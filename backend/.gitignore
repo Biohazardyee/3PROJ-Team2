@@ -29,6 +29,8 @@ out/
 prisma/dev.db
 prisma/*.db
 prisma/migrations/*_lock.toml
+generated/
+node_modules/@prisma/client/
 
 ################################
 # Logs

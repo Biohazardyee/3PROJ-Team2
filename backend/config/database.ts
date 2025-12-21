@@ -1,7 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '../generated/prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 import "dotenv/config";
 
-const prisma = new PrismaClient();
+const connectionString = `${process.env.DATABASE_URL}`
+const adapter = new PrismaPg({ connectionString })
+const prisma = new PrismaClient({ adapter })
 
 export async function connectDB() {
     try {
@@ -12,3 +15,5 @@ export async function connectDB() {
         process.exit(1); // Arrête l'app si la connexion échoue
     }
 }
+
+export { prisma }

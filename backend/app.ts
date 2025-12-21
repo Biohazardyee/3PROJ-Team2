@@ -1,14 +1,12 @@
 import createError from 'http-errors';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { connectDB } from "./config/database.js";
-
 import indexRouter from './routes/index.js';
-import usersRouter from './routes/users.js';
+
 import { ApiError, InternalError } from './utils/errors.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,51 +18,82 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // front-end routes
-app.use('/', indexRouter);
+
 
 // back-end routes
-app.use('/api/users', usersRouter);
+app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     next(createError(404));
 });
 
-const PORT = 3000;
+// Export app without auto-connecting to database
+// Database connection is handled by bin/www.ts for the server
+// and by test files for testing
 
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
-    });
-});
-
-// error handler
-app.use(function(err: any, _req: any, res: any, _next: any) {
+// Centralized error handler
+app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
     let status = 500;
     let message = 'Internal Server Error';
 
+    // Handle custom API errors
     if (err instanceof ApiError) {
         status = err.status;
         message = err.message;
-    } else if (err instanceof SyntaxError) {
+    }
+    // Handle JSON parsing errors
+    else if (err instanceof SyntaxError && 'body' in err) {
         status = 400;
         message = 'Invalid JSON payload';
-    } else {
-        err = new InternalError();
+    }
+    // Handle 404 errors from createError
+    else if (err.status === 404) {
+        status = 404;
+        message = err.message || 'Not Found';
+    }
+    // Handle other errors
+    else if (err.message) {
+        message = err.message;
     }
 
-    res.status(status)
-        .json({
-            error: status,
-            message
-        });
+    // Log error to console for debugging (skip in test environment to keep output clean)
+    if (process.env.NODE_ENV !== 'test') {
+        console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.error(`❌ Error ${status}: ${message}`);
+        console.error(`📍 ${req.method} ${req.originalUrl}`);
+        if (req.body && Object.keys(req.body).length > 0) {
+            console.error('📦 Request Body:', JSON.stringify(req.body, null, 2));
+        }
+        console.error('🔍 Stack Trace:');
+        console.error(err.stack || 'No stack trace available');
+        console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    }
+
+    // Build response object
+    const errorResponse: any = {
+        error: status,
+        message: message
+    };
+
+    // In development mode, include stack trace in response
+    const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production';
+    if (isDevelopment && err.stack) {
+        errorResponse.stack = err.stack;
+        errorResponse.details = {
+            method: req.method,
+            path: req.originalUrl,
+            body: req.body
+        };
+    }
+
+    res.status(status).json(errorResponse);
 });
 
 export default app;
