@@ -9,10 +9,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
-# Copier Prisma schema et générer le client dans "generated"
-COPY prisma ./prisma
-RUN npx prisma generate
-
 # Copier le reste du code
 COPY . .
 
@@ -28,13 +24,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Copier node_modules, dist, prisma et generated
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/views ./dist/views
-# Ensure the generated Prisma client is available inside dist so ESM imports from compiled files resolve
-COPY --from=builder /app/dist/generated ./dist/generated
-COPY package.json ./
 
 EXPOSE 3000
 CMD ["node", "dist/bin/www.js"]
