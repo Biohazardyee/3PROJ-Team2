@@ -37,7 +37,7 @@ export type ReviewSumAggregateOutputType = {
 export type ReviewMinAggregateOutputType = {
   id: string | null
   user_id: string | null
-  music_id: string | null
+  media_id: string | null
   rating: number | null
   content: string | null
   created_at: Date | null
@@ -47,7 +47,7 @@ export type ReviewMinAggregateOutputType = {
 export type ReviewMaxAggregateOutputType = {
   id: string | null
   user_id: string | null
-  music_id: string | null
+  media_id: string | null
   rating: number | null
   content: string | null
   created_at: Date | null
@@ -57,7 +57,7 @@ export type ReviewMaxAggregateOutputType = {
 export type ReviewCountAggregateOutputType = {
   id: number
   user_id: number
-  music_id: number
+  media_id: number
   rating: number
   content: number
   created_at: number
@@ -77,7 +77,7 @@ export type ReviewSumAggregateInputType = {
 export type ReviewMinAggregateInputType = {
   id?: true
   user_id?: true
-  music_id?: true
+  media_id?: true
   rating?: true
   content?: true
   created_at?: true
@@ -87,7 +87,7 @@ export type ReviewMinAggregateInputType = {
 export type ReviewMaxAggregateInputType = {
   id?: true
   user_id?: true
-  music_id?: true
+  media_id?: true
   rating?: true
   content?: true
   created_at?: true
@@ -97,7 +97,7 @@ export type ReviewMaxAggregateInputType = {
 export type ReviewCountAggregateInputType = {
   id?: true
   user_id?: true
-  music_id?: true
+  media_id?: true
   rating?: true
   content?: true
   created_at?: true
@@ -194,7 +194,7 @@ export type ReviewGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 export type ReviewGroupByOutputType = {
   id: string
   user_id: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at: Date
@@ -227,13 +227,13 @@ export type ReviewWhereInput = {
   NOT?: Prisma.ReviewWhereInput | Prisma.ReviewWhereInput[]
   id?: Prisma.StringFilter<"Review"> | string
   user_id?: Prisma.StringFilter<"Review"> | string
-  music_id?: Prisma.StringFilter<"Review"> | string
+  media_id?: Prisma.StringFilter<"Review"> | string
   rating?: Prisma.FloatFilter<"Review"> | number
   content?: Prisma.StringFilter<"Review"> | string
   created_at?: Prisma.DateTimeFilter<"Review"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Review"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  music?: Prisma.XOR<Prisma.MusicScalarRelationFilter, Prisma.MusicWhereInput>
+  media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
   comments?: Prisma.ReviewCommentListRelationFilter
   likes?: Prisma.ReviewLikeListRelationFilter
   reports?: Prisma.ReportListRelationFilter
@@ -244,13 +244,13 @@ export type ReviewWhereInput = {
 export type ReviewOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
-  music?: Prisma.MusicOrderByWithRelationInput
+  media?: Prisma.MediaOrderByWithRelationInput
   comments?: Prisma.ReviewCommentOrderByRelationAggregateInput
   likes?: Prisma.ReviewLikeOrderByRelationAggregateInput
   reports?: Prisma.ReportOrderByRelationAggregateInput
@@ -264,13 +264,13 @@ export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ReviewWhereInput[]
   NOT?: Prisma.ReviewWhereInput | Prisma.ReviewWhereInput[]
   user_id?: Prisma.StringFilter<"Review"> | string
-  music_id?: Prisma.StringFilter<"Review"> | string
+  media_id?: Prisma.StringFilter<"Review"> | string
   rating?: Prisma.FloatFilter<"Review"> | number
   content?: Prisma.StringFilter<"Review"> | string
   created_at?: Prisma.DateTimeFilter<"Review"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Review"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  music?: Prisma.XOR<Prisma.MusicScalarRelationFilter, Prisma.MusicWhereInput>
+  media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
   comments?: Prisma.ReviewCommentListRelationFilter
   likes?: Prisma.ReviewLikeListRelationFilter
   reports?: Prisma.ReportListRelationFilter
@@ -281,7 +281,7 @@ export type ReviewWhereUniqueInput = Prisma.AtLeast<{
 export type ReviewOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -299,7 +299,7 @@ export type ReviewScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ReviewScalarWhereWithAggregatesInput | Prisma.ReviewScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Review"> | string
   user_id?: Prisma.StringWithAggregatesFilter<"Review"> | string
-  music_id?: Prisma.StringWithAggregatesFilter<"Review"> | string
+  media_id?: Prisma.StringWithAggregatesFilter<"Review"> | string
   rating?: Prisma.FloatWithAggregatesFilter<"Review"> | number
   content?: Prisma.StringWithAggregatesFilter<"Review"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Review"> | Date | string
@@ -313,7 +313,7 @@ export type ReviewCreateInput = {
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
-  music: Prisma.MusicCreateNestedOneWithoutReviewsInput
+  media: Prisma.MediaCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikeCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportCreateNestedManyWithoutReviewInput
@@ -324,7 +324,7 @@ export type ReviewCreateInput = {
 export type ReviewUncheckedCreateInput = {
   id?: string
   user_id: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -343,7 +343,7 @@ export type ReviewUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
-  music?: Prisma.MusicUpdateOneRequiredWithoutReviewsNestedInput
+  media?: Prisma.MediaUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikeUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReviewNestedInput
@@ -354,7 +354,7 @@ export type ReviewUpdateInput = {
 export type ReviewUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -369,7 +369,7 @@ export type ReviewUncheckedUpdateInput = {
 export type ReviewCreateManyInput = {
   id?: string
   user_id: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -387,7 +387,7 @@ export type ReviewUpdateManyMutationInput = {
 export type ReviewUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -407,7 +407,7 @@ export type ReviewOrderByRelationAggregateInput = {
 export type ReviewCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -421,7 +421,7 @@ export type ReviewAvgOrderByAggregateInput = {
 export type ReviewMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -431,7 +431,7 @@ export type ReviewMaxOrderByAggregateInput = {
 export type ReviewMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -494,45 +494,45 @@ export type ReviewUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.ReviewScalarWhereInput | Prisma.ReviewScalarWhereInput[]
 }
 
-export type ReviewCreateNestedManyWithoutMusicInput = {
-  create?: Prisma.XOR<Prisma.ReviewCreateWithoutMusicInput, Prisma.ReviewUncheckedCreateWithoutMusicInput> | Prisma.ReviewCreateWithoutMusicInput[] | Prisma.ReviewUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutMusicInput | Prisma.ReviewCreateOrConnectWithoutMusicInput[]
-  createMany?: Prisma.ReviewCreateManyMusicInputEnvelope
+export type ReviewCreateNestedManyWithoutMediaInput = {
+  create?: Prisma.XOR<Prisma.ReviewCreateWithoutMediaInput, Prisma.ReviewUncheckedCreateWithoutMediaInput> | Prisma.ReviewCreateWithoutMediaInput[] | Prisma.ReviewUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutMediaInput | Prisma.ReviewCreateOrConnectWithoutMediaInput[]
+  createMany?: Prisma.ReviewCreateManyMediaInputEnvelope
   connect?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
 }
 
-export type ReviewUncheckedCreateNestedManyWithoutMusicInput = {
-  create?: Prisma.XOR<Prisma.ReviewCreateWithoutMusicInput, Prisma.ReviewUncheckedCreateWithoutMusicInput> | Prisma.ReviewCreateWithoutMusicInput[] | Prisma.ReviewUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutMusicInput | Prisma.ReviewCreateOrConnectWithoutMusicInput[]
-  createMany?: Prisma.ReviewCreateManyMusicInputEnvelope
+export type ReviewUncheckedCreateNestedManyWithoutMediaInput = {
+  create?: Prisma.XOR<Prisma.ReviewCreateWithoutMediaInput, Prisma.ReviewUncheckedCreateWithoutMediaInput> | Prisma.ReviewCreateWithoutMediaInput[] | Prisma.ReviewUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutMediaInput | Prisma.ReviewCreateOrConnectWithoutMediaInput[]
+  createMany?: Prisma.ReviewCreateManyMediaInputEnvelope
   connect?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
 }
 
-export type ReviewUpdateManyWithoutMusicNestedInput = {
-  create?: Prisma.XOR<Prisma.ReviewCreateWithoutMusicInput, Prisma.ReviewUncheckedCreateWithoutMusicInput> | Prisma.ReviewCreateWithoutMusicInput[] | Prisma.ReviewUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutMusicInput | Prisma.ReviewCreateOrConnectWithoutMusicInput[]
-  upsert?: Prisma.ReviewUpsertWithWhereUniqueWithoutMusicInput | Prisma.ReviewUpsertWithWhereUniqueWithoutMusicInput[]
-  createMany?: Prisma.ReviewCreateManyMusicInputEnvelope
+export type ReviewUpdateManyWithoutMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewCreateWithoutMediaInput, Prisma.ReviewUncheckedCreateWithoutMediaInput> | Prisma.ReviewCreateWithoutMediaInput[] | Prisma.ReviewUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutMediaInput | Prisma.ReviewCreateOrConnectWithoutMediaInput[]
+  upsert?: Prisma.ReviewUpsertWithWhereUniqueWithoutMediaInput | Prisma.ReviewUpsertWithWhereUniqueWithoutMediaInput[]
+  createMany?: Prisma.ReviewCreateManyMediaInputEnvelope
   set?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
   disconnect?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
   delete?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
   connect?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
-  update?: Prisma.ReviewUpdateWithWhereUniqueWithoutMusicInput | Prisma.ReviewUpdateWithWhereUniqueWithoutMusicInput[]
-  updateMany?: Prisma.ReviewUpdateManyWithWhereWithoutMusicInput | Prisma.ReviewUpdateManyWithWhereWithoutMusicInput[]
+  update?: Prisma.ReviewUpdateWithWhereUniqueWithoutMediaInput | Prisma.ReviewUpdateWithWhereUniqueWithoutMediaInput[]
+  updateMany?: Prisma.ReviewUpdateManyWithWhereWithoutMediaInput | Prisma.ReviewUpdateManyWithWhereWithoutMediaInput[]
   deleteMany?: Prisma.ReviewScalarWhereInput | Prisma.ReviewScalarWhereInput[]
 }
 
-export type ReviewUncheckedUpdateManyWithoutMusicNestedInput = {
-  create?: Prisma.XOR<Prisma.ReviewCreateWithoutMusicInput, Prisma.ReviewUncheckedCreateWithoutMusicInput> | Prisma.ReviewCreateWithoutMusicInput[] | Prisma.ReviewUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutMusicInput | Prisma.ReviewCreateOrConnectWithoutMusicInput[]
-  upsert?: Prisma.ReviewUpsertWithWhereUniqueWithoutMusicInput | Prisma.ReviewUpsertWithWhereUniqueWithoutMusicInput[]
-  createMany?: Prisma.ReviewCreateManyMusicInputEnvelope
+export type ReviewUncheckedUpdateManyWithoutMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewCreateWithoutMediaInput, Prisma.ReviewUncheckedCreateWithoutMediaInput> | Prisma.ReviewCreateWithoutMediaInput[] | Prisma.ReviewUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.ReviewCreateOrConnectWithoutMediaInput | Prisma.ReviewCreateOrConnectWithoutMediaInput[]
+  upsert?: Prisma.ReviewUpsertWithWhereUniqueWithoutMediaInput | Prisma.ReviewUpsertWithWhereUniqueWithoutMediaInput[]
+  createMany?: Prisma.ReviewCreateManyMediaInputEnvelope
   set?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
   disconnect?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
   delete?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
   connect?: Prisma.ReviewWhereUniqueInput | Prisma.ReviewWhereUniqueInput[]
-  update?: Prisma.ReviewUpdateWithWhereUniqueWithoutMusicInput | Prisma.ReviewUpdateWithWhereUniqueWithoutMusicInput[]
-  updateMany?: Prisma.ReviewUpdateManyWithWhereWithoutMusicInput | Prisma.ReviewUpdateManyWithWhereWithoutMusicInput[]
+  update?: Prisma.ReviewUpdateWithWhereUniqueWithoutMediaInput | Prisma.ReviewUpdateWithWhereUniqueWithoutMediaInput[]
+  updateMany?: Prisma.ReviewUpdateManyWithWhereWithoutMediaInput | Prisma.ReviewUpdateManyWithWhereWithoutMediaInput[]
   deleteMany?: Prisma.ReviewScalarWhereInput | Prisma.ReviewScalarWhereInput[]
 }
 
@@ -626,7 +626,7 @@ export type ReviewCreateWithoutUserInput = {
   content: string
   created_at?: Date | string
   updated_at?: Date | string
-  music: Prisma.MusicCreateNestedOneWithoutReviewsInput
+  media: Prisma.MediaCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikeCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportCreateNestedManyWithoutReviewInput
@@ -636,7 +636,7 @@ export type ReviewCreateWithoutUserInput = {
 
 export type ReviewUncheckedCreateWithoutUserInput = {
   id?: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -680,14 +680,14 @@ export type ReviewScalarWhereInput = {
   NOT?: Prisma.ReviewScalarWhereInput | Prisma.ReviewScalarWhereInput[]
   id?: Prisma.StringFilter<"Review"> | string
   user_id?: Prisma.StringFilter<"Review"> | string
-  music_id?: Prisma.StringFilter<"Review"> | string
+  media_id?: Prisma.StringFilter<"Review"> | string
   rating?: Prisma.FloatFilter<"Review"> | number
   content?: Prisma.StringFilter<"Review"> | string
   created_at?: Prisma.DateTimeFilter<"Review"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Review"> | Date | string
 }
 
-export type ReviewCreateWithoutMusicInput = {
+export type ReviewCreateWithoutMediaInput = {
   id?: string
   rating: number
   content: string
@@ -701,7 +701,7 @@ export type ReviewCreateWithoutMusicInput = {
   activities?: Prisma.ActivityCreateNestedManyWithoutReviewInput
 }
 
-export type ReviewUncheckedCreateWithoutMusicInput = {
+export type ReviewUncheckedCreateWithoutMediaInput = {
   id?: string
   user_id: string
   rating: number
@@ -715,30 +715,30 @@ export type ReviewUncheckedCreateWithoutMusicInput = {
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutReviewInput
 }
 
-export type ReviewCreateOrConnectWithoutMusicInput = {
+export type ReviewCreateOrConnectWithoutMediaInput = {
   where: Prisma.ReviewWhereUniqueInput
-  create: Prisma.XOR<Prisma.ReviewCreateWithoutMusicInput, Prisma.ReviewUncheckedCreateWithoutMusicInput>
+  create: Prisma.XOR<Prisma.ReviewCreateWithoutMediaInput, Prisma.ReviewUncheckedCreateWithoutMediaInput>
 }
 
-export type ReviewCreateManyMusicInputEnvelope = {
-  data: Prisma.ReviewCreateManyMusicInput | Prisma.ReviewCreateManyMusicInput[]
+export type ReviewCreateManyMediaInputEnvelope = {
+  data: Prisma.ReviewCreateManyMediaInput | Prisma.ReviewCreateManyMediaInput[]
   skipDuplicates?: boolean
 }
 
-export type ReviewUpsertWithWhereUniqueWithoutMusicInput = {
+export type ReviewUpsertWithWhereUniqueWithoutMediaInput = {
   where: Prisma.ReviewWhereUniqueInput
-  update: Prisma.XOR<Prisma.ReviewUpdateWithoutMusicInput, Prisma.ReviewUncheckedUpdateWithoutMusicInput>
-  create: Prisma.XOR<Prisma.ReviewCreateWithoutMusicInput, Prisma.ReviewUncheckedCreateWithoutMusicInput>
+  update: Prisma.XOR<Prisma.ReviewUpdateWithoutMediaInput, Prisma.ReviewUncheckedUpdateWithoutMediaInput>
+  create: Prisma.XOR<Prisma.ReviewCreateWithoutMediaInput, Prisma.ReviewUncheckedCreateWithoutMediaInput>
 }
 
-export type ReviewUpdateWithWhereUniqueWithoutMusicInput = {
+export type ReviewUpdateWithWhereUniqueWithoutMediaInput = {
   where: Prisma.ReviewWhereUniqueInput
-  data: Prisma.XOR<Prisma.ReviewUpdateWithoutMusicInput, Prisma.ReviewUncheckedUpdateWithoutMusicInput>
+  data: Prisma.XOR<Prisma.ReviewUpdateWithoutMediaInput, Prisma.ReviewUncheckedUpdateWithoutMediaInput>
 }
 
-export type ReviewUpdateManyWithWhereWithoutMusicInput = {
+export type ReviewUpdateManyWithWhereWithoutMediaInput = {
   where: Prisma.ReviewScalarWhereInput
-  data: Prisma.XOR<Prisma.ReviewUpdateManyMutationInput, Prisma.ReviewUncheckedUpdateManyWithoutMusicInput>
+  data: Prisma.XOR<Prisma.ReviewUpdateManyMutationInput, Prisma.ReviewUncheckedUpdateManyWithoutMediaInput>
 }
 
 export type ReviewCreateWithoutCommentsInput = {
@@ -748,7 +748,7 @@ export type ReviewCreateWithoutCommentsInput = {
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
-  music: Prisma.MusicCreateNestedOneWithoutReviewsInput
+  media: Prisma.MediaCreateNestedOneWithoutReviewsInput
   likes?: Prisma.ReviewLikeCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutReviewInput
@@ -758,7 +758,7 @@ export type ReviewCreateWithoutCommentsInput = {
 export type ReviewUncheckedCreateWithoutCommentsInput = {
   id?: string
   user_id: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -792,7 +792,7 @@ export type ReviewUpdateWithoutCommentsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
-  music?: Prisma.MusicUpdateOneRequiredWithoutReviewsNestedInput
+  media?: Prisma.MediaUpdateOneRequiredWithoutReviewsNestedInput
   likes?: Prisma.ReviewLikeUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutReviewNestedInput
@@ -802,7 +802,7 @@ export type ReviewUpdateWithoutCommentsInput = {
 export type ReviewUncheckedUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -820,7 +820,7 @@ export type ReviewCreateWithoutLikesInput = {
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
-  music: Prisma.MusicCreateNestedOneWithoutReviewsInput
+  media: Prisma.MediaCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutReviewInput
@@ -830,7 +830,7 @@ export type ReviewCreateWithoutLikesInput = {
 export type ReviewUncheckedCreateWithoutLikesInput = {
   id?: string
   user_id: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -864,7 +864,7 @@ export type ReviewUpdateWithoutLikesInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
-  music?: Prisma.MusicUpdateOneRequiredWithoutReviewsNestedInput
+  media?: Prisma.MediaUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutReviewNestedInput
@@ -874,7 +874,7 @@ export type ReviewUpdateWithoutLikesInput = {
 export type ReviewUncheckedUpdateWithoutLikesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -892,7 +892,7 @@ export type ReviewCreateWithoutActivitiesInput = {
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
-  music: Prisma.MusicCreateNestedOneWithoutReviewsInput
+  media: Prisma.MediaCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikeCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportCreateNestedManyWithoutReviewInput
@@ -902,7 +902,7 @@ export type ReviewCreateWithoutActivitiesInput = {
 export type ReviewUncheckedCreateWithoutActivitiesInput = {
   id?: string
   user_id: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -936,7 +936,7 @@ export type ReviewUpdateWithoutActivitiesInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
-  music?: Prisma.MusicUpdateOneRequiredWithoutReviewsNestedInput
+  media?: Prisma.MediaUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikeUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReviewNestedInput
@@ -946,7 +946,7 @@ export type ReviewUpdateWithoutActivitiesInput = {
 export type ReviewUncheckedUpdateWithoutActivitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -964,7 +964,7 @@ export type ReviewCreateWithoutReportsInput = {
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
-  music: Prisma.MusicCreateNestedOneWithoutReviewsInput
+  media: Prisma.MediaCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikeCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutReviewInput
@@ -974,7 +974,7 @@ export type ReviewCreateWithoutReportsInput = {
 export type ReviewUncheckedCreateWithoutReportsInput = {
   id?: string
   user_id: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -1008,7 +1008,7 @@ export type ReviewUpdateWithoutReportsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
-  music?: Prisma.MusicUpdateOneRequiredWithoutReviewsNestedInput
+  media?: Prisma.MediaUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikeUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutReviewNestedInput
@@ -1018,7 +1018,7 @@ export type ReviewUpdateWithoutReportsInput = {
 export type ReviewUncheckedUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1036,7 +1036,7 @@ export type ReviewCreateWithoutNotificationsInput = {
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
-  music: Prisma.MusicCreateNestedOneWithoutReviewsInput
+  media: Prisma.MediaCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikeCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportCreateNestedManyWithoutReviewInput
@@ -1046,7 +1046,7 @@ export type ReviewCreateWithoutNotificationsInput = {
 export type ReviewUncheckedCreateWithoutNotificationsInput = {
   id?: string
   user_id: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -1080,7 +1080,7 @@ export type ReviewUpdateWithoutNotificationsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
-  music?: Prisma.MusicUpdateOneRequiredWithoutReviewsNestedInput
+  media?: Prisma.MediaUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikeUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReviewNestedInput
@@ -1090,7 +1090,7 @@ export type ReviewUpdateWithoutNotificationsInput = {
 export type ReviewUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1103,7 +1103,7 @@ export type ReviewUncheckedUpdateWithoutNotificationsInput = {
 
 export type ReviewCreateManyUserInput = {
   id?: string
-  music_id: string
+  media_id: string
   rating: number
   content: string
   created_at?: Date | string
@@ -1116,7 +1116,7 @@ export type ReviewUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  music?: Prisma.MusicUpdateOneRequiredWithoutReviewsNestedInput
+  media?: Prisma.MediaUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikeUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReviewNestedInput
@@ -1126,7 +1126,7 @@ export type ReviewUpdateWithoutUserInput = {
 
 export type ReviewUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1140,14 +1140,14 @@ export type ReviewUncheckedUpdateWithoutUserInput = {
 
 export type ReviewUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  music_id?: Prisma.StringFieldUpdateOperationsInput | string
+  media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ReviewCreateManyMusicInput = {
+export type ReviewCreateManyMediaInput = {
   id?: string
   user_id: string
   rating: number
@@ -1156,7 +1156,7 @@ export type ReviewCreateManyMusicInput = {
   updated_at?: Date | string
 }
 
-export type ReviewUpdateWithoutMusicInput = {
+export type ReviewUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1170,7 +1170,7 @@ export type ReviewUpdateWithoutMusicInput = {
   activities?: Prisma.ActivityUpdateManyWithoutReviewNestedInput
 }
 
-export type ReviewUncheckedUpdateWithoutMusicInput = {
+export type ReviewUncheckedUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1184,7 +1184,7 @@ export type ReviewUncheckedUpdateWithoutMusicInput = {
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutReviewNestedInput
 }
 
-export type ReviewUncheckedUpdateManyWithoutMusicInput = {
+export type ReviewUncheckedUpdateManyWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1263,13 +1263,13 @@ export type ReviewCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Typ
 export type ReviewSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   user_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   rating?: boolean
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  music?: boolean | Prisma.MusicDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
   comments?: boolean | Prisma.Review$commentsArgs<ExtArgs>
   likes?: boolean | Prisma.Review$likesArgs<ExtArgs>
   reports?: boolean | Prisma.Review$reportsArgs<ExtArgs>
@@ -1281,41 +1281,41 @@ export type ReviewSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 export type ReviewSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   user_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   rating?: boolean
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  music?: boolean | Prisma.MusicDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["review"]>
 
 export type ReviewSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   user_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   rating?: boolean
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  music?: boolean | Prisma.MusicDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["review"]>
 
 export type ReviewSelectScalar = {
   id?: boolean
   user_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   rating?: boolean
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type ReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "music_id" | "rating" | "content" | "created_at" | "updated_at", ExtArgs["result"]["review"]>
+export type ReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "media_id" | "rating" | "content" | "created_at" | "updated_at", ExtArgs["result"]["review"]>
 export type ReviewInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  music?: boolean | Prisma.MusicDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
   comments?: boolean | Prisma.Review$commentsArgs<ExtArgs>
   likes?: boolean | Prisma.Review$likesArgs<ExtArgs>
   reports?: boolean | Prisma.Review$reportsArgs<ExtArgs>
@@ -1325,18 +1325,18 @@ export type ReviewInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 }
 export type ReviewIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  music?: boolean | Prisma.MusicDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
 }
 export type ReviewIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  music?: boolean | Prisma.MusicDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
 }
 
 export type $ReviewPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Review"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
-    music: Prisma.$MusicPayload<ExtArgs>
+    media: Prisma.$MediaPayload<ExtArgs>
     comments: Prisma.$ReviewCommentPayload<ExtArgs>[]
     likes: Prisma.$ReviewLikePayload<ExtArgs>[]
     reports: Prisma.$ReportPayload<ExtArgs>[]
@@ -1346,7 +1346,7 @@ export type $ReviewPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     user_id: string
-    music_id: string
+    media_id: string
     rating: number
     content: string
     created_at: Date
@@ -1746,7 +1746,7 @@ readonly fields: ReviewFieldRefs;
 export interface Prisma__ReviewClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  music<T extends Prisma.MusicDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MusicDefaultArgs<ExtArgs>>): Prisma.Prisma__MusicClient<runtime.Types.Result.GetResult<Prisma.$MusicPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  media<T extends Prisma.MediaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaDefaultArgs<ExtArgs>>): Prisma.Prisma__MediaClient<runtime.Types.Result.GetResult<Prisma.$MediaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   comments<T extends Prisma.Review$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Review$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   likes<T extends Prisma.Review$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Review$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.Review$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Review$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1783,7 +1783,7 @@ export interface Prisma__ReviewClient<T, Null = never, ExtArgs extends runtime.T
 export interface ReviewFieldRefs {
   readonly id: Prisma.FieldRef<"Review", 'String'>
   readonly user_id: Prisma.FieldRef<"Review", 'String'>
-  readonly music_id: Prisma.FieldRef<"Review", 'String'>
+  readonly media_id: Prisma.FieldRef<"Review", 'String'>
   readonly rating: Prisma.FieldRef<"Review", 'Float'>
   readonly content: Prisma.FieldRef<"Review", 'String'>
   readonly created_at: Prisma.FieldRef<"Review", 'DateTime'>

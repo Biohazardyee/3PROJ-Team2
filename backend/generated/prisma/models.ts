@@ -9,13 +9,13 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User.js'
-export type * from './models/Music.js'
+export type * from './models/Media.js'
 export type * from './models/Review.js'
 export type * from './models/ReviewComment.js'
 export type * from './models/ReviewLike.js'
 export type * from './models/Playlist.js'
 export type * from './models/PlaylistItem.js'
-export type * from './models/UserMusicStatus.js'
+export type * from './models/UserMediaStatus.js'
 export type * from './models/Activity.js'
 export type * from './models/Follow.js'
 export type * from './models/Report.js'

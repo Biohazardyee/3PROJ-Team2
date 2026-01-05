@@ -30,7 +30,7 @@ export type UserMinAggregateOutputType = {
   email: string | null
   password_hash: string | null
   phone_number: string | null
-  profile_picture: string | null
+  profile_picture: runtime.Bytes | null
   role: $Enums.Role | null
   biography: string | null
   favorite_band: string | null
@@ -45,7 +45,7 @@ export type UserMaxAggregateOutputType = {
   email: string | null
   password_hash: string | null
   phone_number: string | null
-  profile_picture: string | null
+  profile_picture: runtime.Bytes | null
   role: $Enums.Role | null
   biography: string | null
   favorite_band: string | null
@@ -195,7 +195,7 @@ export type UserGroupByOutputType = {
   email: string
   password_hash: string
   phone_number: string | null
-  profile_picture: string | null
+  profile_picture: runtime.Bytes | null
   role: $Enums.Role | null
   biography: string | null
   favorite_band: string
@@ -231,7 +231,7 @@ export type UserWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   password_hash?: Prisma.StringFilter<"User"> | string
   phone_number?: Prisma.StringNullableFilter<"User"> | string | null
-  profile_picture?: Prisma.StringNullableFilter<"User"> | string | null
+  profile_picture?: Prisma.BytesNullableFilter<"User"> | runtime.Bytes | null
   role?: Prisma.EnumRoleNullableFilter<"User"> | $Enums.Role | null
   biography?: Prisma.StringNullableFilter<"User"> | string | null
   favorite_band?: Prisma.StringFilter<"User"> | string
@@ -246,7 +246,7 @@ export type UserWhereInput = {
   followers?: Prisma.FollowListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   notificationsRelated?: Prisma.NotificationListRelationFilter
-  user_music_status?: Prisma.UserMusicStatusListRelationFilter
+  user_media_status?: Prisma.UserMediaStatusListRelationFilter
   reports?: Prisma.ReportListRelationFilter
   bannedUsers?: Prisma.XOR<Prisma.BannedUsersNullableScalarRelationFilter, Prisma.BannedUsersWhereInput> | null
   activities?: Prisma.ActivityListRelationFilter
@@ -274,7 +274,7 @@ export type UserOrderByWithRelationInput = {
   followers?: Prisma.FollowOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   notificationsRelated?: Prisma.NotificationOrderByRelationAggregateInput
-  user_music_status?: Prisma.UserMusicStatusOrderByRelationAggregateInput
+  user_media_status?: Prisma.UserMediaStatusOrderByRelationAggregateInput
   reports?: Prisma.ReportOrderByRelationAggregateInput
   bannedUsers?: Prisma.BannedUsersOrderByWithRelationInput
   activities?: Prisma.ActivityOrderByRelationAggregateInput
@@ -290,7 +290,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   password_hash?: Prisma.StringFilter<"User"> | string
   phone_number?: Prisma.StringNullableFilter<"User"> | string | null
-  profile_picture?: Prisma.StringNullableFilter<"User"> | string | null
+  profile_picture?: Prisma.BytesNullableFilter<"User"> | runtime.Bytes | null
   role?: Prisma.EnumRoleNullableFilter<"User"> | $Enums.Role | null
   biography?: Prisma.StringNullableFilter<"User"> | string | null
   favorite_band?: Prisma.StringFilter<"User"> | string
@@ -305,7 +305,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   followers?: Prisma.FollowListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   notificationsRelated?: Prisma.NotificationListRelationFilter
-  user_music_status?: Prisma.UserMusicStatusListRelationFilter
+  user_media_status?: Prisma.UserMediaStatusListRelationFilter
   reports?: Prisma.ReportListRelationFilter
   bannedUsers?: Prisma.XOR<Prisma.BannedUsersNullableScalarRelationFilter, Prisma.BannedUsersWhereInput> | null
   activities?: Prisma.ActivityListRelationFilter
@@ -339,7 +339,7 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   password_hash?: Prisma.StringWithAggregatesFilter<"User"> | string
   phone_number?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  profile_picture?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  profile_picture?: Prisma.BytesNullableWithAggregatesFilter<"User"> | runtime.Bytes | null
   role?: Prisma.EnumRoleNullableWithAggregatesFilter<"User"> | $Enums.Role | null
   biography?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   favorite_band?: Prisma.StringWithAggregatesFilter<"User"> | string
@@ -354,7 +354,7 @@ export type UserCreateInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -369,7 +369,7 @@ export type UserCreateInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -382,7 +382,7 @@ export type UserUncheckedCreateInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -397,7 +397,7 @@ export type UserUncheckedCreateInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -410,7 +410,7 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -425,7 +425,7 @@ export type UserUpdateInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -438,7 +438,7 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -453,7 +453,7 @@ export type UserUncheckedUpdateInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -466,7 +466,7 @@ export type UserCreateManyInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -481,7 +481,7 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -496,7 +496,7 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -568,6 +568,10 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
+export type NullableBytesFieldUpdateOperationsInput = {
+  set?: runtime.Bytes | null
+}
+
 export type NullableEnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role | null
 }
@@ -636,18 +640,18 @@ export type UserUpdateOneRequiredWithoutPlaylistsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPlaylistsInput, Prisma.UserUpdateWithoutPlaylistsInput>, Prisma.UserUncheckedUpdateWithoutPlaylistsInput>
 }
 
-export type UserCreateNestedOneWithoutUser_music_statusInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUser_music_statusInput, Prisma.UserUncheckedCreateWithoutUser_music_statusInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUser_music_statusInput
+export type UserCreateNestedOneWithoutUser_media_statusInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUser_media_statusInput, Prisma.UserUncheckedCreateWithoutUser_media_statusInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUser_media_statusInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutUser_music_statusNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUser_music_statusInput, Prisma.UserUncheckedCreateWithoutUser_music_statusInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUser_music_statusInput
-  upsert?: Prisma.UserUpsertWithoutUser_music_statusInput
+export type UserUpdateOneRequiredWithoutUser_media_statusNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUser_media_statusInput, Prisma.UserUncheckedCreateWithoutUser_media_statusInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUser_media_statusInput
+  upsert?: Prisma.UserUpsertWithoutUser_media_statusInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUser_music_statusInput, Prisma.UserUpdateWithoutUser_music_statusInput>, Prisma.UserUncheckedUpdateWithoutUser_music_statusInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUser_media_statusInput, Prisma.UserUpdateWithoutUser_media_statusInput>, Prisma.UserUncheckedUpdateWithoutUser_media_statusInput>
 }
 
 export type UserCreateNestedOneWithoutActivitiesInput = {
@@ -772,7 +776,7 @@ export type UserCreateWithoutReviewsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -786,7 +790,7 @@ export type UserCreateWithoutReviewsInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -799,7 +803,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -813,7 +817,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -842,7 +846,7 @@ export type UserUpdateWithoutReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -856,7 +860,7 @@ export type UserUpdateWithoutReviewsInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -869,7 +873,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -883,7 +887,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -896,7 +900,7 @@ export type UserCreateWithoutReview_commentsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -910,7 +914,7 @@ export type UserCreateWithoutReview_commentsInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -923,7 +927,7 @@ export type UserUncheckedCreateWithoutReview_commentsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -937,7 +941,7 @@ export type UserUncheckedCreateWithoutReview_commentsInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -966,7 +970,7 @@ export type UserUpdateWithoutReview_commentsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -980,7 +984,7 @@ export type UserUpdateWithoutReview_commentsInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -993,7 +997,7 @@ export type UserUncheckedUpdateWithoutReview_commentsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1007,7 +1011,7 @@ export type UserUncheckedUpdateWithoutReview_commentsInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -1020,7 +1024,7 @@ export type UserCreateWithoutReview_likesInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1034,7 +1038,7 @@ export type UserCreateWithoutReview_likesInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -1047,7 +1051,7 @@ export type UserUncheckedCreateWithoutReview_likesInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1061,7 +1065,7 @@ export type UserUncheckedCreateWithoutReview_likesInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -1090,7 +1094,7 @@ export type UserUpdateWithoutReview_likesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1104,7 +1108,7 @@ export type UserUpdateWithoutReview_likesInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -1117,7 +1121,7 @@ export type UserUncheckedUpdateWithoutReview_likesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1131,7 +1135,7 @@ export type UserUncheckedUpdateWithoutReview_likesInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -1144,7 +1148,7 @@ export type UserCreateWithoutPlaylistsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1158,7 +1162,7 @@ export type UserCreateWithoutPlaylistsInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -1171,7 +1175,7 @@ export type UserUncheckedCreateWithoutPlaylistsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1185,7 +1189,7 @@ export type UserUncheckedCreateWithoutPlaylistsInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -1214,7 +1218,7 @@ export type UserUpdateWithoutPlaylistsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1228,7 +1232,7 @@ export type UserUpdateWithoutPlaylistsInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -1241,7 +1245,7 @@ export type UserUncheckedUpdateWithoutPlaylistsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1255,20 +1259,20 @@ export type UserUncheckedUpdateWithoutPlaylistsInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
 }
 
-export type UserCreateWithoutUser_music_statusInput = {
+export type UserCreateWithoutUser_media_statusInput = {
   id?: string
   username: string
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1289,13 +1293,13 @@ export type UserCreateWithoutUser_music_statusInput = {
   activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
 }
 
-export type UserUncheckedCreateWithoutUser_music_statusInput = {
+export type UserUncheckedCreateWithoutUser_media_statusInput = {
   id?: string
   username: string
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1316,29 +1320,29 @@ export type UserUncheckedCreateWithoutUser_music_statusInput = {
   activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
 }
 
-export type UserCreateOrConnectWithoutUser_music_statusInput = {
+export type UserCreateOrConnectWithoutUser_media_statusInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutUser_music_statusInput, Prisma.UserUncheckedCreateWithoutUser_music_statusInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUser_media_statusInput, Prisma.UserUncheckedCreateWithoutUser_media_statusInput>
 }
 
-export type UserUpsertWithoutUser_music_statusInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutUser_music_statusInput, Prisma.UserUncheckedUpdateWithoutUser_music_statusInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutUser_music_statusInput, Prisma.UserUncheckedCreateWithoutUser_music_statusInput>
+export type UserUpsertWithoutUser_media_statusInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUser_media_statusInput, Prisma.UserUncheckedUpdateWithoutUser_media_statusInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUser_media_statusInput, Prisma.UserUncheckedCreateWithoutUser_media_statusInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutUser_music_statusInput = {
+export type UserUpdateToOneWithWhereWithoutUser_media_statusInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutUser_music_statusInput, Prisma.UserUncheckedUpdateWithoutUser_music_statusInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUser_media_statusInput, Prisma.UserUncheckedUpdateWithoutUser_media_statusInput>
 }
 
-export type UserUpdateWithoutUser_music_statusInput = {
+export type UserUpdateWithoutUser_media_statusInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1359,13 +1363,13 @@ export type UserUpdateWithoutUser_music_statusInput = {
   activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
 }
 
-export type UserUncheckedUpdateWithoutUser_music_statusInput = {
+export type UserUncheckedUpdateWithoutUser_media_statusInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1392,7 +1396,7 @@ export type UserCreateWithoutActivitiesInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1407,7 +1411,7 @@ export type UserCreateWithoutActivitiesInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
@@ -1419,7 +1423,7 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1434,7 +1438,7 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
@@ -1451,7 +1455,7 @@ export type UserCreateWithoutActivities_targetsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1466,7 +1470,7 @@ export type UserCreateWithoutActivities_targetsInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -1478,7 +1482,7 @@ export type UserUncheckedCreateWithoutActivities_targetsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1493,7 +1497,7 @@ export type UserUncheckedCreateWithoutActivities_targetsInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -1521,7 +1525,7 @@ export type UserUpdateWithoutActivitiesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1536,7 +1540,7 @@ export type UserUpdateWithoutActivitiesInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
@@ -1548,7 +1552,7 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1563,7 +1567,7 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
@@ -1586,7 +1590,7 @@ export type UserUpdateWithoutActivities_targetsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1601,7 +1605,7 @@ export type UserUpdateWithoutActivities_targetsInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -1613,7 +1617,7 @@ export type UserUncheckedUpdateWithoutActivities_targetsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1628,7 +1632,7 @@ export type UserUncheckedUpdateWithoutActivities_targetsInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -1640,7 +1644,7 @@ export type UserCreateWithoutFollowsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1654,7 +1658,7 @@ export type UserCreateWithoutFollowsInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -1667,7 +1671,7 @@ export type UserUncheckedCreateWithoutFollowsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1681,7 +1685,7 @@ export type UserUncheckedCreateWithoutFollowsInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -1699,7 +1703,7 @@ export type UserCreateWithoutFollowersInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1713,7 +1717,7 @@ export type UserCreateWithoutFollowersInput = {
   follows?: Prisma.FollowCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -1726,7 +1730,7 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1740,7 +1744,7 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -1769,7 +1773,7 @@ export type UserUpdateWithoutFollowsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1783,7 +1787,7 @@ export type UserUpdateWithoutFollowsInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -1796,7 +1800,7 @@ export type UserUncheckedUpdateWithoutFollowsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1810,7 +1814,7 @@ export type UserUncheckedUpdateWithoutFollowsInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -1834,7 +1838,7 @@ export type UserUpdateWithoutFollowersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1848,7 +1852,7 @@ export type UserUpdateWithoutFollowersInput = {
   follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -1861,7 +1865,7 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1875,7 +1879,7 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -1888,7 +1892,7 @@ export type UserCreateWithoutReportsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1903,7 +1907,7 @@ export type UserCreateWithoutReportsInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
@@ -1915,7 +1919,7 @@ export type UserUncheckedCreateWithoutReportsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -1930,7 +1934,7 @@ export type UserUncheckedCreateWithoutReportsInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
@@ -1958,7 +1962,7 @@ export type UserUpdateWithoutReportsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1973,7 +1977,7 @@ export type UserUpdateWithoutReportsInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
@@ -1985,7 +1989,7 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2000,7 +2004,7 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
@@ -2012,7 +2016,7 @@ export type UserCreateWithoutNotificationsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -2026,7 +2030,7 @@ export type UserCreateWithoutNotificationsInput = {
   follows?: Prisma.FollowCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -2039,7 +2043,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -2053,7 +2057,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -2071,7 +2075,7 @@ export type UserCreateWithoutNotificationsRelatedInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -2085,7 +2089,7 @@ export type UserCreateWithoutNotificationsRelatedInput = {
   follows?: Prisma.FollowCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
@@ -2098,7 +2102,7 @@ export type UserUncheckedCreateWithoutNotificationsRelatedInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -2112,7 +2116,7 @@ export type UserUncheckedCreateWithoutNotificationsRelatedInput = {
   follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
@@ -2141,7 +2145,7 @@ export type UserUpdateWithoutNotificationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2155,7 +2159,7 @@ export type UserUpdateWithoutNotificationsInput = {
   follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -2168,7 +2172,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2182,7 +2186,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -2206,7 +2210,7 @@ export type UserUpdateWithoutNotificationsRelatedInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2220,7 +2224,7 @@ export type UserUpdateWithoutNotificationsRelatedInput = {
   follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
@@ -2233,7 +2237,7 @@ export type UserUncheckedUpdateWithoutNotificationsRelatedInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2247,7 +2251,7 @@ export type UserUncheckedUpdateWithoutNotificationsRelatedInput = {
   follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
@@ -2260,7 +2264,7 @@ export type UserCreateWithoutBannedUsersInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -2275,7 +2279,7 @@ export type UserCreateWithoutBannedUsersInput = {
   followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
   activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
@@ -2287,7 +2291,7 @@ export type UserUncheckedCreateWithoutBannedUsersInput = {
   email: string
   password_hash: string
   phone_number?: string | null
-  profile_picture?: string | null
+  profile_picture?: runtime.Bytes | null
   role?: $Enums.Role | null
   biography?: string | null
   favorite_band: string
@@ -2302,7 +2306,7 @@ export type UserUncheckedCreateWithoutBannedUsersInput = {
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedCreateNestedManyWithoutUserInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
@@ -2330,7 +2334,7 @@ export type UserUpdateWithoutBannedUsersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2345,7 +2349,7 @@ export type UserUpdateWithoutBannedUsersInput = {
   followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
@@ -2357,7 +2361,7 @@ export type UserUncheckedUpdateWithoutBannedUsersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password_hash?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2372,7 +2376,7 @@ export type UserUncheckedUpdateWithoutBannedUsersInput = {
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  user_music_status?: Prisma.UserMusicStatusUncheckedUpdateManyWithoutUserNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
@@ -2392,7 +2396,7 @@ export type UserCountOutputType = {
   followers: number
   notifications: number
   notificationsRelated: number
-  user_music_status: number
+  user_media_status: number
   reports: number
   activities: number
   activities_targets: number
@@ -2407,7 +2411,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   followers?: boolean | UserCountOutputTypeCountFollowersArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   notificationsRelated?: boolean | UserCountOutputTypeCountNotificationsRelatedArgs
-  user_music_status?: boolean | UserCountOutputTypeCountUser_music_statusArgs
+  user_media_status?: boolean | UserCountOutputTypeCountUser_media_statusArgs
   reports?: boolean | UserCountOutputTypeCountReportsArgs
   activities?: boolean | UserCountOutputTypeCountActivitiesArgs
   activities_targets?: boolean | UserCountOutputTypeCountActivities_targetsArgs
@@ -2482,8 +2486,8 @@ export type UserCountOutputTypeCountNotificationsRelatedArgs<ExtArgs extends run
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountUser_music_statusArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.UserMusicStatusWhereInput
+export type UserCountOutputTypeCountUser_media_statusArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserMediaStatusWhereInput
 }
 
 /**
@@ -2529,7 +2533,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   followers?: boolean | Prisma.User$followersArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   notificationsRelated?: boolean | Prisma.User$notificationsRelatedArgs<ExtArgs>
-  user_music_status?: boolean | Prisma.User$user_music_statusArgs<ExtArgs>
+  user_media_status?: boolean | Prisma.User$user_media_statusArgs<ExtArgs>
   reports?: boolean | Prisma.User$reportsArgs<ExtArgs>
   bannedUsers?: boolean | Prisma.User$bannedUsersArgs<ExtArgs>
   activities?: boolean | Prisma.User$activitiesArgs<ExtArgs>
@@ -2592,7 +2596,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   followers?: boolean | Prisma.User$followersArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   notificationsRelated?: boolean | Prisma.User$notificationsRelatedArgs<ExtArgs>
-  user_music_status?: boolean | Prisma.User$user_music_statusArgs<ExtArgs>
+  user_media_status?: boolean | Prisma.User$user_media_statusArgs<ExtArgs>
   reports?: boolean | Prisma.User$reportsArgs<ExtArgs>
   bannedUsers?: boolean | Prisma.User$bannedUsersArgs<ExtArgs>
   activities?: boolean | Prisma.User$activitiesArgs<ExtArgs>
@@ -2613,7 +2617,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     followers: Prisma.$FollowPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     notificationsRelated: Prisma.$NotificationPayload<ExtArgs>[]
-    user_music_status: Prisma.$UserMusicStatusPayload<ExtArgs>[]
+    user_media_status: Prisma.$UserMediaStatusPayload<ExtArgs>[]
     reports: Prisma.$ReportPayload<ExtArgs>[]
     bannedUsers: Prisma.$BannedUsersPayload<ExtArgs> | null
     activities: Prisma.$ActivityPayload<ExtArgs>[]
@@ -2625,7 +2629,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string
     password_hash: string
     phone_number: string | null
-    profile_picture: string | null
+    profile_picture: runtime.Bytes | null
     role: $Enums.Role | null
     biography: string | null
     favorite_band: string
@@ -3034,7 +3038,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   followers<T extends Prisma.User$followersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$followersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationsRelated<T extends Prisma.User$notificationsRelatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsRelatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  user_music_status<T extends Prisma.User$user_music_statusArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$user_music_statusArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserMusicStatusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  user_media_status<T extends Prisma.User$user_media_statusArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$user_media_statusArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserMediaStatusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.User$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bannedUsers<T extends Prisma.User$bannedUsersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bannedUsersArgs<ExtArgs>>): Prisma.Prisma__BannedUsersClient<runtime.Types.Result.GetResult<Prisma.$BannedUsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   activities<T extends Prisma.User$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3073,7 +3077,7 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly password_hash: Prisma.FieldRef<"User", 'String'>
   readonly phone_number: Prisma.FieldRef<"User", 'String'>
-  readonly profile_picture: Prisma.FieldRef<"User", 'String'>
+  readonly profile_picture: Prisma.FieldRef<"User", 'Bytes'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly biography: Prisma.FieldRef<"User", 'String'>
   readonly favorite_band: Prisma.FieldRef<"User", 'String'>
@@ -3660,27 +3664,27 @@ export type User$notificationsRelatedArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
- * User.user_music_status
+ * User.user_media_status
  */
-export type User$user_music_statusArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$user_media_statusArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the UserMusicStatus
+   * Select specific fields to fetch from the UserMediaStatus
    */
-  select?: Prisma.UserMusicStatusSelect<ExtArgs> | null
+  select?: Prisma.UserMediaStatusSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the UserMusicStatus
+   * Omit specific fields from the UserMediaStatus
    */
-  omit?: Prisma.UserMusicStatusOmit<ExtArgs> | null
+  omit?: Prisma.UserMediaStatusOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.UserMusicStatusInclude<ExtArgs> | null
-  where?: Prisma.UserMusicStatusWhereInput
-  orderBy?: Prisma.UserMusicStatusOrderByWithRelationInput | Prisma.UserMusicStatusOrderByWithRelationInput[]
-  cursor?: Prisma.UserMusicStatusWhereUniqueInput
+  include?: Prisma.UserMediaStatusInclude<ExtArgs> | null
+  where?: Prisma.UserMediaStatusWhereInput
+  orderBy?: Prisma.UserMediaStatusOrderByWithRelationInput | Prisma.UserMediaStatusOrderByWithRelationInput[]
+  cursor?: Prisma.UserMediaStatusWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.UserMusicStatusScalarFieldEnum | Prisma.UserMusicStatusScalarFieldEnum[]
+  distinct?: Prisma.UserMediaStatusScalarFieldEnum | Prisma.UserMediaStatusScalarFieldEnum[]
 }
 
 /**

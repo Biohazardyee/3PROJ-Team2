@@ -385,13 +385,13 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
-  Music: 'Music',
+  Media: 'Media',
   Review: 'Review',
   ReviewComment: 'ReviewComment',
   ReviewLike: 'ReviewLike',
   Playlist: 'Playlist',
   PlaylistItem: 'PlaylistItem',
-  UserMusicStatus: 'UserMusicStatus',
+  UserMediaStatus: 'UserMediaStatus',
   Activity: 'Activity',
   Follow: 'Follow',
   Report: 'Report',
@@ -412,7 +412,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "music" | "review" | "reviewComment" | "reviewLike" | "playlist" | "playlistItem" | "userMusicStatus" | "activity" | "follow" | "report" | "notification" | "bannedUsers"
+    modelProps: "user" | "media" | "review" | "reviewComment" | "reviewLike" | "playlist" | "playlistItem" | "userMediaStatus" | "activity" | "follow" | "report" | "notification" | "bannedUsers"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -490,77 +490,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Music: {
-      payload: Prisma.$MusicPayload<ExtArgs>
-      fields: Prisma.MusicFieldRefs
+    Media: {
+      payload: Prisma.$MediaPayload<ExtArgs>
+      fields: Prisma.MediaFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.MusicFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload> | null
+          args: Prisma.MediaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.MusicFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>
+          args: Prisma.MediaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
         }
         findFirst: {
-          args: Prisma.MusicFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload> | null
+          args: Prisma.MediaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.MusicFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>
+          args: Prisma.MediaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
         }
         findMany: {
-          args: Prisma.MusicFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>[]
+          args: Prisma.MediaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>[]
         }
         create: {
-          args: Prisma.MusicCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>
+          args: Prisma.MediaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
         }
         createMany: {
-          args: Prisma.MusicCreateManyArgs<ExtArgs>
+          args: Prisma.MediaCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.MusicCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>[]
+          args: Prisma.MediaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>[]
         }
         delete: {
-          args: Prisma.MusicDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>
+          args: Prisma.MediaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
         }
         update: {
-          args: Prisma.MusicUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>
+          args: Prisma.MediaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
         }
         deleteMany: {
-          args: Prisma.MusicDeleteManyArgs<ExtArgs>
+          args: Prisma.MediaDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.MusicUpdateManyArgs<ExtArgs>
+          args: Prisma.MediaUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.MusicUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>[]
+          args: Prisma.MediaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>[]
         }
         upsert: {
-          args: Prisma.MusicUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MusicPayload>
+          args: Prisma.MediaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPayload>
         }
         aggregate: {
-          args: Prisma.MusicAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateMusic>
+          args: Prisma.MediaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMedia>
         }
         groupBy: {
-          args: Prisma.MusicGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.MusicGroupByOutputType>[]
+          args: Prisma.MediaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MediaGroupByOutputType>[]
         }
         count: {
-          args: Prisma.MusicCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.MusicCountAggregateOutputType> | number
+          args: Prisma.MediaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MediaCountAggregateOutputType> | number
         }
       }
     }
@@ -934,77 +934,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    UserMusicStatus: {
-      payload: Prisma.$UserMusicStatusPayload<ExtArgs>
-      fields: Prisma.UserMusicStatusFieldRefs
+    UserMediaStatus: {
+      payload: Prisma.$UserMediaStatusPayload<ExtArgs>
+      fields: Prisma.UserMediaStatusFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.UserMusicStatusFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload> | null
+          args: Prisma.UserMediaStatusFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.UserMusicStatusFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>
+          args: Prisma.UserMediaStatusFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>
         }
         findFirst: {
-          args: Prisma.UserMusicStatusFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload> | null
+          args: Prisma.UserMediaStatusFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.UserMusicStatusFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>
+          args: Prisma.UserMediaStatusFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>
         }
         findMany: {
-          args: Prisma.UserMusicStatusFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>[]
+          args: Prisma.UserMediaStatusFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>[]
         }
         create: {
-          args: Prisma.UserMusicStatusCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>
+          args: Prisma.UserMediaStatusCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>
         }
         createMany: {
-          args: Prisma.UserMusicStatusCreateManyArgs<ExtArgs>
+          args: Prisma.UserMediaStatusCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.UserMusicStatusCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>[]
+          args: Prisma.UserMediaStatusCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>[]
         }
         delete: {
-          args: Prisma.UserMusicStatusDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>
+          args: Prisma.UserMediaStatusDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>
         }
         update: {
-          args: Prisma.UserMusicStatusUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>
+          args: Prisma.UserMediaStatusUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>
         }
         deleteMany: {
-          args: Prisma.UserMusicStatusDeleteManyArgs<ExtArgs>
+          args: Prisma.UserMediaStatusDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.UserMusicStatusUpdateManyArgs<ExtArgs>
+          args: Prisma.UserMediaStatusUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.UserMusicStatusUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>[]
+          args: Prisma.UserMediaStatusUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>[]
         }
         upsert: {
-          args: Prisma.UserMusicStatusUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMusicStatusPayload>
+          args: Prisma.UserMediaStatusUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMediaStatusPayload>
         }
         aggregate: {
-          args: Prisma.UserMusicStatusAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateUserMusicStatus>
+          args: Prisma.UserMediaStatusAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserMediaStatus>
         }
         groupBy: {
-          args: Prisma.UserMusicStatusGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.UserMusicStatusGroupByOutputType>[]
+          args: Prisma.UserMediaStatusGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserMediaStatusGroupByOutputType>[]
         }
         count: {
-          args: Prisma.UserMusicStatusCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.UserMusicStatusCountAggregateOutputType> | number
+          args: Prisma.UserMediaStatusCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserMediaStatusCountAggregateOutputType> | number
         }
       }
     }
@@ -1435,19 +1435,19 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const MusicScalarFieldEnum = {
+export const MediaScalarFieldEnum = {
   id: 'id',
   api_id: 'api_id',
   created_at: 'created_at'
 } as const
 
-export type MusicScalarFieldEnum = (typeof MusicScalarFieldEnum)[keyof typeof MusicScalarFieldEnum]
+export type MediaScalarFieldEnum = (typeof MediaScalarFieldEnum)[keyof typeof MediaScalarFieldEnum]
 
 
 export const ReviewScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
-  music_id: 'music_id',
+  media_id: 'media_id',
   rating: 'rating',
   content: 'content',
   created_at: 'created_at',
@@ -1492,20 +1492,20 @@ export type PlaylistScalarFieldEnum = (typeof PlaylistScalarFieldEnum)[keyof typ
 export const PlaylistItemScalarFieldEnum = {
   id: 'id',
   playlist_id: 'playlist_id',
-  music_id: 'music_id'
+  media_id: 'media_id'
 } as const
 
 export type PlaylistItemScalarFieldEnum = (typeof PlaylistItemScalarFieldEnum)[keyof typeof PlaylistItemScalarFieldEnum]
 
 
-export const UserMusicStatusScalarFieldEnum = {
+export const UserMediaStatusScalarFieldEnum = {
   user_id: 'user_id',
-  music_id: 'music_id',
+  media_id: 'media_id',
   status: 'status',
   created_at: 'created_at'
 } as const
 
-export type UserMusicStatusScalarFieldEnum = (typeof UserMusicStatusScalarFieldEnum)[keyof typeof UserMusicStatusScalarFieldEnum]
+export type UserMediaStatusScalarFieldEnum = (typeof UserMediaStatusScalarFieldEnum)[keyof typeof UserMediaStatusScalarFieldEnum]
 
 
 export const ActivityScalarFieldEnum = {
@@ -1513,7 +1513,7 @@ export const ActivityScalarFieldEnum = {
   user_id: 'user_id',
   target_user_id: 'target_user_id',
   review_id: 'review_id',
-  music_id: 'music_id',
+  media_id: 'media_id',
   rating_from_user: 'rating_from_user',
   action: 'action',
   created_at: 'created_at'
@@ -1550,7 +1550,7 @@ export const NotificationScalarFieldEnum = {
   action: 'action',
   related_user_id: 'related_user_id',
   review_id: 'review_id',
-  music_id: 'music_id',
+  media_id: 'media_id',
   is_read: 'is_read',
   read_at: 'read_at',
   created_at: 'created_at'
@@ -1613,6 +1613,20 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'Bytes'
+ */
+export type BytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes[]'
+ */
+export type ListBytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes[]'>
+    
+
+
+/**
  * Reference to a field of type 'Role'
  */
 export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
@@ -1662,16 +1676,16 @@ export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMode
 
 
 /**
- * Reference to a field of type 'MusicStatus'
+ * Reference to a field of type 'MediaStatus'
  */
-export type EnumMusicStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MusicStatus'>
+export type EnumMediaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaStatus'>
     
 
 
 /**
- * Reference to a field of type 'MusicStatus[]'
+ * Reference to a field of type 'MediaStatus[]'
  */
-export type ListEnumMusicStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MusicStatus[]'>
+export type ListEnumMediaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaStatus[]'>
     
 
 
@@ -1826,13 +1840,13 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
-  music?: Prisma.MusicOmit
+  media?: Prisma.MediaOmit
   review?: Prisma.ReviewOmit
   reviewComment?: Prisma.ReviewCommentOmit
   reviewLike?: Prisma.ReviewLikeOmit
   playlist?: Prisma.PlaylistOmit
   playlistItem?: Prisma.PlaylistItemOmit
-  userMusicStatus?: Prisma.UserMusicStatusOmit
+  userMediaStatus?: Prisma.UserMediaStatusOmit
   activity?: Prisma.ActivityOmit
   follow?: Prisma.FollowOmit
   report?: Prisma.ReportOmit

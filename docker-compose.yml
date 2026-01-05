@@ -21,8 +21,6 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: production
-    volumes:
-      - ./prisma:/app/prisma         # Pour Prisma, si tu veux que le schema soit accessible
     depends_on:
       - db
 

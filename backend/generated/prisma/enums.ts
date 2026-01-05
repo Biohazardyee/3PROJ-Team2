@@ -17,14 +17,14 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
-export const MusicStatus = {
+export const MediaStatus = {
   planned: 'planned',
   listening: 'listening',
   completed: 'completed',
   abandoned: 'abandoned'
 } as const
 
-export type MusicStatus = (typeof MusicStatus)[keyof typeof MusicStatus]
+export type MediaStatus = (typeof MediaStatus)[keyof typeof MediaStatus]
 
 
 export const ActivityAction = {

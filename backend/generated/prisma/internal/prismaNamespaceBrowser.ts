@@ -52,13 +52,13 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  Music: 'Music',
+  Media: 'Media',
   Review: 'Review',
   ReviewComment: 'ReviewComment',
   ReviewLike: 'ReviewLike',
   Playlist: 'Playlist',
   PlaylistItem: 'PlaylistItem',
-  UserMusicStatus: 'UserMusicStatus',
+  UserMediaStatus: 'UserMediaStatus',
   Activity: 'Activity',
   Follow: 'Follow',
   Report: 'Report',
@@ -100,19 +100,19 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const MusicScalarFieldEnum = {
+export const MediaScalarFieldEnum = {
   id: 'id',
   api_id: 'api_id',
   created_at: 'created_at'
 } as const
 
-export type MusicScalarFieldEnum = (typeof MusicScalarFieldEnum)[keyof typeof MusicScalarFieldEnum]
+export type MediaScalarFieldEnum = (typeof MediaScalarFieldEnum)[keyof typeof MediaScalarFieldEnum]
 
 
 export const ReviewScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
-  music_id: 'music_id',
+  media_id: 'media_id',
   rating: 'rating',
   content: 'content',
   created_at: 'created_at',
@@ -157,20 +157,20 @@ export type PlaylistScalarFieldEnum = (typeof PlaylistScalarFieldEnum)[keyof typ
 export const PlaylistItemScalarFieldEnum = {
   id: 'id',
   playlist_id: 'playlist_id',
-  music_id: 'music_id'
+  media_id: 'media_id'
 } as const
 
 export type PlaylistItemScalarFieldEnum = (typeof PlaylistItemScalarFieldEnum)[keyof typeof PlaylistItemScalarFieldEnum]
 
 
-export const UserMusicStatusScalarFieldEnum = {
+export const UserMediaStatusScalarFieldEnum = {
   user_id: 'user_id',
-  music_id: 'music_id',
+  media_id: 'media_id',
   status: 'status',
   created_at: 'created_at'
 } as const
 
-export type UserMusicStatusScalarFieldEnum = (typeof UserMusicStatusScalarFieldEnum)[keyof typeof UserMusicStatusScalarFieldEnum]
+export type UserMediaStatusScalarFieldEnum = (typeof UserMediaStatusScalarFieldEnum)[keyof typeof UserMediaStatusScalarFieldEnum]
 
 
 export const ActivityScalarFieldEnum = {
@@ -178,7 +178,7 @@ export const ActivityScalarFieldEnum = {
   user_id: 'user_id',
   target_user_id: 'target_user_id',
   review_id: 'review_id',
-  music_id: 'music_id',
+  media_id: 'media_id',
   rating_from_user: 'rating_from_user',
   action: 'action',
   created_at: 'created_at'
@@ -215,7 +215,7 @@ export const NotificationScalarFieldEnum = {
   action: 'action',
   related_user_id: 'related_user_id',
   review_id: 'review_id',
-  music_id: 'music_id',
+  media_id: 'media_id',
   is_read: 'is_read',
   read_at: 'read_at',
   created_at: 'created_at'

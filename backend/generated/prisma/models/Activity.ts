@@ -27,32 +27,30 @@ export type AggregateActivity = {
 }
 
 export type ActivityAvgAggregateOutputType = {
-  id: number | null
   rating_from_user: number | null
 }
 
 export type ActivitySumAggregateOutputType = {
-  id: number | null
   rating_from_user: number | null
 }
 
 export type ActivityMinAggregateOutputType = {
-  id: number | null
+  id: string | null
   user_id: string | null
   target_user_id: string | null
   review_id: string | null
-  music_id: string | null
+  media_id: string | null
   rating_from_user: number | null
   action: $Enums.ActivityAction | null
   created_at: Date | null
 }
 
 export type ActivityMaxAggregateOutputType = {
-  id: number | null
+  id: string | null
   user_id: string | null
   target_user_id: string | null
   review_id: string | null
-  music_id: string | null
+  media_id: string | null
   rating_from_user: number | null
   action: $Enums.ActivityAction | null
   created_at: Date | null
@@ -63,7 +61,7 @@ export type ActivityCountAggregateOutputType = {
   user_id: number
   target_user_id: number
   review_id: number
-  music_id: number
+  media_id: number
   rating_from_user: number
   action: number
   created_at: number
@@ -72,12 +70,10 @@ export type ActivityCountAggregateOutputType = {
 
 
 export type ActivityAvgAggregateInputType = {
-  id?: true
   rating_from_user?: true
 }
 
 export type ActivitySumAggregateInputType = {
-  id?: true
   rating_from_user?: true
 }
 
@@ -86,7 +82,7 @@ export type ActivityMinAggregateInputType = {
   user_id?: true
   target_user_id?: true
   review_id?: true
-  music_id?: true
+  media_id?: true
   rating_from_user?: true
   action?: true
   created_at?: true
@@ -97,7 +93,7 @@ export type ActivityMaxAggregateInputType = {
   user_id?: true
   target_user_id?: true
   review_id?: true
-  music_id?: true
+  media_id?: true
   rating_from_user?: true
   action?: true
   created_at?: true
@@ -108,7 +104,7 @@ export type ActivityCountAggregateInputType = {
   user_id?: true
   target_user_id?: true
   review_id?: true
-  music_id?: true
+  media_id?: true
   rating_from_user?: true
   action?: true
   created_at?: true
@@ -202,11 +198,11 @@ export type ActivityGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 export type ActivityGroupByOutputType = {
-  id: number
+  id: string
   user_id: string
   target_user_id: string | null
   review_id: string | null
-  music_id: string | null
+  media_id: string | null
   rating_from_user: number | null
   action: $Enums.ActivityAction
   created_at: Date
@@ -236,18 +232,18 @@ export type ActivityWhereInput = {
   AND?: Prisma.ActivityWhereInput | Prisma.ActivityWhereInput[]
   OR?: Prisma.ActivityWhereInput[]
   NOT?: Prisma.ActivityWhereInput | Prisma.ActivityWhereInput[]
-  id?: Prisma.IntFilter<"Activity"> | number
+  id?: Prisma.StringFilter<"Activity"> | string
   user_id?: Prisma.StringFilter<"Activity"> | string
   target_user_id?: Prisma.StringNullableFilter<"Activity"> | string | null
   review_id?: Prisma.StringNullableFilter<"Activity"> | string | null
-  music_id?: Prisma.StringNullableFilter<"Activity"> | string | null
+  media_id?: Prisma.StringNullableFilter<"Activity"> | string | null
   rating_from_user?: Prisma.IntNullableFilter<"Activity"> | number | null
   action?: Prisma.EnumActivityActionFilter<"Activity"> | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFilter<"Activity"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   target_user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   review?: Prisma.XOR<Prisma.ReviewNullableScalarRelationFilter, Prisma.ReviewWhereInput> | null
-  music?: Prisma.XOR<Prisma.MusicNullableScalarRelationFilter, Prisma.MusicWhereInput> | null
+  media?: Prisma.XOR<Prisma.MediaNullableScalarRelationFilter, Prisma.MediaWhereInput> | null
 }
 
 export type ActivityOrderByWithRelationInput = {
@@ -255,32 +251,32 @@ export type ActivityOrderByWithRelationInput = {
   user_id?: Prisma.SortOrder
   target_user_id?: Prisma.SortOrderInput | Prisma.SortOrder
   review_id?: Prisma.SortOrderInput | Prisma.SortOrder
-  music_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  media_id?: Prisma.SortOrderInput | Prisma.SortOrder
   rating_from_user?: Prisma.SortOrderInput | Prisma.SortOrder
   action?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   target_user?: Prisma.UserOrderByWithRelationInput
   review?: Prisma.ReviewOrderByWithRelationInput
-  music?: Prisma.MusicOrderByWithRelationInput
+  media?: Prisma.MediaOrderByWithRelationInput
 }
 
 export type ActivityWhereUniqueInput = Prisma.AtLeast<{
-  id?: number
+  id?: string
   AND?: Prisma.ActivityWhereInput | Prisma.ActivityWhereInput[]
   OR?: Prisma.ActivityWhereInput[]
   NOT?: Prisma.ActivityWhereInput | Prisma.ActivityWhereInput[]
   user_id?: Prisma.StringFilter<"Activity"> | string
   target_user_id?: Prisma.StringNullableFilter<"Activity"> | string | null
   review_id?: Prisma.StringNullableFilter<"Activity"> | string | null
-  music_id?: Prisma.StringNullableFilter<"Activity"> | string | null
+  media_id?: Prisma.StringNullableFilter<"Activity"> | string | null
   rating_from_user?: Prisma.IntNullableFilter<"Activity"> | number | null
   action?: Prisma.EnumActivityActionFilter<"Activity"> | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFilter<"Activity"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   target_user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   review?: Prisma.XOR<Prisma.ReviewNullableScalarRelationFilter, Prisma.ReviewWhereInput> | null
-  music?: Prisma.XOR<Prisma.MusicNullableScalarRelationFilter, Prisma.MusicWhereInput> | null
+  media?: Prisma.XOR<Prisma.MediaNullableScalarRelationFilter, Prisma.MediaWhereInput> | null
 }, "id">
 
 export type ActivityOrderByWithAggregationInput = {
@@ -288,7 +284,7 @@ export type ActivityOrderByWithAggregationInput = {
   user_id?: Prisma.SortOrder
   target_user_id?: Prisma.SortOrderInput | Prisma.SortOrder
   review_id?: Prisma.SortOrderInput | Prisma.SortOrder
-  music_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  media_id?: Prisma.SortOrderInput | Prisma.SortOrder
   rating_from_user?: Prisma.SortOrderInput | Prisma.SortOrder
   action?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -303,81 +299,84 @@ export type ActivityScalarWhereWithAggregatesInput = {
   AND?: Prisma.ActivityScalarWhereWithAggregatesInput | Prisma.ActivityScalarWhereWithAggregatesInput[]
   OR?: Prisma.ActivityScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ActivityScalarWhereWithAggregatesInput | Prisma.ActivityScalarWhereWithAggregatesInput[]
-  id?: Prisma.IntWithAggregatesFilter<"Activity"> | number
+  id?: Prisma.StringWithAggregatesFilter<"Activity"> | string
   user_id?: Prisma.StringWithAggregatesFilter<"Activity"> | string
   target_user_id?: Prisma.StringNullableWithAggregatesFilter<"Activity"> | string | null
   review_id?: Prisma.StringNullableWithAggregatesFilter<"Activity"> | string | null
-  music_id?: Prisma.StringNullableWithAggregatesFilter<"Activity"> | string | null
+  media_id?: Prisma.StringNullableWithAggregatesFilter<"Activity"> | string | null
   rating_from_user?: Prisma.IntNullableWithAggregatesFilter<"Activity"> | number | null
   action?: Prisma.EnumActivityActionWithAggregatesFilter<"Activity"> | $Enums.ActivityAction
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Activity"> | Date | string
 }
 
 export type ActivityCreateInput = {
+  id?: string
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutActivitiesInput
   target_user?: Prisma.UserCreateNestedOneWithoutActivities_targetsInput
   review?: Prisma.ReviewCreateNestedOneWithoutActivitiesInput
-  music?: Prisma.MusicCreateNestedOneWithoutActivitiesInput
+  media?: Prisma.MediaCreateNestedOneWithoutActivitiesInput
 }
 
 export type ActivityUncheckedCreateInput = {
-  id?: number
+  id?: string
   user_id: string
   target_user_id?: string | null
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
 }
 
 export type ActivityUpdateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutActivitiesNestedInput
   target_user?: Prisma.UserUpdateOneWithoutActivities_targetsNestedInput
   review?: Prisma.ReviewUpdateOneWithoutActivitiesNestedInput
-  music?: Prisma.MusicUpdateOneWithoutActivitiesNestedInput
+  media?: Prisma.MediaUpdateOneWithoutActivitiesNestedInput
 }
 
 export type ActivityUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   target_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActivityCreateManyInput = {
-  id?: number
+  id?: string
   user_id: string
   target_user_id?: string | null
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
 }
 
 export type ActivityUpdateManyMutationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActivityUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   target_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -398,14 +397,13 @@ export type ActivityCountOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   target_user_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   rating_from_user?: Prisma.SortOrder
   action?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
 export type ActivityAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   rating_from_user?: Prisma.SortOrder
 }
 
@@ -414,7 +412,7 @@ export type ActivityMaxOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   target_user_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   rating_from_user?: Prisma.SortOrder
   action?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -425,14 +423,13 @@ export type ActivityMinOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   target_user_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   rating_from_user?: Prisma.SortOrder
   action?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
 export type ActivitySumOrderByAggregateInput = {
-  id?: Prisma.SortOrder
   rating_from_user?: Prisma.SortOrder
 }
 
@@ -520,45 +517,45 @@ export type ActivityUncheckedUpdateManyWithoutTarget_userNestedInput = {
   deleteMany?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
 }
 
-export type ActivityCreateNestedManyWithoutMusicInput = {
-  create?: Prisma.XOR<Prisma.ActivityCreateWithoutMusicInput, Prisma.ActivityUncheckedCreateWithoutMusicInput> | Prisma.ActivityCreateWithoutMusicInput[] | Prisma.ActivityUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutMusicInput | Prisma.ActivityCreateOrConnectWithoutMusicInput[]
-  createMany?: Prisma.ActivityCreateManyMusicInputEnvelope
+export type ActivityCreateNestedManyWithoutMediaInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutMediaInput, Prisma.ActivityUncheckedCreateWithoutMediaInput> | Prisma.ActivityCreateWithoutMediaInput[] | Prisma.ActivityUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutMediaInput | Prisma.ActivityCreateOrConnectWithoutMediaInput[]
+  createMany?: Prisma.ActivityCreateManyMediaInputEnvelope
   connect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
 }
 
-export type ActivityUncheckedCreateNestedManyWithoutMusicInput = {
-  create?: Prisma.XOR<Prisma.ActivityCreateWithoutMusicInput, Prisma.ActivityUncheckedCreateWithoutMusicInput> | Prisma.ActivityCreateWithoutMusicInput[] | Prisma.ActivityUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutMusicInput | Prisma.ActivityCreateOrConnectWithoutMusicInput[]
-  createMany?: Prisma.ActivityCreateManyMusicInputEnvelope
+export type ActivityUncheckedCreateNestedManyWithoutMediaInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutMediaInput, Prisma.ActivityUncheckedCreateWithoutMediaInput> | Prisma.ActivityCreateWithoutMediaInput[] | Prisma.ActivityUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutMediaInput | Prisma.ActivityCreateOrConnectWithoutMediaInput[]
+  createMany?: Prisma.ActivityCreateManyMediaInputEnvelope
   connect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
 }
 
-export type ActivityUpdateManyWithoutMusicNestedInput = {
-  create?: Prisma.XOR<Prisma.ActivityCreateWithoutMusicInput, Prisma.ActivityUncheckedCreateWithoutMusicInput> | Prisma.ActivityCreateWithoutMusicInput[] | Prisma.ActivityUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutMusicInput | Prisma.ActivityCreateOrConnectWithoutMusicInput[]
-  upsert?: Prisma.ActivityUpsertWithWhereUniqueWithoutMusicInput | Prisma.ActivityUpsertWithWhereUniqueWithoutMusicInput[]
-  createMany?: Prisma.ActivityCreateManyMusicInputEnvelope
+export type ActivityUpdateManyWithoutMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutMediaInput, Prisma.ActivityUncheckedCreateWithoutMediaInput> | Prisma.ActivityCreateWithoutMediaInput[] | Prisma.ActivityUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutMediaInput | Prisma.ActivityCreateOrConnectWithoutMediaInput[]
+  upsert?: Prisma.ActivityUpsertWithWhereUniqueWithoutMediaInput | Prisma.ActivityUpsertWithWhereUniqueWithoutMediaInput[]
+  createMany?: Prisma.ActivityCreateManyMediaInputEnvelope
   set?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
   disconnect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
   delete?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
   connect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
-  update?: Prisma.ActivityUpdateWithWhereUniqueWithoutMusicInput | Prisma.ActivityUpdateWithWhereUniqueWithoutMusicInput[]
-  updateMany?: Prisma.ActivityUpdateManyWithWhereWithoutMusicInput | Prisma.ActivityUpdateManyWithWhereWithoutMusicInput[]
+  update?: Prisma.ActivityUpdateWithWhereUniqueWithoutMediaInput | Prisma.ActivityUpdateWithWhereUniqueWithoutMediaInput[]
+  updateMany?: Prisma.ActivityUpdateManyWithWhereWithoutMediaInput | Prisma.ActivityUpdateManyWithWhereWithoutMediaInput[]
   deleteMany?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
 }
 
-export type ActivityUncheckedUpdateManyWithoutMusicNestedInput = {
-  create?: Prisma.XOR<Prisma.ActivityCreateWithoutMusicInput, Prisma.ActivityUncheckedCreateWithoutMusicInput> | Prisma.ActivityCreateWithoutMusicInput[] | Prisma.ActivityUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutMusicInput | Prisma.ActivityCreateOrConnectWithoutMusicInput[]
-  upsert?: Prisma.ActivityUpsertWithWhereUniqueWithoutMusicInput | Prisma.ActivityUpsertWithWhereUniqueWithoutMusicInput[]
-  createMany?: Prisma.ActivityCreateManyMusicInputEnvelope
+export type ActivityUncheckedUpdateManyWithoutMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutMediaInput, Prisma.ActivityUncheckedCreateWithoutMediaInput> | Prisma.ActivityCreateWithoutMediaInput[] | Prisma.ActivityUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutMediaInput | Prisma.ActivityCreateOrConnectWithoutMediaInput[]
+  upsert?: Prisma.ActivityUpsertWithWhereUniqueWithoutMediaInput | Prisma.ActivityUpsertWithWhereUniqueWithoutMediaInput[]
+  createMany?: Prisma.ActivityCreateManyMediaInputEnvelope
   set?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
   disconnect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
   delete?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
   connect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
-  update?: Prisma.ActivityUpdateWithWhereUniqueWithoutMusicInput | Prisma.ActivityUpdateWithWhereUniqueWithoutMusicInput[]
-  updateMany?: Prisma.ActivityUpdateManyWithWhereWithoutMusicInput | Prisma.ActivityUpdateManyWithWhereWithoutMusicInput[]
+  update?: Prisma.ActivityUpdateWithWhereUniqueWithoutMediaInput | Prisma.ActivityUpdateWithWhereUniqueWithoutMediaInput[]
+  updateMany?: Prisma.ActivityUpdateManyWithWhereWithoutMediaInput | Prisma.ActivityUpdateManyWithWhereWithoutMediaInput[]
   deleteMany?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
 }
 
@@ -616,28 +613,21 @@ export type EnumActivityActionFieldUpdateOperationsInput = {
   set?: $Enums.ActivityAction
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ActivityCreateWithoutUserInput = {
+  id?: string
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
   target_user?: Prisma.UserCreateNestedOneWithoutActivities_targetsInput
   review?: Prisma.ReviewCreateNestedOneWithoutActivitiesInput
-  music?: Prisma.MusicCreateNestedOneWithoutActivitiesInput
+  media?: Prisma.MediaCreateNestedOneWithoutActivitiesInput
 }
 
 export type ActivityUncheckedCreateWithoutUserInput = {
-  id?: number
+  id?: string
   target_user_id?: string | null
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
@@ -654,19 +644,20 @@ export type ActivityCreateManyUserInputEnvelope = {
 }
 
 export type ActivityCreateWithoutTarget_userInput = {
+  id?: string
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutActivitiesInput
   review?: Prisma.ReviewCreateNestedOneWithoutActivitiesInput
-  music?: Prisma.MusicCreateNestedOneWithoutActivitiesInput
+  media?: Prisma.MediaCreateNestedOneWithoutActivitiesInput
 }
 
 export type ActivityUncheckedCreateWithoutTarget_userInput = {
-  id?: number
+  id?: string
   user_id: string
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
@@ -702,11 +693,11 @@ export type ActivityScalarWhereInput = {
   AND?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
   OR?: Prisma.ActivityScalarWhereInput[]
   NOT?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
-  id?: Prisma.IntFilter<"Activity"> | number
+  id?: Prisma.StringFilter<"Activity"> | string
   user_id?: Prisma.StringFilter<"Activity"> | string
   target_user_id?: Prisma.StringNullableFilter<"Activity"> | string | null
   review_id?: Prisma.StringNullableFilter<"Activity"> | string | null
-  music_id?: Prisma.StringNullableFilter<"Activity"> | string | null
+  media_id?: Prisma.StringNullableFilter<"Activity"> | string | null
   rating_from_user?: Prisma.IntNullableFilter<"Activity"> | number | null
   action?: Prisma.EnumActivityActionFilter<"Activity"> | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFilter<"Activity"> | Date | string
@@ -728,7 +719,8 @@ export type ActivityUpdateManyWithWhereWithoutTarget_userInput = {
   data: Prisma.XOR<Prisma.ActivityUpdateManyMutationInput, Prisma.ActivityUncheckedUpdateManyWithoutTarget_userInput>
 }
 
-export type ActivityCreateWithoutMusicInput = {
+export type ActivityCreateWithoutMediaInput = {
+  id?: string
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
@@ -737,8 +729,8 @@ export type ActivityCreateWithoutMusicInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutActivitiesInput
 }
 
-export type ActivityUncheckedCreateWithoutMusicInput = {
-  id?: number
+export type ActivityUncheckedCreateWithoutMediaInput = {
+  id?: string
   user_id: string
   target_user_id?: string | null
   review_id?: string | null
@@ -747,46 +739,47 @@ export type ActivityUncheckedCreateWithoutMusicInput = {
   created_at?: Date | string
 }
 
-export type ActivityCreateOrConnectWithoutMusicInput = {
+export type ActivityCreateOrConnectWithoutMediaInput = {
   where: Prisma.ActivityWhereUniqueInput
-  create: Prisma.XOR<Prisma.ActivityCreateWithoutMusicInput, Prisma.ActivityUncheckedCreateWithoutMusicInput>
+  create: Prisma.XOR<Prisma.ActivityCreateWithoutMediaInput, Prisma.ActivityUncheckedCreateWithoutMediaInput>
 }
 
-export type ActivityCreateManyMusicInputEnvelope = {
-  data: Prisma.ActivityCreateManyMusicInput | Prisma.ActivityCreateManyMusicInput[]
+export type ActivityCreateManyMediaInputEnvelope = {
+  data: Prisma.ActivityCreateManyMediaInput | Prisma.ActivityCreateManyMediaInput[]
   skipDuplicates?: boolean
 }
 
-export type ActivityUpsertWithWhereUniqueWithoutMusicInput = {
+export type ActivityUpsertWithWhereUniqueWithoutMediaInput = {
   where: Prisma.ActivityWhereUniqueInput
-  update: Prisma.XOR<Prisma.ActivityUpdateWithoutMusicInput, Prisma.ActivityUncheckedUpdateWithoutMusicInput>
-  create: Prisma.XOR<Prisma.ActivityCreateWithoutMusicInput, Prisma.ActivityUncheckedCreateWithoutMusicInput>
+  update: Prisma.XOR<Prisma.ActivityUpdateWithoutMediaInput, Prisma.ActivityUncheckedUpdateWithoutMediaInput>
+  create: Prisma.XOR<Prisma.ActivityCreateWithoutMediaInput, Prisma.ActivityUncheckedCreateWithoutMediaInput>
 }
 
-export type ActivityUpdateWithWhereUniqueWithoutMusicInput = {
+export type ActivityUpdateWithWhereUniqueWithoutMediaInput = {
   where: Prisma.ActivityWhereUniqueInput
-  data: Prisma.XOR<Prisma.ActivityUpdateWithoutMusicInput, Prisma.ActivityUncheckedUpdateWithoutMusicInput>
+  data: Prisma.XOR<Prisma.ActivityUpdateWithoutMediaInput, Prisma.ActivityUncheckedUpdateWithoutMediaInput>
 }
 
-export type ActivityUpdateManyWithWhereWithoutMusicInput = {
+export type ActivityUpdateManyWithWhereWithoutMediaInput = {
   where: Prisma.ActivityScalarWhereInput
-  data: Prisma.XOR<Prisma.ActivityUpdateManyMutationInput, Prisma.ActivityUncheckedUpdateManyWithoutMusicInput>
+  data: Prisma.XOR<Prisma.ActivityUpdateManyMutationInput, Prisma.ActivityUncheckedUpdateManyWithoutMediaInput>
 }
 
 export type ActivityCreateWithoutReviewInput = {
+  id?: string
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutActivitiesInput
   target_user?: Prisma.UserCreateNestedOneWithoutActivities_targetsInput
-  music?: Prisma.MusicCreateNestedOneWithoutActivitiesInput
+  media?: Prisma.MediaCreateNestedOneWithoutActivitiesInput
 }
 
 export type ActivityUncheckedCreateWithoutReviewInput = {
-  id?: number
+  id?: string
   user_id: string
   target_user_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
@@ -819,85 +812,87 @@ export type ActivityUpdateManyWithWhereWithoutReviewInput = {
 }
 
 export type ActivityCreateManyUserInput = {
-  id?: number
+  id?: string
   target_user_id?: string | null
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
 }
 
 export type ActivityCreateManyTarget_userInput = {
-  id?: number
+  id?: string
   user_id: string
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
 }
 
 export type ActivityUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   target_user?: Prisma.UserUpdateOneWithoutActivities_targetsNestedInput
   review?: Prisma.ReviewUpdateOneWithoutActivitiesNestedInput
-  music?: Prisma.MusicUpdateOneWithoutActivitiesNestedInput
+  media?: Prisma.MediaUpdateOneWithoutActivitiesNestedInput
 }
 
 export type ActivityUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   target_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActivityUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   target_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActivityUpdateWithoutTarget_userInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutActivitiesNestedInput
   review?: Prisma.ReviewUpdateOneWithoutActivitiesNestedInput
-  music?: Prisma.MusicUpdateOneWithoutActivitiesNestedInput
+  media?: Prisma.MediaUpdateOneWithoutActivitiesNestedInput
 }
 
 export type ActivityUncheckedUpdateWithoutTarget_userInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActivityUncheckedUpdateManyWithoutTarget_userInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ActivityCreateManyMusicInput = {
-  id?: number
+export type ActivityCreateManyMediaInput = {
+  id?: string
   user_id: string
   target_user_id?: string | null
   review_id?: string | null
@@ -906,7 +901,8 @@ export type ActivityCreateManyMusicInput = {
   created_at?: Date | string
 }
 
-export type ActivityUpdateWithoutMusicInput = {
+export type ActivityUpdateWithoutMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -915,8 +911,8 @@ export type ActivityUpdateWithoutMusicInput = {
   review?: Prisma.ReviewUpdateOneWithoutActivitiesNestedInput
 }
 
-export type ActivityUncheckedUpdateWithoutMusicInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+export type ActivityUncheckedUpdateWithoutMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   target_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -925,8 +921,8 @@ export type ActivityUncheckedUpdateWithoutMusicInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ActivityUncheckedUpdateManyWithoutMusicInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+export type ActivityUncheckedUpdateManyWithoutMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   target_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -936,39 +932,40 @@ export type ActivityUncheckedUpdateManyWithoutMusicInput = {
 }
 
 export type ActivityCreateManyReviewInput = {
-  id?: number
+  id?: string
   user_id: string
   target_user_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   rating_from_user?: number | null
   action: $Enums.ActivityAction
   created_at?: Date | string
 }
 
 export type ActivityUpdateWithoutReviewInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutActivitiesNestedInput
   target_user?: Prisma.UserUpdateOneWithoutActivities_targetsNestedInput
-  music?: Prisma.MusicUpdateOneWithoutActivitiesNestedInput
+  media?: Prisma.MediaUpdateOneWithoutActivitiesNestedInput
 }
 
 export type ActivityUncheckedUpdateWithoutReviewInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   target_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActivityUncheckedUpdateManyWithoutReviewInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   target_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating_from_user?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   action?: Prisma.EnumActivityActionFieldUpdateOperationsInput | $Enums.ActivityAction
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -981,14 +978,14 @@ export type ActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   user_id?: boolean
   target_user_id?: boolean
   review_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   rating_from_user?: boolean
   action?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   target_user?: boolean | Prisma.Activity$target_userArgs<ExtArgs>
   review?: boolean | Prisma.Activity$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Activity$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Activity$mediaArgs<ExtArgs>
 }, ExtArgs["result"]["activity"]>
 
 export type ActivitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -996,14 +993,14 @@ export type ActivitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   user_id?: boolean
   target_user_id?: boolean
   review_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   rating_from_user?: boolean
   action?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   target_user?: boolean | Prisma.Activity$target_userArgs<ExtArgs>
   review?: boolean | Prisma.Activity$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Activity$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Activity$mediaArgs<ExtArgs>
 }, ExtArgs["result"]["activity"]>
 
 export type ActivitySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1011,14 +1008,14 @@ export type ActivitySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   user_id?: boolean
   target_user_id?: boolean
   review_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   rating_from_user?: boolean
   action?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   target_user?: boolean | Prisma.Activity$target_userArgs<ExtArgs>
   review?: boolean | Prisma.Activity$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Activity$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Activity$mediaArgs<ExtArgs>
 }, ExtArgs["result"]["activity"]>
 
 export type ActivitySelectScalar = {
@@ -1026,30 +1023,30 @@ export type ActivitySelectScalar = {
   user_id?: boolean
   target_user_id?: boolean
   review_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   rating_from_user?: boolean
   action?: boolean
   created_at?: boolean
 }
 
-export type ActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "target_user_id" | "review_id" | "music_id" | "rating_from_user" | "action" | "created_at", ExtArgs["result"]["activity"]>
+export type ActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "target_user_id" | "review_id" | "media_id" | "rating_from_user" | "action" | "created_at", ExtArgs["result"]["activity"]>
 export type ActivityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   target_user?: boolean | Prisma.Activity$target_userArgs<ExtArgs>
   review?: boolean | Prisma.Activity$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Activity$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Activity$mediaArgs<ExtArgs>
 }
 export type ActivityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   target_user?: boolean | Prisma.Activity$target_userArgs<ExtArgs>
   review?: boolean | Prisma.Activity$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Activity$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Activity$mediaArgs<ExtArgs>
 }
 export type ActivityIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   target_user?: boolean | Prisma.Activity$target_userArgs<ExtArgs>
   review?: boolean | Prisma.Activity$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Activity$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Activity$mediaArgs<ExtArgs>
 }
 
 export type $ActivityPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1058,14 +1055,14 @@ export type $ActivityPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     user: Prisma.$UserPayload<ExtArgs>
     target_user: Prisma.$UserPayload<ExtArgs> | null
     review: Prisma.$ReviewPayload<ExtArgs> | null
-    music: Prisma.$MusicPayload<ExtArgs> | null
+    media: Prisma.$MediaPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: number
+    id: string
     user_id: string
     target_user_id: string | null
     review_id: string | null
-    music_id: string | null
+    media_id: string | null
     rating_from_user: number | null
     action: $Enums.ActivityAction
     created_at: Date
@@ -1466,7 +1463,7 @@ export interface Prisma__ActivityClient<T, Null = never, ExtArgs extends runtime
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   target_user<T extends Prisma.Activity$target_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$target_userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   review<T extends Prisma.Activity$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$reviewArgs<ExtArgs>>): Prisma.Prisma__ReviewClient<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  music<T extends Prisma.Activity$musicArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$musicArgs<ExtArgs>>): Prisma.Prisma__MusicClient<runtime.Types.Result.GetResult<Prisma.$MusicPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  media<T extends Prisma.Activity$mediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$mediaArgs<ExtArgs>>): Prisma.Prisma__MediaClient<runtime.Types.Result.GetResult<Prisma.$MediaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1496,11 +1493,11 @@ export interface Prisma__ActivityClient<T, Null = never, ExtArgs extends runtime
  * Fields of the Activity model
  */
 export interface ActivityFieldRefs {
-  readonly id: Prisma.FieldRef<"Activity", 'Int'>
+  readonly id: Prisma.FieldRef<"Activity", 'String'>
   readonly user_id: Prisma.FieldRef<"Activity", 'String'>
   readonly target_user_id: Prisma.FieldRef<"Activity", 'String'>
   readonly review_id: Prisma.FieldRef<"Activity", 'String'>
-  readonly music_id: Prisma.FieldRef<"Activity", 'String'>
+  readonly media_id: Prisma.FieldRef<"Activity", 'String'>
   readonly rating_from_user: Prisma.FieldRef<"Activity", 'Int'>
   readonly action: Prisma.FieldRef<"Activity", 'ActivityAction'>
   readonly created_at: Prisma.FieldRef<"Activity", 'DateTime'>
@@ -1938,22 +1935,22 @@ export type Activity$reviewArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 /**
- * Activity.music
+ * Activity.media
  */
-export type Activity$musicArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Activity$mediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Music
+   * Select specific fields to fetch from the Media
    */
-  select?: Prisma.MusicSelect<ExtArgs> | null
+  select?: Prisma.MediaSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Music
+   * Omit specific fields from the Media
    */
-  omit?: Prisma.MusicOmit<ExtArgs> | null
+  omit?: Prisma.MediaOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.MusicInclude<ExtArgs> | null
-  where?: Prisma.MusicWhereInput
+  include?: Prisma.MediaInclude<ExtArgs> | null
+  where?: Prisma.MediaWhereInput
 }
 
 /**

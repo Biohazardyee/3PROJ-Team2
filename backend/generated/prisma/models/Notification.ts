@@ -30,7 +30,7 @@ export type NotificationMinAggregateOutputType = {
   action: $Enums.NotificationAction | null
   related_user_id: string | null
   review_id: string | null
-  music_id: string | null
+  media_id: string | null
   is_read: boolean | null
   read_at: Date | null
   created_at: Date | null
@@ -42,7 +42,7 @@ export type NotificationMaxAggregateOutputType = {
   action: $Enums.NotificationAction | null
   related_user_id: string | null
   review_id: string | null
-  music_id: string | null
+  media_id: string | null
   is_read: boolean | null
   read_at: Date | null
   created_at: Date | null
@@ -54,7 +54,7 @@ export type NotificationCountAggregateOutputType = {
   action: number
   related_user_id: number
   review_id: number
-  music_id: number
+  media_id: number
   is_read: number
   read_at: number
   created_at: number
@@ -68,7 +68,7 @@ export type NotificationMinAggregateInputType = {
   action?: true
   related_user_id?: true
   review_id?: true
-  music_id?: true
+  media_id?: true
   is_read?: true
   read_at?: true
   created_at?: true
@@ -80,7 +80,7 @@ export type NotificationMaxAggregateInputType = {
   action?: true
   related_user_id?: true
   review_id?: true
-  music_id?: true
+  media_id?: true
   is_read?: true
   read_at?: true
   created_at?: true
@@ -92,7 +92,7 @@ export type NotificationCountAggregateInputType = {
   action?: true
   related_user_id?: true
   review_id?: true
-  music_id?: true
+  media_id?: true
   is_read?: true
   read_at?: true
   created_at?: true
@@ -177,7 +177,7 @@ export type NotificationGroupByOutputType = {
   action: $Enums.NotificationAction
   related_user_id: string | null
   review_id: string | null
-  music_id: string | null
+  media_id: string | null
   is_read: boolean
   read_at: Date | null
   created_at: Date
@@ -210,14 +210,14 @@ export type NotificationWhereInput = {
   action?: Prisma.EnumNotificationActionFilter<"Notification"> | $Enums.NotificationAction
   related_user_id?: Prisma.StringNullableFilter<"Notification"> | string | null
   review_id?: Prisma.StringNullableFilter<"Notification"> | string | null
-  music_id?: Prisma.StringNullableFilter<"Notification"> | string | null
+  media_id?: Prisma.StringNullableFilter<"Notification"> | string | null
   is_read?: Prisma.BoolFilter<"Notification"> | boolean
   read_at?: Prisma.DateTimeNullableFilter<"Notification"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Notification"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   related_user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   review?: Prisma.XOR<Prisma.ReviewNullableScalarRelationFilter, Prisma.ReviewWhereInput> | null
-  music?: Prisma.XOR<Prisma.MusicNullableScalarRelationFilter, Prisma.MusicWhereInput> | null
+  media?: Prisma.XOR<Prisma.MediaNullableScalarRelationFilter, Prisma.MediaWhereInput> | null
 }
 
 export type NotificationOrderByWithRelationInput = {
@@ -226,14 +226,14 @@ export type NotificationOrderByWithRelationInput = {
   action?: Prisma.SortOrder
   related_user_id?: Prisma.SortOrderInput | Prisma.SortOrder
   review_id?: Prisma.SortOrderInput | Prisma.SortOrder
-  music_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  media_id?: Prisma.SortOrderInput | Prisma.SortOrder
   is_read?: Prisma.SortOrder
   read_at?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   related_user?: Prisma.UserOrderByWithRelationInput
   review?: Prisma.ReviewOrderByWithRelationInput
-  music?: Prisma.MusicOrderByWithRelationInput
+  media?: Prisma.MediaOrderByWithRelationInput
 }
 
 export type NotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -245,14 +245,14 @@ export type NotificationWhereUniqueInput = Prisma.AtLeast<{
   action?: Prisma.EnumNotificationActionFilter<"Notification"> | $Enums.NotificationAction
   related_user_id?: Prisma.StringNullableFilter<"Notification"> | string | null
   review_id?: Prisma.StringNullableFilter<"Notification"> | string | null
-  music_id?: Prisma.StringNullableFilter<"Notification"> | string | null
+  media_id?: Prisma.StringNullableFilter<"Notification"> | string | null
   is_read?: Prisma.BoolFilter<"Notification"> | boolean
   read_at?: Prisma.DateTimeNullableFilter<"Notification"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Notification"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   related_user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   review?: Prisma.XOR<Prisma.ReviewNullableScalarRelationFilter, Prisma.ReviewWhereInput> | null
-  music?: Prisma.XOR<Prisma.MusicNullableScalarRelationFilter, Prisma.MusicWhereInput> | null
+  media?: Prisma.XOR<Prisma.MediaNullableScalarRelationFilter, Prisma.MediaWhereInput> | null
 }, "id">
 
 export type NotificationOrderByWithAggregationInput = {
@@ -261,7 +261,7 @@ export type NotificationOrderByWithAggregationInput = {
   action?: Prisma.SortOrder
   related_user_id?: Prisma.SortOrderInput | Prisma.SortOrder
   review_id?: Prisma.SortOrderInput | Prisma.SortOrder
-  music_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  media_id?: Prisma.SortOrderInput | Prisma.SortOrder
   is_read?: Prisma.SortOrder
   read_at?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -279,7 +279,7 @@ export type NotificationScalarWhereWithAggregatesInput = {
   action?: Prisma.EnumNotificationActionWithAggregatesFilter<"Notification"> | $Enums.NotificationAction
   related_user_id?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   review_id?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
-  music_id?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
+  media_id?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   is_read?: Prisma.BoolWithAggregatesFilter<"Notification"> | boolean
   read_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Notification"> | Date | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Notification"> | Date | string
@@ -294,7 +294,7 @@ export type NotificationCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   related_user?: Prisma.UserCreateNestedOneWithoutNotificationsRelatedInput
   review?: Prisma.ReviewCreateNestedOneWithoutNotificationsInput
-  music?: Prisma.MusicCreateNestedOneWithoutNotificationsInput
+  media?: Prisma.MediaCreateNestedOneWithoutNotificationsInput
 }
 
 export type NotificationUncheckedCreateInput = {
@@ -303,7 +303,7 @@ export type NotificationUncheckedCreateInput = {
   action: $Enums.NotificationAction
   related_user_id?: string | null
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
@@ -318,7 +318,7 @@ export type NotificationUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   related_user?: Prisma.UserUpdateOneWithoutNotificationsRelatedNestedInput
   review?: Prisma.ReviewUpdateOneWithoutNotificationsNestedInput
-  music?: Prisma.MusicUpdateOneWithoutNotificationsNestedInput
+  media?: Prisma.MediaUpdateOneWithoutNotificationsNestedInput
 }
 
 export type NotificationUncheckedUpdateInput = {
@@ -327,7 +327,7 @@ export type NotificationUncheckedUpdateInput = {
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   related_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -339,7 +339,7 @@ export type NotificationCreateManyInput = {
   action: $Enums.NotificationAction
   related_user_id?: string | null
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
@@ -359,7 +359,7 @@ export type NotificationUncheckedUpdateManyInput = {
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   related_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -381,7 +381,7 @@ export type NotificationCountOrderByAggregateInput = {
   action?: Prisma.SortOrder
   related_user_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   is_read?: Prisma.SortOrder
   read_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -393,7 +393,7 @@ export type NotificationMaxOrderByAggregateInput = {
   action?: Prisma.SortOrder
   related_user_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   is_read?: Prisma.SortOrder
   read_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -405,7 +405,7 @@ export type NotificationMinOrderByAggregateInput = {
   action?: Prisma.SortOrder
   related_user_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
-  music_id?: Prisma.SortOrder
+  media_id?: Prisma.SortOrder
   is_read?: Prisma.SortOrder
   read_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -495,45 +495,45 @@ export type NotificationUncheckedUpdateManyWithoutRelated_userNestedInput = {
   deleteMany?: Prisma.NotificationScalarWhereInput | Prisma.NotificationScalarWhereInput[]
 }
 
-export type NotificationCreateNestedManyWithoutMusicInput = {
-  create?: Prisma.XOR<Prisma.NotificationCreateWithoutMusicInput, Prisma.NotificationUncheckedCreateWithoutMusicInput> | Prisma.NotificationCreateWithoutMusicInput[] | Prisma.NotificationUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMusicInput | Prisma.NotificationCreateOrConnectWithoutMusicInput[]
-  createMany?: Prisma.NotificationCreateManyMusicInputEnvelope
+export type NotificationCreateNestedManyWithoutMediaInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutMediaInput, Prisma.NotificationUncheckedCreateWithoutMediaInput> | Prisma.NotificationCreateWithoutMediaInput[] | Prisma.NotificationUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMediaInput | Prisma.NotificationCreateOrConnectWithoutMediaInput[]
+  createMany?: Prisma.NotificationCreateManyMediaInputEnvelope
   connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
 }
 
-export type NotificationUncheckedCreateNestedManyWithoutMusicInput = {
-  create?: Prisma.XOR<Prisma.NotificationCreateWithoutMusicInput, Prisma.NotificationUncheckedCreateWithoutMusicInput> | Prisma.NotificationCreateWithoutMusicInput[] | Prisma.NotificationUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMusicInput | Prisma.NotificationCreateOrConnectWithoutMusicInput[]
-  createMany?: Prisma.NotificationCreateManyMusicInputEnvelope
+export type NotificationUncheckedCreateNestedManyWithoutMediaInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutMediaInput, Prisma.NotificationUncheckedCreateWithoutMediaInput> | Prisma.NotificationCreateWithoutMediaInput[] | Prisma.NotificationUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMediaInput | Prisma.NotificationCreateOrConnectWithoutMediaInput[]
+  createMany?: Prisma.NotificationCreateManyMediaInputEnvelope
   connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
 }
 
-export type NotificationUpdateManyWithoutMusicNestedInput = {
-  create?: Prisma.XOR<Prisma.NotificationCreateWithoutMusicInput, Prisma.NotificationUncheckedCreateWithoutMusicInput> | Prisma.NotificationCreateWithoutMusicInput[] | Prisma.NotificationUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMusicInput | Prisma.NotificationCreateOrConnectWithoutMusicInput[]
-  upsert?: Prisma.NotificationUpsertWithWhereUniqueWithoutMusicInput | Prisma.NotificationUpsertWithWhereUniqueWithoutMusicInput[]
-  createMany?: Prisma.NotificationCreateManyMusicInputEnvelope
+export type NotificationUpdateManyWithoutMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutMediaInput, Prisma.NotificationUncheckedCreateWithoutMediaInput> | Prisma.NotificationCreateWithoutMediaInput[] | Prisma.NotificationUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMediaInput | Prisma.NotificationCreateOrConnectWithoutMediaInput[]
+  upsert?: Prisma.NotificationUpsertWithWhereUniqueWithoutMediaInput | Prisma.NotificationUpsertWithWhereUniqueWithoutMediaInput[]
+  createMany?: Prisma.NotificationCreateManyMediaInputEnvelope
   set?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
   disconnect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
   delete?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
   connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
-  update?: Prisma.NotificationUpdateWithWhereUniqueWithoutMusicInput | Prisma.NotificationUpdateWithWhereUniqueWithoutMusicInput[]
-  updateMany?: Prisma.NotificationUpdateManyWithWhereWithoutMusicInput | Prisma.NotificationUpdateManyWithWhereWithoutMusicInput[]
+  update?: Prisma.NotificationUpdateWithWhereUniqueWithoutMediaInput | Prisma.NotificationUpdateWithWhereUniqueWithoutMediaInput[]
+  updateMany?: Prisma.NotificationUpdateManyWithWhereWithoutMediaInput | Prisma.NotificationUpdateManyWithWhereWithoutMediaInput[]
   deleteMany?: Prisma.NotificationScalarWhereInput | Prisma.NotificationScalarWhereInput[]
 }
 
-export type NotificationUncheckedUpdateManyWithoutMusicNestedInput = {
-  create?: Prisma.XOR<Prisma.NotificationCreateWithoutMusicInput, Prisma.NotificationUncheckedCreateWithoutMusicInput> | Prisma.NotificationCreateWithoutMusicInput[] | Prisma.NotificationUncheckedCreateWithoutMusicInput[]
-  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMusicInput | Prisma.NotificationCreateOrConnectWithoutMusicInput[]
-  upsert?: Prisma.NotificationUpsertWithWhereUniqueWithoutMusicInput | Prisma.NotificationUpsertWithWhereUniqueWithoutMusicInput[]
-  createMany?: Prisma.NotificationCreateManyMusicInputEnvelope
+export type NotificationUncheckedUpdateManyWithoutMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.NotificationCreateWithoutMediaInput, Prisma.NotificationUncheckedCreateWithoutMediaInput> | Prisma.NotificationCreateWithoutMediaInput[] | Prisma.NotificationUncheckedCreateWithoutMediaInput[]
+  connectOrCreate?: Prisma.NotificationCreateOrConnectWithoutMediaInput | Prisma.NotificationCreateOrConnectWithoutMediaInput[]
+  upsert?: Prisma.NotificationUpsertWithWhereUniqueWithoutMediaInput | Prisma.NotificationUpsertWithWhereUniqueWithoutMediaInput[]
+  createMany?: Prisma.NotificationCreateManyMediaInputEnvelope
   set?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
   disconnect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
   delete?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
   connect?: Prisma.NotificationWhereUniqueInput | Prisma.NotificationWhereUniqueInput[]
-  update?: Prisma.NotificationUpdateWithWhereUniqueWithoutMusicInput | Prisma.NotificationUpdateWithWhereUniqueWithoutMusicInput[]
-  updateMany?: Prisma.NotificationUpdateManyWithWhereWithoutMusicInput | Prisma.NotificationUpdateManyWithWhereWithoutMusicInput[]
+  update?: Prisma.NotificationUpdateWithWhereUniqueWithoutMediaInput | Prisma.NotificationUpdateWithWhereUniqueWithoutMediaInput[]
+  updateMany?: Prisma.NotificationUpdateManyWithWhereWithoutMediaInput | Prisma.NotificationUpdateManyWithWhereWithoutMediaInput[]
   deleteMany?: Prisma.NotificationScalarWhereInput | Prisma.NotificationScalarWhereInput[]
 }
 
@@ -595,7 +595,7 @@ export type NotificationCreateWithoutUserInput = {
   created_at?: Date | string
   related_user?: Prisma.UserCreateNestedOneWithoutNotificationsRelatedInput
   review?: Prisma.ReviewCreateNestedOneWithoutNotificationsInput
-  music?: Prisma.MusicCreateNestedOneWithoutNotificationsInput
+  media?: Prisma.MediaCreateNestedOneWithoutNotificationsInput
 }
 
 export type NotificationUncheckedCreateWithoutUserInput = {
@@ -603,7 +603,7 @@ export type NotificationUncheckedCreateWithoutUserInput = {
   action: $Enums.NotificationAction
   related_user_id?: string | null
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
@@ -627,7 +627,7 @@ export type NotificationCreateWithoutRelated_userInput = {
   created_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   review?: Prisma.ReviewCreateNestedOneWithoutNotificationsInput
-  music?: Prisma.MusicCreateNestedOneWithoutNotificationsInput
+  media?: Prisma.MediaCreateNestedOneWithoutNotificationsInput
 }
 
 export type NotificationUncheckedCreateWithoutRelated_userInput = {
@@ -635,7 +635,7 @@ export type NotificationUncheckedCreateWithoutRelated_userInput = {
   user_id: string
   action: $Enums.NotificationAction
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
@@ -676,7 +676,7 @@ export type NotificationScalarWhereInput = {
   action?: Prisma.EnumNotificationActionFilter<"Notification"> | $Enums.NotificationAction
   related_user_id?: Prisma.StringNullableFilter<"Notification"> | string | null
   review_id?: Prisma.StringNullableFilter<"Notification"> | string | null
-  music_id?: Prisma.StringNullableFilter<"Notification"> | string | null
+  media_id?: Prisma.StringNullableFilter<"Notification"> | string | null
   is_read?: Prisma.BoolFilter<"Notification"> | boolean
   read_at?: Prisma.DateTimeNullableFilter<"Notification"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Notification"> | Date | string
@@ -698,7 +698,7 @@ export type NotificationUpdateManyWithWhereWithoutRelated_userInput = {
   data: Prisma.XOR<Prisma.NotificationUpdateManyMutationInput, Prisma.NotificationUncheckedUpdateManyWithoutRelated_userInput>
 }
 
-export type NotificationCreateWithoutMusicInput = {
+export type NotificationCreateWithoutMediaInput = {
   id?: string
   action: $Enums.NotificationAction
   is_read?: boolean
@@ -709,7 +709,7 @@ export type NotificationCreateWithoutMusicInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutNotificationsInput
 }
 
-export type NotificationUncheckedCreateWithoutMusicInput = {
+export type NotificationUncheckedCreateWithoutMediaInput = {
   id?: string
   user_id: string
   action: $Enums.NotificationAction
@@ -720,30 +720,30 @@ export type NotificationUncheckedCreateWithoutMusicInput = {
   created_at?: Date | string
 }
 
-export type NotificationCreateOrConnectWithoutMusicInput = {
+export type NotificationCreateOrConnectWithoutMediaInput = {
   where: Prisma.NotificationWhereUniqueInput
-  create: Prisma.XOR<Prisma.NotificationCreateWithoutMusicInput, Prisma.NotificationUncheckedCreateWithoutMusicInput>
+  create: Prisma.XOR<Prisma.NotificationCreateWithoutMediaInput, Prisma.NotificationUncheckedCreateWithoutMediaInput>
 }
 
-export type NotificationCreateManyMusicInputEnvelope = {
-  data: Prisma.NotificationCreateManyMusicInput | Prisma.NotificationCreateManyMusicInput[]
+export type NotificationCreateManyMediaInputEnvelope = {
+  data: Prisma.NotificationCreateManyMediaInput | Prisma.NotificationCreateManyMediaInput[]
   skipDuplicates?: boolean
 }
 
-export type NotificationUpsertWithWhereUniqueWithoutMusicInput = {
+export type NotificationUpsertWithWhereUniqueWithoutMediaInput = {
   where: Prisma.NotificationWhereUniqueInput
-  update: Prisma.XOR<Prisma.NotificationUpdateWithoutMusicInput, Prisma.NotificationUncheckedUpdateWithoutMusicInput>
-  create: Prisma.XOR<Prisma.NotificationCreateWithoutMusicInput, Prisma.NotificationUncheckedCreateWithoutMusicInput>
+  update: Prisma.XOR<Prisma.NotificationUpdateWithoutMediaInput, Prisma.NotificationUncheckedUpdateWithoutMediaInput>
+  create: Prisma.XOR<Prisma.NotificationCreateWithoutMediaInput, Prisma.NotificationUncheckedCreateWithoutMediaInput>
 }
 
-export type NotificationUpdateWithWhereUniqueWithoutMusicInput = {
+export type NotificationUpdateWithWhereUniqueWithoutMediaInput = {
   where: Prisma.NotificationWhereUniqueInput
-  data: Prisma.XOR<Prisma.NotificationUpdateWithoutMusicInput, Prisma.NotificationUncheckedUpdateWithoutMusicInput>
+  data: Prisma.XOR<Prisma.NotificationUpdateWithoutMediaInput, Prisma.NotificationUncheckedUpdateWithoutMediaInput>
 }
 
-export type NotificationUpdateManyWithWhereWithoutMusicInput = {
+export type NotificationUpdateManyWithWhereWithoutMediaInput = {
   where: Prisma.NotificationScalarWhereInput
-  data: Prisma.XOR<Prisma.NotificationUpdateManyMutationInput, Prisma.NotificationUncheckedUpdateManyWithoutMusicInput>
+  data: Prisma.XOR<Prisma.NotificationUpdateManyMutationInput, Prisma.NotificationUncheckedUpdateManyWithoutMediaInput>
 }
 
 export type NotificationCreateWithoutReviewInput = {
@@ -754,7 +754,7 @@ export type NotificationCreateWithoutReviewInput = {
   created_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotificationsInput
   related_user?: Prisma.UserCreateNestedOneWithoutNotificationsRelatedInput
-  music?: Prisma.MusicCreateNestedOneWithoutNotificationsInput
+  media?: Prisma.MediaCreateNestedOneWithoutNotificationsInput
 }
 
 export type NotificationUncheckedCreateWithoutReviewInput = {
@@ -762,7 +762,7 @@ export type NotificationUncheckedCreateWithoutReviewInput = {
   user_id: string
   action: $Enums.NotificationAction
   related_user_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
@@ -799,7 +799,7 @@ export type NotificationCreateManyUserInput = {
   action: $Enums.NotificationAction
   related_user_id?: string | null
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
@@ -810,7 +810,7 @@ export type NotificationCreateManyRelated_userInput = {
   user_id: string
   action: $Enums.NotificationAction
   review_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
@@ -824,7 +824,7 @@ export type NotificationUpdateWithoutUserInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   related_user?: Prisma.UserUpdateOneWithoutNotificationsRelatedNestedInput
   review?: Prisma.ReviewUpdateOneWithoutNotificationsNestedInput
-  music?: Prisma.MusicUpdateOneWithoutNotificationsNestedInput
+  media?: Prisma.MediaUpdateOneWithoutNotificationsNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutUserInput = {
@@ -832,7 +832,7 @@ export type NotificationUncheckedUpdateWithoutUserInput = {
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   related_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -843,7 +843,7 @@ export type NotificationUncheckedUpdateManyWithoutUserInput = {
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   related_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -857,7 +857,7 @@ export type NotificationUpdateWithoutRelated_userInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   review?: Prisma.ReviewUpdateOneWithoutNotificationsNestedInput
-  music?: Prisma.MusicUpdateOneWithoutNotificationsNestedInput
+  media?: Prisma.MediaUpdateOneWithoutNotificationsNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutRelated_userInput = {
@@ -865,7 +865,7 @@ export type NotificationUncheckedUpdateWithoutRelated_userInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -876,13 +876,13 @@ export type NotificationUncheckedUpdateManyWithoutRelated_userInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type NotificationCreateManyMusicInput = {
+export type NotificationCreateManyMediaInput = {
   id?: string
   user_id: string
   action: $Enums.NotificationAction
@@ -893,7 +893,7 @@ export type NotificationCreateManyMusicInput = {
   created_at?: Date | string
 }
 
-export type NotificationUpdateWithoutMusicInput = {
+export type NotificationUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -904,7 +904,7 @@ export type NotificationUpdateWithoutMusicInput = {
   review?: Prisma.ReviewUpdateOneWithoutNotificationsNestedInput
 }
 
-export type NotificationUncheckedUpdateWithoutMusicInput = {
+export type NotificationUncheckedUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
@@ -915,7 +915,7 @@ export type NotificationUncheckedUpdateWithoutMusicInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type NotificationUncheckedUpdateManyWithoutMusicInput = {
+export type NotificationUncheckedUpdateManyWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
@@ -931,7 +931,7 @@ export type NotificationCreateManyReviewInput = {
   user_id: string
   action: $Enums.NotificationAction
   related_user_id?: string | null
-  music_id?: string | null
+  media_id?: string | null
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
@@ -945,7 +945,7 @@ export type NotificationUpdateWithoutReviewInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
   related_user?: Prisma.UserUpdateOneWithoutNotificationsRelatedNestedInput
-  music?: Prisma.MusicUpdateOneWithoutNotificationsNestedInput
+  media?: Prisma.MediaUpdateOneWithoutNotificationsNestedInput
 }
 
 export type NotificationUncheckedUpdateWithoutReviewInput = {
@@ -953,7 +953,7 @@ export type NotificationUncheckedUpdateWithoutReviewInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   related_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -964,7 +964,7 @@ export type NotificationUncheckedUpdateManyWithoutReviewInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   action?: Prisma.EnumNotificationActionFieldUpdateOperationsInput | $Enums.NotificationAction
   related_user_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  music_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -978,14 +978,14 @@ export type NotificationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   action?: boolean
   related_user_id?: boolean
   review_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   is_read?: boolean
   read_at?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notification$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notification$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Notification$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Notification$mediaArgs<ExtArgs>
 }, ExtArgs["result"]["notification"]>
 
 export type NotificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -994,14 +994,14 @@ export type NotificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   action?: boolean
   related_user_id?: boolean
   review_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   is_read?: boolean
   read_at?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notification$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notification$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Notification$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Notification$mediaArgs<ExtArgs>
 }, ExtArgs["result"]["notification"]>
 
 export type NotificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1010,14 +1010,14 @@ export type NotificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   action?: boolean
   related_user_id?: boolean
   review_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   is_read?: boolean
   read_at?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notification$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notification$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Notification$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Notification$mediaArgs<ExtArgs>
 }, ExtArgs["result"]["notification"]>
 
 export type NotificationSelectScalar = {
@@ -1026,30 +1026,30 @@ export type NotificationSelectScalar = {
   action?: boolean
   related_user_id?: boolean
   review_id?: boolean
-  music_id?: boolean
+  media_id?: boolean
   is_read?: boolean
   read_at?: boolean
   created_at?: boolean
 }
 
-export type NotificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "action" | "related_user_id" | "review_id" | "music_id" | "is_read" | "read_at" | "created_at", ExtArgs["result"]["notification"]>
+export type NotificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "action" | "related_user_id" | "review_id" | "media_id" | "is_read" | "read_at" | "created_at", ExtArgs["result"]["notification"]>
 export type NotificationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notification$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notification$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Notification$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Notification$mediaArgs<ExtArgs>
 }
 export type NotificationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notification$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notification$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Notification$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Notification$mediaArgs<ExtArgs>
 }
 export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notification$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notification$reviewArgs<ExtArgs>
-  music?: boolean | Prisma.Notification$musicArgs<ExtArgs>
+  media?: boolean | Prisma.Notification$mediaArgs<ExtArgs>
 }
 
 export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1058,7 +1058,7 @@ export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     user: Prisma.$UserPayload<ExtArgs>
     related_user: Prisma.$UserPayload<ExtArgs> | null
     review: Prisma.$ReviewPayload<ExtArgs> | null
-    music: Prisma.$MusicPayload<ExtArgs> | null
+    media: Prisma.$MediaPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1066,7 +1066,7 @@ export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     action: $Enums.NotificationAction
     related_user_id: string | null
     review_id: string | null
-    music_id: string | null
+    media_id: string | null
     is_read: boolean
     read_at: Date | null
     created_at: Date
@@ -1467,7 +1467,7 @@ export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends run
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   related_user<T extends Prisma.Notification$related_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$related_userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   review<T extends Prisma.Notification$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$reviewArgs<ExtArgs>>): Prisma.Prisma__ReviewClient<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  music<T extends Prisma.Notification$musicArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$musicArgs<ExtArgs>>): Prisma.Prisma__MusicClient<runtime.Types.Result.GetResult<Prisma.$MusicPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  media<T extends Prisma.Notification$mediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$mediaArgs<ExtArgs>>): Prisma.Prisma__MediaClient<runtime.Types.Result.GetResult<Prisma.$MediaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1502,7 +1502,7 @@ export interface NotificationFieldRefs {
   readonly action: Prisma.FieldRef<"Notification", 'NotificationAction'>
   readonly related_user_id: Prisma.FieldRef<"Notification", 'String'>
   readonly review_id: Prisma.FieldRef<"Notification", 'String'>
-  readonly music_id: Prisma.FieldRef<"Notification", 'String'>
+  readonly media_id: Prisma.FieldRef<"Notification", 'String'>
   readonly is_read: Prisma.FieldRef<"Notification", 'Boolean'>
   readonly read_at: Prisma.FieldRef<"Notification", 'DateTime'>
   readonly created_at: Prisma.FieldRef<"Notification", 'DateTime'>
@@ -1940,22 +1940,22 @@ export type Notification$reviewArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
- * Notification.music
+ * Notification.media
  */
-export type Notification$musicArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Notification$mediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Music
+   * Select specific fields to fetch from the Media
    */
-  select?: Prisma.MusicSelect<ExtArgs> | null
+  select?: Prisma.MediaSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Music
+   * Omit specific fields from the Media
    */
-  omit?: Prisma.MusicOmit<ExtArgs> | null
+  omit?: Prisma.MediaOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.MusicInclude<ExtArgs> | null
-  where?: Prisma.MusicWhereInput
+  include?: Prisma.MediaInclude<ExtArgs> | null
+  where?: Prisma.MediaWhereInput
 }
 
 /**

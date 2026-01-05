@@ -25,6 +25,9 @@ ENV NODE_ENV=production
 
 # Copier node_modules, dist, prisma et generated
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/views ./dist/views
 
 EXPOSE 3000
 CMD ["node", "dist/bin/www.js"]

@@ -19,7 +19,7 @@ model User {
   email             String   @unique @db.VarChar(320)
   password_hash     String
   phone_number      String?  @db.VarChar(15)
-  profile_picture   String?
+  profile_picture   Bytes?
   role              Role?    @default(BASIC)
   biography         String?  @db.VarChar(255)
   favorite_band     String
@@ -35,12 +35,11 @@ model User {
   followers            Follow[]          @relation("followers")
   notifications        Notification[]    @relation("user_notifications")
   notificationsRelated Notification[]    @relation("user_related_notifications")
-  user_music_status    UserMusicStatus[]
+  user_media_status    UserMediaStatus[]
   reports              Report[]
   bannedUsers          BannedUsers?
 
-  activities Activity[] @relation("user_activities")
-
+  activities         Activity[] @relation("user_activities")
   activities_targets Activity[] @relation("user_activities_targets")
 }
 
@@ -49,25 +48,24 @@ enum Role {
   ADMIN
 }
 
-model Music {
+model Media {
   id         String   @id @default(uuid())
   api_id     String
   created_at DateTime @default(now())
 
   reviews           Review[]
   playlist_items    PlaylistItem[]
-  user_music_status UserMusicStatus[]
+  user_music_status UserMediaStatus[]
   notifications     Notification[]
-
-  activities Activity[]
+  activities        Activity[]
 }
 
 model Review {
   id         String   @id @default(uuid())
   user       User     @relation(fields: [user_id], references: [id])
   user_id    String
-  music      Music    @relation(fields: [music_id], references: [id])
-  music_id   String
+  media      Media    @relation(fields: [media_id], references: [id])
+  media_id   String
   rating     Float
   content    String
   created_at DateTime @default(now())
@@ -121,24 +119,24 @@ model PlaylistItem {
   id          String   @id @default(uuid())
   playlist    Playlist @relation(fields: [playlist_id], references: [id])
   playlist_id String
-  music       Music    @relation(fields: [music_id], references: [id])
-  music_id    String
+  media       Media    @relation(fields: [media_id], references: [id])
+  media_id    String
 
-  @@unique([playlist_id, music_id])
+  @@unique([playlist_id, media_id])
 }
 
-model UserMusicStatus {
+model UserMediaStatus {
   user       User        @relation(fields: [user_id], references: [id])
   user_id    String
-  music      Music       @relation(fields: [music_id], references: [id])
-  music_id   String
-  status     MusicStatus
+  media      Media       @relation(fields: [media_id], references: [id])
+  media_id   String
+  status     MediaStatus
   created_at DateTime    @default(now())
 
-  @@id([user_id, music_id])
+  @@id([user_id, media_id])
 }
 
-enum MusicStatus {
+enum MediaStatus {
   planned
   listening
   completed
@@ -146,15 +144,15 @@ enum MusicStatus {
 }
 
 model Activity {
-  id               Int            @id @default(autoincrement())
+  id               String         @id @default(uuid())
   user             User           @relation("user_activities", fields: [user_id], references: [id])
   user_id          String
   target_user      User?          @relation("user_activities_targets", fields: [target_user_id], references: [id])
   target_user_id   String?
   review           Review?        @relation(fields: [review_id], references: [id])
   review_id        String?
-  music            Music?         @relation(fields: [music_id], references: [id])
-  music_id         String?
+  media            Media?         @relation(fields: [media_id], references: [id])
+  media_id         String?
   rating_from_user Int?
   action           ActivityAction
   created_at       DateTime       @default(now())
@@ -206,8 +204,8 @@ model Notification {
   related_user_id String?
   review          Review?            @relation(fields: [review_id], references: [id])
   review_id       String?
-  music           Music?             @relation(fields: [music_id], references: [id])
-  music_id        String?
+  media           Media?             @relation(fields: [media_id], references: [id])
+  media_id        String?
   is_read         Boolean            @default(false)
   read_at         DateTime?
   created_at      DateTime           @default(now())

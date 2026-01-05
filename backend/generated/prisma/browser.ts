@@ -23,10 +23,10 @@ export * from './enums.js';
  */
 export type User = Prisma.UserModel
 /**
- * Model Music
+ * Model Media
  * 
  */
-export type Music = Prisma.MusicModel
+export type Media = Prisma.MediaModel
 /**
  * Model Review
  * 
@@ -53,10 +53,10 @@ export type Playlist = Prisma.PlaylistModel
  */
 export type PlaylistItem = Prisma.PlaylistItemModel
 /**
- * Model UserMusicStatus
+ * Model UserMediaStatus
  * 
  */
-export type UserMusicStatus = Prisma.UserMusicStatusModel
+export type UserMediaStatus = Prisma.UserMediaStatusModel
 /**
  * Model Activity
  * 
