@@ -1,21 +1,20 @@
 import type { Request, Response, NextFunction } from 'express';
-import { Controller } from '../controller.js';
-import { Unauthorized, BadRequest, NotFound } from '../../utils/errors.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { prisma } from "../../config/database";
-import {userService} from "./user.service";
 
-import { User } from '../../generated/prisma/client.js'
+import { Controller } from '../controller.js';
+import { Unauthorized, BadRequest } from '../../utils/errors.js';
+import { userService } from './user.service.js';
+
+import { NotFound } from '../../utils/errors.js';
+
+dotenv.config();
 
 class UserController extends Controller {
 
-    private readonly service;
-
-    constructor(service = userService) {
+    constructor(private readonly service = userService) {
         super();
-        this.service = service;
     }
 
     // =========================
@@ -27,102 +26,91 @@ class UserController extends Controller {
                 email,
                 username,
                 password,
-                roles,
+                role,
                 phone_number,
                 biography,
                 favorite_band,
                 has_notifications,
             } = req.body;
 
-            const profile_picture = (req as any).file?.buffer; // multer memoryStorage
-
             if (!email || !username || !password) {
                 throw new BadRequest('Missing required fields');
             }
 
-            // Email unique
-            const existingByEmail = await prisma.user.findUnique({
-                where: { email },
-            });
-            if (existingByEmail) {
-                throw new BadRequest('Email already in use');
-            }
-
-            // Username unique
-            const existingByUsername = await prisma.user.findUnique({
-                where: { username },
-            });
-            if (existingByUsername) {
-                throw new BadRequest('Username already in use');
-            }
-
             const password_hash = await bcrypt.hash(password, 10);
+            const profile_picture = (req as any).file?.buffer ?? null;
 
-            const createdUser = await this.service.create({
-                data: {
-                    email,
-                    username,
-                    password_hash,
-                    phone_number,
-                    biography,
-                    favorite_band,
-                    has_notifications,
-                    role: roles,
-                    profile_picture,
-                },
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    role: true,
-                }
-            } as User)
+            const user = await this.service.create({
+                email,
+                username,
+                password_hash,
+                role,
+                phone_number,
+                biography,
+                favorite_band,
+                has_notifications,
+                profile_picture,
+                created_at: new Date(),
+                updated_at: new Date(),
+            });
 
             res.status(201).json({
-                message: 'Created User Successfully',
-                user: createdUser,
+                message: 'User created successfully',
+                user,
             });
         } catch (err) {
             next(err);
         }
     }
 
+    // =========================
+    // LOGIN
+    // =========================
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { email, password } = req.body;
+
+            if (!email || !password) {
+                throw new BadRequest('Email and password required');
+            }
 
             const user = await this.service.getByEmail(email);
             if (!user) {
                 throw new Unauthorized('Invalid email or password');
             }
 
-            const isPasswordValid = await bcrypt.compare(password, user.password);
-            if (!isPasswordValid) {
+            const isValid = await bcrypt.compare(password, user.password_hash);
+            if (!isValid) {
                 throw new Unauthorized('Invalid email or password');
             }
 
             const token = jwt.sign(
-                { id: user._id, email: user.email, username: user.username, roles: user.roles },
-                process.env.JWT_SECRET || 'defaultsecret',
+                {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    role: user.role,
+                },
+                process.env.JWT_SECRET!,
                 { expiresIn: '1h' }
             );
-            res.status(200).json({
+
+            res.json({
                 message: 'Login successful',
                 token,
                 user: {
-                    id: user._id.toString(),
-                    name: user.username,
+                    id: user.id,
                     email: user.email,
-                    roles: user.roles
-                }
+                    username: user.username,
+                    role: user.role,
+                },
             });
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }
 
-    async getAll(_req: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction) {
         try {
             const users = await this.service.getAll();
             res.json(users);
@@ -133,77 +121,58 @@ class UserController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
-            if (!id) return next(new BadRequest('ID is required'));
-
-            // Validate ObjectId format
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                return next(new BadRequest('Invalid ID format'));
-            }
-
-            const user = await this.service.getById(id);
-            if (!user) return next(new NotFound('User not found'));
-
+            const user = await this.service.getById(req.params.id);
             res.json(user);
-        } catch (e) {
-            next(e);
+        } catch (err) {
+            next(err);
         }
     }
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
-            if (!id) return next(new BadRequest('ID is required'));
+            const { password, ...rest } = req.body;
 
-            // Validate ObjectId format
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                return next(new BadRequest('Invalid ID format'));
+            const data: any = { ...rest };
+
+            if (password) {
+                data.password_hash = await bcrypt.hash(password, 10);
             }
 
-            const { username, email, password, roles } = req.body;
-
-            const patch: Partial<IUser> = {};
-
-            if (username) patch.username = username;
-            if (email) patch.email = email;
-            if (roles) patch.roles = roles;
-            if (password) patch.password = await bcrypt.hash(password, 10);
-
-            const updatedUser = await this.service.update(id, patch);
+            const user = await this.service.update(req.params.id, data);
 
             res.json({
-                message: "User Updated successfully",
-                user: updatedUser
+                message: 'User updated successfully',
+                user,
             });
-
-        } catch (e) {
-            next(e);
+        } catch (err) {
+            next(err);
         }
     }
-
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
-            if (!id) return next(new BadRequest('ID is required'));
-
-            // Validate ObjectId format
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                return next(new BadRequest('Invalid ID format'));
-            }
-
-            const deletedUser = await this.service.delete(id);
-            if (!deletedUser) return next(new NotFound('User not found'));
+            const user = await this.service.delete(req.params.id);
 
             res.json({
                 message: 'User deleted successfully',
-                user: deletedUser
+                user,
             });
-        } catch (e) {
-            next(e);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getByEmail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const user = await this.service.getByEmail(req.params.email);
+            if (!user) {
+                throw new NotFound('User not found');
+            }
+            res.json(user);
+        } catch (err) {
+            next(err);
         }
     }
 }
-
 
 export default new UserController();

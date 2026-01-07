@@ -7,6 +7,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import indexRouter from './routes/index.js';
 
+import userRouter from './routes/users.js';
+
 import { ApiError, InternalError } from './utils/errors.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // back-end routes
+app.use('/users', userRouter);
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
