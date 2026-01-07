@@ -14,13 +14,13 @@ services:
   api:
     image: api:latest
     restart: always
+    env_file:
+      - ./backend/.env
     build:
       context: ./backend
       dockerfile: Dockerfile         # Si tu veux rebuild depuis le docker-compose
     ports:
       - "3000:3000"
-    environment:
-      NODE_ENV: production
     depends_on:
       - db
 

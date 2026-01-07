@@ -28,6 +28,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/views ./dist/views
+COPY --from=builder /app/generated ./generated
 
 EXPOSE 3000
 CMD ["node", "dist/bin/www.js"]
