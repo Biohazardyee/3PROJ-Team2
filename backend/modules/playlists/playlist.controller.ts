@@ -1,0 +1,110 @@
+import type { Request, Response, NextFunction } from 'express';
+
+import { Controller } from '../controller.js';
+import { BadRequest } from '../../utils/errors.js';
+import { PlaylistService } from './playlist.service.js';
+
+class PlaylistController extends Controller {
+
+    constructor(private readonly service = new PlaylistService()) {
+        super();
+    }
+
+    async add(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { name, user_id } = req.body;
+
+            if (!name || !user_id) {
+                throw new BadRequest('Missing required fields');
+            }
+
+            const playlist = await this.service.create({
+                name,
+                user_id,
+                updated_at: new Date(),
+                created_at: new Date(),
+            });
+            res.status(201).json({
+                message: 'Playlist created successfully',
+                playlist,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+
+    async getPlaylistsByUserId(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = req.params;
+            const playlists = await this.service.getPlaylistsByUserId(user_id);
+            res.status(200).json({
+                message: 'Playlists retrieved successfully',
+                playlists,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            const playlist = await this.service.getById(id);
+            res.status(200).json({
+                message: 'Playlist retrieved successfully',
+                playlist,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async update(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id, playlist_id } = req.params;
+            const { name } = req.body;
+
+            if (!name) {
+                throw new BadRequest('Missing required fields');
+            }
+
+            const playlist = await this.service.update(playlist_id, user_id, { name });
+
+            res.status(200).json({
+                message: 'Playlist updated successfully',
+                playlist,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const playlists = await this.service.getAll();
+            res.status(200).json({
+                message: 'Playlists retrieved successfully',
+                playlists,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async delete(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            const playlist = await this.service.delete(id);
+            res.status(200).json({
+                message: 'Playlist deleted successfully',
+                playlist,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+}
+
+export default new PlaylistController();

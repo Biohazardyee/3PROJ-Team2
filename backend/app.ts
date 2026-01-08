@@ -8,6 +8,8 @@ import { dirname } from 'path';
 import indexRouter from './routes/index.js';
 
 import userRouter from './routes/users.js';
+import playlistRouter from './routes/playlists.js';
+import mediaRouter from './routes/medias.js';
 
 import { ApiError, InternalError } from './utils/errors.js';
 
@@ -29,6 +31,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // back-end routes
+app.use('/medias', mediaRouter);
+app.use('/playlists', playlistRouter);
 app.use('/users', userRouter);
 app.use('/', indexRouter);
 
