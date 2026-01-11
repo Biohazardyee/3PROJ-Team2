@@ -8,7 +8,7 @@ router.post('/', function (req, res, next) {
     playlistController.add(req, res, next);
 });
 
-router.get('/:user_id', function (req, res, next) {
+router.get('/user/:user_id', function (req, res, next) {
     playlistController.getPlaylistsByUserId(req, res, next);
 });
 
