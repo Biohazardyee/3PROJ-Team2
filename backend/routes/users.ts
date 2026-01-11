@@ -1,9 +1,7 @@
 import express from 'express';
 import userController from '../modules/users/user.controller.js';
 
-
 var router = express.Router();
-
 
 router.post('/signin', function(req, res, next) {
   userController.add(req, res, next);
@@ -12,7 +10,6 @@ router.post('/signin', function(req, res, next) {
 router.post('/login', function(req, res, next) {
   userController.login(req, res, next);
 });
-
 
 router.put('/:id', function(req, res, next) {
   userController.update(req, res, next);

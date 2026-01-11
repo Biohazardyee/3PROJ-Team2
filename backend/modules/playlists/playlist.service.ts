@@ -85,7 +85,7 @@ export class PlaylistService {
     }
 
     async getAll() {
-        return await prisma.playlist.findMany({
+        return prisma.playlist.findMany({
             select: {
                 id: true,
                 name: true,
@@ -110,7 +110,6 @@ export class PlaylistService {
             throw new NotFound('Playlist not found');
         }
     }
-
 }
 
 export const playlistService = new PlaylistService();

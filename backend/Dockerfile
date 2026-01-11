@@ -12,7 +12,10 @@ RUN npm install
 # Copier le reste du code
 COPY . .
 
-# Build TypeScript (après génération du client)
+# Générer le client Prisma (OBLIGATOIRE)
+RUN npx prisma generate
+
+# Build TypeScript
 RUN npm run build
 
 # =======================
@@ -23,12 +26,11 @@ FROM node:20-alpine AS production
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Copier node_modules, dist, prisma et generated
+# Copier uniquement ce qui est nécessaire
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/views ./dist/views
-COPY --from=builder /app/generated ./generated
 
 EXPOSE 3000
 CMD ["node", "dist/bin/www.js"]

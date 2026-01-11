@@ -10,6 +10,7 @@ import indexRouter from './routes/index.js';
 import userRouter from './routes/users.js';
 import playlistRouter from './routes/playlists.js';
 import mediaRouter from './routes/medias.js';
+import reviewRouter from './routes/reviews.js';
 
 import { ApiError, InternalError } from './utils/errors.js';
 
@@ -34,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/medias', mediaRouter);
 app.use('/playlists', playlistRouter);
 app.use('/users', userRouter);
+app.use('/reviews', reviewRouter);
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
