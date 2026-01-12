@@ -260,6 +260,7 @@ export type ReviewOrderByWithRelationInput = {
 
 export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  user_id_media_id?: Prisma.ReviewUser_idMedia_idCompoundUniqueInput
   AND?: Prisma.ReviewWhereInput | Prisma.ReviewWhereInput[]
   OR?: Prisma.ReviewWhereInput[]
   NOT?: Prisma.ReviewWhereInput | Prisma.ReviewWhereInput[]
@@ -276,7 +277,7 @@ export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   reports?: Prisma.ReportListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   activities?: Prisma.ActivityListRelationFilter
-}, "id">
+}, "id" | "user_id_media_id">
 
 export type ReviewOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -402,6 +403,11 @@ export type ReviewListRelationFilter = {
 
 export type ReviewOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ReviewUser_idMedia_idCompoundUniqueInput = {
+  user_id: string
+  media_id: string
 }
 
 export type ReviewCountOrderByAggregateInput = {

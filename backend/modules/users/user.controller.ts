@@ -1,13 +1,13 @@
-import type { Request, Response, NextFunction } from 'express';
+import type {Request, Response, NextFunction} from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import { Controller } from '../controller.js';
-import { Unauthorized, BadRequest } from '../../utils/errors.js';
-import { userService } from './user.service.js';
+import {Controller} from '../controller.js';
+import {Unauthorized, BadRequest} from '../../utils/errors.js';
+import {userService} from './user.service.js';
 
-import { NotFound } from '../../utils/errors.js';
+import {NotFound} from '../../utils/errors.js';
 
 dotenv.config();
 
@@ -17,11 +17,10 @@ class UserController extends Controller {
         super();
     }
 
-    // =========================
-    // CREATE USER
-    // =========================
     async add(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log(req.body);
+
             const {
                 email,
                 username,
@@ -34,22 +33,18 @@ class UserController extends Controller {
             } = req.body;
 
             if (!email || !username || !password) {
-                throw new BadRequest('Missing required fields');
+                throw new BadRequest('Email, username and password are required');
             }
-
-            const password_hash = await bcrypt.hash(password, 10);
-            const profile_picture = (req as any).file?.buffer ?? null;
 
             const user = await this.service.create({
                 email,
                 username,
-                password_hash,
+                password,
                 role,
                 phone_number,
                 biography,
                 favorite_band,
                 has_notifications,
-                profile_picture,
                 created_at: new Date(),
                 updated_at: new Date(),
             });
@@ -63,23 +58,22 @@ class UserController extends Controller {
         }
     }
 
-    // =========================
-    // LOGIN
-    // =========================
     async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const { email, password } = req.body;
+            const {email, password} = req.body;
 
             if (!email || !password) {
                 throw new BadRequest('Email and password required');
             }
 
             const user = await this.service.getByEmail(email);
+
             if (!user) {
                 throw new Unauthorized('Invalid email or password');
             }
 
-            const isValid = await bcrypt.compare(password, user.password_hash);
+            const isValid = await bcrypt.compare(password, user.password);
+
             if (!isValid) {
                 throw new Unauthorized('Invalid email or password');
             }
@@ -92,7 +86,7 @@ class UserController extends Controller {
                     role: user.role,
                 },
                 process.env.JWT_SECRET!,
-                { expiresIn: '1h' }
+                {expiresIn: '1h'}
             );
 
             res.json({
@@ -130,15 +124,57 @@ class UserController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const { password, ...rest } = req.body;
+            const id = req.params.id;
 
-            const data: any = { ...rest };
+            const {
+                username,
+                password,
+                phone_number,
+                biography,
+                favorite_band,
+                has_notifications,
+                profile_picture
+            } = req.body;
 
-            if (password) {
-                data.password_hash = await bcrypt.hash(password, 10);
+            let data: any = {}
+
+            if (username) {
+                data.username = username;
             }
 
-            const user = await this.service.update(req.params.id, data);
+            if (password) {
+                data.password = password;
+            }
+
+            if (phone_number) {
+                data.phone_number = phone_number;
+            }
+
+            if (biography) {
+                data.biography = biography;
+            }
+
+            if (favorite_band) {
+                data.band = favorite_band;
+            }
+
+            if (has_notifications) {
+                data.has_notifications = has_notifications;
+            }
+
+            if (profile_picture) {
+                data.profile_picture = profile_picture;
+            }
+
+            if (password) {
+                data.password = await bcrypt.hash(password, 10);
+            }
+
+            if (Object.keys(data).length === 0) {
+                throw new BadRequest("No fields provided")
+            }
+
+            const user = this.service.update(id, data)
 
             res.json({
                 message: 'User updated successfully',
@@ -152,7 +188,6 @@ class UserController extends Controller {
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const user = await this.service.delete(req.params.id);
-
             res.json({
                 message: 'User deleted successfully',
                 user,
@@ -164,7 +199,9 @@ class UserController extends Controller {
 
     async getByEmail(req: Request, res: Response, next: NextFunction) {
         try {
-            const user = await this.service.getByEmail(req.params.email);
+            const email = req.params.email;
+
+            const user = await this.service.getByEmail(email);
             if (!user) {
                 throw new NotFound('User not found');
             }
