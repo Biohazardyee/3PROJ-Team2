@@ -1,6 +1,6 @@
 import {prisma} from '../../config/database.js';
 import {NotFound, BadRequest} from '../../utils/errors.js';
-import {isNonEmptyString, isValidApiId} from '../../utils/helpers.js';
+import {isEmptyString, isValidApiId} from '../../utils/helpers.js';
 
 export class MediaService {
     async create(data: any) {
@@ -33,7 +33,7 @@ export class MediaService {
     }
 
     async update(id: string, data: any) {
-        if (!isNonEmptyString(id)) {
+        if (isEmptyString(id)) {
             throw new BadRequest('Media id is required');
         }
 
@@ -57,7 +57,7 @@ export class MediaService {
     }
 
     async getById(id: string) {
-        if (!isNonEmptyString(id)) throw new BadRequest('Media id is required');
+        if (isEmptyString(id)) throw new BadRequest('Media id is required');
 
         const media = await prisma.media.findUnique({
             where: {id},
@@ -74,7 +74,7 @@ export class MediaService {
     }
 
     async delete(id: string) {
-        if (!isNonEmptyString(id)) throw new BadRequest('Media id is required');
+        if (isEmptyString(id)) throw new BadRequest('Media id is required');
 
         const media = await prisma.media.findUnique({where: {id}});
         if (!media) throw new NotFound('Media not found');

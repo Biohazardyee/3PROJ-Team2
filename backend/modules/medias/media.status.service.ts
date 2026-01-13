@@ -1,6 +1,6 @@
 import {prisma} from '../../config/database.js';
 import {NotFound, BadRequest} from '../../utils/errors.js';
-import {isNonEmptyString} from "../../utils/helpers.js";
+import {isEmptyString} from "../../utils/helpers.js";
 import {isValidMediaStatus} from "./media.status.helper.js"
 import {MediaStatus} from '../../generated/prisma/enums.js';
 
@@ -9,11 +9,11 @@ export class MediaStatusService {
     async create(data: any) {
         const {user_id, media_id, status} = data;
 
-        if (!isNonEmptyString(user_id)) {
+        if (isEmptyString(user_id)) {
             throw new BadRequest('user_id is required');
         }
 
-        if (!isNonEmptyString(media_id)) {
+        if (isEmptyString(media_id)) {
             throw new BadRequest('media_id is required');
         }
 
@@ -68,11 +68,11 @@ export class MediaStatusService {
 
     async update(user_id: string, media_id: string, status: MediaStatus) {
 
-        if (!isNonEmptyString(user_id)) {
+        if (isEmptyString(user_id)) {
             throw new BadRequest('user_id is required');
         }
 
-        if (!isNonEmptyString(media_id)) {
+        if (isEmptyString(media_id)) {
             throw new BadRequest('media_id is required');
         }
 
@@ -107,11 +107,11 @@ export class MediaStatusService {
 
     async getStatus(user_id: string, media_id: string) {
 
-        if (!isNonEmptyString(user_id)) {
+        if (isEmptyString(user_id)) {
             throw new BadRequest('user_id is required');
         }
 
-        if (!isNonEmptyString(media_id)) {
+        if (isEmptyString(media_id)) {
             throw new BadRequest('media_id is required');
         }
 
@@ -136,11 +136,11 @@ export class MediaStatusService {
 
     async delete(user_id: string, media_id: string) {
 
-        if (!isNonEmptyString(user_id)) {
+        if (isEmptyString(user_id)) {
             throw new BadRequest('user_id is required');
         }
 
-        if (!isNonEmptyString(media_id)) {
+        if (isEmptyString(media_id)) {
             throw new BadRequest('media_id is required');
         }
 

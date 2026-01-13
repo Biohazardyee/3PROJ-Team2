@@ -2,7 +2,7 @@ import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../controller.js';
 import {BadRequest} from '../../utils/errors.js';
 import {MediaService} from './media.service.js';
-import {isNonEmptyString, isValidApiId} from '../../utils/helpers.js';
+import {isEmptyString, isValidApiId} from '../../utils/helpers.js';
 
 class MediaController extends Controller {
     constructor(private readonly service = new MediaService()) {
@@ -28,7 +28,7 @@ class MediaController extends Controller {
             const {id} = req.params;
             const {api_id} = req.body;
 
-            if (!isNonEmptyString(id)) {
+            if (isEmptyString(id)) {
                 throw new BadRequest('Media id is required');
             }
 
@@ -46,7 +46,7 @@ class MediaController extends Controller {
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
-            if (!isNonEmptyString(id)) {
+            if (isEmptyString(id)) {
                 throw new BadRequest('Media id is required')
             }
 
@@ -70,7 +70,7 @@ class MediaController extends Controller {
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
-            if (!isNonEmptyString(id)) {
+            if (isEmptyString(id)) {
                 throw new BadRequest('Media id is required')
             }
 

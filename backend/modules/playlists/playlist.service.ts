@@ -1,6 +1,6 @@
 import {prisma} from '../../config/database.js';
 import {NotFound, BadRequest} from '../../utils/errors.js';
-import {isNonEmptyString, isValidStringLength} from "../../utils/helpers.js";
+import {isEmptyString, isValidStringLength} from "../../utils/helpers.js";
 
 const PLAYLIST_NAME_MAX_LENGTH = 100;
 
@@ -8,7 +8,7 @@ export class PlaylistService {
 
     async create(data: any) {
 
-        if (!isNonEmptyString(data.name)) {
+        if (isEmptyString(data.name)) {
             throw new BadRequest('Playlist name is required');
         }
 
@@ -18,7 +18,7 @@ export class PlaylistService {
             );
         }
 
-        if (!isNonEmptyString(data.user_id)) {
+        if (isEmptyString(data.user_id)) {
             throw new BadRequest('user_id is required');
         }
 
@@ -60,7 +60,7 @@ export class PlaylistService {
 
     async getPlaylistsByUserId(user_id: string) {
 
-        if (!isNonEmptyString(user_id)) {
+        if (isEmptyString(user_id)) {
             throw new BadRequest('user_id is required');
         }
 
@@ -101,7 +101,7 @@ export class PlaylistService {
     }
 
     async getById(id: string) {
-        if (!isNonEmptyString(id)) {
+        if (isEmptyString(id)) {
             throw new BadRequest('Playlist id is required');
         }
 
@@ -124,7 +124,7 @@ export class PlaylistService {
 
     async update(id: string, data: any) {
 
-        if (!isNonEmptyString(id)) {
+        if (isEmptyString(id)) {
             throw new BadRequest('ID is required');
         }
 
@@ -137,7 +137,7 @@ export class PlaylistService {
         }
 
         if (data.name) {
-            if (!isNonEmptyString(data.name)) {
+            if (isEmptyString(data.name)) {
                 throw new BadRequest('Playlist name cannot be empty');
             }
 
@@ -184,7 +184,7 @@ export class PlaylistService {
     }
 
     async delete(id: string) {
-        if (!isNonEmptyString(id)) {
+        if (isEmptyString(id)) {
             throw new BadRequest('Playlist id is required');
         }
 

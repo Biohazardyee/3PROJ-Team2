@@ -1,16 +1,16 @@
 import {prisma} from '../../config/database.js';
 import {NotFound, BadRequest} from '../../utils/errors.js';
-import {isNonEmptyString, isValidStringLength} from "../../utils/helpers.js";
+import {isEmptyString, isValidStringLength} from "../../utils/helpers.js";
 
 export class ReviewService {
 
     async create(data: any) {
 
-        if (!isNonEmptyString(data.user_id)) {
+        if (isEmptyString(data.user_id)) {
             throw new BadRequest('user_id is required');
         }
 
-        if (!isNonEmptyString(data.media_id)) {
+        if (isEmptyString(data.media_id)) {
             throw new BadRequest('media_id is required');
         }
 
@@ -18,7 +18,7 @@ export class ReviewService {
             throw new BadRequest('Rating must be a float between 0 and 5');
         }
 
-        if (!isNonEmptyString(data.content)) {
+        if (isEmptyString(data.content)) {
             throw new BadRequest('Content is required');
         }
 
@@ -66,7 +66,7 @@ export class ReviewService {
     }
 
     async getById(id: string) {
-        if (!isNonEmptyString(id)) {
+        if (isEmptyString(id)) {
             throw new BadRequest('Review id is required');
         }
 
@@ -114,7 +114,7 @@ export class ReviewService {
         }
 
         if (data.content) {
-            if (!isNonEmptyString(data.content)) {
+            if (isEmptyString(data.content)) {
                 throw new BadRequest('Content is required');
             }
             if (!isValidStringLength(data.content, 1000)) {
@@ -129,7 +129,7 @@ export class ReviewService {
     }
 
     async delete(id: string) {
-        if (!isNonEmptyString(id)) {
+        if (isEmptyString(id)) {
             throw new BadRequest('Review id is required');
         }
 

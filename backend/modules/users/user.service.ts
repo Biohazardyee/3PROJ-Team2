@@ -1,6 +1,6 @@
 import {prisma} from '../../config/database.js';
 import {NotFound, BadRequest} from '../../utils/errors.js';
-import {isValidStringLength, isNonEmptyString} from "../../utils/helpers.js";
+import {isValidStringLength, isEmptyString} from "../../utils/helpers.js";
 import {isValidEmail, isValidUsername, isValidPassword} from "./user.helper.js"
 import bcrypt from "bcrypt";
 
@@ -8,15 +8,15 @@ export class UserService {
 
     async create(data: any) {
 
-        if (!isNonEmptyString(data.email)) {
+        if (isEmptyString(data.email)) {
             throw new BadRequest("Email cannot be empty");
         }
 
-        if (!isNonEmptyString(data.username)) {
+        if (isEmptyString(data.username)) {
             throw new BadRequest("Username cannot be empty");
         }
 
-        if (!isNonEmptyString(data.password)) {
+        if (isEmptyString(data.password)) {
             throw new BadRequest("Password cannot be empty");
         }
 
