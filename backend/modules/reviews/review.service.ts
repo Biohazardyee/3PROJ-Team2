@@ -5,41 +5,39 @@ import {isNonEmptyString, isValidStringLength} from "../../utils/helpers.js";
 export class ReviewService {
 
     async create(data: any) {
-        const {user_id, media_id, rating, content} = data;
 
-        // ===== VALIDATION BASIQUE =====
-        if (!isNonEmptyString(user_id)) {
+        if (!isNonEmptyString(data.user_id)) {
             throw new BadRequest('user_id is required');
         }
 
-        if (!isNonEmptyString(media_id)) {
+        if (!isNonEmptyString(data.media_id)) {
             throw new BadRequest('media_id is required');
         }
 
-        if (!isValidFloatRating(rating)) {
+        if (!isValidFloatRating(data.rating)) {
             throw new BadRequest('Rating must be a float between 0 and 5');
         }
 
-        if (!isNonEmptyString(content)) {
+        if (!isNonEmptyString(data.content)) {
             throw new BadRequest('Content is required');
         }
 
-        if (content.length > 1000) {
+        if (!isValidStringLength(data.content.length, 1000)) {
             throw new BadRequest('Content is too long (max 1000 characters)');
         }
 
-        // ===== EXISTENCE USER =====
         const user = await prisma.user.findUnique({
-            where: {id: user_id},
+            where: {
+                id: data.user_id
+            },
         });
 
         if (!user) {
             throw new BadRequest('User with this id does not exist');
         }
 
-        // ===== EXISTENCE MEDIA =====
         const media = await prisma.media.findUnique({
-            where: {id: media_id},
+            where: {id: data.media_id},
         });
 
         if (!media) {
@@ -48,8 +46,8 @@ export class ReviewService {
 
         const alreadyReviewed = await prisma.review.findFirst({
             where: {
-                user_id,
-                media_id,
+                user_id: data.user_id,
+                media_id: data.media_id,
             },
         });
 
@@ -57,21 +55,12 @@ export class ReviewService {
             throw new BadRequest('User has already reviewed this media');
         }
 
-        // ===== CREATE =====
         return prisma.review.create({
             data: {
-                user_id,
-                media_id,
-                rating: normalizeRating(rating),
-                content: content.trim(),
-            },
-            select: {
-                id: true,
-                user_id: true,
-                media_id: true,
-                rating: true,
-                content: true,
-                created_at: true,
+                user_id: data.user_id,
+                media_id: data.media_id,
+                rating: normalizeRating(data.rating),
+                content: data.content.trim(),
             },
         });
     }
@@ -83,14 +72,6 @@ export class ReviewService {
 
         const review = await prisma.review.findUnique({
             where: {id},
-            select: {
-                id: true,
-                user_id: true,
-                media_id: true,
-                rating: true,
-                content: true,
-                created_at: true,
-            },
         });
 
         if (!review) {
@@ -144,14 +125,6 @@ export class ReviewService {
         return prisma.review.update({
             where: {id},
             data,
-            select: {
-                id: true,
-                user_id: true,
-                media_id: true,
-                rating: true,
-                content: true,
-                created_at: true,
-            },
         });
     }
 
@@ -170,14 +143,6 @@ export class ReviewService {
 
         return prisma.review.delete({
             where: {id},
-            select: {
-                id: true,
-                user_id: true,
-                media_id: true,
-                rating: true,
-                content: true,
-                created_at: true,
-            },
         });
     }
 }

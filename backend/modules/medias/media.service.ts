@@ -10,14 +10,25 @@ export class MediaService {
             throw new BadRequest('Invalid api_id provided');
         }
 
-        const exists = await prisma.media.findFirst({where: {api_id}});
+        const exists = await prisma.media.findFirst(
+            {
+                where: 
+                    {api_id}
+            });
+
         if (exists) {
             throw new BadRequest('Media with this API ID already exists');
         }
 
         return prisma.media.create({
-            data: {api_id, created_at: new Date()},
-            select: {id: true, api_id: true, created_at: true},
+            data: {
+                api_id,
+                created_at: new Date()},
+            select: {
+                id: true,
+                api_id: true,
+                created_at: true
+            },
         });
     }
 

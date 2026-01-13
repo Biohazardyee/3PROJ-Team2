@@ -1,8 +1,8 @@
-import type { Request, Response, NextFunction } from 'express';
+import type {Request, Response, NextFunction} from 'express';
 
-import { Controller } from '../controller.js';
-import { Unauthorized, BadRequest } from '../../utils/errors.js'
-import { ReviewService } from './review.service.js';
+import {Controller} from '../controller.js';
+import {Unauthorized, BadRequest} from '../../utils/errors.js'
+import {ReviewService} from './review.service.js';
 
 class ReviewController extends Controller {
 
@@ -40,14 +40,13 @@ class ReviewController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
             const review = await this.service.getById(id);
             res.status(200).json({
                 message: 'Review retrieved successfully',
                 review,
             });
-        }
-        catch (error) {
+        } catch (error) {
             next(error);
         }
     }
@@ -67,6 +66,7 @@ class ReviewController extends Controller {
     async update(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
+
             const {
                 user_id,
                 media_id,
@@ -74,20 +74,42 @@ class ReviewController extends Controller {
                 content
             } = req.body;
 
-            const review = await this.service.update(id, { user_id, media_id, rating, content });
+            let data: any = {}
+
+            if (user_id) {
+                data.user_id = user_id;
+            }
+
+            if (media_id) {
+                data.media_id = media_id;
+            }
+
+            if (rating) {
+                data.rating = rating;
+            }
+
+            if (content) {
+                data.content = content;
+            }
+
+            if (Object.keys(data).length === 0) {
+                throw new BadRequest("No fields provided")
+            }
+
+            const review = await this.service.update(id, data);
+
             res.status(200).json({
                 message: 'Review updated successfully',
                 review,
             });
-        }
-        catch (error) {
+        } catch (error) {
             next(error);
         }
     }
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
             await this.service.delete(id);
             res.status(200).json({
                 message: 'Review deleted successfully',

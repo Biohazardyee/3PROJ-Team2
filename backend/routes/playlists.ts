@@ -16,7 +16,7 @@ router.get('/:id', function (req, res, next) {
     playlistController.getById(req, res, next);
 });
 
-router.put('/:user_id/:playlist_id', function (req, res, next) {
+router.put('/:playlist_id', function (req, res, next) {
     playlistController.update(req, res, next);
 });
 

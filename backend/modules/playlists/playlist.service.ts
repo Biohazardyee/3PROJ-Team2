@@ -1,50 +1,42 @@
 import {prisma} from '../../config/database.js';
 import {NotFound, BadRequest} from '../../utils/errors.js';
-
-/**
- * Helpers
- */
-function isNonEmptyString(value: any): boolean {
-    return typeof value === 'string' && value.trim().length > 0;
-}
+import {isNonEmptyString, isValidStringLength} from "../../utils/helpers.js";
 
 const PLAYLIST_NAME_MAX_LENGTH = 100;
 
 export class PlaylistService {
 
     async create(data: any) {
-        const {name, user_id} = data;
 
-        // ===== VALIDATION =====
-        if (!isNonEmptyString(name)) {
+        if (!isNonEmptyString(data.name)) {
             throw new BadRequest('Playlist name is required');
         }
 
-        if (name.trim().length > PLAYLIST_NAME_MAX_LENGTH) {
+        if (isValidStringLength(data.name.trim(), PLAYLIST_NAME_MAX_LENGTH)) {
             throw new BadRequest(
                 `Playlist name is too long (max ${PLAYLIST_NAME_MAX_LENGTH} characters)`
             );
         }
 
-        if (!isNonEmptyString(user_id)) {
+        if (!isNonEmptyString(data.user_id)) {
             throw new BadRequest('user_id is required');
         }
 
-        const cleanName = name.trim();
-
-        // ===== USER EXISTS =====
         const user = await prisma.user.findUnique({
-            where: {id: user_id},
+            where: {
+                id: data.user_id
+            },
         });
 
         if (!user) {
             throw new BadRequest('User with this id does not exist');
         }
 
-        // ===== UNIQUE PLAYLIST NAME PER USER =====
+        const cleanName = data.name.trim();
+
         const exists = await prisma.playlist.findFirst({
             where: {
-                user_id,
+                user_id: data.user_id,
                 name: cleanName,
             },
         });
@@ -55,12 +47,8 @@ export class PlaylistService {
             );
         }
 
-        // ===== CREATE =====
         return prisma.playlist.create({
-            data: {
-                name: cleanName,
-                user_id,
-            },
+            data,
             select: {
                 id: true,
                 name: true,
@@ -71,26 +59,45 @@ export class PlaylistService {
     }
 
     async getPlaylistsByUserId(user_id: string) {
+
         if (!isNonEmptyString(user_id)) {
             throw new BadRequest('user_id is required');
         }
 
-        const playlists = await prisma.playlist.findMany({
-            where: {user_id},
+        const user = await prisma.user.findUnique({
+            where: {
+                id: user_id
+            },
+        });
+
+        if (!user) {
+            throw new BadRequest('User with this id does not exist');
+        }
+
+        return prisma.playlist.findMany({
+            where: {
+                user_id
+            },
             select: {
                 id: true,
                 name: true,
+                is_public: true,
                 created_at: true,
                 user_id: true,
             },
         });
+    }
 
-        // findMany retourne toujours un tableau
-        if (playlists.length === 0) {
-            throw new NotFound('No playlists found for this user');
-        }
-
-        return playlists;
+    async getAll() {
+        return prisma.playlist.findMany({
+            select: {
+                id: true,
+                name: true,
+                user_id: true,
+                is_public: true,
+                created_at: true,
+            },
+        });
     }
 
     async getById(id: string) {
@@ -99,7 +106,7 @@ export class PlaylistService {
         }
 
         const playlist = await prisma.playlist.findUnique({
-            where: {id},
+            where: { id },
             select: {
                 id: true,
                 name: true,
@@ -115,17 +122,13 @@ export class PlaylistService {
         return playlist;
     }
 
-    async update(playlistId: string, userId: string, data: { name?: string }) {
-        if (!isNonEmptyString(playlistId)) {
-            throw new BadRequest('playlistId is required');
+    async update(id: string, data: any) {
+
+        if (!isNonEmptyString(id)) {
+            throw new BadRequest('ID is required');
         }
 
-        if (!isNonEmptyString(userId)) {
-            throw new BadRequest('userId is required');
-        }
-
-        // Champs modifiables uniquement
-        const allowedFields = ['name'];
+        const allowedFields = ['name', 'is_public'];
 
         for (const key of Object.keys(data)) {
             if (!allowedFields.includes(key)) {
@@ -133,23 +136,21 @@ export class PlaylistService {
             }
         }
 
-        if (data.name !== undefined) {
+        if (data.name) {
             if (!isNonEmptyString(data.name)) {
                 throw new BadRequest('Playlist name cannot be empty');
             }
 
-            if (data.name.trim().length > PLAYLIST_NAME_MAX_LENGTH) {
+            if (isValidStringLength(data.name, PLAYLIST_NAME_MAX_LENGTH)) {
                 throw new BadRequest(
                     `Playlist name is too long (max ${PLAYLIST_NAME_MAX_LENGTH} characters)`
                 );
             }
 
-            // Vérifier unicité du nom pour le user
             const exists = await prisma.playlist.findFirst({
                 where: {
-                    user_id: userId,
                     name: data.name.trim(),
-                    NOT: {id: playlistId},
+                    user_id: data.user_id,
                 },
             });
 
@@ -163,11 +164,11 @@ export class PlaylistService {
         try {
             return await prisma.playlist.update({
                 where: {
-                    id: playlistId,
-                    user_id: userId, // autorisation ici
+                    id: id,
                 },
                 data: {
                     name: data.name?.trim(),
+                    is_public: data.is_public,
                 },
                 select: {
                     id: true,
@@ -180,17 +181,6 @@ export class PlaylistService {
         } catch {
             throw new NotFound('Playlist not found or unauthorized');
         }
-    }
-
-    async getAll() {
-        return prisma.playlist.findMany({
-            select: {
-                id: true,
-                name: true,
-                created_at: true,
-                user_id: true,
-            },
-        });
     }
 
     async delete(id: string) {

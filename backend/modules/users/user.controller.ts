@@ -19,8 +19,6 @@ class UserController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log(req.body);
-
             const {
                 email,
                 username,

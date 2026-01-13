@@ -12,7 +12,11 @@ class PlaylistController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction) {
         try {
-            const {name, user_id} = req.body;
+            const {
+                name,
+                user_id,
+                is_public,
+            } = req.body;
 
             if (!name || !user_id) {
                 throw new BadRequest('Missing required fields');
@@ -21,6 +25,7 @@ class PlaylistController extends Controller {
             const playlist = await this.service.create({
                 name,
                 user_id,
+                is_public,
                 updated_at: new Date(),
                 created_at: new Date(),
             });
@@ -33,11 +38,27 @@ class PlaylistController extends Controller {
         }
     }
 
-
     async getPlaylistsByUserId(req: Request, res: Response, next: NextFunction) {
         try {
-            const {user_id} = req.params;
+            const {
+                user_id
+            } = req.params;
+
             const playlists = await this.service.getPlaylistsByUserId(user_id);
+
+            res.status(200).json({
+                message: 'Playlists retrieved successfully',
+                playlists,
+            });
+
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAll(_req: Request, res: Response, next: NextFunction) {
+        try {
+            const playlists = await this.service.getAll();
             res.status(200).json({
                 message: 'Playlists retrieved successfully',
                 playlists,
@@ -49,7 +70,7 @@ class PlaylistController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const { id } = req.params;
             const playlist = await this.service.getById(id);
             res.status(200).json({
                 message: 'Playlist retrieved successfully',
@@ -62,30 +83,32 @@ class PlaylistController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const {user_id, playlist_id} = req.params;
-            const {name} = req.body;
+            const { id } = req.params;
 
-            if (!name) {
-                throw new BadRequest('Missing required fields');
+            const {
+                name,
+                is_public
+            } = req.body;
+
+            let data: any = {}
+
+            if (name) {
+                data.name = name;
             }
 
-            const playlist = await this.service.update(playlist_id, user_id, {name});
+            if (is_public) {
+                data.is_public = is_public;
+            }
+
+            if (Object.keys(data).length === 0) {
+                throw new BadRequest("No fields provided")
+            }
+
+            const playlist = await this.service.update(id, data);
 
             res.status(200).json({
                 message: 'Playlist updated successfully',
                 playlist,
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async getAll(req: Request, res: Response, next: NextFunction) {
-        try {
-            const playlists = await this.service.getAll();
-            res.status(200).json({
-                message: 'Playlists retrieved successfully',
-                playlists,
             });
         } catch (error) {
             next(error);

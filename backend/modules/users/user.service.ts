@@ -48,6 +48,10 @@ export class UserService {
                     {username: data.username},
                 ],
             },
+            omit: {
+                password: true
+            }
+
         });
 
         if (exists) {
@@ -56,6 +60,9 @@ export class UserService {
 
         return prisma.user.create({
             data,
+            omit: {
+                password: true
+            }
         });
     }
 
@@ -84,28 +91,27 @@ export class UserService {
 
         const user = await prisma.user.findUnique({
             where: {id},
-            select: {
-                id: true,
-                email: true,
-                username: true,
-                role: true,
-                profile_picture: true,
-                phone_number: true,
-                biography: true,
-                favorite_band: true,
-                has_notifications: true,
-                created_at: true,
-                updated_at: true,
-            },
+            omit: {
+                password: true
+            }
         });
 
         if (!user) throw new NotFound('User not found');
+
         return user;
     }
 
     async update(id: string, data: any) {
         if (!id) {
             throw new BadRequest('User id is required');
+        }
+
+        const user = await prisma.user.findUnique({
+            where: {id},
+        });
+
+        if (!user) {
+            throw new NotFound('User not found');
         }
 
         const allowedFields = [
@@ -149,19 +155,9 @@ export class UserService {
             return await prisma.user.update({
                 where: {id},
                 data,
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    role: true,
-                    profile_picture: true,
-                    phone_number: true,
-                    biography: true,
-                    favorite_band: true,
-                    has_notifications: true,
-                    created_at: true,
-                    updated_at: true,
-                },
+                omit: {
+                    password: true,
+                }
             });
         } catch {
             throw new NotFound('User not found');
