@@ -1,6 +1,6 @@
-import React from "react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { FaBook, FaStar, FaUsers, FaChartLine, FaGlobe, FaMusic, FaArrowRight } from "react-icons/fa";
+import { FaBook, FaStar, FaUsers, FaChartLine, FaGlobe, FaMusic, FaArrowRight, FaSearch } from "react-icons/fa";
 import { AlbumCard } from "../components/AlbumCard"; 
 import { Footer } from "../components/Footer";
 
@@ -63,16 +63,16 @@ export const LandingPage: React.FC = () => {
       {/* SECTION 1 : Logo + boutons */}
       <section className="relative overflow-hidden pt-20 pb-32">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] -top-48 -left-48 animate-pulse" />
-          <div className="absolute w-[500px] h-[500px] bg-pink-600/10 rounded-full blur-[120px] -bottom-48 -right-48 animate-pulse" />
+          <div className="absolute w-125 h-125 bg-purple-600/10 rounded-full blur-[120px] -top-48 -left-48 animate-pulse" />
+          <div className="absolute w-125 h-125 bg-pink-600/10 rounded-full blur-[120px] -bottom-48 -right-48 animate-pulse" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <div className="w-20 h-20 bg-gradient-to-tr from-[#a855f7] to-[#ec4899] rounded-[24px] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-purple-500/20">
+          <div className="w-20 h-20 bg-linear-to-tr from-[#a855f7] to-[#ec4899] rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-purple-500/20">
             <FaMusic className="text-4xl text-white" />
           </div>
           {/*TODO : Changer la police d'ecriture*/}
-          <h1 className="text-6xl md:text-7xl font-black mb-6 tracking-tighter bg-gradient-to-r from-[#a855f7] via-[#ec4899] to-[#a855f7] bg-clip-text text-transparent">
+          <h1 className="text-6xl md:text-7xl font-black mb-6 tracking-tighter bg-linear-to-r from-[#a855f7] via-[#ec4899] to-[#a855f7] bg-clip-text text-transparent">
             SUPCONTENT 
           </h1>
           
@@ -84,7 +84,7 @@ export const LandingPage: React.FC = () => {
           <div className="flex items-center justify-center gap-4 flex-wrap mt-10">
             <button
               onClick={() => navigate("/register")}
-              className="bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-4 rounded-xl text-lg flex items-center shadow-lg shadow-blue-500/25"
+              className="bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-4 rounded-xl text-lg flex items-center shadow-lg hover:shadow-blue-600 "
             >
               Commencer
               <FaArrowRight className="ml-2 w-5 h-5" />
@@ -92,10 +92,12 @@ export const LandingPage: React.FC = () => {
             
             {/*Bouton Se connecter*/}    
             <button
-              onClick={() => navigate("/login")}
-              className="bg-[#1e1e26] border border-gray-800 hover:border-gray-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all"
+              onClick={() => navigate("/feed")}
+              className="bg-[#1e1e26] border border-gray-800 hover:border-gray-600 text-white px-8 py-4 rounded-xl text-lg flex items-center shadow-lg hover:shadow-purple-700 "
             >
-              Se connecter
+              Découvrir
+
+              <FaSearch className="ml-2 w-5 h-5" />
             </button>
           </div>
         </div>
@@ -105,7 +107,7 @@ export const LandingPage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="flex flex-col mb-12">
           <h2 className="text-3xl font-bold mb-2">Tendances actuelles</h2>
-          <div className="h-1 w-20 bg-gradient-to-r from-[#a855f7] to-[#ec4899] rounded-full"></div>
+          <div className="h-1 w-20 bg-linear-to-r from-[#a855f7] to-[#ec4899] rounded-full"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {FamousAlbums.map((album) => (
@@ -140,7 +142,7 @@ export const LandingPage: React.FC = () => {
       {/* SECTION : 4 CTA*/}       {/* TODO : Trouver une police Orbotron */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="bg-[#1e1e2e]/50 rounded-[20px] border border-gray-800 p-16 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-tr from-purple-500/5 to-transparent pointer-events-none" />
           {/* Titre */}
           <h2 className="text-4xl md:text-3xl  font-bold mb-6 tracking-tight text-white uppercase italic">
             Prêt à commencer votre aventure ?
