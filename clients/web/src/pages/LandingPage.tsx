@@ -96,10 +96,17 @@ export const LandingPage: React.FC = () => {
               className="bg-[#1e1e26] border border-gray-800 hover:border-gray-600 text-white px-8 py-4 rounded-xl text-lg flex items-center shadow-lg hover:shadow-purple-700 "
             >
               Découvrir
-
               <FaSearch className="ml-2 w-5 h-5" />
             </button>
           </div>
+
+          {/* Texte sous les boutons */}
+          <p className="mt-7 text-gray-400 text-xl">
+            Déjà un compte ?{" "}
+            <span onClick={() => navigate("/login")} className="text-[#3b82f6] hover:text-[#2563eb] cursor-pointer font-semibold">
+              Se connecter
+            </span>
+          </p>
         </div>
       </section>
 
