@@ -9,7 +9,6 @@ import Navbar from './components/Navbar';
 const App: React.FC = () => {
     return (
         <Router>
-            <main className="pt-16 min-h-screen bg-[#13131a]">
             <Routes>
                 {/* Par défaut, on affiche la page d'accueil */}
                 <Route path="/" element={<LandingPage />} />
@@ -21,7 +20,6 @@ const App: React.FC = () => {
                 {/* Route pour la page Login */}
                 <Route path="/login" element={<Login />} />
             </Routes>
-            </main>
         </Router>
     );
 };

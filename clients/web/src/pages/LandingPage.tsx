@@ -71,7 +71,6 @@ export const LandingPage: React.FC = () => {
           <div className="w-20 h-20 bg-linear-to-tr from-[#a855f7] to-[#ec4899] rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-purple-500/20">
             <FaMusic className="text-4xl text-white" />
           </div>
-          {/*TODO : Changer la police d'ecriture*/}
           <h1
               style={{ fontFamily: "'Michroma', sans-serif" }}
               className="font-logo text-6xl font-black tracking-tighter uppercase bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-8">
@@ -103,7 +102,7 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Texte sous les boutons */}
-          <p className="mt-7 text-gray-400 text-xl">
+          <p className="mt-7 text-gray-400 text-sg">
             Déjà un compte ?{" "}
             <span onClick={() => navigate("/login")} className="text-[#3b82f6] hover:text-[#2563eb] cursor-pointer font-semibold">
               Se connecter
