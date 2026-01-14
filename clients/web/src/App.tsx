@@ -9,7 +9,6 @@ import Navbar from './components/Navbar';
 const App: React.FC = () => {
     return (
         <Router>
-            <Navbar />
             <main className="pt-16 min-h-screen bg-[#13131a]">
             <Routes>
                 {/* Par défaut, on affiche la page d'accueil */}
