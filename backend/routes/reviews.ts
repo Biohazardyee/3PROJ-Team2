@@ -1,6 +1,6 @@
 import express from 'express';
 import ReviewController from '../modules/reviews/review.controller.js';
-import ReviewLikeController from "../modules/reviews/review.like.controller";
+import ReviewLikeController from "../modules/reviews/review.like.controller.js";
 
 var router = express.Router();
 

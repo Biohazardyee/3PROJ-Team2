@@ -215,7 +215,7 @@ model Notification {
 
 model BannedUsers {
   id      String @id @default(uuid())
-  user    User   @relation(fields: [user_id], references: [id])
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String @unique
   content String @db.VarChar(255)
 }

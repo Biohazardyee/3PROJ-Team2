@@ -11,6 +11,8 @@ import userRouter from './routes/users.js';
 import playlistRouter from './routes/playlists.js';
 import mediaRouter from './routes/medias.js';
 import reviewRouter from './routes/reviews.js';
+import banUserRouter from './routes/ban.users.js';
+import reportRouter from './routes/reports.js';
 
 import { ApiError, InternalError } from './utils/errors.js';
 
@@ -32,6 +34,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // back-end routes
+app.use('/reports', reportRouter);
+app.use('/bans', banUserRouter);
 app.use('/medias', mediaRouter);
 app.use('/playlists', playlistRouter);
 app.use('/users', userRouter);

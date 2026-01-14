@@ -34,7 +34,7 @@ class UserController extends Controller {
                 throw new BadRequest('Email, username and password are required');
             }
 
-            const user = await this.service.create({
+            const user = await this.service.add({
                 email,
                 username,
                 password,
@@ -172,9 +172,9 @@ class UserController extends Controller {
                 throw new BadRequest("No fields provided")
             }
 
-            const user = this.service.update(id, data)
+            const user = await this.service.update(id, data);
 
-            res.json({
+            res.status(200).json({
                 message: 'User updated successfully',
                 user,
             });

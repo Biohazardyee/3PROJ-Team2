@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 
 export class UserService {
 
-    async create(data: any) {
+    async add(data: any) {
 
         if (isEmptyString(data.email)) {
             throw new BadRequest("Email cannot be empty");
