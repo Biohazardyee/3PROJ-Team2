@@ -72,7 +72,9 @@ export const LandingPage: React.FC = () => {
             <FaMusic className="text-4xl text-white" />
           </div>
           {/*TODO : Changer la police d'ecriture*/}
-          <h1 className="text-6xl md:text-7xl font-black mb-6 tracking-tighter bg-linear-to-r from-[#a855f7] via-[#ec4899] to-[#a855f7] bg-clip-text text-transparent">
+          <h1
+              style={{ fontFamily: "'Michroma', sans-serif" }}
+              className="font-logo text-6xl font-black tracking-tighter uppercase bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-8">
             SUPCONTENT 
           </h1>
           
