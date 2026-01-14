@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaBook, FaStar, FaUsers, FaChartLine, FaGlobe, FaMusic, FaArrowRight, FaSearch } from "react-icons/fa";
 import { AlbumCard } from "../components/AlbumCard"; 

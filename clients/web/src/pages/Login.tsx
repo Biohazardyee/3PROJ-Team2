@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { FaEnvelope, FaLock, FaGoogle, FaGithub, FaFacebookF } from 'react-icons/fa';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { FaMusic } from "react-icons/fa";
 
 export const Footer: React.FC = () => {
