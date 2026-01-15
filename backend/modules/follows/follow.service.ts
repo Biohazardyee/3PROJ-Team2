@@ -1,0 +1,110 @@
+import { prisma } from '../../config/database.js';
+import { BadRequest, NotFound } from '../../utils/errors.js';
+import { isEmptyString } from '../../utils/helpers.js';
+
+export class FollowService {
+
+    async create(data: { user_id: string; follow_user_id: string }) {
+        const { user_id, follow_user_id } = data;
+
+        if (isEmptyString(user_id) || isEmptyString(follow_user_id)) {
+            throw new BadRequest('user_id and follow_user_id are required');
+        }
+
+        if (user_id === follow_user_id) {
+            throw new BadRequest('You cannot follow yourself');
+        }
+
+        // Check users exist
+        const [user, target] = await Promise.all([
+            prisma.user.findUnique({ where: { id: user_id } }),
+            prisma.user.findUnique({ where: { id: follow_user_id } }),
+        ]);
+
+        if (!user) throw new BadRequest('User not found');
+        if (!target) throw new BadRequest('Target user not found');
+
+        // Check already following
+        const exists = await prisma.follow.findUnique({
+            where: {
+                user_id_follow_user_id: {
+                    user_id,
+                    follow_user_id,
+                },
+            },
+        });
+
+        if (exists) {
+            throw new BadRequest('Already following this user');
+        }
+
+        return prisma.follow.create({
+            data: { user_id, follow_user_id },
+            select: {
+                user_id: true,
+                follow_user_id: true,
+                created_at: true,
+            },
+        });
+    }
+
+    async delete(user_id: string, follow_user_id: string) {
+
+        if (isEmptyString(user_id) || isEmptyString(follow_user_id)) {
+            throw new BadRequest('user_id and follow_user_id are required');
+        }
+
+        try {
+            return await prisma.follow.delete({
+                where: {
+                    user_id_follow_user_id: {
+                        user_id,
+                        follow_user_id,
+                    },
+                },
+                select: {
+                    user_id: true,
+                    follow_user_id: true,
+                },
+            });
+        } catch {
+            throw new NotFound('Follow relation not found');
+        }
+    }
+
+    async getFollowers(user_id: string) {
+
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('user_id is required');
+        }
+
+        return prisma.follow.findMany({
+            where: { follow_user_id: user_id },
+            select: {
+                user: {
+                    select: { id: true, username: true },
+                },
+                created_at: true,
+            },
+        });
+    }
+
+    async getFollowing(user_id: string) {
+
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('user_id is required');
+        }
+
+        return prisma.follow.findMany({
+            where: { user_id },
+            select: {
+                follow_user: {
+                    select: { id: true, username: true },
+                },
+                created_at: true,
+            },
+        });
+    }
+}
+
+export const followService = new FollowService();

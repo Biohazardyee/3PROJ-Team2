@@ -13,6 +13,10 @@ import mediaRouter from './routes/medias.js';
 import reviewRouter from './routes/reviews.js';
 import banUserRouter from './routes/ban.users.js';
 import reportRouter from './routes/reports.js';
+import playlistItemRouter from './routes/playlists.items.js';
+import notificationRouter from './routes/notifications.js';
+import activitiesRouter from './routes/activities.js';
+import followRouter from './routes/follows.js';
 
 import { ApiError, InternalError } from './utils/errors.js';
 
@@ -34,6 +38,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // back-end routes
+app.use('/follows', followRouter);
+app.use('/activities', activitiesRouter);
+app.use('/notifications', notificationRouter);
+app.use('/playlist-items', playlistItemRouter);
 app.use('/reports', reportRouter);
 app.use('/bans', banUserRouter);
 app.use('/medias', mediaRouter);
