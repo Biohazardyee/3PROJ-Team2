@@ -61,7 +61,7 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#13131a] text-white font-sans">
       {/* SECTION 1 : Logo + boutons */}
-      <section className="relative overflow-hidden pt-20 pb-32">
+      <section className="h-screen w-full flex flex-col items-center justify-center space-y-8">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute w-125 h-125 bg-purple-600/10 rounded-full blur-[120px] -top-48 -left-48 animate-pulse" />
           <div className="absolute w-125 h-125 bg-pink-600/10 rounded-full blur-[120px] -bottom-48 -right-48 animate-pulse" />
