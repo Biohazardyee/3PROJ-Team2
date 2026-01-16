@@ -4,11 +4,9 @@ import { Controller } from '../controller.js';
 import { BadRequest } from '../../utils/errors.js';
 import { followService } from './follow.service.js';
 
-class FollowController  {
+class FollowController {
 
-    constructor(private readonly service = followService) {
-      
-    }
+    constructor(private readonly service = followService) { }
 
     async create(req: Request, res: Response, next: NextFunction) {
         try {
@@ -33,7 +31,12 @@ class FollowController  {
         try {
             const { user_id, follow_user_id } = req.body;
 
+            if (!user_id || !follow_user_id) {
+                throw new BadRequest('user_id and follow_user_id are required');
+            }
+
             const unfollow = await this.service.delete(user_id, follow_user_id);
+
             res.status(200).json({
                 message: 'User unfollowed successfully',
                 unfollow,
@@ -46,6 +49,8 @@ class FollowController  {
     async getFollowers(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = req.params;
+
+            if (!user_id) throw new BadRequest('user_id is required');
 
             const followers = await this.service.getFollowers(user_id);
 
@@ -62,6 +67,8 @@ class FollowController  {
         try {
             const { user_id } = req.params;
 
+            if (!user_id) throw new BadRequest('user_id is required');
+
             const following = await this.service.getFollowing(user_id);
 
             res.status(200).json({
@@ -73,5 +80,4 @@ class FollowController  {
         }
     }
 }
-
 export default new FollowController();

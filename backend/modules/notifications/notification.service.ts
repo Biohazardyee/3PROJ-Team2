@@ -12,43 +12,39 @@ export class NotificationService {
         review_id?: string;
         media_id?: string;
     }) {
+        const {
+            user_id,
+            action,
+            related_user_id,
+            review_id,
+            media_id
+        } = data;
 
-        const { user_id, action, related_user_id, review_id, media_id } = data;
 
-        if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
-        }
+        if (isEmptyString(user_id)) throw new BadRequest('user_id is required');
 
         if (!action || !Object.values(NotificationAction).includes(action)) {
             throw new BadRequest('Invalid notification action');
         }
 
-        // Check main user exists
-        const user = await prisma.user.findUnique({ where: { id: user_id } });
-        if (!user) {
-            throw new BadRequest('User not found')
-        };
 
-        // Optional relations validation
+        const user = await prisma.user.findUnique({ where: { id: user_id } });
+        if (!user) throw new BadRequest('User not found');
+
+
         if (related_user_id) {
             const relatedUser = await prisma.user.findUnique({ where: { id: related_user_id } });
-            if (!relatedUser) {
-                throw new BadRequest('Related user not found')
-            };
+            if (!relatedUser) throw new BadRequest('Related user not found');
         }
 
         if (review_id) {
             const review = await prisma.review.findUnique({ where: { id: review_id } });
-            if (!review) {
-                throw new BadRequest('Review not found')
-            };
+            if (!review) throw new BadRequest('Review not found');
         }
 
         if (media_id) {
             const media = await prisma.media.findUnique({ where: { id: media_id } });
-            if (!media) {
-                throw new BadRequest('Media not found')
-            };
+            if (!media) throw new BadRequest('Media not found');
         }
 
         return prisma.notification.create({
@@ -59,20 +55,18 @@ export class NotificationService {
                 action: true,
                 is_read: true,
                 created_at: true,
+                related_user_id: true,
+                review_id: true,
+                media_id: true,
             },
         });
     }
 
     async getByUserId(user_id: string) {
-
-        if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
-        }
+        if (isEmptyString(user_id)) throw new BadRequest('user_id is required');
 
         const user = await prisma.user.findUnique({ where: { id: user_id } });
-        if (!user) {
-            throw new NotFound('User not found')
-        };
+        if (!user) throw new NotFound('User not found');
 
         return prisma.notification.findMany({
             where: { user_id },
@@ -83,45 +77,27 @@ export class NotificationService {
                 is_read: true,
                 read_at: true,
                 created_at: true,
-                related_user: {
-                    select: {
-                        id: true,
-                        username: true
-                    },
-                },
-                review: {
-                    select: {
-                        id: true,
-                        rating: true
-                    },
-                },
-                media: {
-                    select: {
-                        id: true,
-                        api_id: true
-                    },
-                },
+                related_user: { select: { id: true, username: true } },
+                review: { select: { id: true, rating: true } },
+                media: { select: { id: true, api_id: true } },
             },
         });
     }
 
     async update(id: string) {
-
-        if (isEmptyString(id)) {
-            throw new BadRequest('Notification id is required');
-        }
+        if (isEmptyString(id)) throw new BadRequest('Notification id is required');
 
         try {
             return await prisma.notification.update({
                 where: { id },
                 data: {
                     is_read: true,
-                    read_at: new Date(),
+                    read_at: new Date()
                 },
                 select: {
                     id: true,
                     is_read: true,
-                    read_at: true,
+                    read_at: true
                 },
             });
         } catch {
@@ -130,10 +106,7 @@ export class NotificationService {
     }
 
     async delete(id: string) {
-
-        if (isEmptyString(id)) {
-            throw new BadRequest('Notification id is required');
-        }
+        if (isEmptyString(id)) throw new BadRequest('Notification id is required');
 
         try {
             return await prisma.notification.delete({
@@ -148,13 +121,36 @@ export class NotificationService {
     async getAll() {
         return prisma.notification.findMany({
             orderBy: { created_at: 'desc' },
+            select: {
+                id: true,
+                user_id: true,
+                action: true,
+                is_read: true,
+                created_at: true,
+            },
         });
     }
 
     async getById(id: string) {
-        return prisma.notification.findUnique({
+        if (isEmptyString(id)) throw new BadRequest('Notification id is required');
+
+        const notification = await prisma.notification.findUnique({
             where: { id },
+            select: {
+                id: true,
+                user_id: true,
+                action: true,
+                is_read: true,
+                read_at: true,
+                created_at: true,
+                related_user_id: true,
+                review_id: true,
+                media_id: true,
+            },
         });
+
+        if (!notification) throw new NotFound('Notification not found');
+        return notification;
     }
 }
 

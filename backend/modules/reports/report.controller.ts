@@ -3,94 +3,82 @@ import { Controller } from '../controller.js';
 import { reportService } from './report.service.js';
 import { BadRequest, NotFound } from '../../utils/errors.js';
 
-class ReportController extends Controller {
+class ReportController {
 
-    constructor(private readonly service = reportService) {
-        super();
-    }
+    constructor(private readonly service = reportService) { }
 
     async add(req: Request, res: Response, next: NextFunction) {
         try {
             const { reporter_id, review_id, reason, reason_type } = req.body;
 
             if (!reporter_id || !reason || !reason_type) {
-                throw new BadRequest("Reporter id, reason and reason type are required");
+                throw new BadRequest('reporter_id, reason and reason_type are required');
             }
 
-            const report = await this.service.create({
-                reporter_id,
-                review_id,
-                reason,
-                reason_type
-            });
+            const report = await this.service.create({ reporter_id, review_id, reason, reason_type });
 
-            res.status(201).json({
-                message: "Report created successfully",
-                report
-            });
-
+            res.status(201).json({ message: 'Report created successfully', report });
         } catch (error) {
             next(error);
         }
     }
-
 
     async getAll(_: Request, res: Response, next: NextFunction) {
         try {
             const reports = await this.service.getAll();
-            res.status(200).json(reports);
+            res.status(200).json({ message: 'Reports retrieved successfully', reports });
         } catch (error) {
             next(error);
         }
     }
-
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const report = await this.service.getById(req.params.id);
-            if (!report) throw new NotFound("Report not found");
-            res.status(200).json(report);
+            const { id } = req.params;
+            if (!id) throw new BadRequest('Report id is required');
+
+            const report = await this.service.getById(id);
+            res.status(200).json({ message: 'Report retrieved successfully', report });
         } catch (error) {
             next(error);
         }
     }
-
 
     async getByReview(req: Request, res: Response, next: NextFunction) {
         try {
-            const reports = await this.service.getByReview(req.params.review_id);
-            res.status(200).json(reports);
+            const { review_id } = req.params;
+            if (!review_id) throw new BadRequest('review_id is required');
+
+            const reports = await this.service.getByReview(review_id);
+            res.status(200).json({ message: 'Reports retrieved successfully', reports });
         } catch (error) {
             next(error);
         }
     }
-
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const updated = await this.service.update(req.params.id);
-            res.status(200).json({
-                message: "Report marked as checked",
-                report: updated
-            });
+            const { id } = req.params;
+            if (!id) throw new BadRequest('Report id is required');
+
+            const report = await this.service.update(id);
+            res.status(200).json({ message: 'Report marked as checked', report });
         } catch (error) {
             next(error);
         }
     }
-
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const deleted = await this.service.delete(req.params.id);
-            res.status(200).json({
-                message: "Report deleted",
-                report: deleted
-            });
+            const { id } = req.params;
+            if (!id) throw new BadRequest('Report id is required');
+
+            const report = await this.service.delete(id);
+            res.status(200).json({ message: 'Report deleted', report });
         } catch (error) {
             next(error);
         }
     }
-
 }
 
 export default new ReportController();
