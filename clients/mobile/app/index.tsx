@@ -1,4 +1,4 @@
-import RegisterMobile from '../src/RegisterMobile';
+import RegisterMobile from '../src/pages/RegisterMobile';
 
 export default function Page() {
   return <RegisterMobile />;

@@ -111,7 +111,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* SECTION : 2 Les albums en tendances */}
+      {/* SECTION 2 : Les albums en tendances */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="flex flex-col mb-12">
           <h2 className="text-3xl font-bold mb-2">Tendances actuelles</h2>

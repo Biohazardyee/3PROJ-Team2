@@ -2,8 +2,8 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ButtonMobile } from './components/ButtonMobile';
-import { InputMobile } from './components/InputMobile';
+import { ButtonMobile } from '../components/ButtonMobile';
+import { InputMobile } from '../components/InputMobile';
 
 const RegisterMobile: React.FC = () => {
   const router = useRouter();
