@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface InputProps {
   label: string;
@@ -13,7 +13,7 @@ export const InputMobile: React.FC<InputProps> = ({ label, placeholder, icon, se
   <View style={styles.container}>
     <Text style={styles.label}>{label}</Text>
     <View style={styles.wrapper}>
-      <Icon name={icon} size={20} color="#666" />
+      <Ionicons name={icon} size={20} color="#FFF" />
       <TextInput 
         style={styles.input} 
         placeholder={placeholder} 

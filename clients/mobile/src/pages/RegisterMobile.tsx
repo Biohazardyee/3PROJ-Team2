@@ -1,9 +1,10 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ButtonMobile } from '../components/ButtonMobile';
 import { InputMobile } from '../components/InputMobile';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from "@expo/vector-icons";
 
 const RegisterMobile: React.FC = () => {
   const router = useRouter();
@@ -12,14 +13,25 @@ const RegisterMobile: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
-          <View style={styles.logoBadge}><Text style={styles.logoText}>♪</Text></View>
+        <LinearGradient
+          colors={['#6366f1', '#ec4899']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.logoBadge}
+         >
+          <Ionicons
+              name="musical-notes-outline"
+              size={35}
+              color="white"
+           />
+        </LinearGradient>
           <Text style={styles.title}>Créer votre compte</Text>
           <Text style={styles.subtitle}>Rejoignez la communauté musicale</Text>
         </View>
 
-        <InputMobile label="E-mail" placeholder="votre@email.com" icon="email-outline" />
-        <InputMobile label="Nom d'utilisateur" placeholder="mélomane" icon="account-outline" />
-        <InputMobile label="Mot de passe" placeholder="••••••••" icon="lock-outline" secureTextEntry />
+        <InputMobile label="E-mail" placeholder="votre@email.com" icon="mail-outline" />
+        <InputMobile label="Nom d'utilisateur" placeholder="fan" icon="person-circle-outline" />
+        <InputMobile label="Mot de passe" placeholder="••••••••" icon="lock-closed-outline" secureTextEntry />
 
         <ButtonMobile title="Créer le compte" style={{ marginTop: 10 }} />
 
@@ -28,9 +40,18 @@ const RegisterMobile: React.FC = () => {
         </View>
 
         <View style={styles.socialRow}>
-          <ButtonMobile variant="social"><Icon name="google" size={24} color="#FFF" /></ButtonMobile>
-          <ButtonMobile variant="social" style={{ marginHorizontal: 10 }}><Icon name="github" size={24} color="#FFF" /></ButtonMobile>
-          <ButtonMobile variant="social"><Icon name="facebook" size={24} color="#FFF" /></ButtonMobile>
+          <ButtonMobile variant="social">
+            <Ionicons name="logo-google" size={24} color="#FFF" />
+          </ButtonMobile>
+
+          <ButtonMobile variant="social" style={{ marginHorizontal: 10 }}>
+            <Ionicons name="logo-github" size={24} color="#FFF" />
+          </ButtonMobile>
+
+          <ButtonMobile variant="social">
+            <Ionicons name="logo-facebook" size={24} color="#FFF" />
+          </ButtonMobile>
+
         </View>
 
         <TouchableOpacity onPress={() => router.push('/login')} style={styles.footer}>
@@ -45,8 +66,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#13131a' },
   scroll: { padding: 25 },
   header: { alignItems: 'center', marginBottom: 30 },
-  logoBadge: { width: 60, height: 60, backgroundColor: '#a855f7', borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
-  logoText: { fontSize: 30, color: '#FFF' },
+  logoBadge: { width: 60, height: 60, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
   title: { color: '#FFF', fontSize: 24, fontWeight: 'bold' },
   subtitle: { color: '#888', fontSize: 14, marginTop: 5 },
   separator: { flexDirection: 'row', alignItems: 'center', marginVertical: 25 },

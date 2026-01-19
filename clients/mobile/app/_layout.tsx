@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import {View, StyleSheet, SafeAreaView} from 'react-native';
 import HeaderStart from "@/src/components/HeaderStart";
+import Footer from "@/src/components/Footer";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 export default function RootLayout() {
@@ -13,6 +14,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" />
           <Stack.Screen name="login" />
         </Stack>
+        <Footer />
       </SafeAreaView>
   );
 }

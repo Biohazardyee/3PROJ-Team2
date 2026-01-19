@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text,TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from "@expo/vector-icons";
 
 const HeaderStart: React.FC = () => {
     return (
@@ -13,12 +14,24 @@ const HeaderStart: React.FC = () => {
                     end={{ x: 1, y: 1 }}
                     style={styles.logo}
                 >
-                    {/* Logo A changer */}
-                    <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold' }}>♪</Text>
+                    {/* Logo */}
+                    <Ionicons
+                        name="musical-notes-outline"
+                        size={24}
+                        color="white"
+                    />
                 </LinearGradient>
                 {/* Nom de l'app */}
                 <Text style={styles.name}>SUPCONTENT</Text>
             </View>
+
+            <TouchableOpacity onPress={() => router.push('/notification')} style={styles.icon}>
+                <Ionicons
+                    name="notifications-outline"
+                    size={26}
+                    color="white"
+                />
+            </TouchableOpacity>
         </View>
     );
 };
@@ -36,7 +49,7 @@ const styles = StyleSheet.create({
     content: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 20,
+        gap: 10,
     },
     logo: {
         width: 40,
@@ -46,7 +59,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     name: {
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: 'bold',
         color: '#ad46ff',
         letterSpacing: 0.5,

@@ -1,0 +1,78 @@
+import React from 'react';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Ionicons} from '@expo/vector-icons';
+import {useRouter, usePathname} from "expo-router";
+import HeaderStart from "@/src/components/HeaderStart";
+
+const Footer: React.FC = () => {
+    const router = useRouter();
+    const pathname = usePathname();
+
+    return(
+        <View style={styles.footer}>
+            {/* Découvrir */}
+            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+                <Ionicons
+                    name="home-outline"
+                    size={26}
+                    color={pathname === '/decouvrir' ? '#6366f1' : '#94a3b8'}
+                />
+            </TouchableOpacity>
+
+            {/* Feed */}
+            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+                <Ionicons
+                    name="rocket-outline"
+                    size={26}
+                    color={pathname === '/feed' ? '#ec4899' : '#94a3b8'}
+                />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+                <Ionicons
+                    name="paper-plane-outline"
+                    size={26}
+                    color={pathname === '/feed' ? '#ec4899' : '#94a3b8'}
+                />
+            </TouchableOpacity>
+
+            {/* Bibliotheque */}
+            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+                <Ionicons
+                    name="library-outline"
+                    size={26}
+                    color="#94a3b8"
+                />
+            </TouchableOpacity>
+
+            {/* Profil */}
+            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+                <Ionicons
+                    name="person-outline"
+                    size={26}
+                    color="#94a3b8"
+                />
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: '#13141c',
+        paddingVertical: 15,
+        borderTopWidth: 0.5,
+        borderTopColor: '#333'
+    },
+    icon: {
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+    }
+})
+
+export default Footer;
