@@ -12,7 +12,9 @@ class NotificationController {
         try {
             const { user_id, action, related_user_id, review_id, media_id } = req.body;
 
-            if (!user_id || !action) throw new BadRequest('user_id and action are required');
+            if (!user_id || !action) {
+                throw new BadRequest('user_id and action are required');
+            }
 
             const notification = await this.service.create({
                 user_id,
@@ -31,9 +33,12 @@ class NotificationController {
     async getByUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = req.params;
-            if (!user_id) throw new BadRequest('user_id is required');
+            if (!user_id) { 
+                throw new BadRequest('user_id is required');
+            }
 
             const notifications = await this.service.getByUserId(user_id);
+
             res.status(200).json({ message: 'Notifications retrieved successfully', notifications });
         } catch (error) {
             next(error);
@@ -43,7 +48,9 @@ class NotificationController {
     async update(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) throw new BadRequest('Notification id is required');
+            if (!id) {
+                throw new BadRequest('Notification id is required');
+            }
 
             const notification = await this.service.update(id);
             res.status(200).json({ message: 'Notification marked as read', notification });
@@ -55,7 +62,9 @@ class NotificationController {
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) throw new BadRequest('Notification id is required');
+            if (!id) {
+                throw new BadRequest('Notification id is required');
+            }
 
             const notification = await this.service.delete(id);
             res.status(200).json({ message: 'Notification deleted', notification });
@@ -76,7 +85,9 @@ class NotificationController {
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) throw new BadRequest('Notification id is required');
+            if (!id) {
+                throw new BadRequest('Notification id is required');
+            }
 
             const notification = await this.service.getById(id);
             res.status(200).json({ message: 'Notification retrieved successfully', notification });

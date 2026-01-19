@@ -17,19 +17,41 @@ export class ActivityService {
         const { user_id, action, target_user_id, review_id, media_id, rating_from_user } = data;
 
 
-        if (isEmptyString(user_id)) throw new BadRequest('user_id is required');
-        if (!action || !Object.values(ActivityAction).includes(action))
-            throw new BadRequest('Invalid activity action');
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('user_id is required')
+        };
+
+        if (!action || !Object.values(ActivityAction).includes(action)) {
+            throw new BadRequest('Invalid activity action')
+        };
 
 
-        const user = await prisma.user.findUnique({ where: { id: user_id } });
-        if (!user) throw new BadRequest('User not found');
+        const user = await prisma.user.findUnique({
+            where:
+            {
+                id: user_id
+            }
+        });
+
+        if (!user) {
+            throw new BadRequest('User not found');
+        }
 
 
         if (target_user_id) {
-            if (target_user_id === user_id) throw new BadRequest('target_user_id cannot be the same as user_id');
-            const targetUser = await prisma.user.findUnique({ where: { id: target_user_id } });
-            if (!targetUser) throw new BadRequest('Target user not found');
+            if (target_user_id === user_id) {
+                throw new BadRequest('target_user_id cannot be the same as user_id')
+            };
+
+            const targetUser = await prisma.user.findUnique({
+                where: {
+                    id: target_user_id
+                }
+            });
+
+            if (!targetUser) {
+                throw new BadRequest('Target user not found');
+            }
         }
 
 
@@ -65,10 +87,21 @@ export class ActivityService {
     }
 
     async getByUserFeed(user_id: string) {
-        if (isEmptyString(user_id)) throw new BadRequest('user_id is required');
 
-        const user = await prisma.user.findUnique({ where: { id: user_id } });
-        if (!user) throw new NotFound('User not found');
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('user_id is required')
+        };
+
+        const user = await prisma.user.findUnique({
+            where:
+            {
+                id: user_id
+            }
+        });
+
+        if (!user) {
+            throw new NotFound('User not found')
+        };
 
         // Get activities of user + users they follow
         const following = await prisma.follow.findMany({
@@ -100,7 +133,9 @@ export class ActivityService {
 
     async delete(id: string) {
 
-        if (isEmptyString(id)) throw new BadRequest('Activity id is required');
+        if (isEmptyString(id)) {
+            throw new BadRequest('Activity id is required');
+        }
 
         try {
             return await prisma.activity.delete({

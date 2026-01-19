@@ -21,30 +21,50 @@ export class NotificationService {
         } = data;
 
 
-        if (isEmptyString(user_id)) throw new BadRequest('user_id is required');
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('user_id is required');
+        }
 
         if (!action || !Object.values(NotificationAction).includes(action)) {
             throw new BadRequest('Invalid notification action');
         }
 
 
-        const user = await prisma.user.findUnique({ where: { id: user_id } });
-        if (!user) throw new BadRequest('User not found');
+        const user = await prisma.user.findUnique({
+            where: {
+                id: user_id
+            }
+        });
+
+        if (!user) {
+            throw new BadRequest('User not found');
+        }
 
 
         if (related_user_id) {
-            const relatedUser = await prisma.user.findUnique({ where: { id: related_user_id } });
-            if (!relatedUser) throw new BadRequest('Related user not found');
+            const relatedUser = await prisma.user.findUnique({
+                where: {
+                    id: related_user_id
+                }
+            });
+
+            if (!relatedUser) {
+                throw new BadRequest('Related user not found');
+            }
         }
 
         if (review_id) {
             const review = await prisma.review.findUnique({ where: { id: review_id } });
-            if (!review) throw new BadRequest('Review not found');
+            if (!review) {
+                throw new BadRequest('Review not found');
+            }
         }
 
         if (media_id) {
             const media = await prisma.media.findUnique({ where: { id: media_id } });
-            if (!media) throw new BadRequest('Media not found');
+            if (!media) {
+                throw new BadRequest('Media not found');
+            }
         }
 
         return prisma.notification.create({
@@ -63,10 +83,19 @@ export class NotificationService {
     }
 
     async getByUserId(user_id: string) {
-        if (isEmptyString(user_id)) throw new BadRequest('user_id is required');
 
-        const user = await prisma.user.findUnique({ where: { id: user_id } });
-        if (!user) throw new NotFound('User not found');
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('user_id is required');
+        }
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: user_id
+            }
+        });
+        if (!user) {
+            throw new NotFound('User not found');
+        }
 
         return prisma.notification.findMany({
             where: { user_id },
@@ -85,7 +114,9 @@ export class NotificationService {
     }
 
     async update(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Notification id is required');
+        if (isEmptyString(id)) {
+            throw new BadRequest('Notification id is required');
+        }
 
         try {
             return await prisma.notification.update({
@@ -106,7 +137,10 @@ export class NotificationService {
     }
 
     async delete(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Notification id is required');
+
+        if (isEmptyString(id)) {
+            throw new BadRequest('Notification id is required');
+        }
 
         try {
             return await prisma.notification.delete({
@@ -132,7 +166,10 @@ export class NotificationService {
     }
 
     async getById(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Notification id is required');
+
+        if (isEmptyString(id)) {
+            throw new BadRequest('Notification id is required');
+        }
 
         const notification = await prisma.notification.findUnique({
             where: { id },
@@ -149,7 +186,10 @@ export class NotificationService {
             },
         });
 
-        if (!notification) throw new NotFound('Notification not found');
+        if (!notification) {
+            throw new NotFound('Notification not found');
+        }
+        
         return notification;
     }
 }

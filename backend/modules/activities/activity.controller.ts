@@ -11,6 +11,13 @@ class ActivityController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction) {
         try {
+
+            const { user_id, action, target_user_id, review_id, media_id, rating_from_user } = req.body;
+
+            if (!user_id || !action) {
+                throw new BadRequest('user_id and action are required');
+            }
+
             // checks are handled in service, no point in doing it again here, would be verbose
             const activity = await this.service.create(req.body);
             res.status(201).json({
@@ -25,8 +32,13 @@ class ActivityController extends Controller {
     async getFeed(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = req.params;
-            if (!user_id) throw new BadRequest('user_id is required');
+
+            if (!user_id) {
+                throw new BadRequest('user_id is required')
+            }
+
             const activities = await this.service.getByUserFeed(user_id);
+
             res.status(200).json({
                 message: 'Activity feed retrieved successfully',
                 activities,
@@ -39,7 +51,13 @@ class ActivityController extends Controller {
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
+
+            if (!id) {
+                throw new BadRequest('Activity id is required');
+            }
+
             const activity = await this.service.delete(id);
+
             res.status(200).json({
                 message: 'Activity deleted',
                 activity,
@@ -61,6 +79,11 @@ class ActivityController extends Controller {
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
+            
+            if (!id) {
+                throw new BadRequest('Activity id is required');
+            }
+
             const activity = await this.service.getById(id);
             res.status(200).json(activity);
         } catch (error) {

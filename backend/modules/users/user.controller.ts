@@ -1,13 +1,13 @@
-import type {Request, Response, NextFunction} from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import {Controller} from '../controller.js';
-import {Unauthorized, BadRequest} from '../../utils/errors.js';
-import {userService} from './user.service.js';
+import { Controller } from '../controller.js';
+import { Unauthorized, BadRequest } from '../../utils/errors.js';
+import { userService } from './user.service.js';
 
-import {NotFound} from '../../utils/errors.js';
+import { NotFound } from '../../utils/errors.js';
 
 dotenv.config();
 
@@ -58,7 +58,7 @@ class UserController extends Controller {
 
     async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const {email, password} = req.body;
+            const { email, password } = req.body;
 
             if (!email || !password) {
                 throw new BadRequest('Email and password required');
@@ -84,7 +84,7 @@ class UserController extends Controller {
                     role: user.role,
                 },
                 process.env.JWT_SECRET!,
-                {expiresIn: '1h'}
+                { expiresIn: '1h' }
             );
 
             res.json({

@@ -5,6 +5,7 @@ import { isEmptyString } from '../../utils/helpers.js';
 export class FollowService {
 
     async create(data: { user_id: string; follow_user_id: string }) {
+
         const { user_id, follow_user_id } = data;
 
 
@@ -22,15 +23,26 @@ export class FollowService {
             prisma.user.findUnique({ where: { id: follow_user_id } }),
         ]);
 
-        if (!user) throw new BadRequest('User not found');
-        if (!target) throw new BadRequest('Target user not found');
+        if (!user) {
+            throw new BadRequest('User not found');
+        }
 
+        if (!target) {
+            throw new BadRequest('Target user not found');
+        }
 
         const exists = await prisma.follow.findUnique({
-            where: { user_id_follow_user_id: { user_id, follow_user_id } },
+            where: {
+                user_id_follow_user_id: {
+                    user_id,
+                    follow_user_id
+                }
+            },
         });
 
-        if (exists) throw new BadRequest('Already following this user');
+        if (exists) {
+            throw new BadRequest('Already following this user');
+        }
 
         return prisma.follow.create({
             data: { user_id, follow_user_id },
@@ -43,13 +55,19 @@ export class FollowService {
     }
 
     async delete(user_id: string, follow_user_id: string) {
+
         if (isEmptyString(user_id) || isEmptyString(follow_user_id)) {
             throw new BadRequest('user_id and follow_user_id are required');
         }
 
         try {
             return await prisma.follow.delete({
-                where: { user_id_follow_user_id: { user_id, follow_user_id } },
+                where: {
+                    user_id_follow_user_id: {
+                        user_id,
+                        follow_user_id
+                    }
+                },
                 select: {
                     user_id: true,
                     follow_user_id: true,
@@ -61,6 +79,7 @@ export class FollowService {
     }
 
     async getFollowers(user_id: string) {
+
         if (isEmptyString(user_id)) throw new BadRequest('user_id is required');
 
         const user = await prisma.user.findUnique({ where: { id: user_id } });
@@ -70,23 +89,43 @@ export class FollowService {
             where: { follow_user_id: user_id },
             orderBy: { created_at: 'desc' },
             select: {
-                user: { select: { id: true, username: true } },
+                user: {
+                    select: {
+                        id: true,
+                        username: true
+                    }
+                },
                 created_at: true,
             },
         });
     }
 
     async getFollowing(user_id: string) {
-        if (isEmptyString(user_id)) throw new BadRequest('user_id is required');
 
-        const user = await prisma.user.findUnique({ where: { id: user_id } });
-        if (!user) throw new NotFound('User not found');
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('user_id is required');
+        }
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: user_id
+            }
+        });
+
+        if (!user) {
+            throw new NotFound('User not found')
+        }
 
         return prisma.follow.findMany({
             where: { user_id },
             orderBy: { created_at: 'desc' },
             select: {
-                follow_user: { select: { id: true, username: true } },
+                follow_user: {
+                    select: {
+                        id: true,
+                        username: true
+                    }
+                },
                 created_at: true,
             },
         });
