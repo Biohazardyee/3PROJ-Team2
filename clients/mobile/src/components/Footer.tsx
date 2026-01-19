@@ -3,6 +3,7 @@ import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter, usePathname} from "expo-router";
 import HeaderStart from "@/src/components/HeaderStart";
+import AuthGuard from '@/src/components/AuthGuard';
 
 const Footer: React.FC = () => {
     const router = useRouter();
@@ -11,7 +12,7 @@ const Footer: React.FC = () => {
     return(
         <View style={styles.footer}>
             {/* Découvrir */}
-            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/login')} style={styles.icon}>
                 <Ionicons
                     name="home-outline"
                     size={26}
@@ -20,7 +21,7 @@ const Footer: React.FC = () => {
             </TouchableOpacity>
 
             {/* Feed */}
-            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/restriction')} style={styles.icon}>
                 <Ionicons
                     name="rocket-outline"
                     size={26}
@@ -28,7 +29,7 @@ const Footer: React.FC = () => {
                 />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/restriction')} style={styles.icon}>
                 <Ionicons
                     name="paper-plane-outline"
                     size={26}
@@ -37,7 +38,7 @@ const Footer: React.FC = () => {
             </TouchableOpacity>
 
             {/* Bibliotheque */}
-            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/restriction')} style={styles.icon}>
                 <Ionicons
                     name="library-outline"
                     size={26}
@@ -46,7 +47,7 @@ const Footer: React.FC = () => {
             </TouchableOpacity>
 
             {/* Profil */}
-            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/restriction')} style={styles.icon}>
                 <Ionicons
                     name="person-outline"
                     size={26}
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        backgroundColor: '#13141c',
+        backgroundColor: '#13131a',
         paddingVertical: 15,
         borderTopWidth: 0.5,
         borderTopColor: '#333'
