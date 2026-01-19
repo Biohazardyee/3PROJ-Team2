@@ -11,10 +11,10 @@ class MediaStatusController {
         try {
             const {user_id, media_id, status} = req.body;
 
-            if (!user_id.trim()) {
+            if (!user_id) {
                 throw new BadRequest('user_id is required')
             }
-            if (!media_id.trim()) {
+            if (!media_id) {
                 throw new BadRequest('media_id is required')
             }
 
@@ -35,11 +35,11 @@ class MediaStatusController {
             const {user_id, media_id} = req.params;
             const {status} = req.body;
 
-            if (!user_id?.trim()) {
+            if (!user_id) {
                 throw new BadRequest('user_id is required')
             }
 
-            if (!media_id?.trim()) {
+            if (!media_id) {
                 throw new BadRequest('media_id is required')
             }
 
@@ -58,10 +58,10 @@ class MediaStatusController {
         try {
             const {user_id, media_id} = req.params;
 
-            if (!user_id?.trim()) {
+            if (!user_id) {
                 throw new BadRequest('user_id is required')
             }
-            if (!media_id?.trim()) {
+            if (!media_id) {
                 throw new BadRequest('media_id is required')
             }
 
@@ -76,10 +76,10 @@ class MediaStatusController {
         try {
             const {user_id, media_id} = req.params;
 
-            if (!user_id?.trim()) {
+            if (!user_id) {
                 throw new BadRequest('user_id is required')
             }
-            if (!media_id?.trim()) {
+            if (!media_id) {
                 throw new BadRequest('media_id is required')
             }
 

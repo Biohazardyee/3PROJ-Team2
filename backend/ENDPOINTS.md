@@ -51,11 +51,11 @@ This document lists all available endpoints in the backend, grouped by route fil
 - **DELETE** `/playlists/:id` — Delete playlist
 
 ## playlists.items
-- **POST** `/playlists.items` — Add item to playlist
-- **GET** `/playlists.items` — Get all playlist items
-- **GET** `/playlists.items/:id` — Get playlist item by ID
-- **GET** `/playlists.items/:playlist_id` — Get items by playlist ID
-- **DELETE** `/playlists.items/:id` — Delete playlist item
+- **POST** `/playlists-items` — Add item to playlist
+- **GET** `/playlists-items` — Get all playlist items
+- **GET** `/playlists-items/:id` — Get playlist item by ID
+- **GET** `/playlists-items/:playlist_id` — Get items by playlist ID
+- **DELETE** `/playlists-items/:id` — Delete playlist item
 
 ## reports
 - **POST** `/reports` — Add report

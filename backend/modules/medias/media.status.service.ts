@@ -6,15 +6,16 @@ import {MediaStatus} from '../../generated/prisma/enums.js';
 
 export class MediaStatusService {
 
-    async create(data: any) {
+    async create(data: { user_id: string, media_id: string, status: MediaStatus }) {
+
         const {user_id, media_id, status} = data;
 
         if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         if (isEmptyString(media_id)) {
-            throw new BadRequest('media_id is required');
+            throw new BadRequest('media_id cannot be empty');
         }
 
         if (!isValidMediaStatus(status)) {
@@ -69,11 +70,11 @@ export class MediaStatusService {
     async update(user_id: string, media_id: string, status: MediaStatus) {
 
         if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         if (isEmptyString(media_id)) {
-            throw new BadRequest('media_id is required');
+            throw new BadRequest('media_id cannot be empty');
         }
 
         if (!isValidMediaStatus(status)) {
@@ -108,11 +109,11 @@ export class MediaStatusService {
     async getStatus(user_id: string, media_id: string) {
 
         if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         if (isEmptyString(media_id)) {
-            throw new BadRequest('media_id is required');
+            throw new BadRequest('media_id cannot be empty');
         }
 
         const mediaStatus = await prisma.userMediaStatus.findUnique({
@@ -137,11 +138,11 @@ export class MediaStatusService {
     async delete(user_id: string, media_id: string) {
 
         if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         if (isEmptyString(media_id)) {
-            throw new BadRequest('media_id is required');
+            throw new BadRequest('media_id cannot be empty');
         }
 
         const mediaStatus = await prisma.userMediaStatus.findUnique({

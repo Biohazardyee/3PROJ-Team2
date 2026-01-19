@@ -44,7 +44,6 @@ class UserController extends Controller {
                 favorite_band,
                 has_notifications,
                 created_at: new Date(),
-                updated_at: new Date(),
             });
 
             res.status(201).json({
@@ -113,6 +112,9 @@ class UserController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
+            if (!req.params.id) {
+                throw new BadRequest('Id is required');
+            }
             const user = await this.service.getById(req.params.id);
             res.json(user);
         } catch (err) {
@@ -123,6 +125,10 @@ class UserController extends Controller {
     async update(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.params.id;
+
+            if (!id) {
+                throw new BadRequest('Id is required');
+            }
 
             const {
                 username,
@@ -185,6 +191,9 @@ class UserController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
+            if (!req.params.id) {
+                throw new BadRequest('Id is required');
+            }
             const user = await this.service.delete(req.params.id);
             res.json({
                 message: 'User deleted successfully',
@@ -197,7 +206,13 @@ class UserController extends Controller {
 
     async getByEmail(req: Request, res: Response, next: NextFunction) {
         try {
-            const email = req.params.email;
+           const {
+               email
+           } = req.body
+
+            if (!email) {
+                throw new BadRequest('Email is required');
+            }
 
             const user = await this.service.getByEmail(email);
             if (!user) {

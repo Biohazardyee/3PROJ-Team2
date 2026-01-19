@@ -26,7 +26,6 @@ class PlaylistController extends Controller {
                 name,
                 user_id,
                 is_public,
-                updated_at: new Date(),
                 created_at: new Date(),
             });
             res.status(201).json({
@@ -43,6 +42,10 @@ class PlaylistController extends Controller {
             const {
                 user_id
             } = req.params;
+
+            if (!user_id) {
+                throw new BadRequest('Missing required fields');
+            }
 
             const playlists = await this.service.getPlaylistsByUserId(user_id);
 
@@ -71,6 +74,11 @@ class PlaylistController extends Controller {
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
+
+            if (!id) {
+                throw new BadRequest('Missing required fields');
+            }
+
             const playlist = await this.service.getById(id);
             res.status(200).json({
                 message: 'Playlist retrieved successfully',
@@ -84,6 +92,10 @@ class PlaylistController extends Controller {
     async update(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
+
+            if (!id){
+                throw new BadRequest('Missing required fields');
+            }
 
             const {
                 name,
@@ -118,6 +130,11 @@ class PlaylistController extends Controller {
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
+
+            if (!id) {
+                throw new BadRequest('Missing required fields');
+            }
+
             const playlist = await this.service.delete(id);
             res.status(200).json({
                 message: 'Playlist deleted successfully',

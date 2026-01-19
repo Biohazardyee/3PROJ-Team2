@@ -2,11 +2,22 @@ import {prisma} from '../../config/database.js';
 import {NotFound, BadRequest} from '../../utils/errors.js';
 import {isValidStringLength, isEmptyString} from "../../utils/helpers.js";
 import {isValidEmail, isValidUsername, isValidPassword} from "./user.helper.js"
+import {Role} from '../../generated/prisma/enums.js';
 import bcrypt from "bcrypt";
 
 export class UserService {
 
-    async add(data: any) {
+    async add(data: {
+        email: string,
+        username: string,
+        password: string,
+        favorite_band: string,
+        role?: Role,
+        phone_number?: string,
+        biography?: string,
+        has_notifications?: boolean,
+        created_at: Date,
+    }) {
 
         if (isEmptyString(data.email)) {
             throw new BadRequest("Email cannot be empty");
@@ -67,12 +78,14 @@ export class UserService {
     }
 
     async getByEmail(email: string) {
-        if (!email || !isValidEmail(email)) {
+        if (!isValidEmail(email)) {
             throw new BadRequest('Invalid email');
         }
 
         return prisma.user.findUnique({
-            where: {email: email.toLowerCase()},
+            where: {
+                email: email.toLowerCase()
+            },
         });
     }
 
@@ -85,9 +98,6 @@ export class UserService {
     }
 
     async getById(id: string) {
-        if (!id) {
-            throw new BadRequest('User id is required');
-        }
 
         const user = await prisma.user.findUnique({
             where: {id},
@@ -101,10 +111,16 @@ export class UserService {
         return user;
     }
 
-    async update(id: string, data: any) {
-        if (!id) {
-            throw new BadRequest('User id is required');
-        }
+    async update(id: string, data: {
+        email?: string,
+        username?: string,
+        password?: string,
+        role?: Role,
+        phone_number?: string,
+        biography?: string,
+        favorite_band?: string,
+        has_notifications?: boolean,
+    }) {
 
         const user = await prisma.user.findUnique({
             where: {id},
@@ -117,6 +133,7 @@ export class UserService {
         const allowedFields = [
             'email',
             'username',
+            'password',
             'biography',
             'favorite_band',
             'has_notifications',
@@ -147,7 +164,7 @@ export class UserService {
             throw new BadRequest('Favorite band is too long (max 100 chars)');
         }
 
-        if (data.role && !data.role.equals('BASIC') && !data.role.equals('ADMIN')) {
+        if (data.role && !data.role.includes('BASIC') && !data.role.includes('ADMIN')) {
             throw new BadRequest('Role need to have a role between BASIC and ADMIN');
         }
 
@@ -165,10 +182,6 @@ export class UserService {
     }
 
     async delete(id: string) {
-        if (!id) {
-            throw new BadRequest('User id is required');
-        }
-
         try {
             return await prisma.user.delete({
                 where: {id},

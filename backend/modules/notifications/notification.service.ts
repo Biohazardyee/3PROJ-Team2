@@ -1,7 +1,7 @@
-import { prisma } from '../../config/database.js';
-import { BadRequest, NotFound } from '../../utils/errors.js';
-import { isEmptyString } from '../../utils/helpers.js';
-import { NotificationAction } from '../../generated/prisma/browser.js';
+import {prisma} from '../../config/database.js';
+import {BadRequest, NotFound} from '../../utils/errors.js';
+import {isEmptyString} from '../../utils/helpers.js';
+import {NotificationAction} from '../../generated/prisma/browser.js';
 
 export class NotificationService {
 
@@ -22,7 +22,7 @@ export class NotificationService {
 
 
         if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         if (!action || !Object.values(NotificationAction).includes(action)) {
@@ -54,14 +54,23 @@ export class NotificationService {
         }
 
         if (review_id) {
-            const review = await prisma.review.findUnique({ where: { id: review_id } });
+            const review = await prisma.review.findUnique({
+                where:
+                    {
+                        id: review_id
+                    }
+            });
             if (!review) {
                 throw new BadRequest('Review not found');
             }
         }
 
         if (media_id) {
-            const media = await prisma.media.findUnique({ where: { id: media_id } });
+            const media = await prisma.media.findUnique({
+                where: {
+                    id: media_id
+                }
+            });
             if (!media) {
                 throw new BadRequest('Media not found');
             }
@@ -85,7 +94,7 @@ export class NotificationService {
     async getByUserId(user_id: string) {
 
         if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         const user = await prisma.user.findUnique({
@@ -98,29 +107,29 @@ export class NotificationService {
         }
 
         return prisma.notification.findMany({
-            where: { user_id },
-            orderBy: { created_at: 'desc' },
+            where: {user_id},
+            orderBy: {created_at: 'desc'},
             select: {
                 id: true,
                 action: true,
                 is_read: true,
                 read_at: true,
                 created_at: true,
-                related_user: { select: { id: true, username: true } },
-                review: { select: { id: true, rating: true } },
-                media: { select: { id: true, api_id: true } },
+                related_user: {select: {id: true, username: true}},
+                review: {select: {id: true, rating: true}},
+                media: {select: {id: true, api_id: true}},
             },
         });
     }
 
     async update(id: string) {
         if (isEmptyString(id)) {
-            throw new BadRequest('Notification id is required');
+            throw new BadRequest('Notification id cannot be empty');
         }
 
         try {
             return await prisma.notification.update({
-                where: { id },
+                where: {id},
                 data: {
                     is_read: true,
                     read_at: new Date()
@@ -139,13 +148,13 @@ export class NotificationService {
     async delete(id: string) {
 
         if (isEmptyString(id)) {
-            throw new BadRequest('Notification id is required');
+            throw new BadRequest('Notification id cannot be empty');
         }
 
         try {
             return await prisma.notification.delete({
-                where: { id },
-                select: { id: true },
+                where: {id},
+                select: {id: true},
             });
         } catch {
             throw new NotFound('Notification not found');
@@ -154,7 +163,7 @@ export class NotificationService {
 
     async getAll() {
         return prisma.notification.findMany({
-            orderBy: { created_at: 'desc' },
+            orderBy: {created_at: 'desc'},
             select: {
                 id: true,
                 user_id: true,
@@ -168,11 +177,11 @@ export class NotificationService {
     async getById(id: string) {
 
         if (isEmptyString(id)) {
-            throw new BadRequest('Notification id is required');
+            throw new BadRequest('Notification id cannot be empty');
         }
 
         const notification = await prisma.notification.findUnique({
-            where: { id },
+            where: {id},
             select: {
                 id: true,
                 user_id: true,
@@ -189,7 +198,7 @@ export class NotificationService {
         if (!notification) {
             throw new NotFound('Notification not found');
         }
-        
+
         return notification;
     }
 }

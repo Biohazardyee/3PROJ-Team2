@@ -1,6 +1,6 @@
-import { prisma } from '../../config/database.js';
-import { BadRequest, NotFound } from '../../utils/errors.js';
-import { isEmptyString } from '../../utils/helpers.js';
+import {prisma} from '../../config/database.js';
+import {BadRequest, NotFound} from '../../utils/errors.js';
+import {isEmptyString} from '../../utils/helpers.js';
 
 export class PlaylistItemService {
 
@@ -8,7 +8,7 @@ export class PlaylistItemService {
         playlist_id: string;
         media_id: string
     }) {
-        const { playlist_id, media_id } = data;
+        const {playlist_id, media_id} = data;
 
         if (isEmptyString(playlist_id)) {
             throw new BadRequest('playlist_id is required');
@@ -23,17 +23,22 @@ export class PlaylistItemService {
                 id: playlist_id
             }
         });
-        if (!playlist) throw new NotFound('Playlist not found');
+        if (!playlist) {
+            throw new NotFound('Playlist not found');
+        }
 
         // Check media exists
         const media = await prisma.media.findUnique({
             where:
-            {
-                id: media_id
+                {
+                    id: media_id
 
-            }
+                }
         });
-        if (!media) throw new NotFound('Media not found');
+
+        if (!media) {
+            throw new NotFound('Media not found');
+        }
 
         // Prevent duplicates
         const exists = await prisma.playlistItem.findFirst({
@@ -42,7 +47,9 @@ export class PlaylistItemService {
                 media_id
             },
         });
-        if (exists) throw new BadRequest('Media already in this playlist');
+        if (exists) {
+            throw new BadRequest('Media already in this playlist');
+        }
 
         return prisma.playlistItem.create({
             data: {
@@ -58,13 +65,17 @@ export class PlaylistItemService {
     }
 
     async getByPlaylistId(playlist_id: string) {
-        if (isEmptyString(playlist_id)) throw new BadRequest('playlist_id is required');
+        if (isEmptyString(playlist_id)) {
+            throw new BadRequest('playlist_id is required');
+        }
 
-        const playlist = await prisma.playlist.findUnique({ where: { id: playlist_id } });
-        if (!playlist) throw new NotFound('Playlist not found');
+        const playlist = await prisma.playlist.findUnique({where: {id: playlist_id}});
+        if (!playlist) {
+            throw new NotFound('Playlist not found');
+        }
 
         return prisma.playlistItem.findMany({
-            where: { playlist_id },
+            where: {playlist_id},
             select: {
                 id: true,
                 media_id: true,
@@ -79,13 +90,19 @@ export class PlaylistItemService {
     }
 
     async delete(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Playlist item id is required');
 
-        const item = await prisma.playlistItem.findUnique({ where: { id } });
-        if (!item) throw new NotFound('Playlist item not found');
+        if (isEmptyString(id)) {
+            throw new BadRequest('Playlist item id is required');
+        }
+
+        const item = await prisma.playlistItem.findUnique({where: {id}});
+
+        if (!item) {
+            throw new NotFound('Playlist item not found');
+        }
 
         return prisma.playlistItem.delete({
-            where: { id },
+            where: {id},
             select: {
                 id: true,
                 playlist_id: true,
@@ -105,18 +122,23 @@ export class PlaylistItemService {
     }
 
     async getById(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Playlist item id is required');
+        if (isEmptyString(id)) {
+            throw new BadRequest('Playlist item id is required');
+        }
 
         const item = await prisma.playlistItem.findUnique({
-            where: { id },
+            where: {id},
             select:
-            {
-                id: true,
-                playlist_id: true,
-                media_id: true
-            }
+                {
+                    id: true,
+                    playlist_id: true,
+                    media_id: true
+                }
         });
-        if (!item) throw new NotFound('Playlist item not found');
+        if (!item) {
+            throw new NotFound('Playlist item not found');
+        }
+
         return item;
     }
 }

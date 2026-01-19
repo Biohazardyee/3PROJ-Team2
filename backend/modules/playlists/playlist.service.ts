@@ -2,24 +2,27 @@ import {prisma} from '../../config/database.js';
 import {NotFound, BadRequest} from '../../utils/errors.js';
 import {isEmptyString, isValidStringLength} from "../../utils/helpers.js";
 
-const PLAYLIST_NAME_MAX_LENGTH = 100;
-
 export class PlaylistService {
 
-    async create(data: any) {
+    async create(data: {
+        name: string,
+        user_id: string,
+        is_public: boolean
+        created_at: Date,
+    }) {
 
         if (isEmptyString(data.name)) {
-            throw new BadRequest('Playlist name is required');
+            throw new BadRequest('Playlist name cannot be empty');
         }
 
-        if (isValidStringLength(data.name.trim(), PLAYLIST_NAME_MAX_LENGTH)) {
+        if (isValidStringLength(data.name.trim(), 100)) {
             throw new BadRequest(
-                `Playlist name is too long (max ${PLAYLIST_NAME_MAX_LENGTH} characters)`
+                `Playlist name is too long (max 100 characters)`
             );
         }
 
         if (isEmptyString(data.user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         const user = await prisma.user.findUnique({
@@ -61,7 +64,7 @@ export class PlaylistService {
     async getPlaylistsByUserId(user_id: string) {
 
         if (isEmptyString(user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         const user = await prisma.user.findUnique({
@@ -102,11 +105,11 @@ export class PlaylistService {
 
     async getById(id: string) {
         if (isEmptyString(id)) {
-            throw new BadRequest('Playlist id is required');
+            throw new BadRequest('Playlist id cannot be empty');
         }
 
         const playlist = await prisma.playlist.findUnique({
-            where: { id },
+            where: {id},
             select: {
                 id: true,
                 name: true,
@@ -122,10 +125,10 @@ export class PlaylistService {
         return playlist;
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: {name: string, user_id: string, is_public: boolean}) {
 
         if (isEmptyString(id)) {
-            throw new BadRequest('ID is required');
+            throw new BadRequest('ID cannot be empty');
         }
 
         const allowedFields = ['name', 'is_public'];
@@ -141,9 +144,9 @@ export class PlaylistService {
                 throw new BadRequest('Playlist name cannot be empty');
             }
 
-            if (isValidStringLength(data.name, PLAYLIST_NAME_MAX_LENGTH)) {
+            if (isValidStringLength(data.name, 100)) {
                 throw new BadRequest(
-                    `Playlist name is too long (max ${PLAYLIST_NAME_MAX_LENGTH} characters)`
+                    `Playlist name is too long (max ${100} characters)`
                 );
             }
 
@@ -185,7 +188,7 @@ export class PlaylistService {
 
     async delete(id: string) {
         if (isEmptyString(id)) {
-            throw new BadRequest('Playlist id is required');
+            throw new BadRequest('Playlist id cannot be empty');
         }
 
         try {

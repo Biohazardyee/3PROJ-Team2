@@ -28,8 +28,8 @@ class MediaController extends Controller {
             const {id} = req.params;
             const {api_id} = req.body;
 
-            if (isEmptyString(id)) {
-                throw new BadRequest('Media id is required');
+            if (!id){
+                throw new BadRequest('media id is required as a parameter');
             }
 
             if (api_id !== undefined && !isValidApiId(api_id)) {
@@ -46,8 +46,9 @@ class MediaController extends Controller {
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
-            if (isEmptyString(id)) {
-                throw new BadRequest('Media id is required')
+
+            if (!id){
+                throw new BadRequest('id is required');
             }
 
 
@@ -70,8 +71,9 @@ class MediaController extends Controller {
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const {id} = req.params;
-            if (isEmptyString(id)) {
-                throw new BadRequest('Media id is required')
+
+            if (!id){
+                throw new BadRequest('id is required');
             }
 
             await this.service.delete(id);

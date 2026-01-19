@@ -1,7 +1,7 @@
-import { prisma } from '../../config/database.js';
-import { ReportType } from '../../generated/prisma/browser.js';
-import { BadRequest, NotFound } from '../../utils/errors.js';
-import { isEmptyString } from '../../utils/helpers.js';
+import {prisma} from '../../config/database.js';
+import {ReportType} from '../../generated/prisma/browser.js';
+import {BadRequest, NotFound} from '../../utils/errors.js';
+import {isEmptyString} from '../../utils/helpers.js';
 
 export class ReportService {
 
@@ -19,27 +19,37 @@ export class ReportService {
         } = data;
 
 
-        if (isEmptyString(reporter_id)) throw new BadRequest('reporter_id is required');
+        if (isEmptyString(reporter_id)) {
+            throw new BadRequest('reporter_id is required');
+        }
 
-        if (isEmptyString(reason)) throw new BadRequest('reason cannot be empty');
+        if (isEmptyString(reason)) {
+            throw new BadRequest('reason cannot be empty');
+        }
 
         if (!reason_type || !Object.values(ReportType).includes(reason_type)) {
             throw new BadRequest('Invalid report type');
         }
 
 
-        const reporter = await prisma.user.findUnique({ where: { id: reporter_id } });
+        const reporter = await prisma.user.findUnique({where: {id: reporter_id}});
 
-        if (!reporter) throw new BadRequest('Reporter not found');
+        if (!reporter) {
+            throw new BadRequest('Reporter not found');
+        }
 
 
         if (reason_type === ReportType.review) {
 
-            if (!review_id) throw new BadRequest('review_id is required for review reports');
+            if (!review_id) {
+                throw new BadRequest('review_id is required for review reports');
+            }
 
-            const review = await prisma.review.findUnique({ where: { id: review_id } });
+            const review = await prisma.review.findUnique({where: {id: review_id}});
 
-            if (!review) throw new BadRequest('Review not found');
+            if (!review) {
+                throw new BadRequest('Review not found');
+            }
         }
 
         return prisma.report.create({
@@ -83,23 +93,25 @@ export class ReportService {
                     }
                 },
             },
-            orderBy: { created_at: 'desc' },
+            orderBy: {created_at: 'desc'},
         });
     }
 
     async getById(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Report id is required');
+        if (isEmptyString(id)) {
+            throw new BadRequest('Report id is required');
+        }
 
         const report = await prisma.report.findUnique({
-            where: { id },
+            where: {id},
             include: {
                 reporter: {
                     select:
-                    {
-                        id: true,
-                        username: true,
-                        email: true
-                    }
+                        {
+                            id: true,
+                            username: true,
+                            email: true
+                        }
                 },
                 review: {
                     select: {
@@ -115,13 +127,18 @@ export class ReportService {
     }
 
     async getByReview(review_id: string) {
-        if (isEmptyString(review_id)) throw new BadRequest('review_id is required');
+        if (isEmptyString(review_id)) {
+            throw new BadRequest('review_id is required');
+        }
 
-        const review = await prisma.review.findUnique({ where: { id: review_id } });
-        if (!review) throw new NotFound('Review not found');
+        const review = await prisma.review.findUnique({where: {id: review_id}});
+
+        if (!review) {
+            throw new NotFound('Review not found');
+        }
 
         return prisma.report.findMany({
-            where: { review_id },
+            where: {review_id},
             include: {
                 reporter: {
                     select: {
@@ -130,19 +147,24 @@ export class ReportService {
                     }
                 },
             },
-            orderBy: { created_at: 'desc' },
+            orderBy: {created_at: 'desc'},
         });
     }
 
     async update(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Report id is required');
 
-        const report = await prisma.report.findUnique({ where: { id } });
-        if (!report) throw new NotFound('Report not found');
+        if (isEmptyString(id)) {
+            throw new BadRequest('Report id is required');
+        }
+
+        const report = await prisma.report.findUnique({where: {id}});
+        if (!report) {
+            throw new NotFound('Report not found');
+        }
 
         return prisma.report.update({
-            where: { id },
-            data: { is_checked: true },
+            where: {id},
+            data: {is_checked: true},
             include: {
                 reporter: {
                     select: {
@@ -161,13 +183,18 @@ export class ReportService {
     }
 
     async delete(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Report id is required');
 
-        const report = await prisma.report.findUnique({ where: { id } });
-        if (!report) throw new NotFound('Report not found');
+        if (isEmptyString(id)) {
+            throw new BadRequest('Report id is required');
+        }
+
+        const report = await prisma.report.findUnique({where: {id}});
+        if (!report) {
+            throw new NotFound('Report not found');
+        }
 
         return prisma.report.delete({
-            where: { id },
+            where: {id},
             include: {
                 reporter: {
                     select: {

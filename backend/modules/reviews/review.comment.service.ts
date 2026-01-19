@@ -4,7 +4,12 @@ import {isValidStringLength, isEmptyString} from "../../utils/helpers.js";
 
 export class ReviewCommentService {
 
-    async create(data: any) {
+    async create(data: {
+        user_id: string,
+        review_id: string,
+        content: string,
+        created_at: Date,
+    }) {
 
         if (isEmptyString(data.user_id)) {
             throw new BadRequest("User_id cannot be empty");
@@ -13,11 +18,11 @@ export class ReviewCommentService {
         if (isEmptyString(data.review_id)) {
             throw new BadRequest("Review_id cannot be empty");
         }
-        
+
         if (isEmptyString(data.content)) {
             throw new BadRequest("Content cannot be empty");
         }
-        
+
         if (!isValidStringLength(data.content, 1000)) {
             throw new BadRequest("Content length cannot exceed 1000 characters");
         }
@@ -52,7 +57,7 @@ export class ReviewCommentService {
             },
         });
     }
-    
+
     async getAll() {
         return prisma.reviewComment.findMany({
             select: {
@@ -65,16 +70,16 @@ export class ReviewCommentService {
     }
 
     async getById(id: string) {
-        
+
         if (isEmptyString(id)) {
             throw new BadRequest("ID cannot be empty");
         }
-        
+
         const reviewComment = await prisma.reviewComment.findUnique({
             where: {
                 id: id,
             },
-            select:{
+            select: {
                 user_id: true,
                 review_id: true,
                 content: true,
@@ -82,12 +87,14 @@ export class ReviewCommentService {
             }
         });
 
-        if (!reviewComment) throw new NotFound('Comment not found');
+        if (!reviewComment) {
+            throw new NotFound('Comment not found');
+        }
 
         return reviewComment;
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: { content?: string }) {
 
         if (isEmptyString(id)) {
             throw new BadRequest("ID cannot be empty");
@@ -113,10 +120,6 @@ export class ReviewCommentService {
             }
         }
 
-        if (data.role && !data.role.equals('BASIC') && !data.role.equals('ADMIN')) {
-            throw new BadRequest('Role need to have a role between BASIC and ADMIN');
-        }
-        
         if (data.content) {
             if (isEmptyString(data.content)) {
                 throw new BadRequest('Content cannot be empty');
@@ -125,7 +128,7 @@ export class ReviewCommentService {
                 throw new BadRequest('Content cannot be much than 1000 characters');
             }
         }
-        
+
         return prisma.reviewComment.update({
             where: {
                 id

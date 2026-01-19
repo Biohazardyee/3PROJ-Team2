@@ -12,7 +12,7 @@ export class MediaService {
 
         const exists = await prisma.media.findFirst(
             {
-                where: 
+                where:
                     {api_id}
             });
 
@@ -23,7 +23,8 @@ export class MediaService {
         return prisma.media.create({
             data: {
                 api_id,
-                created_at: new Date()},
+                created_at: new Date()
+            },
             select: {
                 id: true,
                 api_id: true,
@@ -38,7 +39,10 @@ export class MediaService {
         }
 
         const media = await prisma.media.findUnique({where: {id}});
-        if (!media) throw new NotFound('Media not found');
+
+        if (!media) {
+            throw new NotFound('Media not found');
+        }
 
         const updateData: any = {};
 
@@ -52,36 +56,67 @@ export class MediaService {
         return prisma.media.update({
             where: {id},
             data: updateData,
-            select: {id: true, api_id: true, created_at: true},
+            select: {
+                id: true,
+                api_id: true,
+                created_at: true
+            },
         });
     }
 
     async getById(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Media id is required');
+
+        if (isEmptyString(id)) {
+            throw new BadRequest('Media id cannot be empty');
+        }
 
         const media = await prisma.media.findUnique({
             where: {id},
-            select: {id: true, api_id: true, created_at: true},
+            select: {
+                id: true,
+                api_id: true,
+                created_at: true
+            },
         });
-        if (!media) throw new NotFound('Media not found');
+        if (!media) {
+            throw new NotFound('Media not found');
+        }
+
         return media;
     }
 
     async getAll() {
         return prisma.media.findMany({
-            select: {id: true, api_id: true, created_at: true},
+            select: {
+                id: true,
+                api_id: true,
+                created_at: true
+            },
         });
     }
 
     async delete(id: string) {
-        if (isEmptyString(id)) throw new BadRequest('Media id is required');
 
-        const media = await prisma.media.findUnique({where: {id}});
-        if (!media) throw new NotFound('Media not found');
+        if (isEmptyString(id)) {
+            throw new BadRequest('Media id cannot be empty');
+        }
+
+        const media = await prisma.media.findUnique(
+            {
+                where: {id}
+            });
+
+        if (!media) {
+            throw new NotFound('Media not found');
+        }
 
         return prisma.media.delete({
             where: {id},
-            select: {id: true, api_id: true, created_at: true},
+            select: {
+                id: true,
+                api_id: true,
+                created_at: true
+            },
         });
     }
 }

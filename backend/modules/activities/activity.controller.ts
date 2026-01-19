@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import { Controller } from '../controller.js';
-import { BadRequest } from '../../utils/errors.js';
-import { activityService } from './activity.service.js';
+import type {Request, Response, NextFunction} from 'express';
+import {Controller} from '../controller.js';
+import {BadRequest} from '../../utils/errors.js';
+import {activityService} from './activity.service.js';
 
 class ActivityController extends Controller {
 
@@ -12,7 +12,7 @@ class ActivityController extends Controller {
     async add(req: Request, res: Response, next: NextFunction) {
         try {
 
-            const { user_id, action, target_user_id, review_id, media_id, rating_from_user } = req.body;
+            const {user_id, action, target_user_id, review_id, media_id, rating_from_user} = req.body;
 
             if (!user_id || !action) {
                 throw new BadRequest('user_id and action are required');
@@ -31,7 +31,7 @@ class ActivityController extends Controller {
 
     async getFeed(req: Request, res: Response, next: NextFunction) {
         try {
-            const { user_id } = req.params;
+            const {user_id} = req.params;
 
             if (!user_id) {
                 throw new BadRequest('user_id is required')
@@ -50,7 +50,7 @@ class ActivityController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
 
             if (!id) {
                 throw new BadRequest('Activity id is required');
@@ -78,8 +78,8 @@ class ActivityController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
-            
+            const {id} = req.params;
+
             if (!id) {
                 throw new BadRequest('Activity id is required');
             }

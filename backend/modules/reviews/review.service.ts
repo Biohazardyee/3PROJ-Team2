@@ -4,14 +4,20 @@ import {isEmptyString, isValidStringLength} from "../../utils/helpers.js";
 
 export class ReviewService {
 
-    async create(data: any) {
+    async create(data: {
+        user_id: string,
+        media_id: string,
+        rating: number,
+        content: string,
+        created_at: Date,
+    }) {
 
         if (isEmptyString(data.user_id)) {
-            throw new BadRequest('user_id is required');
+            throw new BadRequest('user_id cannot be empty');
         }
 
         if (isEmptyString(data.media_id)) {
-            throw new BadRequest('media_id is required');
+            throw new BadRequest('media_id cannot be empty');
         }
 
         if (!isValidFloatRating(data.rating)) {
@@ -19,10 +25,10 @@ export class ReviewService {
         }
 
         if (isEmptyString(data.content)) {
-            throw new BadRequest('Content is required');
+            throw new BadRequest('Content cannot be empty');
         }
 
-        if (!isValidStringLength(data.content.length, 1000)) {
+        if (!isValidStringLength(data.content, 1000)) {
             throw new BadRequest('Content is too long (max 1000 characters)');
         }
 
@@ -37,7 +43,9 @@ export class ReviewService {
         }
 
         const media = await prisma.media.findUnique({
-            where: {id: data.media_id},
+            where: {
+                id: data.media_id
+            },
         });
 
         if (!media) {
@@ -66,12 +74,15 @@ export class ReviewService {
     }
 
     async getById(id: string) {
+
         if (isEmptyString(id)) {
-            throw new BadRequest('Review id is required');
+            throw new BadRequest('Review id cannot be empty');
         }
 
         const review = await prisma.review.findUnique({
-            where: {id},
+            where: {
+                id
+            },
         });
 
         if (!review) {
@@ -85,13 +96,18 @@ export class ReviewService {
         return prisma.review.findMany();
     }
 
-    async update(id: string, data: any) {
-        if (!id) {
-            throw new BadRequest('Review id is required');
-        }
+    async update(id: string, data: {
+        rating?: number,
+        content?: string,
+    }) {
 
+        if (isEmptyString(id)) {
+            throw new BadRequest('Review id cannot be empty');
+        }
         const review = await prisma.review.findUnique({
-            where: {id},
+            where: {
+                id
+            }
         });
 
         if (!review) {
@@ -123,14 +139,16 @@ export class ReviewService {
         }
 
         return prisma.review.update({
-            where: {id},
+            where: {
+                id
+            },
             data,
         });
     }
 
     async delete(id: string) {
         if (isEmptyString(id)) {
-            throw new BadRequest('Review id is required');
+            throw new BadRequest('Review id cannot be empty');
         }
 
         const review = await prisma.review.findUnique({

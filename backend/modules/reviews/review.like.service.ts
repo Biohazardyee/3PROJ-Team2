@@ -4,7 +4,11 @@ import {isValidStringLength, isEmptyString} from "../../utils/helpers.js";
 
 export class ReviewLikeService {
 
-    async create(data: any) {
+    async create(data: {
+        user_id: string,
+        review_id: string,
+        created_at: Date,
+    }) {
 
         if (isEmptyString(data.user_id)) {
             throw new BadRequest("User_id cannot be empty");
@@ -43,7 +47,7 @@ export class ReviewLikeService {
             },
         });
 
-        if (alreadyLiked){
+        if (alreadyLiked) {
             throw new BadRequest('Already Liked');
         }
 
@@ -70,12 +74,12 @@ export class ReviewLikeService {
 
     async getById(user_id: string, review_id: string) {
 
-        if (!review_id) {
-            throw new BadRequest('Review_id is required');
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('User_id cannot be empty');
         }
 
-        if (!user_id) {
-            throw new BadRequest('User_id is required');
+        if (isEmptyString(review_id)) {
+            throw new BadRequest('Review_id cannot be empty');
         }
 
         const reviewLike = await prisma.reviewLike.findUnique({
@@ -85,14 +89,16 @@ export class ReviewLikeService {
                     review_id: review_id
                 },
             },
-            select:{
+            select: {
                 user_id: true,
                 review_id: true,
                 created_at: true
             }
         });
 
-        if (!reviewLike) throw new NotFound('ReviewLike not found');
+        if (!reviewLike) {
+            throw new NotFound('ReviewLike not found');
+        }
 
         return reviewLike;
     }
@@ -103,12 +109,13 @@ export class ReviewLikeService {
     }
 
     async delete(review_id: string, user_id: string) {
-        if (!review_id) {
-            throw new BadRequest('Review_id is required');
+
+        if (isEmptyString(user_id)) {
+            throw new BadRequest('User_id cannot be empty');
         }
 
-        if (!user_id) {
-            throw new BadRequest('User_id is required');
+        if (isEmptyString(review_id)) {
+            throw new BadRequest('Review_id cannot be empty');
         }
 
         try {

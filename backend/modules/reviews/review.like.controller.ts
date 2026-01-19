@@ -1,5 +1,4 @@
 import type {Request, Response, NextFunction} from 'express';
-import dotenv from 'dotenv';
 
 import {Controller} from '../controller.js';
 import {BadRequest} from '../../utils/errors.js';
@@ -56,6 +55,10 @@ class ReviewLikeController extends Controller {
                 review_id
             } = req.params;
 
+            if (!user_id || !review_id) {
+                throw new BadRequest('User_id & review_id are required');
+            }
+
             const reviewsLike = await this.service.getById(user_id, review_id);
             res.status(201).json({
                 message: `Like retrieved successfully`,
@@ -77,6 +80,10 @@ class ReviewLikeController extends Controller {
                 user_id,
                 review_id
             } = req.params;
+
+            if (!user_id || !review_id) {
+                throw new BadRequest('User_id & review_id are required');
+            }
 
             const reviewsLike = await this.service.delete(user_id, review_id);
             res.json({

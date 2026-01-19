@@ -69,7 +69,9 @@ class FollowController {
         try {
             const { user_id } = req.params;
 
-            if (!user_id) throw new BadRequest('user_id is required');
+            if (!user_id) {
+                throw new BadRequest('user_id is required');
+            }
 
             const following = await this.service.getFollowing(user_id);
 

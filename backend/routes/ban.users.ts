@@ -19,4 +19,8 @@ router.put('/:id', function(req, res, next) {
   userBanController.update(req, res, next);
 });
 
+router.delete('/:id', function(req, res, next) {
+  userBanController.delete(req, res, next);
+})
+
 export default router;
