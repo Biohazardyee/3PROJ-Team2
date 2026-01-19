@@ -39,8 +39,11 @@ model User {
   reports              Report[]
   bannedUsers          BannedUsers?
 
-  activities         Activity[] @relation("user_activities")
-  activities_targets Activity[] @relation("user_activities_targets")
+  activities          Activity[]     @relation("user_activities")
+  activities_targets  Activity[]     @relation("user_activities_targets")
+  conversations_user1 Conversation[] @relation("conversation_user1")
+  conversations_user2 Conversation[] @relation("conversation_user2")
+  messages            Message[]
 }
 
 enum Role {
@@ -225,4 +228,27 @@ enum NotificationAction {
   comment_added
   new_follow
   recommendation
+}
+
+model Conversation {
+  id         String    @id @default(uuid())
+  user1      User      @relation("conversation_user1", fields: [user1_id], references: [id])
+  user1_id   String
+  user2      User      @relation("conversation_user2", fields: [user2_id], references: [id])
+  user2_id   String
+  created_at DateTime  @default(now())
+  messages   Message[]
+
+  @@unique([user1_id, user2_id])
+}
+
+model Message {
+  id              String       @id @default(uuid())
+  conversation    Conversation @relation(fields: [conversation_id], references: [id])
+  conversation_id String
+  sender          User         @relation(fields: [sender_id], references: [id])
+  sender_id       String
+  content         String
+  is_read         Boolean      @default(false)
+  created_at      DateTime     @default(now())
 }

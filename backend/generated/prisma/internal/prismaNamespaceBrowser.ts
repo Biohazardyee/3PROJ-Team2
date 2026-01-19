@@ -63,7 +63,9 @@ export const ModelName = {
   Follow: 'Follow',
   Report: 'Report',
   Notification: 'Notification',
-  BannedUsers: 'BannedUsers'
+  BannedUsers: 'BannedUsers',
+  Conversation: 'Conversation',
+  Message: 'Message'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -231,6 +233,28 @@ export const BannedUsersScalarFieldEnum = {
 } as const
 
 export type BannedUsersScalarFieldEnum = (typeof BannedUsersScalarFieldEnum)[keyof typeof BannedUsersScalarFieldEnum]
+
+
+export const ConversationScalarFieldEnum = {
+  id: 'id',
+  user1_id: 'user1_id',
+  user2_id: 'user2_id',
+  created_at: 'created_at'
+} as const
+
+export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
+
+
+export const MessageScalarFieldEnum = {
+  id: 'id',
+  conversation_id: 'conversation_id',
+  sender_id: 'sender_id',
+  content: 'content',
+  is_read: 'is_read',
+  created_at: 'created_at'
+} as const
+
+export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
 
 
 export const SortOrder = {

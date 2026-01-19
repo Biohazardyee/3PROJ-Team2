@@ -104,3 +104,13 @@ export type Notification = Prisma.NotificationModel
  * 
  */
 export type BannedUsers = Prisma.BannedUsersModel
+/**
+ * Model Conversation
+ * 
+ */
+export type Conversation = Prisma.ConversationModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel
