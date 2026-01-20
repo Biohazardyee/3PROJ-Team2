@@ -1,5 +1,5 @@
 import AuthGuard from '@/src/components/AuthGuard';
 
-export default function RestrictionScreen() {
+export default function Page() {
     return <AuthGuard />;
 }

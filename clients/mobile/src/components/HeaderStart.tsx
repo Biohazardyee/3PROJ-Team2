@@ -2,8 +2,11 @@ import React from 'react';
 import { View, Text,TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
+import {useRouter} from "expo-router";
 
 const HeaderStart: React.FC = () => {
+    const router = useRouter();
+
     return (
         <View style={styles.header}>
             <View style={styles.content}>
@@ -25,7 +28,7 @@ const HeaderStart: React.FC = () => {
                 <Text style={styles.name}>SUPCONTENT</Text>
             </View>
 
-            <TouchableOpacity onPress={() => router.push('/notification')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/notifications')}>
                 <Ionicons
                     name="notifications-outline"
                     size={26}
@@ -41,7 +44,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#13141c',
+        backgroundColor: '#1C1C28',
         paddingHorizontal: 20,
         paddingTop: 10,
         paddingBottom: 15,

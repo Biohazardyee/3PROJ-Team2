@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   wrapper: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    backgroundColor: '#1c1c27', 
+    backgroundColor: '#1C1C28',
     borderRadius: 15, 
     paddingHorizontal: 15, 
     height: 55,

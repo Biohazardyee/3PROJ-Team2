@@ -2,8 +2,6 @@ import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter, usePathname} from "expo-router";
-import HeaderStart from "@/src/components/HeaderStart";
-import AuthGuard from '@/src/components/AuthGuard';
 
 const Footer: React.FC = () => {
     const router = useRouter();
@@ -12,11 +10,11 @@ const Footer: React.FC = () => {
     return(
         <View style={styles.footer}>
             {/* Découvrir */}
-            <TouchableOpacity onPress={() => router.push('/login')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/')} style={styles.icon}>
                 <Ionicons
                     name="home-outline"
                     size={26}
-                    color={pathname === '/decouvrir' ? '#6366f1' : '#94a3b8'}
+                    color={pathname === '/' ? '#6366f1' : '#94a3b8'}
                 />
             </TouchableOpacity>
 
@@ -63,7 +61,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        backgroundColor: '#13131a',
+        backgroundColor: '#1C1C28',
         paddingVertical: 15,
         borderTopWidth: 0.5,
         borderTopColor: '#333'

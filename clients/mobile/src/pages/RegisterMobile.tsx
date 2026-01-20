@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { ButtonMobile } from '../components/ButtonMobile';
 import { InputMobile } from '../components/InputMobile';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,14 +10,14 @@ const RegisterMobile: React.FC = () => {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
         <LinearGradient
           colors={['#6366f1', '#ec4899']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.logoBadge}
+          style={styles.logo}
          >
           <Ionicons
               name="musical-notes-outline"
@@ -34,7 +33,7 @@ const RegisterMobile: React.FC = () => {
         <InputMobile label="Nom d'utilisateur" placeholder="fan" icon="person-circle-outline" />
         <InputMobile label="Mot de passe" placeholder="••••••••" icon="lock-closed-outline" secureTextEntry />
 
-        <ButtonMobile title="Créer le compte" style={{ marginTop: 10 }} />
+        <ButtonMobile title="Créer le compte" style={{ marginTop: 10 }} onPress={() => router.push('/onboarding' as any)} />
 
         <View style={styles.separator}>
           <View style={styles.line} /><Text style={styles.sepText}>OU</Text><View style={styles.line} />
@@ -59,24 +58,83 @@ const RegisterMobile: React.FC = () => {
           <Text style={styles.footerText}>Déjà un compte ? <Text style={styles.link}>Se connecter</Text></Text>
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#13131a' },
-  scroll: { padding: 25 },
-  header: { alignItems: 'center', marginBottom: 30 },
-  logoBadge: { width: 60, height: 60, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
-  title: { color: '#FFF', fontSize: 24, fontWeight: 'bold' },
-  subtitle: { color: '#888', fontSize: 14, marginTop: 5 },
-  separator: { flexDirection: 'row', alignItems: 'center', marginVertical: 25 },
-  line: { flex: 1, height: 1, backgroundColor: '#333' },
-  sepText: { color: '#555', marginHorizontal: 10, fontSize: 12 },
-  socialRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  footer: { marginTop: 30, alignItems: 'center' },
-  footerText: { color: '#888' },
-  link: { color: '#3b82f6', fontWeight: 'bold' }
+  container: {
+    flex: 1,
+    backgroundColor: '#1C1C28'
+  },
+
+  scroll: {
+    padding: 25
+  },
+
+  header: {
+    alignItems: 'center',
+    marginBottom: 30
+  },
+
+  logo: {
+    width: 60,
+    height: 60,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15
+  },
+
+  title: {
+    color: '#FFF',
+    fontSize: 24,
+    fontWeight: 'bold'
+  },
+
+  subtitle: {
+    color: '#888',
+    fontSize: 14,
+    marginTop: 5
+  },
+
+  separator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 25
+  },
+
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#333'
+  },
+
+  sepText: {
+    color: '#555',
+    marginHorizontal: 10,
+    fontSize: 12
+  },
+
+  socialRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+
+  footer: {
+    marginTop: 30,
+    alignItems: 'center'
+  },
+
+  footerText: {
+    color: '#888'
+  },
+
+  link: {
+    color: '#3b82f6',
+    fontWeight: 'bold'
+  }
+
 });
 
 export default RegisterMobile;

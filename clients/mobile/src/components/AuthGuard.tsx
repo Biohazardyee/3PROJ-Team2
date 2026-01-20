@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from 'expo-router';
@@ -27,10 +28,10 @@ export default function AutGuard() {
                 {/* Texte  */}
                 <Text style={styles.title}>Contenu Exclusif</Text>
                 <Text style={styles.text}>
-                    Rejoignez SUPCONTENT pour accéder à de nouveaux contenus,
+                    Rejoignez SUPCONTENT pour accéder à ce contenu.
                 </Text>
 
-                {/* Groupe de boutons */}
+                {/* boutons */}
                 <View style={styles.buttons}>
                     <ButtonMobile
                         title="Se connecter"
@@ -56,7 +57,7 @@ export default function AutGuard() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Lien retour discret */}
+                {/* Lien retour */}
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Text style={styles.backText}>Plus tard</Text>
                 </TouchableOpacity>
@@ -69,7 +70,7 @@ export default function AutGuard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#13131a',
+        backgroundColor: '#1C1C28',
     },
     content: {
         flex: 1,
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     spacer: {
         height: 15,
     },
-    // Style pour un bouton "Outline" avec dégradé
+    // Style pour le bouton en dégradé
     registerButton: {
         height: 55,
         borderRadius: 12,
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     },
     outlineGradient: {
         flex: 1,
-        padding: 2, // Largeur de la bordure
+        padding: 2,
         borderRadius: 12,
     },
     innerButton: {
