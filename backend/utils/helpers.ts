@@ -9,3 +9,9 @@ export function isValidApiId(value: any): boolean {
 export function isValidStringLength(text: string, value: number): boolean{
     return text.trim().length <= value;
 }
+
+export function isValidBoolean(value: unknown): boolean {
+    return typeof value === 'boolean';
+}
+
+

@@ -2,21 +2,22 @@ import createError from 'http-errors';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
-import logger from 'morgan';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import indexRouter from './routes/index.js';
+import indexRouter from './routes/db';
 
-import userRouter from './routes/users.js';
-import playlistRouter from './routes/playlists.js';
-import mediaRouter from './routes/medias.js';
-import reviewRouter from './routes/reviews.js';
-import banUserRouter from './routes/ban.users.js';
-import reportRouter from './routes/reports.js';
-import playlistItemRouter from './routes/playlists.items.js';
-import notificationRouter from './routes/notifications.js';
-import activitiesRouter from './routes/activities.js';
-import followRouter from './routes/follows.js';
+import userRouter from './routes/db/users';
+import playlistRouter from './routes/db/playlists';
+import mediaRouter from './routes/db/medias';
+import reviewRouter from './routes/db/reviews';
+import banUserRouter from './routes/db/ban.users';
+import reportRouter from './routes/db/reports';
+import playlistItemRouter from './routes/db/playlists.items';
+import notificationRouter from './routes/db/notifications';
+import activitiesRouter from './routes/db/activities';
+import followRouter from './routes/db/follows';
+import messageRouter from './routes/db/messages';
+import conversationRouter from './routes/db/conversations';
 
 import { ApiError, InternalError } from './utils/errors.js';
 
@@ -38,6 +39,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // back-end routes
+app.use('/messages', messageRouter)
+app.use('/conversations', conversationRouter)
 app.use('/follows', followRouter);
 app.use('/activities', activitiesRouter);
 app.use('/notifications', notificationRouter);

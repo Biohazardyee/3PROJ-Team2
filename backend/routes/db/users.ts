@@ -1,5 +1,5 @@
 import express from 'express';
-import userController from '../modules/db/users/user.controller.js';
+import userController from '../../modules/db/users/user.controller.js';
 
 var router = express.Router();
 

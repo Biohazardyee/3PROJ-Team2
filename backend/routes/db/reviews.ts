@@ -1,7 +1,7 @@
 import express from 'express';
-import ReviewController from '../modules/db/reviews/review.controller.js';
-import ReviewLikeController from "../modules/db/reviews/review.like.controller.js";
-import ReviewCommentController from "../modules/db/reviews/review.comment.controller.js";
+import ReviewController from '../../modules/db/reviews/review.controller.js';
+import ReviewLikeController from "../../modules/db/reviews/review.like.controller.js";
+import ReviewCommentController from "../../modules/db/reviews/review.comment.controller.js";
 
 var router = express.Router();
 

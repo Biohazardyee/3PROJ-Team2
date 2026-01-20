@@ -1,6 +1,6 @@
 import express from 'express';
-import MediaController from '../modules/db/medias/media.controller.js';
-import MediaStatusController from '../modules/db/medias/media.status.controller.js';
+import MediaController from '../../modules/db/medias/media.controller.js';
+import MediaStatusController from '../../modules/db/medias/media.status.controller.js';
 
 var router = express.Router();
 

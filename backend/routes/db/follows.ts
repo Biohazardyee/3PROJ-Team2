@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import followController from '../modules/db/follows/follow.controller.js';
+import followController from '../../modules/db/follows/follow.controller.js';
 
 const router = Router();
 

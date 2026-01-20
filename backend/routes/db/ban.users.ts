@@ -1,5 +1,5 @@
 import express from 'express';
-import userBanController from '../modules/db/users/ban.user.controller.js';
+import userBanController from '../../modules/db/users/ban.user.controller.js';
 
 var router = express.Router();
 

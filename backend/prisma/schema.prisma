@@ -248,7 +248,7 @@ model Message {
   conversation_id String
   sender          User         @relation(fields: [sender_id], references: [id])
   sender_id       String
-  content         String
+  content         String       @db.VarChar(1000)
   is_read         Boolean      @default(false)
   created_at      DateTime     @default(now())
 }
