@@ -1,0 +1,79 @@
+import type { Request, Response, NextFunction } from 'express';
+import { BadRequest } from '../../../utils/errors.js';
+import { albumService } from './album.service.js';
+
+
+export class AlbumController {
+
+    constructor(private readonly service = albumService) {
+
+    }
+
+    async getAlbumInfo(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { artist, album } = req.query;
+
+            if (!artist || !album) {
+                throw new BadRequest('Artist and Album are required');
+            }
+
+            const albumInfo = await this.service.getAlbumInfo({
+                artist: String(artist),
+                album: String(album),
+            });
+
+            res.status(200).json({
+                message: 'Album info retrieved successfully',
+                albumInfo,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getAlbumInfoById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { mbid } = req.params;
+
+            if (!mbid) {
+                throw new BadRequest('MBID is required');
+            }
+
+            const albumInfo = await this.service.getAlbumInfoById({
+                mbid: mbid,
+            });
+            res.status(200).json({
+                message: 'Album info retrieved successfully',
+                albumInfo,
+            });
+        }
+        catch (err) {
+            next(err);
+        }
+    }
+
+
+    async albumGetTags(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { artist, album } = req.query;
+
+            if (!artist || !album) {
+                throw new BadRequest('Artist and Album are required');
+            }
+
+            const tags = await this.service.albumGetTags({
+                artist: String(artist),
+                album: String(album),
+            });
+
+            res.status(200).json({
+                message: 'Album tags retrieved successfully',
+                tags,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+}
+
+export default new AlbumController();

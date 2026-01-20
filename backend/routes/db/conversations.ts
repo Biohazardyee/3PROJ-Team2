@@ -1,6 +1,6 @@
 import express from "express";
 import conversationController from "../../modules/db/conversations/conversation.controller.js";
-import messageController from "../../modules/db/messages/message.controller";
+import messageController from "../../modules/db/messages/message.controller.js";
 
 var router = express.Router();
 

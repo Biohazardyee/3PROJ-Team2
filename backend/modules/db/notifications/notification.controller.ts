@@ -4,14 +4,21 @@ import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {NotificationService} from './notification.service.js';
 
-class NotificationController {
+class NotificationController extends Controller{
 
     constructor(private readonly service = new NotificationService()) {
+        super();
     }
 
     async add(req: Request, res: Response, next: NextFunction) {
         try {
-            const {user_id, action, related_user_id, review_id, media_id} = req.body;
+            const {
+                user_id, 
+                action, 
+                related_user_id, 
+                review_id, 
+                media_id
+            } = req.body;
 
             if (!user_id || !action) {
                 throw new BadRequest('user_id and action are required');

@@ -4,20 +4,27 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import indexRouter from './routes/db';
 
-import userRouter from './routes/db/users';
-import playlistRouter from './routes/db/playlists';
-import mediaRouter from './routes/db/medias';
-import reviewRouter from './routes/db/reviews';
-import banUserRouter from './routes/db/ban.users';
-import reportRouter from './routes/db/reports';
-import playlistItemRouter from './routes/db/playlists.items';
-import notificationRouter from './routes/db/notifications';
-import activitiesRouter from './routes/db/activities';
-import followRouter from './routes/db/follows';
-import messageRouter from './routes/db/messages';
-import conversationRouter from './routes/db/conversations';
+import indexRouter from './routes/db/index.js';
+
+// DB Endpoints
+import userRouter from './routes/db/users.js';
+import playlistRouter from './routes/db/playlists.js';
+import mediaRouter from './routes/db/medias.js';
+import reviewRouter from './routes/db/reviews.js';
+import banUserRouter from './routes/db/ban.users.js';
+import reportRouter from './routes/db/reports.js';
+import playlistItemRouter from './routes/db/playlists.items.js';
+import notificationRouter from './routes/db/notifications.js';
+import activitiesRouter from './routes/db/activities.js';
+import followRouter from './routes/db/follows.js';
+import messageRouter from './routes/db/messages.js';
+import conversationRouter from './routes/db/conversations.js';
+
+// API Endpoints
+import albumsRouter from './routes/api/albums.js';
+import artistsRouter from './routes/api/artists.js';
+import searchRouter from './routes/api/search.js';
 
 import { ApiError, InternalError } from './utils/errors.js';
 
@@ -52,6 +59,11 @@ app.use('/playlists', playlistRouter);
 app.use('/users', userRouter);
 app.use('/reviews', reviewRouter);
 app.use('/', indexRouter);
+
+// API routes
+app.use('/api/artists', artistsRouter); 
+app.use('/api/albums', albumsRouter);
+app.use('/api/search', searchRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
