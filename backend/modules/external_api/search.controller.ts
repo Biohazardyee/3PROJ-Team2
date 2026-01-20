@@ -6,17 +6,17 @@ class SearchController {
 
     async search(req: Request, res: Response, next: NextFunction) {
         try {
-            const { album } = req.query;
+            const { query } = req.query;
 
-            if (!album) {
-                throw new BadRequest('Album is required');
+            if (!query) {
+                throw new BadRequest('Query is required');
             }
 
             const searchResults = await searchService.search({
-                query: String(album),
+                query: String(query),
             });
             res.status(200).json({
-                message: 'Album search completed successfully',
+                message: 'Search completed successfully',
                 searchResults,
             });
         }

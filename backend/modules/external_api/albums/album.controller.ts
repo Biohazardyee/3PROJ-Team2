@@ -55,15 +55,14 @@ export class AlbumController {
 
     async albumGetTags(req: Request, res: Response, next: NextFunction) {
         try {
-            const { artist, album } = req.query;
+            const { mbid } = req.params;
 
-            if (!artist || !album) {
-                throw new BadRequest('Artist and Album are required');
+            if (!mbid) {
+                throw new BadRequest('mbid is required');
             }
 
             const tags = await this.service.albumGetTags({
-                artist: String(artist),
-                album: String(album),
+                mbid: String(mbid),
             });
 
             res.status(200).json({

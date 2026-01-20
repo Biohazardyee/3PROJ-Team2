@@ -11,7 +11,7 @@ router.get('/info/:mbid', function (req, res, next) {
     albumController.getAlbumInfoById(req, res, next);
 });
 
-router.get('/info/tags', function (req, res, next) {
+router.get('/info/tags/:mbid', function (req, res, next) {
     albumController.albumGetTags(req, res, next);
 });
 

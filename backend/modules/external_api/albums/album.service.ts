@@ -66,23 +66,21 @@ export class AlbumService {
 
     
 
-    async albumGetTags(data: { artist: string; album: string }) {
+    // to redo, we need to use the mbid instead, using artist and album name doesnt work
+    async albumGetTags(data: { mbid: string}) {
 
-        const { artist, album } = data;
+        const { mbid } = data;
 
-        if (isEmptyString(artist)) {
-            throw new BadRequest('Artist cannot be empty');
+        if (isEmptyString(mbid)) {
+            throw new BadRequest('MBID cannot be empty');
         }
 
-        if (isEmptyString(album)) {
-            throw new BadRequest('Album cannot be empty');
-        }
-
+      
         const tags_URL =
             `${URL}?method=album.gettoptags` +
             `&api_key=${API_KEY}` +
-            `&artist=${encodeURIComponent(artist)}` +
-            `&album=${encodeURIComponent(album)}` +
+            `&mbid=${encodeURIComponent(mbid)}` +
+            `autocorrect=1` +
             `&format=json`;
 
         const response = await fetch(tags_URL);

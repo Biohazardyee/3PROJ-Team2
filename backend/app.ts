@@ -25,6 +25,8 @@ import conversationRouter from './routes/db/conversations.js';
 import albumsRouter from './routes/api/albums.js';
 import artistsRouter from './routes/api/artists.js';
 import searchRouter from './routes/api/search.js';
+import tagRouter from './routes/api/tags.js';
+import trackRouter from './routes/api/tracks.js';
 
 import { ApiError, InternalError } from './utils/errors.js';
 
@@ -61,6 +63,8 @@ app.use('/reviews', reviewRouter);
 app.use('/', indexRouter);
 
 // API routes
+app.use('/api/tracks', trackRouter);
+app.use('/api/tags', tagRouter);
 app.use('/api/artists', artistsRouter); 
 app.use('/api/albums', albumsRouter);
 app.use('/api/search', searchRouter);
