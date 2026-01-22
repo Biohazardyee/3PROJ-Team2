@@ -29,7 +29,6 @@ export class NotificationService {
             throw new BadRequest('Invalid notification action');
         }
 
-
         const user = await prisma.user.findUnique({
             where: {
                 id: user_id
@@ -55,10 +54,9 @@ export class NotificationService {
 
         if (review_id) {
             const review = await prisma.review.findUnique({
-                where:
-                    {
-                        id: review_id
-                    }
+                where: {
+                    id: review_id
+                }
             });
             if (!review) {
                 throw new BadRequest('Review not found');
@@ -107,17 +105,36 @@ export class NotificationService {
         }
 
         return prisma.notification.findMany({
-            where: {user_id},
-            orderBy: {created_at: 'desc'},
+            where: {
+                user_id
+            },
+            orderBy: {
+                created_at: 'desc'
+            },
             select: {
                 id: true,
                 action: true,
                 is_read: true,
                 read_at: true,
                 created_at: true,
-                related_user: {select: {id: true, username: true}},
-                review: {select: {id: true, rating: true}},
-                media: {select: {id: true, api_id: true}},
+                related_user: {
+                    select: {
+                        id: true, 
+                        username: true
+                    }
+                },
+                review: {
+                    select: {
+                        id: true, 
+                        rating: true
+                    }
+                },
+                media: {
+                    select: {
+                        id: true,
+                        api_id: true
+                    }
+                },
             },
         });
     }
@@ -129,7 +146,9 @@ export class NotificationService {
 
         try {
             return await prisma.notification.update({
-                where: {id},
+                where: {
+                    id
+                },
                 data: {
                     is_read: true,
                     read_at: new Date()
@@ -153,7 +172,9 @@ export class NotificationService {
 
         try {
             return await prisma.notification.delete({
-                where: {id},
+                where: {
+                    id
+                },
                 select: {id: true},
             });
         } catch {
@@ -163,7 +184,9 @@ export class NotificationService {
 
     async getAll() {
         return prisma.notification.findMany({
-            orderBy: {created_at: 'desc'},
+            orderBy: {
+                created_at: 'desc'
+            },
             select: {
                 id: true,
                 user_id: true,
@@ -181,7 +204,9 @@ export class NotificationService {
         }
 
         const notification = await prisma.notification.findUnique({
-            where: {id},
+            where: {
+                id
+            },
             select: {
                 id: true,
                 user_id: true,

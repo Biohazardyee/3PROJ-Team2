@@ -31,6 +31,10 @@ export class MessageService {
             throw new BadRequest('Conversation content cannot be empty');
         }
 
+        if (!isValidBoolean(is_read)) {
+            throw new BadRequest('is_read must be a boolean');
+        }
+
         const conversation = await prisma.conversation.findUnique({
             where: {
                 id: conversation_id
@@ -40,7 +44,6 @@ export class MessageService {
         if (!conversation) {
             throw new BadRequest('Conversation not found');
         }
-
 
         const sender = await prisma.user.findUnique({
             where: {
@@ -57,12 +60,7 @@ export class MessageService {
         }
 
         return prisma.message.create({
-            data: {
-                conversation_id: conversation_id,
-                sender_id: sender_id,
-                content: content,
-                is_read: is_read ?? false,
-            },
+            data,
             select: {
                 id: true,
                 conversation_id: true,
@@ -84,7 +82,9 @@ export class MessageService {
                 is_read: true,
                 created_at: true,
             },
-            orderBy: {created_at: 'desc'},
+            orderBy: {
+                created_at: 'desc'
+            },
         });
     }
 
@@ -95,7 +95,9 @@ export class MessageService {
         }
 
         const message = await prisma.message.findUnique({
-            where: {id},
+            where: {
+                id
+            },
             select: {
                 id: true,
                 conversation_id: true,
@@ -121,7 +123,9 @@ export class MessageService {
         }
 
         const message = await prisma.message.findUnique({
-            where: {id}
+            where: {
+                id
+            }
         });
 
         if (!message) {
@@ -155,7 +159,9 @@ export class MessageService {
         }
 
         return prisma.message.update({
-            where: {id},
+            where: {
+                id
+            },
             data,
             select: {
                 id: true,
@@ -181,7 +187,9 @@ export class MessageService {
         }
 
         return prisma.message.delete({
-            where: {id},
+            where: {
+                id
+            },
             select: {
                 id: true,
                 conversation_id: true,
@@ -193,6 +201,5 @@ export class MessageService {
         });
     }
 }
-
 
 export const messageService = new MessageService();

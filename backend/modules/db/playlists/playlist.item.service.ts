@@ -8,7 +8,10 @@ export class PlaylistItemService {
         playlist_id: string;
         media_id: string
     }) {
-        const {playlist_id, media_id} = data;
+        const {
+            playlist_id, 
+            media_id
+        } = data;
 
         if (isEmptyString(playlist_id)) {
             throw new BadRequest('playlist_id is required');
@@ -17,7 +20,6 @@ export class PlaylistItemService {
             throw new BadRequest('media_id is required');
         }
 
-        // Check playlist exists
         const playlist = await prisma.playlist.findUnique({
             where: {
                 id: playlist_id
@@ -27,20 +29,16 @@ export class PlaylistItemService {
             throw new NotFound('Playlist not found');
         }
 
-        // Check media exists
         const media = await prisma.media.findUnique({
-            where:
-                {
-                    id: media_id
-
-                }
+            where: {
+                id: media_id
+            }
         });
 
         if (!media) {
             throw new NotFound('Media not found');
         }
 
-        // Prevent duplicates
         const exists = await prisma.playlistItem.findFirst({
             where: {
                 playlist_id,
@@ -65,17 +63,25 @@ export class PlaylistItemService {
     }
 
     async getByPlaylistId(playlist_id: string) {
+
         if (isEmptyString(playlist_id)) {
             throw new BadRequest('playlist_id is required');
         }
 
-        const playlist = await prisma.playlist.findUnique({where: {id: playlist_id}});
+        const playlist = await prisma.playlist.findUnique({
+            where: {
+                id: playlist_id
+            }
+        });
+
         if (!playlist) {
             throw new NotFound('Playlist not found');
         }
 
         return prisma.playlistItem.findMany({
-            where: {playlist_id},
+            where: {
+                playlist_id
+            },
             select: {
                 id: true,
                 media_id: true,
@@ -95,14 +101,20 @@ export class PlaylistItemService {
             throw new BadRequest('Playlist item id is required');
         }
 
-        const item = await prisma.playlistItem.findUnique({where: {id}});
+        const item = await prisma.playlistItem.findUnique({
+            where: {
+                id
+            }
+        });
 
         if (!item) {
             throw new NotFound('Playlist item not found');
         }
 
         return prisma.playlistItem.delete({
-            where: {id},
+            where: {
+                id
+            },
             select: {
                 id: true,
                 playlist_id: true,
@@ -122,23 +134,25 @@ export class PlaylistItemService {
     }
 
     async getById(id: string) {
+
         if (isEmptyString(id)) {
             throw new BadRequest('Playlist item id is required');
         }
 
         const item = await prisma.playlistItem.findUnique({
-            where: {id},
-            select:
-                {
-                    id: true,
-                    playlist_id: true,
-                    media_id: true
-                }
+            where: {
+                id
+            },
+            select: {
+                id: true,
+                playlist_id: true,
+                media_id: true
+            }
         });
+
         if (!item) {
             throw new NotFound('Playlist item not found');
         }
-
         return item;
     }
 }

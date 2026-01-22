@@ -31,13 +31,15 @@ export class ReportService {
             throw new BadRequest('Invalid report type');
         }
 
-
-        const reporter = await prisma.user.findUnique({where: {id: reporter_id}});
+        const reporter = await prisma.user.findUnique({
+            where: {
+                id: reporter_id
+            }
+        });
 
         if (!reporter) {
             throw new BadRequest('Reporter not found');
         }
-
 
         if (reason_type === ReportType.review) {
 
@@ -93,7 +95,9 @@ export class ReportService {
                     }
                 },
             },
-            orderBy: {created_at: 'desc'},
+            orderBy: {
+                created_at: 'desc'
+            },
         });
     }
 
@@ -103,15 +107,16 @@ export class ReportService {
         }
 
         const report = await prisma.report.findUnique({
-            where: {id},
+            where: {
+                id
+            },
             include: {
                 reporter: {
-                    select:
-                        {
-                            id: true,
-                            username: true,
-                            email: true
-                        }
+                    select: {
+                        id: true,
+                        username: true,
+                        email: true
+                    }
                 },
                 review: {
                     select: {
@@ -127,18 +132,25 @@ export class ReportService {
     }
 
     async getByReview(review_id: string) {
+
         if (isEmptyString(review_id)) {
             throw new BadRequest('review_id is required');
         }
 
-        const review = await prisma.review.findUnique({where: {id: review_id}});
+        const review = await prisma.review.findUnique({
+            where: {
+                id: review_id
+            }
+        });
 
         if (!review) {
             throw new NotFound('Review not found');
         }
 
         return prisma.report.findMany({
-            where: {review_id},
+            where: {
+                review_id
+            },
             include: {
                 reporter: {
                     select: {
@@ -147,7 +159,9 @@ export class ReportService {
                     }
                 },
             },
-            orderBy: {created_at: 'desc'},
+            orderBy: {
+                created_at: 'desc'
+            },
         });
     }
 
@@ -157,14 +171,23 @@ export class ReportService {
             throw new BadRequest('Report id is required');
         }
 
-        const report = await prisma.report.findUnique({where: {id}});
+        const report = await prisma.report.findUnique({
+            where: {
+                id
+            }
+        });
+
         if (!report) {
             throw new NotFound('Report not found');
         }
 
         return prisma.report.update({
-            where: {id},
-            data: {is_checked: true},
+            where: {
+                id
+            },
+            data: {
+                is_checked: true
+            },
             include: {
                 reporter: {
                     select: {
@@ -188,13 +211,20 @@ export class ReportService {
             throw new BadRequest('Report id is required');
         }
 
-        const report = await prisma.report.findUnique({where: {id}});
+        const report = await prisma.report.findUnique({
+            where: {
+                id
+            }
+        });
+
         if (!report) {
             throw new NotFound('Report not found');
         }
 
         return prisma.report.delete({
-            where: {id},
+            where: {
+                id
+            },
             include: {
                 reporter: {
                     select: {
@@ -212,6 +242,5 @@ export class ReportService {
         });
     }
 }
-
 
 export const reportService = new ReportService();

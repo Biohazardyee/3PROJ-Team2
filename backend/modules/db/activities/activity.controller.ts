@@ -12,14 +12,28 @@ class ActivityController extends Controller {
     async add(req: Request, res: Response, next: NextFunction) {
         try {
 
-            const {user_id, action, target_user_id, review_id, media_id, rating_from_user} = req.body;
+            const {
+                user_id, 
+                action, 
+                target_user_id, 
+                review_id, 
+                media_id, 
+                rating_from_user
+            } = req.body;
 
             if (!user_id || !action) {
                 throw new BadRequest('user_id and action are required');
             }
 
-            // checks are handled in service, no point in doing it again here, would be verbose
-            const activity = await this.service.create(req.body);
+            const activity = await this.service.create({
+                user_id,
+                action,
+                target_user_id,
+                review_id,
+                media_id,
+                rating_from_user,
+            });
+            
             res.status(201).json({
                 message: 'Activity created successfully',
                 activity,

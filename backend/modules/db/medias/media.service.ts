@@ -3,18 +3,20 @@ import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString, isValidApiId} from '../../../utils/helpers.js';
 
 export class MediaService {
-    async create(data: any) {
-        const {api_id} = data;
+    async create(data: { api_id: string }) {
+        const {
+            api_id
+        } = data;
 
         if (!isValidApiId(api_id)) {
             throw new BadRequest('Invalid api_id provided');
         }
 
-        const exists = await prisma.media.findFirst(
-            {
-                where:
-                    {api_id}
-            });
+        const exists = await prisma.media.findFirst({
+            where: {
+                api_id
+            }
+        });
 
         if (exists) {
             throw new BadRequest('Media with this API ID already exists');
@@ -33,7 +35,7 @@ export class MediaService {
         });
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: { api_id: string }) {
         if (isEmptyString(id)) {
             throw new BadRequest('Media id is required');
         }
@@ -54,7 +56,9 @@ export class MediaService {
         }
 
         return prisma.media.update({
-            where: {id},
+            where: {
+                id
+            },
             data: updateData,
             select: {
                 id: true,
@@ -71,7 +75,9 @@ export class MediaService {
         }
 
         const media = await prisma.media.findUnique({
-            where: {id},
+            where: {
+                id
+            },
             select: {
                 id: true,
                 api_id: true,
@@ -103,7 +109,9 @@ export class MediaService {
 
         const media = await prisma.media.findUnique(
             {
-                where: {id}
+                where: {
+                    id
+                }
             });
 
         if (!media) {
@@ -111,7 +119,9 @@ export class MediaService {
         }
 
         return prisma.media.delete({
-            where: {id},
+            where: {
+                id
+            },
             select: {
                 id: true,
                 api_id: true,

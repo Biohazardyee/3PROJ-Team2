@@ -40,7 +40,9 @@ class NotificationController extends Controller{
 
     async getByUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const {user_id} = req.params;
+            const {
+                user_id
+            } = req.params;
 
             if (!user_id) {
                 throw new BadRequest('user_id is required');
@@ -56,7 +58,9 @@ class NotificationController extends Controller{
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest('Notification id is required');
@@ -71,7 +75,9 @@ class NotificationController extends Controller{
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest('Notification id is required');
@@ -95,7 +101,9 @@ class NotificationController extends Controller{
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest('Notification id is required');

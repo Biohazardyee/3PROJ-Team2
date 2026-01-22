@@ -25,7 +25,7 @@ class ConversationController extends Controller {
                 throw new BadRequest('User_id2 is required');
             }
 
-            const reviewComment = await this.service.create({
+            const conversation = await this.service.create({
                 user1_id,
                 user2_id,
                 created_at: new Date(),
@@ -33,7 +33,7 @@ class ConversationController extends Controller {
 
             res.status(201).json({
                 message: 'Conervsation created successfully',
-                reviewComment,
+                conversation,
             });
         } catch (err) {
             next(err);

@@ -8,7 +8,11 @@ export class MediaStatusService {
 
     async create(data: { user_id: string, media_id: string, status: MediaStatus }) {
 
-        const {user_id, media_id, status} = data;
+        const {
+            user_id, 
+            media_id, 
+            status
+        } = data;
 
         if (isEmptyString(user_id)) {
             throw new BadRequest('user_id cannot be empty');
@@ -23,7 +27,9 @@ export class MediaStatusService {
         }
 
         const user = await prisma.user.findUnique({
-            where: {id: user_id},
+            where: {
+                id: user_id
+            },
         });
 
         if (!user) {
@@ -31,17 +37,21 @@ export class MediaStatusService {
         }
 
         const media = await prisma.media.findUnique({
-            where: {id: media_id},
+            where: {
+                id: media_id
+            },
         });
 
         if (!media) {
             throw new BadRequest('Media with this id does not exist');
         }
 
-
         const alreadyHasStatus = await prisma.userMediaStatus.findUnique({
             where: {
-                user_id_media_id: {user_id, media_id},
+                user_id_media_id: {
+                    user_id, 
+                    media_id
+                },
             },
         });
 
@@ -50,7 +60,6 @@ export class MediaStatusService {
                 'User already has a status for this media. Use update instead'
             );
         }
-
 
         return prisma.userMediaStatus.create({
             data: {
@@ -83,7 +92,10 @@ export class MediaStatusService {
 
         const mediaStatus = await prisma.userMediaStatus.findUnique({
             where: {
-                user_id_media_id: {user_id, media_id},
+                user_id_media_id: {
+                    user_id, 
+                    media_id
+                },
             },
         });
 
@@ -94,9 +106,14 @@ export class MediaStatusService {
 
         return prisma.userMediaStatus.update({
             where: {
-                user_id_media_id: {user_id, media_id},
+                user_id_media_id: {
+                    user_id, 
+                    media_id
+                },
             },
-            data: {status},
+            data: {
+                status
+            },
             select: {
                 user_id: true,
                 media_id: true,
@@ -118,7 +135,10 @@ export class MediaStatusService {
 
         const mediaStatus = await prisma.userMediaStatus.findUnique({
             where: {
-                user_id_media_id: {user_id, media_id},
+                user_id_media_id: {
+                    user_id, 
+                    media_id
+                },
             },
             select: {
                 user_id: true,
@@ -147,7 +167,10 @@ export class MediaStatusService {
 
         const mediaStatus = await prisma.userMediaStatus.findUnique({
             where: {
-                user_id_media_id: {user_id, media_id},
+                user_id_media_id: {
+                    user_id, 
+                    media_id
+                },
             },
         });
 
@@ -157,7 +180,10 @@ export class MediaStatusService {
 
         return prisma.userMediaStatus.delete({
             where: {
-                user_id_media_id: {user_id, media_id},
+                user_id_media_id: {
+                    user_id, 
+                    media_id
+                },
             },
         });
     }

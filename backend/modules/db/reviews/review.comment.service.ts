@@ -94,7 +94,9 @@ export class ReviewCommentService {
         return reviewComment;
     }
 
-    async update(id: string, data: { content?: string }) {
+    async update(id: string, data: {
+        content?: string
+    }) {
 
         if (isEmptyString(id)) {
             throw new BadRequest("ID cannot be empty");

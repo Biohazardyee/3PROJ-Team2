@@ -62,7 +62,6 @@ export class UserService {
             omit: {
                 password: true
             }
-
         });
 
         if (exists) {
@@ -100,7 +99,9 @@ export class UserService {
     async getById(id: string) {
 
         const user = await prisma.user.findUnique({
-            where: {id},
+            where: {
+                id
+            },
             omit: {
                 password: true
             }
@@ -123,7 +124,9 @@ export class UserService {
     }) {
 
         const user = await prisma.user.findUnique({
-            where: {id},
+            where: {
+                id
+            },
         });
 
         if (!user) {
@@ -170,7 +173,9 @@ export class UserService {
 
         try {
             return await prisma.user.update({
-                where: {id},
+                where: {
+                    id
+                },
                 data,
                 omit: {
                     password: true,
@@ -184,7 +189,9 @@ export class UserService {
     async delete(id: string) {
         try {
             return await prisma.user.delete({
-                where: {id},
+                where: {
+                    id
+                },
                 select: {
                     id: true,
                     email: true,

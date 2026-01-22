@@ -3,7 +3,6 @@ import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {messageService} from './message.service.js';
-import {isEmptyString} from "../../../utils/helpers";
 
 class MessageController extends Controller {
 
@@ -32,6 +31,7 @@ class MessageController extends Controller {
                 message_text: 'Message created successfully',
                 message,
             });
+
         } catch (err) {
             next(err);
         }
@@ -65,6 +65,7 @@ class MessageController extends Controller {
                 message_text: `Message retrieved successfully`,
                 message,
             });
+
         } catch (err) {
             next(err);
         }

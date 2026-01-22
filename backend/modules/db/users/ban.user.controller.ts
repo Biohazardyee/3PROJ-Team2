@@ -12,14 +12,18 @@ class UserBanController {
     async add(req: Request, res: Response, next: NextFunction) {
         try {
             const {
-                id, content
+                id,
+                content
             } = req.body;
 
             if (!id || !content) {
                 throw new BadRequest('User id and a ban reason are required');
             }
 
-            const bannedUser = await this.service.create({id, content});
+            const bannedUser = await this.service.create({
+                id, 
+                content
+            });
 
             res.status(201).json({message: 'User banned successfully', bannedUser});
         } catch (error) {
@@ -30,7 +34,6 @@ class UserBanController {
     async getAll(_: Request, res: Response, next: NextFunction) {
         try {
             const bannedUsers = await this.service.getAll();
-
             res.status(200).json({message: 'Banned users retrieved successfully', bannedUsers});
         } catch (error) {
             next(error);
@@ -39,7 +42,9 @@ class UserBanController {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const {user_id} = req.params;
+            const {
+                user_id
+            } = req.params;
 
             if (!user_id) {
                 throw new BadRequest('User id is required');
@@ -79,7 +84,10 @@ class UserBanController {
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
+            
             if (!id) {
                 throw new BadRequest('Banned user id is required');
             }

@@ -16,7 +16,6 @@ export class ActivityService {
 
         const {user_id, action, target_user_id, review_id, media_id, rating_from_user} = data;
 
-
         if (isEmptyString(user_id)) {
             throw new BadRequest('The value of user_id cannot be empty')
         }
@@ -25,24 +24,20 @@ export class ActivityService {
             throw new BadRequest('Invalid activity action')
         }
 
-
         const user = await prisma.user.findUnique({
-            where:
-                {
-                    id: user_id
-                }
+            where:{
+                id: user_id
+            }
         });
 
         if (!user) {
             throw new BadRequest('User not found');
         }
 
-
         if (target_user_id) {
             if (target_user_id === user_id) {
                 throw new BadRequest('target_user_id cannot be the same as user_id')
             }
-
 
             const targetUser = await prisma.user.findUnique({
                 where: {
@@ -98,10 +93,9 @@ export class ActivityService {
 
 
         const user = await prisma.user.findUnique({
-            where:
-                {
-                    id: user_id
-                }
+            where: {
+                id: user_id
+            }
         });
 
         if (!user) {

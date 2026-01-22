@@ -12,12 +12,19 @@ class PlaylistItemController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction) {
         try {
-            const {playlist_id, media_id} = req.body;
+            const {
+                playlist_id, 
+                media_id
+            } = req.body;
+
             if (!playlist_id || !media_id) {
                 throw new BadRequest('playlist_id and media_id are required');
             }
 
-            const item = await this.service.add({playlist_id, media_id});
+            const item = await this.service.add({
+                playlist_id, 
+                media_id
+            });
 
             res.status(201).json({message: 'Media added to playlist successfully', item});
         } catch (error) {
@@ -27,7 +34,9 @@ class PlaylistItemController extends Controller {
 
     async getByPlaylistId(req: Request, res: Response, next: NextFunction) {
         try {
-            const {playlist_id} = req.params;
+            const {
+                playlist_id
+            } = req.params;
 
             if (!playlist_id) {
                 throw new BadRequest('playlist_id is required');
@@ -46,7 +55,9 @@ class PlaylistItemController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest("Item ID is required as a parameter");
@@ -60,7 +71,7 @@ class PlaylistItemController extends Controller {
         }
     }
 
-    async getAll(req: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction) {
         try {
             const items = await this.service.getAll();
             res.status(200).json({message: 'Playlist items retrieved successfully', items});
@@ -71,7 +82,9 @@ class PlaylistItemController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest("Item ID is required as a parameter");

@@ -109,7 +109,9 @@ export class PlaylistService {
         }
 
         const playlist = await prisma.playlist.findUnique({
-            where: {id},
+            where: {
+                id
+            },
             select: {
                 id: true,
                 name: true,
@@ -125,7 +127,11 @@ export class PlaylistService {
         return playlist;
     }
 
-    async update(id: string, data: {name: string, user_id: string, is_public: boolean}) {
+    async update(id: string, data: {
+        name: string, 
+        user_id: string, 
+        is_public: boolean
+    }) {
 
         if (isEmptyString(id)) {
             throw new BadRequest('ID cannot be empty');
@@ -193,7 +199,9 @@ export class PlaylistService {
 
         try {
             return await prisma.playlist.delete({
-                where: {id},
+                where: {
+                    id
+                },
                 select: {
                     id: true,
                     name: true,

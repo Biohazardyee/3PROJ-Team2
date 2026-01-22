@@ -11,13 +11,19 @@ class MediaController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction) {
         try {
-            const {api_id} = req.body;
+            const {
+                api_id
+            } = req.body;
+
             if (!isValidApiId(api_id)) {
                 throw new BadRequest('api_id is required and must be a valid string');
             }
 
-            const media = await this.service.create({api_id});
+            const media = await this.service.create({
+                api_id
+            });
             res.status(201).json({message: 'Media created successfully', media});
+
         } catch (error) {
             next(error);
         }
@@ -25,8 +31,13 @@ class MediaController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
-            const {api_id} = req.body;
+            const {
+                id
+            } = req.params;
+
+            const {
+                api_id
+            }= req.body;
 
             if (!id){
                 throw new BadRequest('media id is required as a parameter');
@@ -45,12 +56,13 @@ class MediaController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id){
                 throw new BadRequest('id is required');
             }
-
 
             const media = await this.service.getById(id);
             res.status(200).json({message: 'Media retrieved successfully', media});
@@ -59,7 +71,7 @@ class MediaController extends Controller {
         }
     }
 
-    async getAll(req: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction) {
         try {
             const medias = await this.service.getAll();
             res.status(200).json({message: 'Medias retrieved successfully', medias});
@@ -70,7 +82,9 @@ class MediaController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id){
                 throw new BadRequest('id is required');

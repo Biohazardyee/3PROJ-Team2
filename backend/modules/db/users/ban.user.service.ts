@@ -100,7 +100,11 @@ export class BanUserService {
             throw new BadRequest('Banned user id cannot be empty');
         }
 
-        const bannedUser = await prisma.bannedUsers.findUnique({where: {id}});
+        const bannedUser = await prisma.bannedUsers.findUnique({
+            where: {
+                id
+            }
+        });
 
         if (!bannedUser) {
             throw new NotFound('Banned user not found');
@@ -111,17 +115,24 @@ export class BanUserService {
         }
 
         return prisma.bannedUsers.update({
-            where: {id},
+            where: {
+                id
+            },
             data
         });
     }
 
     async delete(id: string) {
+
         if (isEmptyString(id)) {
             throw new BadRequest('Banned user id is required');
         }
 
-        const bannedUser = await prisma.bannedUsers.findUnique({where: {id}});
+        const bannedUser = await prisma.bannedUsers.findUnique({
+            where: {
+                id
+            }
+        });
 
         if (!bannedUser) {
             throw new NotFound('Banned user not found');

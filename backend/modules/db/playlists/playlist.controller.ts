@@ -28,6 +28,7 @@ class PlaylistController extends Controller {
                 is_public,
                 created_at: new Date(),
             });
+
             res.status(201).json({
                 message: 'Playlist created successfully',
                 playlist,
@@ -73,7 +74,9 @@ class PlaylistController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest('Missing required fields');
@@ -91,7 +94,9 @@ class PlaylistController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id){
                 throw new BadRequest('Missing required fields');
@@ -129,7 +134,9 @@ class PlaylistController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest('Missing required fields');
@@ -144,7 +151,6 @@ class PlaylistController extends Controller {
             next(error);
         }
     }
-
 }
 
 export default new PlaylistController();

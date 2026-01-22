@@ -57,7 +57,10 @@ class UserController extends Controller {
 
     async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const { email, password } = req.body;
+            const {
+                email, 
+                password
+            } = req.body;
 
             if (!email || !password) {
                 throw new BadRequest('Email and password required');
@@ -83,7 +86,9 @@ class UserController extends Controller {
                     role: user.role,
                 },
                 process.env.JWT_SECRET!,
-                { expiresIn: '1h' }
+                {
+                    expiresIn: '1h'
+                }
             );
 
             res.json({
@@ -124,6 +129,7 @@ class UserController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
+            
             const id = req.params.id;
 
             if (!id) {

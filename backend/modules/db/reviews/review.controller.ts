@@ -71,7 +71,9 @@ class ReviewController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest('Missing required fields');
@@ -119,7 +121,9 @@ class ReviewController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
             await this.service.delete(id);
             res.status(200).json({
                 message: 'Review deleted successfully',

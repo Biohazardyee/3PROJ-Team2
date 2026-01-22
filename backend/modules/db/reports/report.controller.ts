@@ -9,13 +9,23 @@ class ReportController {
 
     async add(req: Request, res: Response, next: NextFunction) {
         try {
-            const {reporter_id, review_id, reason, reason_type} = req.body;
+            const {
+                reporter_id, 
+                review_id, 
+                reason, 
+                reason_type
+            } = req.body;
 
             if (!reporter_id || !reason || !reason_type) {
                 throw new BadRequest('reporter_id, reason and reason_type are required');
             }
 
-            const report = await this.service.create({reporter_id, review_id, reason, reason_type});
+            const report = await this.service.create({
+                reporter_id, 
+                review_id, 
+                reason, 
+                reason_type
+            });
 
             res.status(201).json({message: 'Report created successfully', report});
         } catch (error) {
@@ -34,7 +44,9 @@ class ReportController {
 
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
 
             if (!id) {
                 throw new BadRequest('Report id is required');
@@ -49,7 +61,10 @@ class ReportController {
 
     async getByReview(req: Request, res: Response, next: NextFunction) {
         try {
-            const {review_id} = req.params;
+            const {
+                review_id
+            } = req.params;
+
             if (!review_id) {
                 throw new BadRequest('review_id is required');
             }
@@ -63,7 +78,10 @@ class ReportController {
 
     async update(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
+
             if (!id) {
                 throw new BadRequest('Report id is required');
             }
@@ -77,7 +95,10 @@ class ReportController {
 
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            const {id} = req.params;
+            const {
+                id
+            } = req.params;
+            
             if (!id) {
                 throw new BadRequest('Report id is required');
             }

@@ -152,7 +152,9 @@ export class ReviewService {
         }
 
         const review = await prisma.review.findUnique({
-            where: {id},
+            where: {
+                id
+            },
         });
 
         if (!review) {
@@ -160,7 +162,9 @@ export class ReviewService {
         }
 
         return prisma.review.delete({
-            where: {id},
+            where: {
+                id
+            },
         });
     }
 }
