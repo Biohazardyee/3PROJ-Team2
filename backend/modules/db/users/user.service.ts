@@ -1,23 +1,16 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isValidStringLength, isEmptyString} from "../../../utils/helpers.js";
 import {isValidEmail, isValidUsername, isValidPassword} from "./user.helper.js"
 import {Role} from '../../../generated/prisma/enums.js';
+import {Prisma} from '../../../generated/prisma/client.js';
 import bcrypt from "bcrypt";
+import {UserWithoutPassword} from "../../../types/user.dto";
+import {User} from "../../../generated/prisma/browser.js";
 
 export class UserService {
 
-    async add(data: {
-        email: string,
-        username: string,
-        password: string,
-        favorite_band: string,
-        role?: Role,
-        phone_number?: string,
-        biography?: string,
-        has_notifications?: boolean,
-        created_at: Date,
-    }) {
+    async add(data: Prisma.UserCreateInput): Promise<UserWithoutPassword> {
 
         if (isEmptyString(data.email)) {
             throw new BadRequest("Email cannot be empty");
@@ -52,7 +45,7 @@ export class UserService {
 
         data.password = await bcrypt.hash(data.password, 10);
 
-        const exists = await prisma.user.findFirst({
+        const exist: UserWithoutPassword | null = await PrismaDb.user.findFirst({
             where: {
                 OR: [
                     {email: data.email},
@@ -64,11 +57,11 @@ export class UserService {
             }
         });
 
-        if (exists) {
+        if (exist) {
             throw new BadRequest('Email or username already in use');
         }
 
-        return prisma.user.create({
+        return PrismaDb.user.create({
             data,
             omit: {
                 password: true
@@ -76,29 +69,29 @@ export class UserService {
         });
     }
 
-    async getByEmail(email: string) {
+    async getByEmail(email: string): Promise<User | null>  {
         if (!isValidEmail(email)) {
             throw new BadRequest('Invalid email');
         }
 
-        return prisma.user.findUnique({
+        return PrismaDb.user.findUnique({
             where: {
                 email: email.toLowerCase()
             },
         });
     }
 
-    async getAll() {
-        return prisma.user.findMany({
+    async getAll(): Promise<UserWithoutPassword[]> {
+        return PrismaDb.user.findMany({
             omit: {
                 password: true
             },
         });
     }
 
-    async getById(id: string) {
+    async getById(id: string): Promise<UserWithoutPassword> {
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id
             },
@@ -112,18 +105,9 @@ export class UserService {
         return user;
     }
 
-    async update(id: string, data: {
-        email?: string,
-        username?: string,
-        password?: string,
-        role?: Role,
-        phone_number?: string,
-        biography?: string,
-        favorite_band?: string,
-        has_notifications?: boolean,
-    }) {
+    async update(id: string, data: Prisma.UserUpdateInput): Promise<UserWithoutPassword> {
 
-        const user = await prisma.user.findUnique({
+        const user: User | null = await PrismaDb.user.findUnique({
             where: {
                 id
             },
@@ -133,7 +117,7 @@ export class UserService {
             throw new NotFound('User not found');
         }
 
-        const allowedFields = [
+        const allowedFields: string[] = [
             'email',
             'username',
             'password',
@@ -151,28 +135,28 @@ export class UserService {
             }
         }
 
-        if (data.email && !isValidEmail(data.email)) {
+        if (data.email && !isValidEmail((data.email).toString())) {
             throw new BadRequest('Invalid email format');
         }
 
-        if (data.username && !isValidUsername(data.username)) {
+        if (data.username && !isValidUsername((data.username).toString())) {
             throw new BadRequest('Invalid username format');
         }
 
-        if (data.biography && !isValidStringLength(data.biography, 500)) {
+        if (data.biography && !isValidStringLength((data.biography).toString(), 500)) {
             throw new BadRequest('Biography is too long (max 500 chars)');
         }
 
-        if (data.favorite_band && !isValidStringLength(data.favorite_band, 100)) {
+        if (data.favorite_band && !isValidStringLength((data.favorite_band).toString(), 100)) {
             throw new BadRequest('Favorite band is too long (max 100 chars)');
         }
 
-        if (data.role && !data.role.includes('BASIC') && !data.role.includes('ADMIN')) {
+        if (data.role && data.role != Role.BASIC && data.role != Role.ADMIN) {
             throw new BadRequest('Role need to have a role between BASIC and ADMIN');
         }
 
         try {
-            return await prisma.user.update({
+            return await PrismaDb.user.update({
                 where: {
                     id
                 },
@@ -186,9 +170,9 @@ export class UserService {
         }
     }
 
-    async delete(id: string) {
+    async delete(id: string): Promise<Partial<User>>{
         try {
-            return await prisma.user.delete({
+            return await PrismaDb.user.delete({
                 where: {
                     id
                 },

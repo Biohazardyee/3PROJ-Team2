@@ -4,11 +4,11 @@ import "dotenv/config";
 
 const connectionString = `${process.env.DATABASE_URL}`
 const adapter = new PrismaPg({ connectionString })
-const prisma = new PrismaClient({ adapter })
+const PrismaDb = new PrismaClient({ adapter })
 
 export async function connectDB() {
     try {
-        await prisma.$connect();
+        await PrismaDb.$connect();
         console.log("✅ Connecté à PostgreSQL !");
     } catch (err) {
         console.error("❌ Erreur de connexion PostgreSQL :", err);
@@ -16,4 +16,4 @@ export async function connectDB() {
     }
 }
 
-export { prisma }
+export { PrismaDb }

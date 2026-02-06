@@ -1,33 +1,30 @@
-import {prisma} from '../../../config/database.js';
-import {BadRequest, NotFound} from '../../../utils/errors.js';
-import {isEmptyString} from '../../../utils/helpers.js';
-import {ActivityAction} from '../../../generated/prisma/browser.js';
+import { PrismaDb } from '../../../config/database.js';
+import { BadRequest, NotFound } from '../../../utils/errors.js';
+import { isEmptyString } from '../../../utils/helpers.js';
+import { Prisma } from '../../../generated/prisma/client.js';
 
 export class ActivityService {
 
-    async create(data: {
-        user_id: string;
-        action: ActivityAction;
-        target_user_id?: string;
-        review_id?: string;
-        media_id?: string;
-        rating_from_user?: number;
-    }) {
-
-        const {user_id, action, target_user_id, review_id, media_id, rating_from_user} = data;
+    async create(data: Prisma.ActivityUncheckedCreateInput) {
+        const {
+            user_id,
+            action,
+            target_user_id,
+            review_id,
+            media_id,
+            rating_from_user
+        } = data;
 
         if (isEmptyString(user_id)) {
-            throw new BadRequest('The value of user_id cannot be empty')
+            throw new BadRequest('The value of user_id cannot be empty');
         }
 
-        if (!action || !Object.values(ActivityAction).includes(action)) {
-            throw new BadRequest('Invalid activity action')
+        if (!action) {
+            throw new BadRequest('Invalid activity action');
         }
 
-        const user = await prisma.user.findUnique({
-            where:{
-                id: user_id
-            }
+        const user = await PrismaDb.user.findUnique({
+            where: { id: user_id },
         });
 
         if (!user) {
@@ -36,13 +33,11 @@ export class ActivityService {
 
         if (target_user_id) {
             if (target_user_id === user_id) {
-                throw new BadRequest('target_user_id cannot be the same as user_id')
+                throw new BadRequest('target_user_id cannot be the same as user_id');
             }
 
-            const targetUser = await prisma.user.findUnique({
-                where: {
-                    id: target_user_id
-                }
+            const targetUser = await PrismaDb.user.findUnique({
+                where: { id: target_user_id },
             });
 
             if (!targetUser) {
@@ -50,27 +45,33 @@ export class ActivityService {
             }
         }
 
-
         if (review_id) {
-            const review = await prisma.review.findUnique({where: {id: review_id}});
+            const review = await PrismaDb.review.findUnique({
+                where: { id: review_id },
+            });
+
             if (!review) {
                 throw new BadRequest('Review not found');
             }
         }
 
         if (media_id) {
-            const media = await prisma.media.findUnique({where: {id: media_id}});
+            const media = await PrismaDb.media.findUnique({
+                where: { id: media_id },
+            });
+
             if (!media) {
                 throw new BadRequest('Media not found');
             }
         }
 
-        if (rating_from_user !== undefined) {
-            if ( rating_from_user < 0 || rating_from_user > 5)
-                throw new BadRequest('rating_from_user must be a number between 0 and 5');
+        if (rating_from_user !== undefined && rating_from_user !== null) {
+            if (rating_from_user < 0 || rating_from_user > 5) {
+                throw new BadRequest('rating_from_user must be between 0 and 5');
+            }
         }
 
-        return prisma.activity.create({
+        return PrismaDb.activity.create({
             data,
             select: {
                 id: true,
@@ -92,7 +93,7 @@ export class ActivityService {
         }
 
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: user_id
             }
@@ -102,16 +103,14 @@ export class ActivityService {
             throw new NotFound('User not found')
         }
 
-
-        // Get activities of user + users they follow
-        const following = await prisma.follow.findMany({
+        const following = await PrismaDb.follow.findMany({
             where: {user_id},
             select: {follow_user_id: true},
         });
 
         const userIds = [user_id, ...following.map(f => f.follow_user_id)];
 
-        return prisma.activity.findMany({
+        return PrismaDb.activity.findMany({
             where: {
                 user_id: {
                     in: userIds
@@ -161,7 +160,7 @@ export class ActivityService {
         }
 
         try {
-            return await prisma.activity.delete({
+            return await PrismaDb.activity.delete({
                 where: {id},
                 select: {id: true},
             });
@@ -171,7 +170,7 @@ export class ActivityService {
     }
 
     async getAll() {
-        return prisma.activity.findMany({
+        return PrismaDb.activity.findMany({
             orderBy: {created_at: 'desc'},
             select: {
                 id: true,
@@ -192,7 +191,7 @@ export class ActivityService {
             throw new BadRequest('Activity id cannot be empty');
         }
 
-        const activity = await prisma.activity.findUnique({
+        const activity = await PrismaDb.activity.findUnique({
             where: {id},
             select: {
                 id: true,

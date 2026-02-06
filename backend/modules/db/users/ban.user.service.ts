@@ -1,34 +1,34 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString, isValidStringLength} from "../../../utils/helpers.js";
+import {Prisma} from '../../../generated/prisma/client.js';
 
 export class BanUserService {
 
-    async create(data: {
-        id: string,
-        content: string
-    }) {
-        const {
-            id, content
-        } = data;
+    async create(data: Prisma.BannedUsersCreateInput) {
 
-        if (isEmptyString(id)) {
+        const userId = typeof data.user === 'object' && 'connect' in data.user
+            ? data.user.connect?.id
+            : undefined;
+
+        if (userId && isEmptyString(userId)) {
             throw new BadRequest('User id cannot be empty');
         }
-        if (isEmptyString(content)) {
+
+        if (isEmptyString(data.content)) {
             throw new BadRequest('Ban reason cannot be empty');
         }
 
-        if (!isValidStringLength(content, 255)) {
+        if (!isValidStringLength(data.content, 255)) {
             throw new BadRequest('Ban reason cannot be longer than 255 chars');
         }
 
-        const user = await prisma.user.findUnique({where: {id}});
+        const user = await PrismaDb.user.findUnique({where: {id}});
         if (!user) {
             throw new NotFound('User not found');
         }
 
-        const alreadyBanned = await prisma.bannedUsers.findUnique({
+        const alreadyBanned = await PrismaDb.bannedUsers.findUnique({
             where: {
                 user_id: id
             }
@@ -38,7 +38,7 @@ export class BanUserService {
             throw new BadRequest('User already banned');
         }
 
-        return prisma.bannedUsers.create({
+        return PrismaDb.bannedUsers.create({
             data: {
                 user_id: id,
                 content
@@ -47,7 +47,7 @@ export class BanUserService {
     }
 
     async getAll() {
-        return prisma.bannedUsers.findMany({
+        return PrismaDb.bannedUsers.findMany({
             orderBy: {
                 id: 'asc'
             },
@@ -68,7 +68,7 @@ export class BanUserService {
             throw new BadRequest('The value of User ID cannot be empty');
         }
 
-        const bannedUser = await prisma.bannedUsers.findUnique({
+        const bannedUser = await PrismaDb.bannedUsers.findUnique({
             where: {
                 user_id
             },
@@ -100,7 +100,7 @@ export class BanUserService {
             throw new BadRequest('Banned user id cannot be empty');
         }
 
-        const bannedUser = await prisma.bannedUsers.findUnique({
+        const bannedUser = await PrismaDb.bannedUsers.findUnique({
             where: {
                 id
             }
@@ -114,7 +114,7 @@ export class BanUserService {
             throw new BadRequest("Ban reason content cannot be more than 255 characters");
         }
 
-        return prisma.bannedUsers.update({
+        return PrismaDb.bannedUsers.update({
             where: {
                 id
             },
@@ -128,7 +128,7 @@ export class BanUserService {
             throw new BadRequest('Banned user id is required');
         }
 
-        const bannedUser = await prisma.bannedUsers.findUnique({
+        const bannedUser = await PrismaDb.bannedUsers.findUnique({
             where: {
                 id
             }
@@ -138,7 +138,7 @@ export class BanUserService {
             throw new NotFound('Banned user not found');
         }
 
-        return prisma.bannedUsers.delete({where: {id}});
+        return PrismaDb.bannedUsers.delete({where: {id}});
     }
 }
 

@@ -1,13 +1,16 @@
-import type { Request, Response, NextFunction } from 'express';
+import type {Request, Response, NextFunction} from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import { Controller } from '../../controller.js';
-import { Unauthorized, BadRequest } from '../../../utils/errors.js';
-import { userService } from './user.service.js';
+import {Controller} from '../../controller.js';
+import {Unauthorized, BadRequest} from '../../../utils/errors.js';
+import {userService} from './user.service.js';
 
-import { NotFound } from '../../../utils/errors.js';
+import {NotFound} from '../../../utils/errors.js';
+import {LoginDto, UserRegistrationDto, UserWithoutPassword} from "../../../types/user.dto.js";
+import {User} from "../../../generated/prisma/browser.js";
+import {UserUpdateInput} from "../../../generated/prisma/models/User.js";
 
 dotenv.config();
 
@@ -17,34 +20,20 @@ class UserController extends Controller {
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                email,
-                username,
-                password,
-                role,
-                phone_number,
-                biography,
-                favorite_band,
-                has_notifications,
-            } = req.body;
+            const registrationData: UserRegistrationDto = {
+                email: req.body.email,
+                username: req.body.username,
+                password: req.body.password,
+                favorite_band: req.body.favorite_band,
+            };
 
-            if (!email || !username || !password) {
+            if (!registrationData.email || !registrationData.username || !registrationData.password) {
                 throw new BadRequest('Email, username and password are required');
             }
 
-            const user = await this.service.add({
-                email,
-                username,
-                password,
-                role,
-                phone_number,
-                biography,
-                favorite_band,
-                has_notifications,
-                created_at: new Date(),
-            });
+            const user: UserWithoutPassword = await this.service.add(registrationData);
 
             res.status(201).json({
                 message: 'User created successfully',
@@ -55,30 +44,30 @@ class UserController extends Controller {
         }
     }
 
-    async login(req: Request, res: Response, next: NextFunction) {
+    async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                email, 
-                password
-            } = req.body;
+            const loginData: LoginDto = {
+                email: req.body.email,
+                password: req.body.password,
+            };
 
-            if (!email || !password) {
+            if (!loginData.email || !loginData.password) {
                 throw new BadRequest('Email and password required');
             }
 
-            const user = await this.service.getByEmail(email);
+            const user: User | null = await this.service.getByEmail(loginData.email);
 
             if (!user) {
                 throw new Unauthorized('Invalid email or password');
             }
 
-            const isValid = await bcrypt.compare(password, user.password);
+            const isValid: boolean = await bcrypt.compare(loginData.password, user.password);
 
             if (!isValid) {
                 throw new Unauthorized('Invalid email or password');
             }
 
-            const token = jwt.sign(
+            const token: string = jwt.sign(
                 {
                     id: user.id,
                     email: user.email,
@@ -106,30 +95,30 @@ class UserController extends Controller {
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const users = await this.service.getAll();
+            const users: UserWithoutPassword[] = await this.service.getAll();
             res.json(users);
         } catch (err) {
             next(err);
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             if (!req.params.id) {
                 throw new BadRequest('Id is required');
             }
-            const user = await this.service.getById(req.params.id);
+            const user: UserWithoutPassword = await this.service.getById(req.params.id);
             res.json(user);
         } catch (err) {
             next(err);
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            
+
             const id = req.params.id;
 
             if (!id) {
@@ -146,7 +135,7 @@ class UserController extends Controller {
                 profile_picture
             } = req.body;
 
-            let data: any = {}
+            let data: UserUpdateInput = {}
 
             if (username) {
                 data.username = username;
@@ -165,7 +154,7 @@ class UserController extends Controller {
             }
 
             if (favorite_band) {
-                data.band = favorite_band;
+                data.favorite_band = favorite_band;
             }
 
             if (has_notifications) {
@@ -184,7 +173,7 @@ class UserController extends Controller {
                 throw new BadRequest("No fields provided")
             }
 
-            const user = await this.service.update(id, data);
+            const user: UserWithoutPassword = await this.service.update(id, data);
 
             res.status(200).json({
                 message: 'User updated successfully',
@@ -195,12 +184,12 @@ class UserController extends Controller {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             if (!req.params.id) {
                 throw new BadRequest('Id is required');
             }
-            const user = await this.service.delete(req.params.id);
+            const user: Partial<User> = await this.service.delete(req.params.id);
             res.json({
                 message: 'User deleted successfully',
                 user,
@@ -210,20 +199,21 @@ class UserController extends Controller {
         }
     }
 
-    async getByEmail(req: Request, res: Response, next: NextFunction) {
+    async getByEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-           const {
-               email
-           } = req.body
+            const email = req.body.email;
 
             if (!email) {
                 throw new BadRequest('Email is required');
             }
 
-            const user = await this.service.getByEmail(email);
+            // ✅ Utiliser une méthode qui ne retourne PAS le password
+            const user: UserWithoutPassword | null = await this.service.getByEmailSafe(email);
+
             if (!user) {
                 throw new NotFound('User not found');
             }
+
             res.json(user);
         } catch (err) {
             next(err);

@@ -9,15 +9,14 @@ class ActivityController extends Controller {
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-
             const {
-                user_id, 
-                action, 
-                target_user_id, 
-                review_id, 
-                media_id, 
+                user_id,
+                action,
+                target_user_id,
+                review_id,
+                media_id,
                 rating_from_user
             } = req.body;
 
@@ -33,7 +32,7 @@ class ActivityController extends Controller {
                 media_id,
                 rating_from_user,
             });
-            
+
             res.status(201).json({
                 message: 'Activity created successfully',
                 activity,
@@ -43,7 +42,7 @@ class ActivityController extends Controller {
         }
     }
 
-    async getFeed(req: Request, res: Response, next: NextFunction) {
+    async getFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {user_id} = req.params;
 

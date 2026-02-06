@@ -19,7 +19,7 @@ model User {
   email             String   @unique @db.VarChar(320)
   password          String
   phone_number      String?  @db.VarChar(15)
-  profile_picture   Bytes?
+  profile_picture   Bytes
   role              Role?    @default(BASIC)
   biography         String?  @db.VarChar(255)
   favorite_band     String
