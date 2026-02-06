@@ -1,4 +1,4 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
 import {NotificationAction} from '../../../generated/prisma/browser.js';
@@ -29,7 +29,7 @@ export class NotificationService {
             throw new BadRequest('Invalid notification action');
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: user_id
             }
@@ -41,7 +41,7 @@ export class NotificationService {
 
 
         if (related_user_id) {
-            const relatedUser = await prisma.user.findUnique({
+            const relatedUser = await PrismaDb.user.findUnique({
                 where: {
                     id: related_user_id
                 }
@@ -53,7 +53,7 @@ export class NotificationService {
         }
 
         if (review_id) {
-            const review = await prisma.review.findUnique({
+            const review = await PrismaDb.review.findUnique({
                 where: {
                     id: review_id
                 }
@@ -64,7 +64,7 @@ export class NotificationService {
         }
 
         if (media_id) {
-            const media = await prisma.media.findUnique({
+            const media = await PrismaDb.media.findUnique({
                 where: {
                     id: media_id
                 }
@@ -74,7 +74,7 @@ export class NotificationService {
             }
         }
 
-        return prisma.notification.create({
+        return PrismaDb.notification.create({
             data,
             select: {
                 id: true,
@@ -95,7 +95,7 @@ export class NotificationService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: user_id
             }
@@ -104,7 +104,7 @@ export class NotificationService {
             throw new NotFound('User not found');
         }
 
-        return prisma.notification.findMany({
+        return PrismaDb.notification.findMany({
             where: {
                 user_id
             },
@@ -145,7 +145,7 @@ export class NotificationService {
         }
 
         try {
-            return await prisma.notification.update({
+            return await PrismaDb.notification.update({
                 where: {
                     id
                 },
@@ -171,7 +171,7 @@ export class NotificationService {
         }
 
         try {
-            return await prisma.notification.delete({
+            return await PrismaDb.notification.delete({
                 where: {
                     id
                 },
@@ -183,7 +183,7 @@ export class NotificationService {
     }
 
     async getAll() {
-        return prisma.notification.findMany({
+        return PrismaDb.notification.findMany({
             orderBy: {
                 created_at: 'desc'
             },
@@ -203,7 +203,7 @@ export class NotificationService {
             throw new BadRequest('Notification id cannot be empty');
         }
 
-        const notification = await prisma.notification.findUnique({
+        const notification = await PrismaDb.notification.findUnique({
             where: {
                 id
             },

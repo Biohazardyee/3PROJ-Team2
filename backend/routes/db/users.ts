@@ -1,8 +1,8 @@
 import express from 'express';
 import userController from '../../modules/db/users/user.controller.js';
-import { authGuard } from "../../middlewares/auth";
-import {checkAdminOrSelf} from "../../middlewares/checkAdminOrSelf";
-import {checkAdmin} from "../../middlewares/checkAdmin";
+import { authGuard } from "../../middlewares/auth.js";
+import {checkAdminOrSelf} from "../../middlewares/checkAdminOrSelf.js";
+import {checkAdmin} from "../../middlewares/checkAdmin.js";
 
 var router = express.Router();
 

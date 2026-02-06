@@ -1,4 +1,4 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString, isValidBoolean, isValidStringLength} from '../../../utils/helpers.js';
 
@@ -35,7 +35,7 @@ export class MessageService {
             throw new BadRequest('is_read must be a boolean');
         }
 
-        const conversation = await prisma.conversation.findUnique({
+        const conversation = await PrismaDb.conversation.findUnique({
             where: {
                 id: conversation_id
             }
@@ -45,7 +45,7 @@ export class MessageService {
             throw new BadRequest('Conversation not found');
         }
 
-        const sender = await prisma.user.findUnique({
+        const sender = await PrismaDb.user.findUnique({
             where: {
                 id: sender_id
             }
@@ -59,7 +59,7 @@ export class MessageService {
             throw new BadRequest('Content cannot be empty');
         }
 
-        return prisma.message.create({
+        return PrismaDb.message.create({
             data,
             select: {
                 id: true,
@@ -73,7 +73,7 @@ export class MessageService {
     }
 
     async getAll() {
-        return prisma.message.findMany({
+        return PrismaDb.message.findMany({
             select: {
                 id: true,
                 conversation_id: true,
@@ -94,7 +94,7 @@ export class MessageService {
             throw new BadRequest('Message id is required');
         }
 
-        const message = await prisma.message.findUnique({
+        const message = await PrismaDb.message.findUnique({
             where: {
                 id
             },
@@ -122,7 +122,7 @@ export class MessageService {
             throw new BadRequest('Message id cannot be empty');
         }
 
-        const message = await prisma.message.findUnique({
+        const message = await PrismaDb.message.findUnique({
             where: {
                 id
             }
@@ -158,7 +158,7 @@ export class MessageService {
             }
         }
 
-        return prisma.message.update({
+        return PrismaDb.message.update({
             where: {
                 id
             },
@@ -181,12 +181,12 @@ export class MessageService {
             throw new BadRequest('Message id cannot be empty');
         }
 
-        const message = await prisma.message.findUnique({where: {id}});
+        const message = await PrismaDb.message.findUnique({where: {id}});
         if (!message) {
             throw new NotFound('Message not found');
         }
 
-        return prisma.message.delete({
+        return PrismaDb.message.delete({
             where: {
                 id
             },

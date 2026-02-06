@@ -1,4 +1,4 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isValidStringLength, isEmptyString} from "../../../utils/helpers.js";
 
@@ -18,7 +18,7 @@ export class ReviewLikeService {
             throw new BadRequest("Review_id cannot be empty");
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: data.user_id,
             }
@@ -28,7 +28,7 @@ export class ReviewLikeService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const review = await prisma.review.findUnique({
+        const review = await PrismaDb.review.findUnique({
             where: {
                 id: data.review_id,
             }
@@ -38,7 +38,7 @@ export class ReviewLikeService {
             throw new BadRequest('The review doesn\'t exist');
         }
 
-        const alreadyLiked = await prisma.reviewLike.findUnique({
+        const alreadyLiked = await PrismaDb.reviewLike.findUnique({
             where: {
                 user_id_review_id: {
                     user_id: data.user_id,
@@ -51,7 +51,7 @@ export class ReviewLikeService {
             throw new BadRequest('Already Liked');
         }
 
-        return prisma.reviewLike.create({
+        return PrismaDb.reviewLike.create({
             data,
             select: {
                 user_id: true,
@@ -63,7 +63,7 @@ export class ReviewLikeService {
 
 
     async getAll() {
-        return prisma.reviewLike.findMany({
+        return PrismaDb.reviewLike.findMany({
             select: {
                 user_id: true,
                 review_id: true,
@@ -82,7 +82,7 @@ export class ReviewLikeService {
             throw new BadRequest('Review_id cannot be empty');
         }
 
-        const reviewLike = await prisma.reviewLike.findUnique({
+        const reviewLike = await PrismaDb.reviewLike.findUnique({
             where: {
                 user_id_review_id: {
                     user_id: user_id,
@@ -119,7 +119,7 @@ export class ReviewLikeService {
         }
 
         try {
-            return await prisma.reviewLike.delete({
+            return await PrismaDb.reviewLike.delete({
                 where: {
                     user_id_review_id: {
                         user_id: user_id,

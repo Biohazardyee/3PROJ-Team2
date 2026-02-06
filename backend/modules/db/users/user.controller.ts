@@ -5,18 +5,24 @@ import dotenv from 'dotenv';
 
 import {Controller} from '../../controller.js';
 import {Unauthorized, BadRequest} from '../../../utils/errors.js';
-import {userService} from './user.service.js';
+import {UserService, userService} from './user.service.js';
 
-import {NotFound} from '../../../utils/errors.js';
-import {LoginDto, UserRegistrationDto, UserWithoutPassword} from "../../../types/user.dto.js";
+import {
+    LoginDto,
+    UserRegistrationDto,
+    UserResponseDto,
+    UserResponseLoginDto,
+    UserUpdateDto
+} from "../../../types/user.dto.js";
+
 import {User} from "../../../generated/prisma/browser.js";
-import {UserUpdateInput} from "../../../generated/prisma/models/User.js";
+import {UserMapper} from "../../../mappers/user.mapper";
 
 dotenv.config();
 
 class UserController extends Controller {
 
-    constructor(private readonly service = userService) {
+    constructor(private readonly service: UserService = userService) {
         super();
     }
 
@@ -27,13 +33,14 @@ class UserController extends Controller {
                 username: req.body.username,
                 password: req.body.password,
                 favorite_band: req.body.favorite_band,
+                profile_picture: req.body.profile_picture,
             };
 
             if (!registrationData.email || !registrationData.username || !registrationData.password) {
                 throw new BadRequest('Email, username and password are required');
             }
 
-            const user: UserWithoutPassword = await this.service.add(registrationData);
+            const user: UserResponseDto = await this.service.add(registrationData);
 
             res.status(201).json({
                 message: 'User created successfully',
@@ -80,15 +87,12 @@ class UserController extends Controller {
                 }
             );
 
+            const userResponse: UserResponseLoginDto  = UserMapper.toLoginDto(user);
+
             res.json({
                 message: 'Login successful',
                 token,
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    username: user.username,
-                    role: user.role,
-                },
+                userResponse,
             });
         } catch (err) {
             next(err);
@@ -97,7 +101,7 @@ class UserController extends Controller {
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const users: UserWithoutPassword[] = await this.service.getAll();
+            const users: UserResponseDto[] = await this.service.getAll();
             res.json(users);
         } catch (err) {
             next(err);
@@ -109,7 +113,7 @@ class UserController extends Controller {
             if (!req.params.id) {
                 throw new BadRequest('Id is required');
             }
-            const user: UserWithoutPassword = await this.service.getById(req.params.id);
+            const user: UserResponseDto = await this.service.getById(req.params.id);
             res.json(user);
         } catch (err) {
             next(err);
@@ -119,61 +123,57 @@ class UserController extends Controller {
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
-            const id = req.params.id;
+            const id: string = req.params.id;
 
             if (!id) {
                 throw new BadRequest('Id is required');
             }
 
-            const {
-                username,
-                password,
-                phone_number,
-                biography,
-                favorite_band,
-                has_notifications,
-                profile_picture
-            } = req.body;
-
-            let data: UserUpdateInput = {}
-
-            if (username) {
-                data.username = username;
+            const updateData: UserUpdateDto = {
+                username: req.body.username,
+                password: req.body.password,
+                favorite_band: req.body.favorite_band,
+                phone_number: req.body.phone_number,
+                biography: req.body.biography,
+                has_notifications: req.body.has_notifications,
+                profile_picture: req.body.profile_picture,
             }
 
-            if (password) {
-                data.password = password;
+            let data: UserUpdateDto = {}
+
+            if (updateData.username) {
+                data.username = updateData.username;
             }
 
-            if (phone_number) {
-                data.phone_number = phone_number;
+            if (updateData.password) {
+                data.password = await bcrypt.hash(updateData.password, 10);
             }
 
-            if (biography) {
-                data.biography = biography;
+            if (updateData.phone_number) {
+                data.phone_number = updateData.phone_number;
             }
 
-            if (favorite_band) {
-                data.favorite_band = favorite_band;
+            if (updateData.biography) {
+                data.biography = updateData.biography;
             }
 
-            if (has_notifications) {
-                data.has_notifications = has_notifications;
+            if (updateData.favorite_band) {
+                data.favorite_band = updateData.favorite_band;
             }
 
-            if (profile_picture) {
-                data.profile_picture = profile_picture;
+            if (updateData.has_notifications) {
+                data.has_notifications = updateData.has_notifications;
             }
 
-            if (password) {
-                data.password = await bcrypt.hash(password, 10);
+            if (updateData.profile_picture) {
+                data.profile_picture = updateData.profile_picture;
             }
 
             if (Object.keys(data).length === 0) {
                 throw new BadRequest("No fields provided")
             }
 
-            const user: UserWithoutPassword = await this.service.update(id, data);
+            const user: UserResponseDto = await this.service.update(id, data);
 
             res.status(200).json({
                 message: 'User updated successfully',
@@ -194,27 +194,6 @@ class UserController extends Controller {
                 message: 'User deleted successfully',
                 user,
             });
-        } catch (err) {
-            next(err);
-        }
-    }
-
-    async getByEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const email = req.body.email;
-
-            if (!email) {
-                throw new BadRequest('Email is required');
-            }
-
-            // ✅ Utiliser une méthode qui ne retourne PAS le password
-            const user: UserWithoutPassword | null = await this.service.getByEmailSafe(email);
-
-            if (!user) {
-                throw new NotFound('User not found');
-            }
-
-            res.json(user);
         } catch (err) {
             next(err);
         }

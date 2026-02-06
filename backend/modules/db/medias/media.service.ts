@@ -1,4 +1,4 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString, isValidApiId} from '../../../utils/helpers.js';
 
@@ -12,7 +12,7 @@ export class MediaService {
             throw new BadRequest('Invalid api_id provided');
         }
 
-        const exists = await prisma.media.findFirst({
+        const exists = await PrismaDb.media.findFirst({
             where: {
                 api_id
             }
@@ -22,7 +22,7 @@ export class MediaService {
             throw new BadRequest('Media with this API ID already exists');
         }
 
-        return prisma.media.create({
+        return PrismaDb.media.create({
             data: {
                 api_id,
                 created_at: new Date()
@@ -40,7 +40,7 @@ export class MediaService {
             throw new BadRequest('Media id is required');
         }
 
-        const media = await prisma.media.findUnique({where: {id}});
+        const media = await PrismaDb.media.findUnique({where: {id}});
 
         if (!media) {
             throw new NotFound('Media not found');
@@ -55,7 +55,7 @@ export class MediaService {
             updateData.api_id = data.api_id;
         }
 
-        return prisma.media.update({
+        return PrismaDb.media.update({
             where: {
                 id
             },
@@ -74,7 +74,7 @@ export class MediaService {
             throw new BadRequest('Media id cannot be empty');
         }
 
-        const media = await prisma.media.findUnique({
+        const media = await PrismaDb.media.findUnique({
             where: {
                 id
             },
@@ -92,7 +92,7 @@ export class MediaService {
     }
 
     async getAll() {
-        return prisma.media.findMany({
+        return PrismaDb.media.findMany({
             select: {
                 id: true,
                 api_id: true,
@@ -107,7 +107,7 @@ export class MediaService {
             throw new BadRequest('Media id cannot be empty');
         }
 
-        const media = await prisma.media.findUnique(
+        const media = await PrismaDb.media.findUnique(
             {
                 where: {
                     id
@@ -118,7 +118,7 @@ export class MediaService {
             throw new NotFound('Media not found');
         }
 
-        return prisma.media.delete({
+        return PrismaDb.media.delete({
             where: {
                 id
             },

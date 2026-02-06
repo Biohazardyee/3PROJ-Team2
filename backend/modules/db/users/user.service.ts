@@ -3,14 +3,14 @@ import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isValidStringLength, isEmptyString} from "../../../utils/helpers.js";
 import {isValidEmail, isValidUsername, isValidPassword} from "./user.helper.js"
 import {Role} from '../../../generated/prisma/enums.js';
-import {Prisma} from '../../../generated/prisma/client.js';
 import bcrypt from "bcrypt";
-import {UserWithoutPassword} from "../../../types/user.dto";
+import {UserRegistrationDto, UserResponseDto, UserUpdateDto} from "../../../types/user.dto";
 import {User} from "../../../generated/prisma/browser.js";
+import {UserMapper} from "../../../mappers/user.mapper"
 
 export class UserService {
 
-    async add(data: Prisma.UserCreateInput): Promise<UserWithoutPassword> {
+    async add(data: UserRegistrationDto): Promise<UserResponseDto> {
 
         if (isEmptyString(data.email)) {
             throw new BadRequest("Email cannot be empty");
@@ -42,70 +42,34 @@ export class UserService {
 
         data.email = data.email.trim().toLowerCase();
         data.username = data.username.trim();
-
         data.password = await bcrypt.hash(data.password, 10);
 
-        const exist: UserWithoutPassword | null = await PrismaDb.user.findFirst({
+        const exist: User | null = await PrismaDb.user.findFirst({
             where: {
                 OR: [
                     {email: data.email},
                     {username: data.username},
                 ],
             },
-            omit: {
-                password: true
-            }
         });
 
         if (exist) {
             throw new BadRequest('Email or username already in use');
         }
 
-        return PrismaDb.user.create({
+        const user: User = await PrismaDb.user.create({
             data,
-            omit: {
-                password: true
-            }
-        });
-    }
-
-    async getByEmail(email: string): Promise<User | null>  {
-        if (!isValidEmail(email)) {
-            throw new BadRequest('Invalid email');
-        }
-
-        return PrismaDb.user.findUnique({
-            where: {
-                email: email.toLowerCase()
-            },
-        });
-    }
-
-    async getAll(): Promise<UserWithoutPassword[]> {
-        return PrismaDb.user.findMany({
-            omit: {
-                password: true
-            },
-        });
-    }
-
-    async getById(id: string): Promise<UserWithoutPassword> {
-
-        const user = await PrismaDb.user.findUnique({
-            where: {
-                id
-            },
-            omit: {
-                password: true
-            }
         });
 
-        if (!user) throw new NotFound('User not found');
-
-        return user;
+        return UserMapper.toResponseDto(user);
     }
 
-    async update(id: string, data: Prisma.UserUpdateInput): Promise<UserWithoutPassword> {
+    async getAll(): Promise<UserResponseDto[]> {
+        const users: User[] = await PrismaDb.user.findMany();
+        return UserMapper.toResponseDtos(users);
+    }
+
+    async getById(id: string): Promise<UserResponseDto> {
 
         const user: User | null = await PrismaDb.user.findUnique({
             where: {
@@ -113,7 +77,20 @@ export class UserService {
             },
         });
 
-        if (!user) {
+        if (!user) throw new NotFound('User not found');
+
+        return UserMapper.toResponseDto(user);
+    }
+
+    async update(id: string, data: UserUpdateDto): Promise<UserResponseDto> {
+
+        const exist: User | null = await PrismaDb.user.findUnique({
+            where: {
+                id
+            },
+        });
+
+        if (!exist) {
             throw new NotFound('User not found');
         }
 
@@ -155,36 +132,55 @@ export class UserService {
             throw new BadRequest('Role need to have a role between BASIC and ADMIN');
         }
 
+        const user: User = await PrismaDb.user.update({
+            where: {
+                id
+            },
+            data,
+        })
+
+        return UserMapper.toResponseDto(user);
+    }
+
+    async delete(id: string): Promise<Partial<User>> {
         try {
-            return await PrismaDb.user.update({
+
+            const user = await PrismaDb.user.delete({
                 where: {
                     id
                 },
-                data,
-                omit: {
-                    password: true,
-                }
-            });
+            })
+
+            return UserMapper.toResponseDto(user)
+
         } catch {
             throw new NotFound('User not found');
         }
     }
 
-    async delete(id: string): Promise<Partial<User>>{
-        try {
-            return await PrismaDb.user.delete({
-                where: {
-                    id
-                },
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                },
-            });
-        } catch {
-            throw new NotFound('User not found');
+    async getByEmail(email: string): Promise<User | null> {
+        if (!isValidEmail(email)) {
+            throw new BadRequest('Invalid email');
         }
+
+        return PrismaDb.user.findUnique({
+            where: {
+                email: email.toLowerCase()
+            },
+        });
+    }
+
+    async getByEmailSafe(email: string): Promise<UserResponseDto> {
+
+        const user: User | null = await PrismaDb.user.findUnique({
+            where: {email},
+        });
+
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+
+        return UserMapper.toResponseDto(user);
     }
 }
 

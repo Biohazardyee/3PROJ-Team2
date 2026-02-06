@@ -1,4 +1,4 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
 
@@ -19,12 +19,12 @@ export class FollowService {
 
 
         const [user, target] = await Promise.all([
-            prisma.user.findUnique({
+            PrismaDb.user.findUnique({
                 where: {
                     id: user_id
                 }
             }),
-            prisma.user.findUnique({
+            PrismaDb.user.findUnique({
                 where: {
                     id: follow_user_id
                 }
@@ -39,7 +39,7 @@ export class FollowService {
             throw new BadRequest('Target user not found');
         }
 
-        const exists = await prisma.follow.findUnique({
+        const exists = await PrismaDb.follow.findUnique({
             where: {
                 user_id_follow_user_id: {
                     user_id,
@@ -52,7 +52,7 @@ export class FollowService {
             throw new BadRequest('Already following this user');
         }
 
-        return prisma.follow.create({
+        return PrismaDb.follow.create({
             data: {user_id, follow_user_id},
             select: {
                 user_id: true,
@@ -69,7 +69,7 @@ export class FollowService {
         }
 
         try {
-            return await prisma.follow.delete({
+            return await PrismaDb.follow.delete({
                 where: {
                     user_id_follow_user_id: {
                         user_id,
@@ -92,7 +92,7 @@ export class FollowService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where:
                 {id: user_id}
         });
@@ -100,7 +100,7 @@ export class FollowService {
             throw new NotFound('User not found');
         }
 
-        return prisma.follow.findMany({
+        return PrismaDb.follow.findMany({
             where: {
                 follow_user_id: user_id
             },
@@ -123,7 +123,7 @@ export class FollowService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: user_id
             }
@@ -133,7 +133,7 @@ export class FollowService {
             throw new NotFound('User not found')
         }
 
-        return prisma.follow.findMany({
+        return PrismaDb.follow.findMany({
             where: {user_id},
             orderBy: {created_at: 'desc'},
             select: {

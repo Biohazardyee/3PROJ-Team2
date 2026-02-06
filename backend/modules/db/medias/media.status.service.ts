@@ -1,4 +1,4 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString} from "../../../utils/helpers.js";
 import {isValidMediaStatus} from "./media.status.helper.js"
@@ -26,7 +26,7 @@ export class MediaStatusService {
             throw new BadRequest('Invalid media status');
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: user_id
             },
@@ -36,7 +36,7 @@ export class MediaStatusService {
             throw new BadRequest('User with this id does not exist');
         }
 
-        const media = await prisma.media.findUnique({
+        const media = await PrismaDb.media.findUnique({
             where: {
                 id: media_id
             },
@@ -46,7 +46,7 @@ export class MediaStatusService {
             throw new BadRequest('Media with this id does not exist');
         }
 
-        const alreadyHasStatus = await prisma.userMediaStatus.findUnique({
+        const alreadyHasStatus = await PrismaDb.userMediaStatus.findUnique({
             where: {
                 user_id_media_id: {
                     user_id, 
@@ -61,7 +61,7 @@ export class MediaStatusService {
             );
         }
 
-        return prisma.userMediaStatus.create({
+        return PrismaDb.userMediaStatus.create({
             data: {
                 user_id,
                 media_id,
@@ -90,7 +90,7 @@ export class MediaStatusService {
             throw new BadRequest('Invalid media status');
         }
 
-        const mediaStatus = await prisma.userMediaStatus.findUnique({
+        const mediaStatus = await PrismaDb.userMediaStatus.findUnique({
             where: {
                 user_id_media_id: {
                     user_id, 
@@ -104,7 +104,7 @@ export class MediaStatusService {
         }
 
 
-        return prisma.userMediaStatus.update({
+        return PrismaDb.userMediaStatus.update({
             where: {
                 user_id_media_id: {
                     user_id, 
@@ -133,7 +133,7 @@ export class MediaStatusService {
             throw new BadRequest('media_id cannot be empty');
         }
 
-        const mediaStatus = await prisma.userMediaStatus.findUnique({
+        const mediaStatus = await PrismaDb.userMediaStatus.findUnique({
             where: {
                 user_id_media_id: {
                     user_id, 
@@ -165,7 +165,7 @@ export class MediaStatusService {
             throw new BadRequest('media_id cannot be empty');
         }
 
-        const mediaStatus = await prisma.userMediaStatus.findUnique({
+        const mediaStatus = await PrismaDb.userMediaStatus.findUnique({
             where: {
                 user_id_media_id: {
                     user_id, 
@@ -178,7 +178,7 @@ export class MediaStatusService {
             throw new NotFound('Media status not found');
         }
 
-        return prisma.userMediaStatus.delete({
+        return PrismaDb.userMediaStatus.delete({
             where: {
                 user_id_media_id: {
                     user_id, 

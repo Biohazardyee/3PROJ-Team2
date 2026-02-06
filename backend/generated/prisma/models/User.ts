@@ -195,8 +195,8 @@ export type UserGroupByOutputType = {
   email: string
   password: string
   phone_number: string | null
-  profile_picture: runtime.Bytes | null
-  role: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role: $Enums.Role
   biography: string | null
   favorite_band: string
   has_notifications: boolean | null
@@ -231,8 +231,8 @@ export type UserWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   password?: Prisma.StringFilter<"User"> | string
   phone_number?: Prisma.StringNullableFilter<"User"> | string | null
-  profile_picture?: Prisma.BytesNullableFilter<"User"> | runtime.Bytes | null
-  role?: Prisma.EnumRoleNullableFilter<"User"> | $Enums.Role | null
+  profile_picture?: Prisma.BytesFilter<"User"> | runtime.Bytes
+  role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   biography?: Prisma.StringNullableFilter<"User"> | string | null
   favorite_band?: Prisma.StringFilter<"User"> | string
   has_notifications?: Prisma.BoolNullableFilter<"User"> | boolean | null
@@ -262,8 +262,8 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
   phone_number?: Prisma.SortOrderInput | Prisma.SortOrder
-  profile_picture?: Prisma.SortOrderInput | Prisma.SortOrder
-  role?: Prisma.SortOrderInput | Prisma.SortOrder
+  profile_picture?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   biography?: Prisma.SortOrderInput | Prisma.SortOrder
   favorite_band?: Prisma.SortOrder
   has_notifications?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -296,8 +296,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   password?: Prisma.StringFilter<"User"> | string
   phone_number?: Prisma.StringNullableFilter<"User"> | string | null
-  profile_picture?: Prisma.BytesNullableFilter<"User"> | runtime.Bytes | null
-  role?: Prisma.EnumRoleNullableFilter<"User"> | $Enums.Role | null
+  profile_picture?: Prisma.BytesFilter<"User"> | runtime.Bytes
+  role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   biography?: Prisma.StringNullableFilter<"User"> | string | null
   favorite_band?: Prisma.StringFilter<"User"> | string
   has_notifications?: Prisma.BoolNullableFilter<"User"> | boolean | null
@@ -327,8 +327,8 @@ export type UserOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
   phone_number?: Prisma.SortOrderInput | Prisma.SortOrder
-  profile_picture?: Prisma.SortOrderInput | Prisma.SortOrder
-  role?: Prisma.SortOrderInput | Prisma.SortOrder
+  profile_picture?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   biography?: Prisma.SortOrderInput | Prisma.SortOrder
   favorite_band?: Prisma.SortOrder
   has_notifications?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -348,8 +348,8 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
   phone_number?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  profile_picture?: Prisma.BytesNullableWithAggregatesFilter<"User"> | runtime.Bytes | null
-  role?: Prisma.EnumRoleNullableWithAggregatesFilter<"User"> | $Enums.Role | null
+  profile_picture?: Prisma.BytesWithAggregatesFilter<"User"> | runtime.Bytes
+  role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   biography?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   favorite_band?: Prisma.StringWithAggregatesFilter<"User"> | string
   has_notifications?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
@@ -363,8 +363,8 @@ export type UserCreateInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -394,8 +394,8 @@ export type UserUncheckedCreateInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -425,8 +425,8 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -456,8 +456,8 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -487,8 +487,8 @@ export type UserCreateManyInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -502,8 +502,8 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -517,8 +517,8 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -589,12 +589,12 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
-export type NullableBytesFieldUpdateOperationsInput = {
-  set?: runtime.Bytes | null
+export type BytesFieldUpdateOperationsInput = {
+  set?: runtime.Bytes
 }
 
-export type NullableEnumRoleFieldUpdateOperationsInput = {
-  set?: $Enums.Role | null
+export type EnumRoleFieldUpdateOperationsInput = {
+  set?: $Enums.Role
 }
 
 export type NullableBoolFieldUpdateOperationsInput = {
@@ -839,8 +839,8 @@ export type UserCreateWithoutReviewsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -869,8 +869,8 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -915,8 +915,8 @@ export type UserUpdateWithoutReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -945,8 +945,8 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -975,8 +975,8 @@ export type UserCreateWithoutReview_commentsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1005,8 +1005,8 @@ export type UserUncheckedCreateWithoutReview_commentsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1051,8 +1051,8 @@ export type UserUpdateWithoutReview_commentsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1081,8 +1081,8 @@ export type UserUncheckedUpdateWithoutReview_commentsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1111,8 +1111,8 @@ export type UserCreateWithoutReview_likesInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1141,8 +1141,8 @@ export type UserUncheckedCreateWithoutReview_likesInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1187,8 +1187,8 @@ export type UserUpdateWithoutReview_likesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1217,8 +1217,8 @@ export type UserUncheckedUpdateWithoutReview_likesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1247,8 +1247,8 @@ export type UserCreateWithoutPlaylistsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1277,8 +1277,8 @@ export type UserUncheckedCreateWithoutPlaylistsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1323,8 +1323,8 @@ export type UserUpdateWithoutPlaylistsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1353,8 +1353,8 @@ export type UserUncheckedUpdateWithoutPlaylistsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1383,8 +1383,8 @@ export type UserCreateWithoutUser_media_statusInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1413,8 +1413,8 @@ export type UserUncheckedCreateWithoutUser_media_statusInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1459,8 +1459,8 @@ export type UserUpdateWithoutUser_media_statusInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1489,8 +1489,8 @@ export type UserUncheckedUpdateWithoutUser_media_statusInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1519,8 +1519,8 @@ export type UserCreateWithoutActivitiesInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1549,8 +1549,8 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1584,8 +1584,8 @@ export type UserCreateWithoutActivities_targetsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1614,8 +1614,8 @@ export type UserUncheckedCreateWithoutActivities_targetsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1660,8 +1660,8 @@ export type UserUpdateWithoutActivitiesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1690,8 +1690,8 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1731,8 +1731,8 @@ export type UserUpdateWithoutActivities_targetsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1761,8 +1761,8 @@ export type UserUncheckedUpdateWithoutActivities_targetsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1791,8 +1791,8 @@ export type UserCreateWithoutFollowsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1821,8 +1821,8 @@ export type UserUncheckedCreateWithoutFollowsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1856,8 +1856,8 @@ export type UserCreateWithoutFollowersInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1886,8 +1886,8 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -1932,8 +1932,8 @@ export type UserUpdateWithoutFollowsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -1962,8 +1962,8 @@ export type UserUncheckedUpdateWithoutFollowsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2003,8 +2003,8 @@ export type UserUpdateWithoutFollowersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2033,8 +2033,8 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2063,8 +2063,8 @@ export type UserCreateWithoutReportsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2093,8 +2093,8 @@ export type UserUncheckedCreateWithoutReportsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2139,8 +2139,8 @@ export type UserUpdateWithoutReportsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2169,8 +2169,8 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2199,8 +2199,8 @@ export type UserCreateWithoutNotificationsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2229,8 +2229,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2264,8 +2264,8 @@ export type UserCreateWithoutNotificationsRelatedInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2294,8 +2294,8 @@ export type UserUncheckedCreateWithoutNotificationsRelatedInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2340,8 +2340,8 @@ export type UserUpdateWithoutNotificationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2370,8 +2370,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2411,8 +2411,8 @@ export type UserUpdateWithoutNotificationsRelatedInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2441,8 +2441,8 @@ export type UserUncheckedUpdateWithoutNotificationsRelatedInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2471,8 +2471,8 @@ export type UserCreateWithoutBannedUsersInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2501,8 +2501,8 @@ export type UserUncheckedCreateWithoutBannedUsersInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2547,8 +2547,8 @@ export type UserUpdateWithoutBannedUsersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2577,8 +2577,8 @@ export type UserUncheckedUpdateWithoutBannedUsersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2607,8 +2607,8 @@ export type UserCreateWithoutConversations_user1Input = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2637,8 +2637,8 @@ export type UserUncheckedCreateWithoutConversations_user1Input = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2672,8 +2672,8 @@ export type UserCreateWithoutConversations_user2Input = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2702,8 +2702,8 @@ export type UserUncheckedCreateWithoutConversations_user2Input = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2748,8 +2748,8 @@ export type UserUpdateWithoutConversations_user1Input = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2778,8 +2778,8 @@ export type UserUncheckedUpdateWithoutConversations_user1Input = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2819,8 +2819,8 @@ export type UserUpdateWithoutConversations_user2Input = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2849,8 +2849,8 @@ export type UserUncheckedUpdateWithoutConversations_user2Input = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2879,8 +2879,8 @@ export type UserCreateWithoutMessagesInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2909,8 +2909,8 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   email: string
   password: string
   phone_number?: string | null
-  profile_picture?: runtime.Bytes | null
-  role?: $Enums.Role | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Role
   biography?: string | null
   favorite_band: string
   has_notifications?: boolean | null
@@ -2955,8 +2955,8 @@ export type UserUpdateWithoutMessagesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -2985,8 +2985,8 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  role?: Prisma.NullableEnumRoleFieldUpdateOperationsInput | $Enums.Role | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
   has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
@@ -3292,8 +3292,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string
     password: string
     phone_number: string | null
-    profile_picture: runtime.Bytes | null
-    role: $Enums.Role | null
+    profile_picture: runtime.Bytes
+    role: $Enums.Role
     biography: string | null
     favorite_band: string
     has_notifications: boolean | null

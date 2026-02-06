@@ -1,4 +1,4 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString, isValidStringLength} from "../../../utils/helpers.js";
 
@@ -25,7 +25,7 @@ export class PlaylistService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: data.user_id
             },
@@ -37,7 +37,7 @@ export class PlaylistService {
 
         const cleanName = data.name.trim();
 
-        const exists = await prisma.playlist.findFirst({
+        const exists = await PrismaDb.playlist.findFirst({
             where: {
                 user_id: data.user_id,
                 name: cleanName,
@@ -50,7 +50,7 @@ export class PlaylistService {
             );
         }
 
-        return prisma.playlist.create({
+        return PrismaDb.playlist.create({
             data,
             select: {
                 id: true,
@@ -67,7 +67,7 @@ export class PlaylistService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: user_id
             },
@@ -77,7 +77,7 @@ export class PlaylistService {
             throw new BadRequest('User with this id does not exist');
         }
 
-        return prisma.playlist.findMany({
+        return PrismaDb.playlist.findMany({
             where: {
                 user_id
             },
@@ -92,7 +92,7 @@ export class PlaylistService {
     }
 
     async getAll() {
-        return prisma.playlist.findMany({
+        return PrismaDb.playlist.findMany({
             select: {
                 id: true,
                 name: true,
@@ -108,7 +108,7 @@ export class PlaylistService {
             throw new BadRequest('Playlist id cannot be empty');
         }
 
-        const playlist = await prisma.playlist.findUnique({
+        const playlist = await PrismaDb.playlist.findUnique({
             where: {
                 id
             },
@@ -156,7 +156,7 @@ export class PlaylistService {
                 );
             }
 
-            const exists = await prisma.playlist.findFirst({
+            const exists = await PrismaDb.playlist.findFirst({
                 where: {
                     name: data.name.trim(),
                     user_id: data.user_id,
@@ -171,7 +171,7 @@ export class PlaylistService {
         }
 
         try {
-            return await prisma.playlist.update({
+            return await PrismaDb.playlist.update({
                 where: {
                     id: id,
                 },
@@ -198,7 +198,7 @@ export class PlaylistService {
         }
 
         try {
-            return await prisma.playlist.delete({
+            return await PrismaDb.playlist.delete({
                 where: {
                     id
                 },

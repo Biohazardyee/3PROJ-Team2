@@ -1,4 +1,4 @@
-import { prisma } from '../../../config/database.js';
+import { PrismaDb } from '../../../config/database.js';
 import { NotFound, BadRequest } from '../../../utils/errors.js';
 import { isValidStringLength, isEmptyString } from "../../../utils/helpers.js";
 
@@ -18,7 +18,7 @@ export class ConversationService {
             throw new BadRequest("User2_id cannot be empty");
         }
 
-        const user1 = await prisma.user.findUnique({
+        const user1 = await PrismaDb.user.findUnique({
             where: {
                 id: data.user1_id,
             }
@@ -28,7 +28,7 @@ export class ConversationService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const user2 = await prisma.user.findUnique({
+        const user2 = await PrismaDb.user.findUnique({
             where: {
                 id: data.user2_id,
             }
@@ -38,7 +38,7 @@ export class ConversationService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const conversation = await prisma.conversation.findUnique({
+        const conversation = await PrismaDb.conversation.findUnique({
             where: {
                 user1_id_user2_id: {
                     user1_id: data.user1_id,
@@ -51,7 +51,7 @@ export class ConversationService {
             throw new BadRequest('The conversation already exists between these two users');
         }
 
-        return prisma.conversation.create({
+        return PrismaDb.conversation.create({
             data,
             select: {
                 user1_id: true,
@@ -62,7 +62,7 @@ export class ConversationService {
     }
 
     async getAll() {
-        return prisma.conversation.findMany({
+        return PrismaDb.conversation.findMany({
             select: {
                 user1_id: true,
                 user2_id: true,
@@ -77,7 +77,7 @@ export class ConversationService {
             throw new BadRequest("ID cannot be empty");
         }
 
-        const conversation = await prisma.conversation.findUnique({
+        const conversation = await PrismaDb.conversation.findUnique({
             where: {
                 id: id,
             },
@@ -105,7 +105,7 @@ export class ConversationService {
             throw new BadRequest("ID cannot be empty");
         }
 
-        return prisma.conversation.delete({
+        return PrismaDb.conversation.delete({
             where: {
                 id: id,
             },

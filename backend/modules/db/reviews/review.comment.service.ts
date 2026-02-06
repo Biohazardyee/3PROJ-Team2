@@ -1,4 +1,4 @@
-import {prisma} from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isValidStringLength, isEmptyString} from "../../../utils/helpers.js";
 
@@ -27,7 +27,7 @@ export class ReviewCommentService {
             throw new BadRequest("Content length cannot exceed 1000 characters");
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await PrismaDb.user.findUnique({
             where: {
                 id: data.user_id,
             }
@@ -37,7 +37,7 @@ export class ReviewCommentService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const review = await prisma.review.findUnique({
+        const review = await PrismaDb.review.findUnique({
             where: {
                 id: data.review_id,
             }
@@ -47,7 +47,7 @@ export class ReviewCommentService {
             throw new BadRequest('The review doesn\'t exist');
         }
 
-        return prisma.reviewComment.create({
+        return PrismaDb.reviewComment.create({
             data,
             select: {
                 user_id: true,
@@ -59,7 +59,7 @@ export class ReviewCommentService {
     }
 
     async getAll() {
-        return prisma.reviewComment.findMany({
+        return PrismaDb.reviewComment.findMany({
             select: {
                 user_id: true,
                 review_id: true,
@@ -75,7 +75,7 @@ export class ReviewCommentService {
             throw new BadRequest("ID cannot be empty");
         }
 
-        const reviewComment = await prisma.reviewComment.findUnique({
+        const reviewComment = await PrismaDb.reviewComment.findUnique({
             where: {
                 id: id,
             },
@@ -102,7 +102,7 @@ export class ReviewCommentService {
             throw new BadRequest("ID cannot be empty");
         }
 
-        const reviewComment = await prisma.reviewComment.findUnique({
+        const reviewComment = await PrismaDb.reviewComment.findUnique({
             where: {
                 id: id,
             }
@@ -131,7 +131,7 @@ export class ReviewCommentService {
             }
         }
 
-        return prisma.reviewComment.update({
+        return PrismaDb.reviewComment.update({
             where: {
                 id
             },
@@ -151,7 +151,7 @@ export class ReviewCommentService {
             throw new BadRequest("ID cannot be empty");
         }
 
-        return prisma.reviewComment.delete({
+        return PrismaDb.reviewComment.delete({
             where: {
                 id: id,
             },
