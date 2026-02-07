@@ -95,8 +95,9 @@ export class ConversationService {
         return conversation;
     }
 
-    async update() {
+    async update(): Promise<null> {
         // Conversations are not updatable
+        return null
     }
 
     async delete(id: string) {

@@ -1,31 +1,31 @@
 import dotenv from 'dotenv';
-import { BadRequest, NotFound } from "../../../utils/errors.js";
-import { isEmptyString } from '../../../utils/helpers.js';
+import {BadRequest, NotFound} from "../../../utils/errors.js";
+import {isEmptyString} from '../../../utils/helpers.js';
 
 dotenv.config();
 
-const URL = process.env.API_ROOT_URL;
-const API_KEY = process.env.API_KEY;
+const URL: string | undefined = process.env.API_ROOT_URL;
+const API_KEY: string | undefined = process.env.API_KEY;
 
 export class TagService {
 
-    async getTagInfo(data: { tag: string }) {
+    async getTagInfo(data: { tag: string }): Promise<any> {
 
-        const { tag } = data;
+        const {tag} = data;
 
         if (isEmptyString(tag)) {
             throw new BadRequest('Tag cannot be empty');
         }
 
-        const synthesize_URL =
+        const synthesize_URL: string =
             `${URL}?method=tag.getinfo` +
             `&api_key=${API_KEY}` +
             `&tag=${encodeURIComponent(tag)}` +
             `&format=json`;
 
-        const response = await fetch(synthesize_URL);
+        const response: Response = await fetch(synthesize_URL);
 
-        const tagInfo = await response.json();
+        const tagInfo: any = await response.json();
 
         if (tagInfo.error) {
             throw new NotFound(tagInfo.message || 'Tag not found');
@@ -34,23 +34,23 @@ export class TagService {
         return tagInfo;
     }
 
-    async getTagTopArtists(data: { tag: string }) {
+    async getTagTopArtists(data: { tag: string }): Promise<any> {
 
-        const { tag } = data;
+        const {tag} = data;
 
         if (isEmptyString(tag)) {
             throw new BadRequest('Tag cannot be empty');
         }
 
-        const synthesize_URL =
+        const synthesize_URL: string =
             `${URL}?method=tag.gettopartists` +
             `&api_key=${API_KEY}` +
             `&tag=${encodeURIComponent(tag)}` +
             `&format=json`;
 
-        const response = await fetch(synthesize_URL);
+        const response: Response = await fetch(synthesize_URL);
 
-        const topArtists = await response.json();
+        const topArtists: any = await response.json();
 
         if (topArtists.error) {
             throw new NotFound(topArtists.message || 'Tag not found');
@@ -59,22 +59,22 @@ export class TagService {
         return topArtists;
     }
 
-    async getTagTopAlbums(data: { tag: string }) {
+    async getTagTopAlbums(data: { tag: string }): Promise<any> {
 
-        const { tag } = data
+        const {tag} = data
 
         if (isEmptyString(tag)) {
             throw new BadRequest('Tag cannot be empty');
         }
-        const synthesize_URL =
+        const synthesize_URL: string =
             `${URL}?method=tag.gettopalbums` +
             `&api_key=${API_KEY}` +
             `&tag=${encodeURIComponent(tag)}` +
             `&format=json`;
 
-        const response = await fetch(synthesize_URL);
+        const response: Response = await fetch(synthesize_URL);
 
-        const topAlbums = await response.json();
+        const topAlbums: any = await response.json();
 
         if (topAlbums.error) {
             throw new NotFound(topAlbums.message || 'Tag not found');
@@ -83,23 +83,23 @@ export class TagService {
         return topAlbums;
     }
 
-    async getTagTopTracks(data: { tag: string }) {
+    async getTagTopTracks(data: { tag: string }): Promise<any> {
 
-        const { tag } = data;
+        const {tag} = data;
 
         if (isEmptyString(tag)) {
             throw new BadRequest('Tag cannot be empty');
         }
 
-        const synthesize_URL =
+        const synthesize_URL: string =
             `${URL}?method=tag.gettoptracks` +
             `&api_key=${API_KEY}` +
             `&tag=${encodeURIComponent(tag)}` +
             `&format=json`;
 
-        const response = await fetch(synthesize_URL);
+        const response: Response = await fetch(synthesize_URL);
 
-        const topTracks = await response.json();
+        const topTracks: any = await response.json();
 
         if (topTracks.error) {
             throw new NotFound(topTracks.message || 'Tag not found');
@@ -108,22 +108,22 @@ export class TagService {
         return topTracks;
     }
 
-    async getSimilarTags(data: { tag: string }) {
+    async getSimilarTags(data: { tag: string }): Promise<any> {
 
-        const { tag } = data;
+        const {tag} = data;
 
         if (isEmptyString(tag)) {
             throw new BadRequest('Tag cannot be empty');
         }
 
-        const synthesize_URL =
+        const synthesize_URL: string =
             `${URL}?method=tag.getsimilar` +
             `&api_key=${API_KEY}` +
             `&tag=${encodeURIComponent(tag)}` +
             `&format=json`;
 
-        const response = await fetch(synthesize_URL);
-        const similarTags = await response.json();
+        const response: Response = await fetch(synthesize_URL);
+        const similarTags: any = await response.json();
 
         if (similarTags.error) {
             throw new NotFound(similarTags.message || 'Tag not found');

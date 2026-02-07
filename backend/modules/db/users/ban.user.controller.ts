@@ -1,15 +1,15 @@
 import type {Request, Response, NextFunction} from 'express';
 
 import {BadRequest, NotFound} from '../../../utils/errors.js';
-import {banUserService} from './ban.user.service.js';
+import {BanUserService, banUserService} from './ban.user.service.js';
 
 
 class UserBanController {
 
-    constructor(private readonly service = banUserService) {
+    constructor(private readonly service: BanUserService = banUserService) {
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id,
@@ -31,7 +31,7 @@ class UserBanController {
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const bannedUsers = await this.service.getAll();
             res.status(200).json({message: 'Banned users retrieved successfully', bannedUsers});
@@ -40,7 +40,7 @@ class UserBanController {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id
@@ -57,7 +57,7 @@ class UserBanController {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -82,7 +82,7 @@ class UserBanController {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id

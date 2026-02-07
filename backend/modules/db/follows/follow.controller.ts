@@ -2,13 +2,13 @@ import type { Request, Response, NextFunction } from 'express';
 
 import { Controller } from '../../controller.js';
 import { BadRequest } from '../../../utils/errors.js';
-import { followService } from './follow.service.js';
+import {FollowService, followService} from './follow.service.js';
 
 class FollowController {
 
-    constructor(private readonly service = followService) { }
+    constructor(private readonly service: FollowService = followService) { }
 
-    async create(req: Request, res: Response, next: NextFunction) {
+    async create(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { user_id, follow_user_id } = req.body;
 
@@ -27,7 +27,7 @@ class FollowController {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { user_id, follow_user_id } = req.body;
 
@@ -46,7 +46,7 @@ class FollowController {
         }
     }
 
-    async getFollowers(req: Request, res: Response, next: NextFunction) {
+    async getFollowers(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { user_id } = req.params;
 
@@ -65,7 +65,7 @@ class FollowController {
         }
     }
 
-    async getFollowing(req: Request, res: Response, next: NextFunction) {
+    async getFollowing(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { user_id } = req.params;
 

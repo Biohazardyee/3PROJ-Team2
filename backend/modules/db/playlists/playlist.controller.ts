@@ -10,7 +10,7 @@ class PlaylistController extends Controller {
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 name,
@@ -38,7 +38,7 @@ class PlaylistController extends Controller {
         }
     }
 
-    async getPlaylistsByUserId(req: Request, res: Response, next: NextFunction) {
+    async getPlaylistsByUserId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id
@@ -60,7 +60,7 @@ class PlaylistController extends Controller {
         }
     }
 
-    async getAll(_req: Request, res: Response, next: NextFunction) {
+    async getAll(_req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const playlists = await this.service.getAll();
             res.status(200).json({
@@ -72,7 +72,7 @@ class PlaylistController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -92,7 +92,7 @@ class PlaylistController extends Controller {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -132,7 +132,7 @@ class PlaylistController extends Controller {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id

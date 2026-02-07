@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { BadRequest, Forbidden } from '../utils/errors.js';
+import {Request, Response, NextFunction} from 'express';
+import {BadRequest, Forbidden} from '../utils/errors.js';
 
-export function checkAdminOrSelf(req: Request, _: Response, next: NextFunction) {
+export function checkAdminOrSelf(req: Request, _: Response, next: NextFunction): void {
     try {
 
         const loggedUser = req.user;
@@ -10,8 +10,8 @@ export function checkAdminOrSelf(req: Request, _: Response, next: NextFunction) 
             throw new BadRequest("User not authenticated");
         }
 
-        const targetUserId = req.params.id;
-        const isAdmin = loggedUser.role === 'ADMIN';
+        const targetUserId: string = req.params.id;
+        const isAdmin: boolean = loggedUser.role === 'ADMIN';
 
         if (isAdmin || loggedUser.id === targetUserId) {
             return next();

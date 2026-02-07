@@ -1,17 +1,17 @@
-import type { Request, Response, NextFunction } from 'express';
-import { BadRequest } from '../../../utils/errors.js';
-import { albumService } from './album.service.js';
+import type {Request, Response, NextFunction} from 'express';
+import {BadRequest} from '../../../utils/errors.js';
+import {AlbumService, albumService} from './album.service.js';
 
 
 export class AlbumController {
 
-    constructor(private readonly service = albumService) {
+    constructor(private readonly service: AlbumService = albumService) {
 
     }
 
-    async getAlbumInfo(req: Request, res: Response, next: NextFunction) {
+    async getAlbumInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { artist, album } = req.query;
+            const {artist, album} = req.query;
 
             if (!artist || !album) {
                 throw new BadRequest('Artist and Album are required');
@@ -31,9 +31,9 @@ export class AlbumController {
         }
     }
 
-    async getAlbumInfoById(req: Request, res: Response, next: NextFunction) {
+    async getAlbumInfoById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { mbid } = req.params;
+            const {mbid} = req.params;
 
             if (!mbid) {
                 throw new BadRequest('MBID is required');
@@ -46,22 +46,21 @@ export class AlbumController {
                 message: 'Album info retrieved successfully',
                 albumInfo,
             });
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }
 
 
-    async albumGetTags(req: Request, res: Response, next: NextFunction) {
+    async albumGetTags(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { mbid } = req.params;
+            const {mbid} = req.params;
 
             if (!mbid) {
                 throw new BadRequest('mbid is required');
             }
 
-            const tags = await this.service.albumGetTags({
+            const tags: any = await this.service.albumGetTags({
                 mbid: String(mbid),
             });
 

@@ -1,7 +1,7 @@
 import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
-import {NotificationAction} from '../../../generated/prisma/browser.js';
+import {NotificationAction} from '../../../generated/prisma/enums.js';
 
 export class NotificationService {
 

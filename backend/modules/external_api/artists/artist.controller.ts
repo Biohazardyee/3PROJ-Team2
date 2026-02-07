@@ -1,41 +1,40 @@
-import type { Request, Response, NextFunction } from 'express';
-import { BadRequest } from '../../../utils/errors.js';
-import { artistService } from './artist.service.js';
+import type {Request, Response, NextFunction} from 'express';
+import {BadRequest} from '../../../utils/errors.js';
+import {ArtistService, artistService} from './artist.service.js';
 
 export class ArtistController {
-    constructor(private readonly service = artistService) {
+    constructor(private readonly service: ArtistService = artistService) {
 
     }
 
-    async getArtistInfo(req: Request, res: Response, next: NextFunction) {
+    async getArtistInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { artist } = req.query;
+            const {artist} = req.query;
             if (!artist) {
                 throw new BadRequest('Artist is required');
             }
-            const artistInfo = await this.service.getArtistInfo({
+            const artistInfo: any = await this.service.getArtistInfo({
                 artist: String(artist),
             });
             res.status(200).json({
                 message: 'Artist info retrieved successfully',
                 artistInfo,
             });
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }
 
-    async getArtistbyId(req: Request, res: Response, next: NextFunction) {
+    async getArtistbyId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
-            const { mbid } = req.params;
+            const {mbid} = req.params;
 
             if (!mbid) {
                 throw new BadRequest('MBID is required');
             }
 
-            const artistInfo = await this.service.getArtistbyId({
+            const artistInfo: any = await this.service.getArtistbyId({
                 mbid: mbid,
             });
 
@@ -43,38 +42,36 @@ export class ArtistController {
                 message: 'Artist info retrieved successfully',
                 artistInfo,
             });
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }
 
-    async getTopAlbums(req: Request, res: Response, next: NextFunction) {
+    async getTopAlbums(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { artist } = req.query;
+            const {artist} = req.query;
             if (!artist) {
                 throw new BadRequest('Artist is required');
             }
-            const topAlbums = await this.service.getTopAlbums({
+            const topAlbums: any = await this.service.getTopAlbums({
                 artist: String(artist),
             });
             res.status(200).json({
                 message: 'Top albums retrieved successfully',
                 topAlbums,
             });
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }
 
-    async getArtistTopTags(req: Request, res: Response, next: NextFunction) {
+    async getArtistTopTags(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { artist } = req.query;
+            const {artist} = req.query;
             if (!artist) {
                 throw new BadRequest('Artist is required');
             }
-            const topTags = await this.service.getArtistTopTags({
+            const topTags: any = await this.service.getArtistTopTags({
                 artist: String(artist),
             });
 
@@ -82,41 +79,39 @@ export class ArtistController {
                 message: 'Artist top tags retrieved successfully',
                 topTags,
             });
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }
 
-    async getArtistTopTracks(req: Request, res: Response, next: NextFunction) {
+    async getArtistTopTracks(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { artist } = req.query;
+            const {artist} = req.query;
 
             if (!artist) {
                 throw new BadRequest('Artist is required');
             }
-            const topTracks = await this.service.getArtistTopTracks({
+            const topTracks: any = await this.service.getArtistTopTracks({
                 artist: String(artist),
             });
             res.status(200).json({
                 message: 'Artist top tracks retrieved successfully',
                 topTracks,
             });
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }
 
-    async getSimilarArtists(req: Request, res: Response, next: NextFunction) {
+    async getSimilarArtists(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { mbid } = req.params;
+            const {mbid} = req.params;
 
             if (!mbid) {
                 throw new BadRequest('MBID is required');
             }
 
-            const similarArtists = await this.service.getSimilarArtists({
+            const similarArtists: any = await this.service.getSimilarArtists({
                 mbid: mbid,
             });
 
@@ -124,8 +119,7 @@ export class ArtistController {
                 message: 'Similar artists retrieved successfully',
                 similarArtists,
             });
-        }
-        catch (err) {
+        } catch (err) {
             next(err);
         }
     }

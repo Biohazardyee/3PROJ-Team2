@@ -10,7 +10,7 @@ class NotificationController extends Controller{
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id, 
@@ -38,7 +38,7 @@ class NotificationController extends Controller{
         }
     }
 
-    async getByUser(req: Request, res: Response, next: NextFunction) {
+    async getByUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id
@@ -56,7 +56,7 @@ class NotificationController extends Controller{
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -73,7 +73,7 @@ class NotificationController extends Controller{
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -90,7 +90,7 @@ class NotificationController extends Controller{
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const notifications = await this.service.getAll();
             res.status(200).json({message: 'All notifications retrieved successfully', notifications});
@@ -99,7 +99,7 @@ class NotificationController extends Controller{
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id

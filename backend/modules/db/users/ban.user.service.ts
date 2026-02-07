@@ -7,7 +7,7 @@ export class BanUserService {
 
     async create(data: Prisma.BannedUsersCreateInput) {
 
-        const userId = typeof data.user === 'object' && 'connect' in data.user
+        const userId: string | undefined = typeof data.user === 'object' && 'connect' in data.user
             ? data.user.connect?.id
             : undefined;
 

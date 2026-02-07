@@ -9,7 +9,7 @@ class MediaController extends Controller {
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 api_id
@@ -29,7 +29,7 @@ class MediaController extends Controller {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -54,7 +54,7 @@ class MediaController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -71,7 +71,7 @@ class MediaController extends Controller {
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const medias = await this.service.getAll();
             res.status(200).json({message: 'Medias retrieved successfully', medias});
@@ -80,7 +80,7 @@ class MediaController extends Controller {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id

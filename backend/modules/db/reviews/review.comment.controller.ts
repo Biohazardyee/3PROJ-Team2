@@ -2,15 +2,15 @@ import type {Request, Response, NextFunction} from 'express';
 
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
-import {reviewCommentService} from './review.comment.service.js';
+import {ReviewCommentService, reviewCommentService} from './review.comment.service.js';
 
 class ReviewCommentController extends Controller {
 
-    constructor(private readonly service = reviewCommentService) {
+    constructor(private readonly service: ReviewCommentService = reviewCommentService) {
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id,
@@ -46,7 +46,7 @@ class ReviewCommentController extends Controller {
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const reviewsComment = await this.service.getAll();
             res.status(201).json({
@@ -58,7 +58,7 @@ class ReviewCommentController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -79,7 +79,7 @@ class ReviewCommentController extends Controller {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = req.params.id;
 
@@ -112,7 +112,7 @@ class ReviewCommentController extends Controller {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id

@@ -1,18 +1,18 @@
 import type {Request, Response, NextFunction} from 'express';
-import {reportService} from './report.service.js';
+import {ReportService, reportService} from './report.service.js';
 import {BadRequest} from '../../../utils/errors.js';
 
 class ReportController {
 
-    constructor(private readonly service = reportService) {
+    constructor(private readonly service: ReportService = reportService) {
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
-                reporter_id, 
-                review_id, 
-                reason, 
+                reporter_id,
+                review_id,
+                reason,
                 reason_type
             } = req.body;
 
@@ -21,9 +21,9 @@ class ReportController {
             }
 
             const report = await this.service.create({
-                reporter_id, 
-                review_id, 
-                reason, 
+                reporter_id,
+                review_id,
+                reason,
                 reason_type
             });
 
@@ -33,7 +33,7 @@ class ReportController {
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const reports = await this.service.getAll();
             res.status(200).json({message: 'Reports retrieved successfully', reports});
@@ -42,7 +42,7 @@ class ReportController {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -59,7 +59,7 @@ class ReportController {
         }
     }
 
-    async getByReview(req: Request, res: Response, next: NextFunction) {
+    async getByReview(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 review_id
@@ -76,7 +76,7 @@ class ReportController {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -93,12 +93,12 @@ class ReportController {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
             } = req.params;
-            
+
             if (!id) {
                 throw new BadRequest('Report id is required');
             }

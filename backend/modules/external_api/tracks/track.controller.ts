@@ -6,7 +6,7 @@ export class TrackController {
     constructor(private readonly service = new TrackService()) {
     }
 
-    async getTrackInfo(req: Request, res: Response, next: NextFunction) {
+    async getTrackInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { artist, track } = req.query;
 
@@ -14,7 +14,7 @@ export class TrackController {
                 throw new BadRequest('Artist and Track are required');
             }
 
-            const trackInfo = await this.service.getTrackInfo({
+            const trackInfo: any = await this.service.getTrackInfo({
                 artist: String(artist),
                 track: String(track),
             });
@@ -29,7 +29,7 @@ export class TrackController {
         }
     }
 
-    async getSimilarTracks(req: Request, res: Response, next: NextFunction) {
+    async getSimilarTracks(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
             const { artist, track } = req.query;
@@ -38,7 +38,7 @@ export class TrackController {
                 throw new BadRequest('Artist and Track are required');
             }
 
-            const similarTracks = await this.service.getSimilarTracks({
+            const similarTracks: any = await this.service.getSimilarTracks({
                 artist: String(artist),
                 track: String(track),
             });
@@ -52,7 +52,7 @@ export class TrackController {
         }
     }
 
-    async getTopTrackTags(req: Request, res: Response, next: NextFunction) {
+    async getTopTrackTags(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { artist, track } = req.query;
 
@@ -60,7 +60,7 @@ export class TrackController {
                 throw new BadRequest('Artist and Track are required');
             }
 
-            const topTrackTags = await this.service.getTopTrackTags({
+            const topTrackTags: any = await this.service.getTopTrackTags({
                 artist: String(artist),
                 track: String(track),
             });

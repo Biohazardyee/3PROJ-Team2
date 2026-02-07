@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { BadRequest, Forbidden } from '../utils/errors.js';
+import {Request, Response, NextFunction} from 'express';
+import {BadRequest, Forbidden} from '../utils/errors.js';
 
 export function checkAdmin(
     req: Request,
     _: Response,
     next: NextFunction
-) {
+): void {
     const user = req.user;
 
     if (!user) {

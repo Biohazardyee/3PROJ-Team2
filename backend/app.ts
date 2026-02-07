@@ -1,5 +1,5 @@
 import createError from 'http-errors';
-import express, { Request, Response, NextFunction } from 'express';
+import express, {Request, Response, NextFunction, Express} from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
@@ -30,10 +30,10 @@ import trackRouter from './routes/api/tracks.js';
 
 import { ApiError, InternalError } from './utils/errors.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename: string = fileURLToPath(import.meta.url);
+const __dirname: string = dirname(__filename);
 
-const app = express();
+const app: Express = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -70,7 +70,7 @@ app.use('/api/albums', albumsRouter);
 app.use('/api/search', searchRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (req, res, next: NextFunction): void  {
     next(createError(404));
 });
 
@@ -79,9 +79,9 @@ app.use(function (req, res, next) {
 // and by test files for testing
 
 // Centralized error handler
-app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
-    let status = 500;
-    let message = 'Internal Server Error';
+app.use(function (err: any, req: Request, res: Response, next: NextFunction): void {
+    let status: number = 500;
+    let message: string = 'Internal Server Error';
 
     // Handle custom API errors
     if (err instanceof ApiError) {
@@ -123,7 +123,7 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
     };
 
     // In development mode, include stack trace in response
-    const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production';
+    const isDevelopment: boolean = process.env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production';
     if (isDevelopment && err.stack) {
         errorResponse.stack = err.stack;
         errorResponse.details = {

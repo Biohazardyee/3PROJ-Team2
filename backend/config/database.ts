@@ -1,12 +1,12 @@
-import { PrismaClient } from '../generated/prisma/client.js'
-import { PrismaPg } from '@prisma/adapter-pg'
+import {PrismaClient} from '../generated/prisma/client.js'
+import {PrismaPg} from '@prisma/adapter-pg'
 import "dotenv/config";
 
 const connectionString = `${process.env.DATABASE_URL}`
-const adapter = new PrismaPg({ connectionString })
-const PrismaDb = new PrismaClient({ adapter })
+const adapter = new PrismaPg({connectionString})
+const PrismaDb = new PrismaClient({adapter})
 
-export async function connectDB() {
+export async function connectDB(): Promise<void> {
     try {
         await PrismaDb.$connect();
         console.log("✅ Connecté à PostgreSQL !");
@@ -16,4 +16,4 @@ export async function connectDB() {
     }
 }
 
-export { PrismaDb }
+export {PrismaDb}

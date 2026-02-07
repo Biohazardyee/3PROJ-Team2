@@ -1,5 +1,5 @@
-import type { User } from '../generated/prisma/browser.js';
-import type { UserResponseDto } from '../types/user.dto.js';
+import type {User} from '../generated/prisma/browser.js';
+import type {UserResponseDto} from '../types/user.dto.js';
 
 export class UserMapper {
 

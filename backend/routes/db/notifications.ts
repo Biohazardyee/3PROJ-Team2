@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import notificationController from '../../modules/db/notifications/notification.controller.js';
 
-const router = Router();
+const router: Router = Router();
 
 router.post('/', notificationController.add);
 

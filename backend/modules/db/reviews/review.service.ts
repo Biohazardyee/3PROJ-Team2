@@ -114,7 +114,7 @@ export class ReviewService {
             throw new NotFound('Review not found');
         }
 
-        const allowedFields = [
+        const allowedFields: string[] = [
             'rating',
             'content'
         ];

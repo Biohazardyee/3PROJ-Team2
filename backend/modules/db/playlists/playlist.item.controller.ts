@@ -2,18 +2,18 @@ import type {Request, Response, NextFunction} from 'express';
 
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
-import {playlistItemService} from './playlist.item.service.js';
+import {PlaylistItemService, playlistItemService} from './playlist.item.service.js';
 
 class PlaylistItemController extends Controller {
 
-    constructor(private readonly service = playlistItemService) {
+    constructor(private readonly service: PlaylistItemService = playlistItemService) {
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
-                playlist_id, 
+                playlist_id,
                 media_id
             } = req.body;
 
@@ -22,7 +22,7 @@ class PlaylistItemController extends Controller {
             }
 
             const item = await this.service.add({
-                playlist_id, 
+                playlist_id,
                 media_id
             });
 
@@ -32,7 +32,7 @@ class PlaylistItemController extends Controller {
         }
     }
 
-    async getByPlaylistId(req: Request, res: Response, next: NextFunction) {
+    async getByPlaylistId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 playlist_id
@@ -53,7 +53,7 @@ class PlaylistItemController extends Controller {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -71,7 +71,7 @@ class PlaylistItemController extends Controller {
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const items = await this.service.getAll();
             res.status(200).json({message: 'Playlist items retrieved successfully', items});
@@ -80,7 +80,7 @@ class PlaylistItemController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -97,7 +97,7 @@ class PlaylistItemController extends Controller {
         }
     }
 
-    async update(_req: Request, _res: Response, _next: NextFunction) {
+    async update(_req: Request, _res: Response, _next: NextFunction): Promise<void> {
         // Not implemented
     }
 }

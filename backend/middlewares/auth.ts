@@ -1,17 +1,17 @@
-import type { Request, Response, NextFunction } from 'express';
+import type {Request, Response, NextFunction} from 'express';
 import jwt from 'jsonwebtoken';
-import { Unauthorized } from '../utils/errors.js';
+import {Unauthorized} from '../utils/errors.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || '';
+const JWT_SECRET: string = process.env.JWT_SECRET || '';
 
-export function authGuard(req: Request, _res: Response, next: NextFunction) {
-    const authHeader = req.get('Authorization');
+export function authGuard(req: Request, _res: Response, next: NextFunction): void {
+    const authHeader: string | undefined = req.get('Authorization');
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return next(new Unauthorized('Authorization header manquant ou invalide'));
     }
 
-    const token = authHeader.split(' ')[1];
+    const token: string = authHeader.split(' ')[1];
     if (!token) {
         return next(new Unauthorized('Missing token'));
     }

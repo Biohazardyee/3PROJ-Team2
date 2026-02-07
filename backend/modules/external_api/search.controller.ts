@@ -4,7 +4,7 @@ import { searchService } from './search.service.js';
 
 class SearchController {
 
-    async search(req: Request, res: Response, next: NextFunction) {
+    async search(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { query } = req.query;
 
@@ -12,7 +12,7 @@ class SearchController {
                 throw new BadRequest('Query is required');
             }
 
-            const searchResults = await searchService.search({
+            const searchResults: any = await searchService.search({
                 query: String(query),
             });
             res.status(200).json({

@@ -128,8 +128,8 @@ export class PlaylistService {
     }
 
     async update(id: string, data: {
-        name: string, 
-        user_id: string, 
+        name: string,
+        user_id: string,
         is_public: boolean
     }) {
 
@@ -137,7 +137,7 @@ export class PlaylistService {
             throw new BadRequest('ID cannot be empty');
         }
 
-        const allowedFields = ['name', 'is_public'];
+        const allowedFields: string[] = ['name', 'is_public'];
 
         for (const key of Object.keys(data)) {
             if (!allowedFields.includes(key)) {

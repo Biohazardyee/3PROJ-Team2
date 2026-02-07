@@ -112,7 +112,7 @@ export class ReviewCommentService {
             throw new NotFound('Comment does not exist');
         }
 
-        const allowedFields = [
+        const allowedFields: string[] = [
             'content'
         ];
 

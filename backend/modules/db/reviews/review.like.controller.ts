@@ -2,15 +2,15 @@ import type {Request, Response, NextFunction} from 'express';
 
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
-import {reviewLikeService} from './review.like.service.js';
+import {ReviewLikeService, reviewLikeService} from './review.like.service.js';
 
 class ReviewLikeController extends Controller {
 
-    constructor(private readonly service = reviewLikeService) {
+    constructor(private readonly service:ReviewLikeService = reviewLikeService) {
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id,
@@ -36,7 +36,7 @@ class ReviewLikeController extends Controller {
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const reviewsLike = await this.service.getAll();
             res.status(201).json({
@@ -48,7 +48,7 @@ class ReviewLikeController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id,
@@ -69,12 +69,12 @@ class ReviewLikeController extends Controller {
         }
     }
 
-    async update() {
+    async update(): Promise<null> {
         // This function don't have to be used for this table
         return null
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id,

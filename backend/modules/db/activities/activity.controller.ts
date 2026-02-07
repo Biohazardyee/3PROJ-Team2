@@ -1,11 +1,11 @@
 import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
-import {activityService} from './activity.service.js';
+import {ActivityService, activityService} from './activity.service.js';
 
 class ActivityController extends Controller {
 
-    constructor(private readonly service = activityService) {
+    constructor(private readonly service: ActivityService = activityService) {
         super();
     }
 
@@ -61,7 +61,7 @@ class ActivityController extends Controller {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {id} = req.params;
 
@@ -80,7 +80,7 @@ class ActivityController extends Controller {
         }
     }
 
-    async getAll(req: Request, res: Response, next: NextFunction) {
+    async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const activities = await this.service.getAll();
             res.status(200).json(activities);
@@ -89,7 +89,7 @@ class ActivityController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {id} = req.params;
 
@@ -104,7 +104,7 @@ class ActivityController extends Controller {
         }
     }
 
-    async update(_: Request, __: Response, next: NextFunction) {
+    async update(_: Request, __: Response, next: NextFunction): Promise<void> {
         // Not implemented
         next();
     }

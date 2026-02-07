@@ -5,8 +5,8 @@ import { isEmptyString } from '../../utils/helpers.js';
 
 dotenv.config();
 
-const URL = process.env.API_ROOT_URL;
-const API_KEY = process.env.API_KEY;
+const URL: string | undefined = process.env.API_ROOT_URL;
+const API_KEY: string | undefined = process.env.API_KEY;
 
 
 // We use a single search service, as all the searches could be handled here.
@@ -16,7 +16,7 @@ const API_KEY = process.env.API_KEY;
 
 export class SearchService {
 
-    async search(data: { query: string }) {
+    async search(data: { query: string }): Promise<any> {
 
         const { query } = data;
 
@@ -24,15 +24,15 @@ export class SearchService {
             throw new BadRequest('Query cannot be empty');
         }
 
-        const search_URL =
+        const search_URL: string =
             `${URL}?method=album.search` +
             `&album=${encodeURIComponent(query)}` +
             `&api_key=${API_KEY}` +
             `&format=json`;
 
-        const response = await fetch(search_URL);
+        const response: Response = await fetch(search_URL);
 
-        const searchResults = await response.json();
+        const searchResults: any = await response.json();
 
         if (searchResults.error) {
             throw new NotFound(searchResults.message || 'No results found');

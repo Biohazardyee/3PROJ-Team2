@@ -7,7 +7,7 @@ class MediaStatusController {
     constructor(private readonly service = new MediaStatusService()) {
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id, 
@@ -34,7 +34,7 @@ class MediaStatusController {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id, 
@@ -65,7 +65,7 @@ class MediaStatusController {
         }
     }
 
-    async getStatus(req: Request, res: Response, next: NextFunction) {
+    async getStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id, 
@@ -86,7 +86,7 @@ class MediaStatusController {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 user_id, 

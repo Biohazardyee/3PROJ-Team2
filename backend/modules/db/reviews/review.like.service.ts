@@ -103,7 +103,7 @@ export class ReviewLikeService {
         return reviewLike;
     }
 
-    async update() {
+    async update(): Promise<null> {
         // This function don't have to be used for this table
         return null
     }

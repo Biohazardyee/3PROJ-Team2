@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import activityController from '../../modules/db/activities/activity.controller.js';
 
-const router = Router();
+const router: Router = Router();
 
 router.post('/', activityController.add);
 

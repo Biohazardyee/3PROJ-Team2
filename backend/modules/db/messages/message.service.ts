@@ -132,7 +132,7 @@ export class MessageService {
             throw new NotFound('Message not found');
         }
 
-        const allowedFields = [
+        const allowedFields: string[] = [
             'content',
             'is_read'
         ];

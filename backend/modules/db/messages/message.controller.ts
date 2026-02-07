@@ -2,15 +2,15 @@ import type {Request, Response, NextFunction} from 'express';
 
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
-import {messageService} from './message.service.js';
+import {MessageService, messageService} from './message.service.js';
 
 class MessageController extends Controller {
 
-    constructor(private readonly service = messageService) {
+    constructor(private readonly service: MessageService = messageService) {
         super();
     }
 
-    async add(req: Request, res: Response, next: NextFunction) {
+    async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 conversation_id,
@@ -37,7 +37,7 @@ class MessageController extends Controller {
         }
     }
 
-    async getAll(_: Request, res: Response, next: NextFunction) {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const messages = await this.service.getAll();
             res.status(201).json({
@@ -49,7 +49,7 @@ class MessageController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id
@@ -71,7 +71,7 @@ class MessageController extends Controller {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const id = req.params.id;
 
@@ -110,7 +110,7 @@ class MessageController extends Controller {
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {
                 id

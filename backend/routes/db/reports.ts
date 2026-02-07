@@ -1,7 +1,7 @@
 import { Router } from "express";
 import reportController from "../../modules/db/reports/report.controller.js";
 
-const router = Router();
+const router: Router = Router();
 
 // Create report
 router.post("/", reportController.add);

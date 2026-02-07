@@ -1,7 +1,7 @@
-import { PrismaDb } from '../../../config/database.js';
-import { BadRequest, NotFound } from '../../../utils/errors.js';
-import { isEmptyString } from '../../../utils/helpers.js';
-import { Prisma } from '../../../generated/prisma/client.js';
+import {PrismaDb} from '../../../config/database.js';
+import {BadRequest, NotFound} from '../../../utils/errors.js';
+import {isEmptyString} from '../../../utils/helpers.js';
+import {Prisma} from '../../../generated/prisma/client.js';
 
 export class ActivityService {
 
@@ -24,7 +24,7 @@ export class ActivityService {
         }
 
         const user = await PrismaDb.user.findUnique({
-            where: { id: user_id },
+            where: {id: user_id},
         });
 
         if (!user) {
@@ -37,7 +37,7 @@ export class ActivityService {
             }
 
             const targetUser = await PrismaDb.user.findUnique({
-                where: { id: target_user_id },
+                where: {id: target_user_id},
             });
 
             if (!targetUser) {
@@ -47,7 +47,7 @@ export class ActivityService {
 
         if (review_id) {
             const review = await PrismaDb.review.findUnique({
-                where: { id: review_id },
+                where: {id: review_id},
             });
 
             if (!review) {
@@ -57,7 +57,7 @@ export class ActivityService {
 
         if (media_id) {
             const media = await PrismaDb.media.findUnique({
-                where: { id: media_id },
+                where: {id: media_id},
             });
 
             if (!media) {
@@ -108,7 +108,7 @@ export class ActivityService {
             select: {follow_user_id: true},
         });
 
-        const userIds = [user_id, ...following.map(f => f.follow_user_id)];
+        const userIds: string[] = [user_id, ...following.map(f => f.follow_user_id)];
 
         return PrismaDb.activity.findMany({
             where: {
