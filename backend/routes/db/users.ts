@@ -26,9 +26,16 @@ router.get('/', authGuard, checkAdmin, function (req, res, next: NextFunction): 
     userController.getAll(req, res, next);
 });
 
+router.get('/fields', authGuard, checkAdmin, function (req, res, next: NextFunction): void {
+    userController.getAllWithFields(req, res, next)
+})
+
 router.get('/:id', authGuard, checkAdminOrSelf, function (req, res, next: NextFunction): void {
     userController.getById(req, res, next);
 });
 
+router.get('/:id/fields', authGuard, checkAdminOrSelf, function (req, res, next: NextFunction): void {
+    userController.getByIdWithFields(req, res, next)
+})
 
 export default router;

@@ -45,72 +45,72 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
- * Model Media
+ * Model Medias
  * 
  */
-export type Media = Prisma.MediaModel
+export type Medias = Prisma.MediasModel
 /**
- * Model Review
+ * Model Reviews
  * 
  */
-export type Review = Prisma.ReviewModel
+export type Reviews = Prisma.ReviewsModel
 /**
- * Model ReviewComment
+ * Model ReviewComments
  * 
  */
-export type ReviewComment = Prisma.ReviewCommentModel
+export type ReviewComments = Prisma.ReviewCommentsModel
 /**
- * Model ReviewLike
+ * Model ReviewLikes
  * 
  */
-export type ReviewLike = Prisma.ReviewLikeModel
+export type ReviewLikes = Prisma.ReviewLikesModel
 /**
- * Model Playlist
+ * Model Playlists
  * 
  */
-export type Playlist = Prisma.PlaylistModel
+export type Playlists = Prisma.PlaylistsModel
 /**
- * Model PlaylistItem
+ * Model PlaylistItems
  * 
  */
-export type PlaylistItem = Prisma.PlaylistItemModel
+export type PlaylistItems = Prisma.PlaylistItemsModel
 /**
  * Model UserMediaStatus
  * 
  */
 export type UserMediaStatus = Prisma.UserMediaStatusModel
 /**
- * Model Activity
+ * Model Activitys
  * 
  */
-export type Activity = Prisma.ActivityModel
+export type Activitys = Prisma.ActivitysModel
 /**
- * Model Follow
+ * Model Follows
  * 
  */
-export type Follow = Prisma.FollowModel
+export type Follows = Prisma.FollowsModel
 /**
- * Model Report
+ * Model Reports
  * 
  */
-export type Report = Prisma.ReportModel
+export type Reports = Prisma.ReportsModel
 /**
- * Model Notification
+ * Model Notifications
  * 
  */
-export type Notification = Prisma.NotificationModel
+export type Notifications = Prisma.NotificationsModel
 /**
  * Model BannedUsers
  * 
  */
 export type BannedUsers = Prisma.BannedUsersModel
 /**
- * Model Conversation
+ * Model Conversations
  * 
  */
-export type Conversation = Prisma.ConversationModel
+export type Conversations = Prisma.ConversationsModel
 /**
- * Model Message
+ * Model Messages
  * 
  */
-export type Message = Prisma.MessageModel
+export type Messages = Prisma.MessagesModel

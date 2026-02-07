@@ -28,7 +28,7 @@ export class ReviewLikeService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const review = await PrismaDb.review.findUnique({
+        const review = await PrismaDb.reviews.findUnique({
             where: {
                 id: data.review_id,
             }
@@ -38,7 +38,7 @@ export class ReviewLikeService {
             throw new BadRequest('The review doesn\'t exist');
         }
 
-        const alreadyLiked = await PrismaDb.reviewLike.findUnique({
+        const alreadyLiked = await PrismaDb.reviewLikes.findUnique({
             where: {
                 user_id_review_id: {
                     user_id: data.user_id,
@@ -51,7 +51,7 @@ export class ReviewLikeService {
             throw new BadRequest('Already Liked');
         }
 
-        return PrismaDb.reviewLike.create({
+        return PrismaDb.reviewLikes.create({
             data,
             select: {
                 user_id: true,
@@ -63,7 +63,7 @@ export class ReviewLikeService {
 
 
     async getAll() {
-        return PrismaDb.reviewLike.findMany({
+        return PrismaDb.reviewLikes.findMany({
             select: {
                 user_id: true,
                 review_id: true,
@@ -82,7 +82,7 @@ export class ReviewLikeService {
             throw new BadRequest('Review_id cannot be empty');
         }
 
-        const reviewLike = await PrismaDb.reviewLike.findUnique({
+        const reviewLike = await PrismaDb.reviewLikes.findUnique({
             where: {
                 user_id_review_id: {
                     user_id: user_id,
@@ -119,7 +119,7 @@ export class ReviewLikeService {
         }
 
         try {
-            return await PrismaDb.reviewLike.delete({
+            return await PrismaDb.reviewLikes.delete({
                 where: {
                     user_id_review_id: {
                         user_id: user_id,

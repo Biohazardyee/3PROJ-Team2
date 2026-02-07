@@ -29,12 +29,12 @@ export type UserMinAggregateOutputType = {
   username: string | null
   email: string | null
   password: string | null
-  phone_number: string | null
-  profile_picture: runtime.Bytes | null
-  role: $Enums.Role | null
-  biography: string | null
   favorite_band: string | null
+  profile_picture: runtime.Bytes | null
+  role: $Enums.Roles | null
   has_notifications: boolean | null
+  phone_number: string | null
+  biography: string | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -44,12 +44,12 @@ export type UserMaxAggregateOutputType = {
   username: string | null
   email: string | null
   password: string | null
-  phone_number: string | null
-  profile_picture: runtime.Bytes | null
-  role: $Enums.Role | null
-  biography: string | null
   favorite_band: string | null
+  profile_picture: runtime.Bytes | null
+  role: $Enums.Roles | null
   has_notifications: boolean | null
+  phone_number: string | null
+  biography: string | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -59,12 +59,12 @@ export type UserCountAggregateOutputType = {
   username: number
   email: number
   password: number
-  phone_number: number
+  favorite_band: number
   profile_picture: number
   role: number
-  biography: number
-  favorite_band: number
   has_notifications: number
+  phone_number: number
+  biography: number
   created_at: number
   updated_at: number
   _all: number
@@ -76,12 +76,12 @@ export type UserMinAggregateInputType = {
   username?: true
   email?: true
   password?: true
-  phone_number?: true
+  favorite_band?: true
   profile_picture?: true
   role?: true
-  biography?: true
-  favorite_band?: true
   has_notifications?: true
+  phone_number?: true
+  biography?: true
   created_at?: true
   updated_at?: true
 }
@@ -91,12 +91,12 @@ export type UserMaxAggregateInputType = {
   username?: true
   email?: true
   password?: true
-  phone_number?: true
+  favorite_band?: true
   profile_picture?: true
   role?: true
-  biography?: true
-  favorite_band?: true
   has_notifications?: true
+  phone_number?: true
+  biography?: true
   created_at?: true
   updated_at?: true
 }
@@ -106,12 +106,12 @@ export type UserCountAggregateInputType = {
   username?: true
   email?: true
   password?: true
-  phone_number?: true
+  favorite_band?: true
   profile_picture?: true
   role?: true
-  biography?: true
-  favorite_band?: true
   has_notifications?: true
+  phone_number?: true
+  biography?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -194,12 +194,12 @@ export type UserGroupByOutputType = {
   username: string
   email: string
   password: string
-  phone_number: string | null
-  profile_picture: runtime.Bytes
-  role: $Enums.Role
-  biography: string | null
   favorite_band: string
-  has_notifications: boolean | null
+  profile_picture: runtime.Bytes
+  role: $Enums.Roles
+  has_notifications: boolean
+  phone_number: string | null
+  biography: string | null
   created_at: Date
   updated_at: Date
   _count: UserCountAggregateOutputType | null
@@ -230,30 +230,30 @@ export type UserWhereInput = {
   username?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
   password?: Prisma.StringFilter<"User"> | string
-  phone_number?: Prisma.StringNullableFilter<"User"> | string | null
-  profile_picture?: Prisma.BytesFilter<"User"> | runtime.Bytes
-  role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
-  biography?: Prisma.StringNullableFilter<"User"> | string | null
   favorite_band?: Prisma.StringFilter<"User"> | string
-  has_notifications?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  profile_picture?: Prisma.BytesFilter<"User"> | runtime.Bytes
+  role?: Prisma.EnumRolesFilter<"User"> | $Enums.Roles
+  has_notifications?: Prisma.BoolFilter<"User"> | boolean
+  phone_number?: Prisma.StringNullableFilter<"User"> | string | null
+  biography?: Prisma.StringNullableFilter<"User"> | string | null
   created_at?: Prisma.DateTimeFilter<"User"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"User"> | Date | string
-  reviews?: Prisma.ReviewListRelationFilter
-  review_comments?: Prisma.ReviewCommentListRelationFilter
-  review_likes?: Prisma.ReviewLikeListRelationFilter
-  playlists?: Prisma.PlaylistListRelationFilter
-  follows?: Prisma.FollowListRelationFilter
-  followers?: Prisma.FollowListRelationFilter
-  notifications?: Prisma.NotificationListRelationFilter
-  notificationsRelated?: Prisma.NotificationListRelationFilter
+  reviews?: Prisma.ReviewsListRelationFilter
+  review_comments?: Prisma.ReviewCommentsListRelationFilter
+  review_likes?: Prisma.ReviewLikesListRelationFilter
+  playlists?: Prisma.PlaylistsListRelationFilter
+  follows?: Prisma.FollowsListRelationFilter
+  followers?: Prisma.FollowsListRelationFilter
+  notifications?: Prisma.NotificationsListRelationFilter
+  notificationsRelated?: Prisma.NotificationsListRelationFilter
   user_media_status?: Prisma.UserMediaStatusListRelationFilter
-  reports?: Prisma.ReportListRelationFilter
+  reports?: Prisma.ReportsListRelationFilter
   bannedUsers?: Prisma.XOR<Prisma.BannedUsersNullableScalarRelationFilter, Prisma.BannedUsersWhereInput> | null
-  activities?: Prisma.ActivityListRelationFilter
-  activities_targets?: Prisma.ActivityListRelationFilter
-  conversations_user1?: Prisma.ConversationListRelationFilter
-  conversations_user2?: Prisma.ConversationListRelationFilter
-  messages?: Prisma.MessageListRelationFilter
+  activities?: Prisma.ActivitysListRelationFilter
+  activities_targets?: Prisma.ActivitysListRelationFilter
+  conversations_user1?: Prisma.ConversationsListRelationFilter
+  conversations_user2?: Prisma.ConversationsListRelationFilter
+  messages?: Prisma.MessagesListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -261,30 +261,30 @@ export type UserOrderByWithRelationInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  phone_number?: Prisma.SortOrderInput | Prisma.SortOrder
+  favorite_band?: Prisma.SortOrder
   profile_picture?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  has_notifications?: Prisma.SortOrder
+  phone_number?: Prisma.SortOrderInput | Prisma.SortOrder
   biography?: Prisma.SortOrderInput | Prisma.SortOrder
-  favorite_band?: Prisma.SortOrder
-  has_notifications?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
-  reviews?: Prisma.ReviewOrderByRelationAggregateInput
-  review_comments?: Prisma.ReviewCommentOrderByRelationAggregateInput
-  review_likes?: Prisma.ReviewLikeOrderByRelationAggregateInput
-  playlists?: Prisma.PlaylistOrderByRelationAggregateInput
-  follows?: Prisma.FollowOrderByRelationAggregateInput
-  followers?: Prisma.FollowOrderByRelationAggregateInput
-  notifications?: Prisma.NotificationOrderByRelationAggregateInput
-  notificationsRelated?: Prisma.NotificationOrderByRelationAggregateInput
+  reviews?: Prisma.ReviewsOrderByRelationAggregateInput
+  review_comments?: Prisma.ReviewCommentsOrderByRelationAggregateInput
+  review_likes?: Prisma.ReviewLikesOrderByRelationAggregateInput
+  playlists?: Prisma.PlaylistsOrderByRelationAggregateInput
+  follows?: Prisma.FollowsOrderByRelationAggregateInput
+  followers?: Prisma.FollowsOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationsOrderByRelationAggregateInput
+  notificationsRelated?: Prisma.NotificationsOrderByRelationAggregateInput
   user_media_status?: Prisma.UserMediaStatusOrderByRelationAggregateInput
-  reports?: Prisma.ReportOrderByRelationAggregateInput
+  reports?: Prisma.ReportsOrderByRelationAggregateInput
   bannedUsers?: Prisma.BannedUsersOrderByWithRelationInput
-  activities?: Prisma.ActivityOrderByRelationAggregateInput
-  activities_targets?: Prisma.ActivityOrderByRelationAggregateInput
-  conversations_user1?: Prisma.ConversationOrderByRelationAggregateInput
-  conversations_user2?: Prisma.ConversationOrderByRelationAggregateInput
-  messages?: Prisma.MessageOrderByRelationAggregateInput
+  activities?: Prisma.ActivitysOrderByRelationAggregateInput
+  activities_targets?: Prisma.ActivitysOrderByRelationAggregateInput
+  conversations_user1?: Prisma.ConversationsOrderByRelationAggregateInput
+  conversations_user2?: Prisma.ConversationsOrderByRelationAggregateInput
+  messages?: Prisma.MessagesOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -295,30 +295,30 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   password?: Prisma.StringFilter<"User"> | string
-  phone_number?: Prisma.StringNullableFilter<"User"> | string | null
-  profile_picture?: Prisma.BytesFilter<"User"> | runtime.Bytes
-  role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
-  biography?: Prisma.StringNullableFilter<"User"> | string | null
   favorite_band?: Prisma.StringFilter<"User"> | string
-  has_notifications?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  profile_picture?: Prisma.BytesFilter<"User"> | runtime.Bytes
+  role?: Prisma.EnumRolesFilter<"User"> | $Enums.Roles
+  has_notifications?: Prisma.BoolFilter<"User"> | boolean
+  phone_number?: Prisma.StringNullableFilter<"User"> | string | null
+  biography?: Prisma.StringNullableFilter<"User"> | string | null
   created_at?: Prisma.DateTimeFilter<"User"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"User"> | Date | string
-  reviews?: Prisma.ReviewListRelationFilter
-  review_comments?: Prisma.ReviewCommentListRelationFilter
-  review_likes?: Prisma.ReviewLikeListRelationFilter
-  playlists?: Prisma.PlaylistListRelationFilter
-  follows?: Prisma.FollowListRelationFilter
-  followers?: Prisma.FollowListRelationFilter
-  notifications?: Prisma.NotificationListRelationFilter
-  notificationsRelated?: Prisma.NotificationListRelationFilter
+  reviews?: Prisma.ReviewsListRelationFilter
+  review_comments?: Prisma.ReviewCommentsListRelationFilter
+  review_likes?: Prisma.ReviewLikesListRelationFilter
+  playlists?: Prisma.PlaylistsListRelationFilter
+  follows?: Prisma.FollowsListRelationFilter
+  followers?: Prisma.FollowsListRelationFilter
+  notifications?: Prisma.NotificationsListRelationFilter
+  notificationsRelated?: Prisma.NotificationsListRelationFilter
   user_media_status?: Prisma.UserMediaStatusListRelationFilter
-  reports?: Prisma.ReportListRelationFilter
+  reports?: Prisma.ReportsListRelationFilter
   bannedUsers?: Prisma.XOR<Prisma.BannedUsersNullableScalarRelationFilter, Prisma.BannedUsersWhereInput> | null
-  activities?: Prisma.ActivityListRelationFilter
-  activities_targets?: Prisma.ActivityListRelationFilter
-  conversations_user1?: Prisma.ConversationListRelationFilter
-  conversations_user2?: Prisma.ConversationListRelationFilter
-  messages?: Prisma.MessageListRelationFilter
+  activities?: Prisma.ActivitysListRelationFilter
+  activities_targets?: Prisma.ActivitysListRelationFilter
+  conversations_user1?: Prisma.ConversationsListRelationFilter
+  conversations_user2?: Prisma.ConversationsListRelationFilter
+  messages?: Prisma.MessagesListRelationFilter
 }, "id" | "username" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -326,12 +326,12 @@ export type UserOrderByWithAggregationInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  phone_number?: Prisma.SortOrderInput | Prisma.SortOrder
+  favorite_band?: Prisma.SortOrder
   profile_picture?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  has_notifications?: Prisma.SortOrder
+  phone_number?: Prisma.SortOrderInput | Prisma.SortOrder
   biography?: Prisma.SortOrderInput | Prisma.SortOrder
-  favorite_band?: Prisma.SortOrder
-  has_notifications?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -347,12 +347,12 @@ export type UserScalarWhereWithAggregatesInput = {
   username?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
-  phone_number?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  profile_picture?: Prisma.BytesWithAggregatesFilter<"User"> | runtime.Bytes
-  role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
-  biography?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   favorite_band?: Prisma.StringWithAggregatesFilter<"User"> | string
-  has_notifications?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
+  profile_picture?: Prisma.BytesWithAggregatesFilter<"User"> | runtime.Bytes
+  role?: Prisma.EnumRolesWithAggregatesFilter<"User"> | $Enums.Roles
+  has_notifications?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  phone_number?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  biography?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -362,30 +362,30 @@ export type UserCreateInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -393,30 +393,30 @@ export type UserUncheckedCreateInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserUpdateInput = {
@@ -424,30 +424,30 @@ export type UserUpdateInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -455,30 +455,30 @@ export type UserUncheckedUpdateInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -486,12 +486,12 @@ export type UserCreateManyInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -501,12 +501,12 @@ export type UserUpdateManyMutationInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -516,12 +516,12 @@ export type UserUncheckedUpdateManyInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -531,12 +531,12 @@ export type UserCountOrderByAggregateInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  phone_number?: Prisma.SortOrder
+  favorite_band?: Prisma.SortOrder
   profile_picture?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  biography?: Prisma.SortOrder
-  favorite_band?: Prisma.SortOrder
   has_notifications?: Prisma.SortOrder
+  phone_number?: Prisma.SortOrder
+  biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -546,12 +546,12 @@ export type UserMaxOrderByAggregateInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  phone_number?: Prisma.SortOrder
+  favorite_band?: Prisma.SortOrder
   profile_picture?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  biography?: Prisma.SortOrder
-  favorite_band?: Prisma.SortOrder
   has_notifications?: Prisma.SortOrder
+  phone_number?: Prisma.SortOrder
+  biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -561,12 +561,12 @@ export type UserMinOrderByAggregateInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
-  phone_number?: Prisma.SortOrder
+  favorite_band?: Prisma.SortOrder
   profile_picture?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  biography?: Prisma.SortOrder
-  favorite_band?: Prisma.SortOrder
   has_notifications?: Prisma.SortOrder
+  phone_number?: Prisma.SortOrder
+  biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -585,20 +585,20 @@ export type StringFieldUpdateOperationsInput = {
   set?: string
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type BytesFieldUpdateOperationsInput = {
   set?: runtime.Bytes
 }
 
-export type EnumRoleFieldUpdateOperationsInput = {
-  set?: $Enums.Role
+export type EnumRolesFieldUpdateOperationsInput = {
+  set?: $Enums.Roles
 }
 
-export type NullableBoolFieldUpdateOperationsInput = {
-  set?: boolean | null
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -838,29 +838,29 @@ export type UserCreateWithoutReviewsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -868,29 +868,29 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -914,29 +914,29 @@ export type UserUpdateWithoutReviewsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -944,29 +944,29 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutReview_commentsInput = {
@@ -974,29 +974,29 @@ export type UserCreateWithoutReview_commentsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutReview_commentsInput = {
@@ -1004,29 +1004,29 @@ export type UserUncheckedCreateWithoutReview_commentsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutReview_commentsInput = {
@@ -1050,29 +1050,29 @@ export type UserUpdateWithoutReview_commentsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReview_commentsInput = {
@@ -1080,29 +1080,29 @@ export type UserUncheckedUpdateWithoutReview_commentsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutReview_likesInput = {
@@ -1110,29 +1110,29 @@ export type UserCreateWithoutReview_likesInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutReview_likesInput = {
@@ -1140,29 +1140,29 @@ export type UserUncheckedCreateWithoutReview_likesInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutReview_likesInput = {
@@ -1186,29 +1186,29 @@ export type UserUpdateWithoutReview_likesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReview_likesInput = {
@@ -1216,29 +1216,29 @@ export type UserUncheckedUpdateWithoutReview_likesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutPlaylistsInput = {
@@ -1246,29 +1246,29 @@ export type UserCreateWithoutPlaylistsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutPlaylistsInput = {
@@ -1276,29 +1276,29 @@ export type UserUncheckedCreateWithoutPlaylistsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutPlaylistsInput = {
@@ -1322,29 +1322,29 @@ export type UserUpdateWithoutPlaylistsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPlaylistsInput = {
@@ -1352,29 +1352,29 @@ export type UserUncheckedUpdateWithoutPlaylistsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutUser_media_statusInput = {
@@ -1382,29 +1382,29 @@ export type UserCreateWithoutUser_media_statusInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutUser_media_statusInput = {
@@ -1412,29 +1412,29 @@ export type UserUncheckedCreateWithoutUser_media_statusInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutUser_media_statusInput = {
@@ -1458,29 +1458,29 @@ export type UserUpdateWithoutUser_media_statusInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUser_media_statusInput = {
@@ -1488,29 +1488,29 @@ export type UserUncheckedUpdateWithoutUser_media_statusInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutActivitiesInput = {
@@ -1518,29 +1518,29 @@ export type UserCreateWithoutActivitiesInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutActivitiesInput = {
@@ -1548,29 +1548,29 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutActivitiesInput = {
@@ -1583,29 +1583,29 @@ export type UserCreateWithoutActivities_targetsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutActivities_targetsInput = {
@@ -1613,29 +1613,29 @@ export type UserUncheckedCreateWithoutActivities_targetsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutActivities_targetsInput = {
@@ -1659,29 +1659,29 @@ export type UserUpdateWithoutActivitiesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActivitiesInput = {
@@ -1689,29 +1689,29 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUpsertWithoutActivities_targetsInput = {
@@ -1730,29 +1730,29 @@ export type UserUpdateWithoutActivities_targetsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActivities_targetsInput = {
@@ -1760,29 +1760,29 @@ export type UserUncheckedUpdateWithoutActivities_targetsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutFollowsInput = {
@@ -1790,29 +1790,29 @@ export type UserCreateWithoutFollowsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutFollowsInput = {
@@ -1820,29 +1820,29 @@ export type UserUncheckedCreateWithoutFollowsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutFollowsInput = {
@@ -1855,29 +1855,29 @@ export type UserCreateWithoutFollowersInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutFollowersInput = {
@@ -1885,29 +1885,29 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutFollowersInput = {
@@ -1931,29 +1931,29 @@ export type UserUpdateWithoutFollowsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFollowsInput = {
@@ -1961,29 +1961,29 @@ export type UserUncheckedUpdateWithoutFollowsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUpsertWithoutFollowersInput = {
@@ -2002,29 +2002,29 @@ export type UserUpdateWithoutFollowersInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFollowersInput = {
@@ -2032,29 +2032,29 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutReportsInput = {
@@ -2062,29 +2062,29 @@ export type UserCreateWithoutReportsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutReportsInput = {
@@ -2092,29 +2092,29 @@ export type UserUncheckedCreateWithoutReportsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutReportsInput = {
@@ -2138,29 +2138,29 @@ export type UserUpdateWithoutReportsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReportsInput = {
@@ -2168,29 +2168,29 @@ export type UserUncheckedUpdateWithoutReportsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2198,29 +2198,29 @@ export type UserCreateWithoutNotificationsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2228,29 +2228,29 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2263,29 +2263,29 @@ export type UserCreateWithoutNotificationsRelatedInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsRelatedInput = {
@@ -2293,29 +2293,29 @@ export type UserUncheckedCreateWithoutNotificationsRelatedInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsRelatedInput = {
@@ -2339,29 +2339,29 @@ export type UserUpdateWithoutNotificationsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -2369,29 +2369,29 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUpsertWithoutNotificationsRelatedInput = {
@@ -2410,29 +2410,29 @@ export type UserUpdateWithoutNotificationsRelatedInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsRelatedInput = {
@@ -2440,29 +2440,29 @@ export type UserUncheckedUpdateWithoutNotificationsRelatedInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutBannedUsersInput = {
@@ -2470,29 +2470,29 @@ export type UserCreateWithoutBannedUsersInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutBannedUsersInput = {
@@ -2500,29 +2500,29 @@ export type UserUncheckedCreateWithoutBannedUsersInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutBannedUsersInput = {
@@ -2546,29 +2546,29 @@ export type UserUpdateWithoutBannedUsersInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBannedUsersInput = {
@@ -2576,29 +2576,29 @@ export type UserUncheckedUpdateWithoutBannedUsersInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutConversations_user1Input = {
@@ -2606,29 +2606,29 @@ export type UserCreateWithoutConversations_user1Input = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutConversations_user1Input = {
@@ -2636,29 +2636,29 @@ export type UserUncheckedCreateWithoutConversations_user1Input = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutConversations_user1Input = {
@@ -2671,29 +2671,29 @@ export type UserCreateWithoutConversations_user2Input = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutConversations_user2Input = {
@@ -2701,29 +2701,29 @@ export type UserUncheckedCreateWithoutConversations_user2Input = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutConversations_user2Input = {
@@ -2747,29 +2747,29 @@ export type UserUpdateWithoutConversations_user1Input = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConversations_user1Input = {
@@ -2777,29 +2777,29 @@ export type UserUncheckedUpdateWithoutConversations_user1Input = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUpsertWithoutConversations_user2Input = {
@@ -2818,29 +2818,29 @@ export type UserUpdateWithoutConversations_user2Input = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConversations_user2Input = {
@@ -2848,29 +2848,29 @@ export type UserUncheckedUpdateWithoutConversations_user2Input = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutMessagesInput = {
@@ -2878,29 +2878,29 @@ export type UserCreateWithoutMessagesInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationCreateNestedManyWithoutUser2Input
+  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
 }
 
 export type UserUncheckedCreateWithoutMessagesInput = {
@@ -2908,29 +2908,29 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   username: string
   email: string
   password: string
-  phone_number?: string | null
-  profile_picture: runtime.Bytes
-  role?: $Enums.Role
-  biography?: string | null
   favorite_band: string
-  has_notifications?: boolean | null
+  profile_picture: runtime.Bytes
+  role?: $Enums.Roles
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationUncheckedCreateNestedManyWithoutRelated_userInput
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reports?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivityUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationUncheckedCreateNestedManyWithoutUser2Input
+  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
 }
 
 export type UserCreateOrConnectWithoutMessagesInput = {
@@ -2954,29 +2954,29 @@ export type UserUpdateWithoutMessagesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUpdateManyWithoutUser2NestedInput
+  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -2984,29 +2984,29 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  has_notifications?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationUncheckedUpdateManyWithoutRelated_userNestedInput
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reports?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivityUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationUncheckedUpdateManyWithoutUser2NestedInput
+  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
 }
 
 
@@ -3064,56 +3064,56 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReviewWhereInput
+  where?: Prisma.ReviewsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountReview_commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReviewCommentWhereInput
+  where?: Prisma.ReviewCommentsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountReview_likesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReviewLikeWhereInput
+  where?: Prisma.ReviewLikesWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountPlaylistsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PlaylistWhereInput
+  where?: Prisma.PlaylistsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountFollowsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FollowWhereInput
+  where?: Prisma.FollowsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountFollowersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FollowWhereInput
+  where?: Prisma.FollowsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NotificationWhereInput
+  where?: Prisma.NotificationsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountNotificationsRelatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NotificationWhereInput
+  where?: Prisma.NotificationsWhereInput
 }
 
 /**
@@ -3127,42 +3127,42 @@ export type UserCountOutputTypeCountUser_media_statusArgs<ExtArgs extends runtim
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReportWhereInput
+  where?: Prisma.ReportsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ActivityWhereInput
+  where?: Prisma.ActivitysWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountActivities_targetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ActivityWhereInput
+  where?: Prisma.ActivitysWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountConversations_user1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ConversationWhereInput
+  where?: Prisma.ConversationsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountConversations_user2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ConversationWhereInput
+  where?: Prisma.ConversationsWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MessageWhereInput
+  where?: Prisma.MessagesWhereInput
 }
 
 
@@ -3171,12 +3171,12 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   username?: boolean
   email?: boolean
   password?: boolean
-  phone_number?: boolean
+  favorite_band?: boolean
   profile_picture?: boolean
   role?: boolean
-  biography?: boolean
-  favorite_band?: boolean
   has_notifications?: boolean
+  phone_number?: boolean
+  biography?: boolean
   created_at?: boolean
   updated_at?: boolean
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
@@ -3203,12 +3203,12 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   username?: boolean
   email?: boolean
   password?: boolean
-  phone_number?: boolean
+  favorite_band?: boolean
   profile_picture?: boolean
   role?: boolean
-  biography?: boolean
-  favorite_band?: boolean
   has_notifications?: boolean
+  phone_number?: boolean
+  biography?: boolean
   created_at?: boolean
   updated_at?: boolean
 }, ExtArgs["result"]["user"]>
@@ -3218,12 +3218,12 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   username?: boolean
   email?: boolean
   password?: boolean
-  phone_number?: boolean
+  favorite_band?: boolean
   profile_picture?: boolean
   role?: boolean
-  biography?: boolean
-  favorite_band?: boolean
   has_notifications?: boolean
+  phone_number?: boolean
+  biography?: boolean
   created_at?: boolean
   updated_at?: boolean
 }, ExtArgs["result"]["user"]>
@@ -3233,17 +3233,17 @@ export type UserSelectScalar = {
   username?: boolean
   email?: boolean
   password?: boolean
-  phone_number?: boolean
+  favorite_band?: boolean
   profile_picture?: boolean
   role?: boolean
-  biography?: boolean
-  favorite_band?: boolean
   has_notifications?: boolean
+  phone_number?: boolean
+  biography?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "phone_number" | "profile_picture" | "role" | "biography" | "favorite_band" | "has_notifications" | "created_at" | "updated_at", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "favorite_band" | "profile_picture" | "role" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   review_comments?: boolean | Prisma.User$review_commentsArgs<ExtArgs>
@@ -3269,34 +3269,34 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
-    reviews: Prisma.$ReviewPayload<ExtArgs>[]
-    review_comments: Prisma.$ReviewCommentPayload<ExtArgs>[]
-    review_likes: Prisma.$ReviewLikePayload<ExtArgs>[]
-    playlists: Prisma.$PlaylistPayload<ExtArgs>[]
-    follows: Prisma.$FollowPayload<ExtArgs>[]
-    followers: Prisma.$FollowPayload<ExtArgs>[]
-    notifications: Prisma.$NotificationPayload<ExtArgs>[]
-    notificationsRelated: Prisma.$NotificationPayload<ExtArgs>[]
+    reviews: Prisma.$ReviewsPayload<ExtArgs>[]
+    review_comments: Prisma.$ReviewCommentsPayload<ExtArgs>[]
+    review_likes: Prisma.$ReviewLikesPayload<ExtArgs>[]
+    playlists: Prisma.$PlaylistsPayload<ExtArgs>[]
+    follows: Prisma.$FollowsPayload<ExtArgs>[]
+    followers: Prisma.$FollowsPayload<ExtArgs>[]
+    notifications: Prisma.$NotificationsPayload<ExtArgs>[]
+    notificationsRelated: Prisma.$NotificationsPayload<ExtArgs>[]
     user_media_status: Prisma.$UserMediaStatusPayload<ExtArgs>[]
-    reports: Prisma.$ReportPayload<ExtArgs>[]
+    reports: Prisma.$ReportsPayload<ExtArgs>[]
     bannedUsers: Prisma.$BannedUsersPayload<ExtArgs> | null
-    activities: Prisma.$ActivityPayload<ExtArgs>[]
-    activities_targets: Prisma.$ActivityPayload<ExtArgs>[]
-    conversations_user1: Prisma.$ConversationPayload<ExtArgs>[]
-    conversations_user2: Prisma.$ConversationPayload<ExtArgs>[]
-    messages: Prisma.$MessagePayload<ExtArgs>[]
+    activities: Prisma.$ActivitysPayload<ExtArgs>[]
+    activities_targets: Prisma.$ActivitysPayload<ExtArgs>[]
+    conversations_user1: Prisma.$ConversationsPayload<ExtArgs>[]
+    conversations_user2: Prisma.$ConversationsPayload<ExtArgs>[]
+    messages: Prisma.$MessagesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     username: string
     email: string
     password: string
-    phone_number: string | null
-    profile_picture: runtime.Bytes
-    role: $Enums.Role
-    biography: string | null
     favorite_band: string
-    has_notifications: boolean | null
+    profile_picture: runtime.Bytes
+    role: $Enums.Roles
+    has_notifications: boolean
+    phone_number: string | null
+    biography: string | null
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["user"]>
@@ -3693,22 +3693,22 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  review_comments<T extends Prisma.User$review_commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$review_commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  review_likes<T extends Prisma.User$review_likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$review_likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  playlists<T extends Prisma.User$playlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$playlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaylistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  follows<T extends Prisma.User$followsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$followsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  followers<T extends Prisma.User$followersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$followersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  notificationsRelated<T extends Prisma.User$notificationsRelatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsRelatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  review_comments<T extends Prisma.User$review_commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$review_commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewCommentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  review_likes<T extends Prisma.User$review_likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$review_likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewLikesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  playlists<T extends Prisma.User$playlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$playlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaylistsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  follows<T extends Prisma.User$followsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$followsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  followers<T extends Prisma.User$followersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$followersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notificationsRelated<T extends Prisma.User$notificationsRelatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsRelatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user_media_status<T extends Prisma.User$user_media_statusArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$user_media_statusArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserMediaStatusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reports<T extends Prisma.User$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reports<T extends Prisma.User$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bannedUsers<T extends Prisma.User$bannedUsersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bannedUsersArgs<ExtArgs>>): Prisma.Prisma__BannedUsersClient<runtime.Types.Result.GetResult<Prisma.$BannedUsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  activities<T extends Prisma.User$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  activities_targets<T extends Prisma.User$activities_targetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activities_targetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  conversations_user1<T extends Prisma.User$conversations_user1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversations_user1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  conversations_user2<T extends Prisma.User$conversations_user2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversations_user2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  messages<T extends Prisma.User$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activities<T extends Prisma.User$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivitysPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activities_targets<T extends Prisma.User$activities_targetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activities_targetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivitysPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conversations_user1<T extends Prisma.User$conversations_user1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversations_user1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conversations_user2<T extends Prisma.User$conversations_user2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversations_user2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  messages<T extends Prisma.User$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3742,12 +3742,12 @@ export interface UserFieldRefs {
   readonly username: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly password: Prisma.FieldRef<"User", 'String'>
-  readonly phone_number: Prisma.FieldRef<"User", 'String'>
-  readonly profile_picture: Prisma.FieldRef<"User", 'Bytes'>
-  readonly role: Prisma.FieldRef<"User", 'Role'>
-  readonly biography: Prisma.FieldRef<"User", 'String'>
   readonly favorite_band: Prisma.FieldRef<"User", 'String'>
+  readonly profile_picture: Prisma.FieldRef<"User", 'Bytes'>
+  readonly role: Prisma.FieldRef<"User", 'Roles'>
   readonly has_notifications: Prisma.FieldRef<"User", 'Boolean'>
+  readonly phone_number: Prisma.FieldRef<"User", 'String'>
+  readonly biography: Prisma.FieldRef<"User", 'String'>
   readonly created_at: Prisma.FieldRef<"User", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -4142,23 +4142,23 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
  */
 export type User$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Review
+   * Select specific fields to fetch from the Reviews
    */
-  select?: Prisma.ReviewSelect<ExtArgs> | null
+  select?: Prisma.ReviewsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Review
+   * Omit specific fields from the Reviews
    */
-  omit?: Prisma.ReviewOmit<ExtArgs> | null
+  omit?: Prisma.ReviewsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ReviewInclude<ExtArgs> | null
-  where?: Prisma.ReviewWhereInput
-  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
-  cursor?: Prisma.ReviewWhereUniqueInput
+  include?: Prisma.ReviewsInclude<ExtArgs> | null
+  where?: Prisma.ReviewsWhereInput
+  orderBy?: Prisma.ReviewsOrderByWithRelationInput | Prisma.ReviewsOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
+  distinct?: Prisma.ReviewsScalarFieldEnum | Prisma.ReviewsScalarFieldEnum[]
 }
 
 /**
@@ -4166,23 +4166,23 @@ export type User$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
  */
 export type User$review_commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the ReviewComment
+   * Select specific fields to fetch from the ReviewComments
    */
-  select?: Prisma.ReviewCommentSelect<ExtArgs> | null
+  select?: Prisma.ReviewCommentsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the ReviewComment
+   * Omit specific fields from the ReviewComments
    */
-  omit?: Prisma.ReviewCommentOmit<ExtArgs> | null
+  omit?: Prisma.ReviewCommentsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ReviewCommentInclude<ExtArgs> | null
-  where?: Prisma.ReviewCommentWhereInput
-  orderBy?: Prisma.ReviewCommentOrderByWithRelationInput | Prisma.ReviewCommentOrderByWithRelationInput[]
-  cursor?: Prisma.ReviewCommentWhereUniqueInput
+  include?: Prisma.ReviewCommentsInclude<ExtArgs> | null
+  where?: Prisma.ReviewCommentsWhereInput
+  orderBy?: Prisma.ReviewCommentsOrderByWithRelationInput | Prisma.ReviewCommentsOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewCommentsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ReviewCommentScalarFieldEnum | Prisma.ReviewCommentScalarFieldEnum[]
+  distinct?: Prisma.ReviewCommentsScalarFieldEnum | Prisma.ReviewCommentsScalarFieldEnum[]
 }
 
 /**
@@ -4190,23 +4190,23 @@ export type User$review_commentsArgs<ExtArgs extends runtime.Types.Extensions.In
  */
 export type User$review_likesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the ReviewLike
+   * Select specific fields to fetch from the ReviewLikes
    */
-  select?: Prisma.ReviewLikeSelect<ExtArgs> | null
+  select?: Prisma.ReviewLikesSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the ReviewLike
+   * Omit specific fields from the ReviewLikes
    */
-  omit?: Prisma.ReviewLikeOmit<ExtArgs> | null
+  omit?: Prisma.ReviewLikesOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ReviewLikeInclude<ExtArgs> | null
-  where?: Prisma.ReviewLikeWhereInput
-  orderBy?: Prisma.ReviewLikeOrderByWithRelationInput | Prisma.ReviewLikeOrderByWithRelationInput[]
-  cursor?: Prisma.ReviewLikeWhereUniqueInput
+  include?: Prisma.ReviewLikesInclude<ExtArgs> | null
+  where?: Prisma.ReviewLikesWhereInput
+  orderBy?: Prisma.ReviewLikesOrderByWithRelationInput | Prisma.ReviewLikesOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewLikesWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ReviewLikeScalarFieldEnum | Prisma.ReviewLikeScalarFieldEnum[]
+  distinct?: Prisma.ReviewLikesScalarFieldEnum | Prisma.ReviewLikesScalarFieldEnum[]
 }
 
 /**
@@ -4214,23 +4214,23 @@ export type User$review_likesArgs<ExtArgs extends runtime.Types.Extensions.Inter
  */
 export type User$playlistsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Playlist
+   * Select specific fields to fetch from the Playlists
    */
-  select?: Prisma.PlaylistSelect<ExtArgs> | null
+  select?: Prisma.PlaylistsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Playlist
+   * Omit specific fields from the Playlists
    */
-  omit?: Prisma.PlaylistOmit<ExtArgs> | null
+  omit?: Prisma.PlaylistsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.PlaylistInclude<ExtArgs> | null
-  where?: Prisma.PlaylistWhereInput
-  orderBy?: Prisma.PlaylistOrderByWithRelationInput | Prisma.PlaylistOrderByWithRelationInput[]
-  cursor?: Prisma.PlaylistWhereUniqueInput
+  include?: Prisma.PlaylistsInclude<ExtArgs> | null
+  where?: Prisma.PlaylistsWhereInput
+  orderBy?: Prisma.PlaylistsOrderByWithRelationInput | Prisma.PlaylistsOrderByWithRelationInput[]
+  cursor?: Prisma.PlaylistsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.PlaylistScalarFieldEnum | Prisma.PlaylistScalarFieldEnum[]
+  distinct?: Prisma.PlaylistsScalarFieldEnum | Prisma.PlaylistsScalarFieldEnum[]
 }
 
 /**
@@ -4238,23 +4238,23 @@ export type User$playlistsArgs<ExtArgs extends runtime.Types.Extensions.Internal
  */
 export type User$followsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Follow
+   * Select specific fields to fetch from the Follows
    */
-  select?: Prisma.FollowSelect<ExtArgs> | null
+  select?: Prisma.FollowsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Follow
+   * Omit specific fields from the Follows
    */
-  omit?: Prisma.FollowOmit<ExtArgs> | null
+  omit?: Prisma.FollowsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.FollowInclude<ExtArgs> | null
-  where?: Prisma.FollowWhereInput
-  orderBy?: Prisma.FollowOrderByWithRelationInput | Prisma.FollowOrderByWithRelationInput[]
-  cursor?: Prisma.FollowWhereUniqueInput
+  include?: Prisma.FollowsInclude<ExtArgs> | null
+  where?: Prisma.FollowsWhereInput
+  orderBy?: Prisma.FollowsOrderByWithRelationInput | Prisma.FollowsOrderByWithRelationInput[]
+  cursor?: Prisma.FollowsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.FollowScalarFieldEnum | Prisma.FollowScalarFieldEnum[]
+  distinct?: Prisma.FollowsScalarFieldEnum | Prisma.FollowsScalarFieldEnum[]
 }
 
 /**
@@ -4262,23 +4262,23 @@ export type User$followsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
  */
 export type User$followersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Follow
+   * Select specific fields to fetch from the Follows
    */
-  select?: Prisma.FollowSelect<ExtArgs> | null
+  select?: Prisma.FollowsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Follow
+   * Omit specific fields from the Follows
    */
-  omit?: Prisma.FollowOmit<ExtArgs> | null
+  omit?: Prisma.FollowsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.FollowInclude<ExtArgs> | null
-  where?: Prisma.FollowWhereInput
-  orderBy?: Prisma.FollowOrderByWithRelationInput | Prisma.FollowOrderByWithRelationInput[]
-  cursor?: Prisma.FollowWhereUniqueInput
+  include?: Prisma.FollowsInclude<ExtArgs> | null
+  where?: Prisma.FollowsWhereInput
+  orderBy?: Prisma.FollowsOrderByWithRelationInput | Prisma.FollowsOrderByWithRelationInput[]
+  cursor?: Prisma.FollowsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.FollowScalarFieldEnum | Prisma.FollowScalarFieldEnum[]
+  distinct?: Prisma.FollowsScalarFieldEnum | Prisma.FollowsScalarFieldEnum[]
 }
 
 /**
@@ -4286,23 +4286,23 @@ export type User$followersArgs<ExtArgs extends runtime.Types.Extensions.Internal
  */
 export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Notification
+   * Select specific fields to fetch from the Notifications
    */
-  select?: Prisma.NotificationSelect<ExtArgs> | null
+  select?: Prisma.NotificationsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Notification
+   * Omit specific fields from the Notifications
    */
-  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  omit?: Prisma.NotificationsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.NotificationInclude<ExtArgs> | null
-  where?: Prisma.NotificationWhereInput
-  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
-  cursor?: Prisma.NotificationWhereUniqueInput
+  include?: Prisma.NotificationsInclude<ExtArgs> | null
+  where?: Prisma.NotificationsWhereInput
+  orderBy?: Prisma.NotificationsOrderByWithRelationInput | Prisma.NotificationsOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+  distinct?: Prisma.NotificationsScalarFieldEnum | Prisma.NotificationsScalarFieldEnum[]
 }
 
 /**
@@ -4310,23 +4310,23 @@ export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
  */
 export type User$notificationsRelatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Notification
+   * Select specific fields to fetch from the Notifications
    */
-  select?: Prisma.NotificationSelect<ExtArgs> | null
+  select?: Prisma.NotificationsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Notification
+   * Omit specific fields from the Notifications
    */
-  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  omit?: Prisma.NotificationsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.NotificationInclude<ExtArgs> | null
-  where?: Prisma.NotificationWhereInput
-  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
-  cursor?: Prisma.NotificationWhereUniqueInput
+  include?: Prisma.NotificationsInclude<ExtArgs> | null
+  where?: Prisma.NotificationsWhereInput
+  orderBy?: Prisma.NotificationsOrderByWithRelationInput | Prisma.NotificationsOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+  distinct?: Prisma.NotificationsScalarFieldEnum | Prisma.NotificationsScalarFieldEnum[]
 }
 
 /**
@@ -4358,23 +4358,23 @@ export type User$user_media_statusArgs<ExtArgs extends runtime.Types.Extensions.
  */
 export type User$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Report
+   * Select specific fields to fetch from the Reports
    */
-  select?: Prisma.ReportSelect<ExtArgs> | null
+  select?: Prisma.ReportsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Report
+   * Omit specific fields from the Reports
    */
-  omit?: Prisma.ReportOmit<ExtArgs> | null
+  omit?: Prisma.ReportsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ReportInclude<ExtArgs> | null
-  where?: Prisma.ReportWhereInput
-  orderBy?: Prisma.ReportOrderByWithRelationInput | Prisma.ReportOrderByWithRelationInput[]
-  cursor?: Prisma.ReportWhereUniqueInput
+  include?: Prisma.ReportsInclude<ExtArgs> | null
+  where?: Prisma.ReportsWhereInput
+  orderBy?: Prisma.ReportsOrderByWithRelationInput | Prisma.ReportsOrderByWithRelationInput[]
+  cursor?: Prisma.ReportsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
+  distinct?: Prisma.ReportsScalarFieldEnum | Prisma.ReportsScalarFieldEnum[]
 }
 
 /**
@@ -4401,23 +4401,23 @@ export type User$bannedUsersArgs<ExtArgs extends runtime.Types.Extensions.Intern
  */
 export type User$activitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Activity
+   * Select specific fields to fetch from the Activitys
    */
-  select?: Prisma.ActivitySelect<ExtArgs> | null
+  select?: Prisma.ActivitysSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Activity
+   * Omit specific fields from the Activitys
    */
-  omit?: Prisma.ActivityOmit<ExtArgs> | null
+  omit?: Prisma.ActivitysOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ActivityInclude<ExtArgs> | null
-  where?: Prisma.ActivityWhereInput
-  orderBy?: Prisma.ActivityOrderByWithRelationInput | Prisma.ActivityOrderByWithRelationInput[]
-  cursor?: Prisma.ActivityWhereUniqueInput
+  include?: Prisma.ActivitysInclude<ExtArgs> | null
+  where?: Prisma.ActivitysWhereInput
+  orderBy?: Prisma.ActivitysOrderByWithRelationInput | Prisma.ActivitysOrderByWithRelationInput[]
+  cursor?: Prisma.ActivitysWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ActivityScalarFieldEnum | Prisma.ActivityScalarFieldEnum[]
+  distinct?: Prisma.ActivitysScalarFieldEnum | Prisma.ActivitysScalarFieldEnum[]
 }
 
 /**
@@ -4425,23 +4425,23 @@ export type User$activitiesArgs<ExtArgs extends runtime.Types.Extensions.Interna
  */
 export type User$activities_targetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Activity
+   * Select specific fields to fetch from the Activitys
    */
-  select?: Prisma.ActivitySelect<ExtArgs> | null
+  select?: Prisma.ActivitysSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Activity
+   * Omit specific fields from the Activitys
    */
-  omit?: Prisma.ActivityOmit<ExtArgs> | null
+  omit?: Prisma.ActivitysOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ActivityInclude<ExtArgs> | null
-  where?: Prisma.ActivityWhereInput
-  orderBy?: Prisma.ActivityOrderByWithRelationInput | Prisma.ActivityOrderByWithRelationInput[]
-  cursor?: Prisma.ActivityWhereUniqueInput
+  include?: Prisma.ActivitysInclude<ExtArgs> | null
+  where?: Prisma.ActivitysWhereInput
+  orderBy?: Prisma.ActivitysOrderByWithRelationInput | Prisma.ActivitysOrderByWithRelationInput[]
+  cursor?: Prisma.ActivitysWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ActivityScalarFieldEnum | Prisma.ActivityScalarFieldEnum[]
+  distinct?: Prisma.ActivitysScalarFieldEnum | Prisma.ActivitysScalarFieldEnum[]
 }
 
 /**
@@ -4449,23 +4449,23 @@ export type User$activities_targetsArgs<ExtArgs extends runtime.Types.Extensions
  */
 export type User$conversations_user1Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Conversation
+   * Select specific fields to fetch from the Conversations
    */
-  select?: Prisma.ConversationSelect<ExtArgs> | null
+  select?: Prisma.ConversationsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Conversation
+   * Omit specific fields from the Conversations
    */
-  omit?: Prisma.ConversationOmit<ExtArgs> | null
+  omit?: Prisma.ConversationsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ConversationInclude<ExtArgs> | null
-  where?: Prisma.ConversationWhereInput
-  orderBy?: Prisma.ConversationOrderByWithRelationInput | Prisma.ConversationOrderByWithRelationInput[]
-  cursor?: Prisma.ConversationWhereUniqueInput
+  include?: Prisma.ConversationsInclude<ExtArgs> | null
+  where?: Prisma.ConversationsWhereInput
+  orderBy?: Prisma.ConversationsOrderByWithRelationInput | Prisma.ConversationsOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+  distinct?: Prisma.ConversationsScalarFieldEnum | Prisma.ConversationsScalarFieldEnum[]
 }
 
 /**
@@ -4473,23 +4473,23 @@ export type User$conversations_user1Args<ExtArgs extends runtime.Types.Extension
  */
 export type User$conversations_user2Args<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Conversation
+   * Select specific fields to fetch from the Conversations
    */
-  select?: Prisma.ConversationSelect<ExtArgs> | null
+  select?: Prisma.ConversationsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Conversation
+   * Omit specific fields from the Conversations
    */
-  omit?: Prisma.ConversationOmit<ExtArgs> | null
+  omit?: Prisma.ConversationsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ConversationInclude<ExtArgs> | null
-  where?: Prisma.ConversationWhereInput
-  orderBy?: Prisma.ConversationOrderByWithRelationInput | Prisma.ConversationOrderByWithRelationInput[]
-  cursor?: Prisma.ConversationWhereUniqueInput
+  include?: Prisma.ConversationsInclude<ExtArgs> | null
+  where?: Prisma.ConversationsWhereInput
+  orderBy?: Prisma.ConversationsOrderByWithRelationInput | Prisma.ConversationsOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationsWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+  distinct?: Prisma.ConversationsScalarFieldEnum | Prisma.ConversationsScalarFieldEnum[]
 }
 
 /**
@@ -4497,23 +4497,23 @@ export type User$conversations_user2Args<ExtArgs extends runtime.Types.Extension
  */
 export type User$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Message
+   * Select specific fields to fetch from the Messages
    */
-  select?: Prisma.MessageSelect<ExtArgs> | null
+  select?: Prisma.MessagesSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Message
+   * Omit specific fields from the Messages
    */
-  omit?: Prisma.MessageOmit<ExtArgs> | null
+  omit?: Prisma.MessagesOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.MessageInclude<ExtArgs> | null
-  where?: Prisma.MessageWhereInput
-  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
-  cursor?: Prisma.MessageWhereUniqueInput
+  include?: Prisma.MessagesInclude<ExtArgs> | null
+  where?: Prisma.MessagesWhereInput
+  orderBy?: Prisma.MessagesOrderByWithRelationInput | Prisma.MessagesOrderByWithRelationInput[]
+  cursor?: Prisma.MessagesWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
+  distinct?: Prisma.MessagesScalarFieldEnum | Prisma.MessagesScalarFieldEnum[]
 }
 
 /**

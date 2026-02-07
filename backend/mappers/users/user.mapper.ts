@@ -1,0 +1,79 @@
+// mappers/user.mapper.ts
+import type {User} from '../../generated/prisma/browser';
+import {
+    UserResponseAddDto,
+    UserResponseDeleteDto,
+    UserResponseDto,
+    UserResponseLoginDto,
+} from '../../types/users/user.dto';
+import {BaseMapper} from '../base.mapper';
+
+
+export class UserMapper extends BaseMapper<User, UserResponseDto> {
+
+    /**
+     * Implémentation de la méthode abstraite
+     */
+    protected mapOne(user: User): UserResponseDto {
+        return {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            role: user.role,
+            phone_number: user.phone_number,
+            biography: user.biography,
+            favorite_band: user.favorite_band,
+            has_notifications: user.has_notifications ?? true,
+            profile_picture: user.profile_picture,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+        };
+    }
+
+    /**
+     * Mapper spécifique pour le login
+     */
+    toLoginDto(user: User): UserResponseLoginDto {
+        return {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            role: user.role,
+        };
+    }
+
+    toAddDto(user: User): UserResponseAddDto {
+        return {
+            id: user.id,
+            username: user.username,
+            created_at: user.created_at,
+        }
+    }
+
+    /**
+     * Mapper spécifique pour le delete
+     */
+    toDeleteDto(user: User): UserResponseDeleteDto {
+        return {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+        };
+    }
+
+    /**
+     * Mapper pour profil public (moins d'infos)
+     */
+    toPublicDto(user: User) {
+        return {
+            id: user.id,
+            username: user.username,
+            biography: user.biography,
+            favorite_band: user.favorite_band,
+            profile_picture: user.profile_picture,
+            created_at: user.created_at,
+        };
+    }
+}
+
+export const userMapper = new UserMapper();

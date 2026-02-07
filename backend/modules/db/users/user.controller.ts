@@ -6,17 +6,18 @@ import dotenv from 'dotenv';
 import {Controller} from '../../controller.js';
 import {Unauthorized, BadRequest} from '../../../utils/errors.js';
 import {UserService, userService} from './user.service.js';
+import {userMapper} from '../../../mappers/users/user.mapper.js';
+
+import type {SelectableUserField, PartialUserResponseDto} from '../../../types/users/user.dto.js';
 
 import {
     LoginDto,
-    UserRegistrationDto,
+    UserRegistrationDto, UserResponseAddDto, UserResponseDeleteDto,
     UserResponseDto,
     UserResponseLoginDto,
     UserUpdateDto
-} from "../../../types/user.dto.js";
-
-import {User} from "../../../generated/prisma/browser.js";
-import {UserMapper} from "../../../mappers/user.mapper";
+} from '../../../types/users/user.dto';
+import {User} from "../../../generated/prisma/client.js";
 
 dotenv.config();
 
@@ -36,11 +37,11 @@ class UserController extends Controller {
                 profile_picture: req.body.profile_picture,
             };
 
-            if (!registrationData.email || !registrationData.username || !registrationData.password) {
-                throw new BadRequest('Email, username and password are required');
+            if (!registrationData.email || !registrationData.username || !registrationData.password || !registrationData.favorite_band) {
+                throw new BadRequest('Email, username, password & favorite band are required');
             }
 
-            const user: UserResponseDto = await this.service.add(registrationData);
+            const user: UserResponseAddDto = await this.service.add(registrationData);
 
             res.status(201).json({
                 message: 'User created successfully',
@@ -62,7 +63,7 @@ class UserController extends Controller {
                 throw new BadRequest('Email and password required');
             }
 
-            const user: User | null = await this.service.getByEmail(loginData.email);
+            const user: User | null = await this.service.getByEmailForAuth(loginData.email);
 
             if (!user) {
                 throw new Unauthorized('Invalid email or password');
@@ -87,12 +88,12 @@ class UserController extends Controller {
                 }
             );
 
-            const userResponse: UserResponseLoginDto  = UserMapper.toLoginDto(user);
+            const userResponse: UserResponseLoginDto = userMapper.toLoginDto(user);
 
             res.json({
                 message: 'Login successful',
                 token,
-                userResponse,
+                user: userResponse,
             });
         } catch (err) {
             next(err);
@@ -102,6 +103,35 @@ class UserController extends Controller {
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const users: UserResponseDto[] = await this.service.getAll();
+            res.json(users);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    /**
+     * GET /users/fields?fields=id,username,biography
+     * Récupère tous les utilisateurs avec seulement les champs spécifiés
+     */
+    async getAllWithFields(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const fieldsParam = req.query.fields as string;
+
+            if (!fieldsParam) {
+                throw new BadRequest('Fields query parameter is required (e.g., ?fields=id,username,email)');
+            }
+
+            const fields = fieldsParam
+                .split(',')
+                .map(field => field.trim())
+                .filter(field => field.length > 0) as SelectableUserField[];
+
+            if (fields.length === 0) {
+                throw new BadRequest('At least one field must be specified');
+            }
+
+            const users: PartialUserResponseDto[] = await this.service.getAllWithFields(fields);
+
             res.json(users);
         } catch (err) {
             next(err);
@@ -120,60 +150,88 @@ class UserController extends Controller {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    /**
+     * GET /users/:id/fields?fields=id,username,email
+     * Récupère un utilisateur avec seulement les champs spécifiés
+     */
+    async getByIdWithFields(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-
             const id: string = req.params.id;
 
             if (!id) {
                 throw new BadRequest('Id is required');
             }
 
-            const updateData: UserUpdateDto = {
-                username: req.body.username,
-                password: req.body.password,
-                favorite_band: req.body.favorite_band,
-                phone_number: req.body.phone_number,
-                biography: req.body.biography,
-                has_notifications: req.body.has_notifications,
-                profile_picture: req.body.profile_picture,
+            const fieldsParam = req.query.fields as string;
+
+            if (!fieldsParam) {
+                throw new BadRequest('Fields query parameter is required (e.g., ?fields=id,username,email)');
             }
 
-            let data: UserUpdateDto = {}
+            const fields = fieldsParam
+                .split(',')
+                .map(field => field.trim())
+                .filter(field => field.length > 0) as SelectableUserField[];
 
-            if (updateData.username) {
-                data.username = updateData.username;
+            if (fields.length === 0) {
+                throw new BadRequest('At least one field must be specified');
             }
 
-            if (updateData.password) {
-                data.password = await bcrypt.hash(updateData.password, 10);
+            const user: PartialUserResponseDto = await this.service.getByIdWithFields(id, fields);
+
+            res.json(user);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const id: string = req.params.id;
+
+            if (!id) {
+                throw new BadRequest('Id is required');
             }
 
-            if (updateData.phone_number) {
-                data.phone_number = updateData.phone_number;
+            const updateData: UserUpdateDto = {};
+
+            if (req.body.email !== undefined) {
+                updateData.email = req.body.email;
             }
 
-            if (updateData.biography) {
-                data.biography = updateData.biography;
+            if (req.body.username !== undefined) {
+                updateData.username = req.body.username;
             }
 
-            if (updateData.favorite_band) {
-                data.favorite_band = updateData.favorite_band;
+            if (req.body.password !== undefined) {
+                updateData.password = req.body.password;
             }
 
-            if (updateData.has_notifications) {
-                data.has_notifications = updateData.has_notifications;
+            if (req.body.phone_number !== undefined) {
+                updateData.phone_number = req.body.phone_number;
             }
 
-            if (updateData.profile_picture) {
-                data.profile_picture = updateData.profile_picture;
+            if (req.body.biography !== undefined) {
+                updateData.biography = req.body.biography;
             }
 
-            if (Object.keys(data).length === 0) {
-                throw new BadRequest("No fields provided")
+            if (req.body.favorite_band !== undefined) {
+                updateData.favorite_band = req.body.favorite_band;
             }
 
-            const user: UserResponseDto = await this.service.update(id, data);
+            if (req.body.has_notifications !== undefined) {
+                updateData.has_notifications = req.body.has_notifications;
+            }
+
+            if (req.body.profile_picture !== undefined) {
+                updateData.profile_picture = req.body.profile_picture;
+            }
+
+            if (Object.keys(updateData).length === 0) {
+                throw new BadRequest('No fields provided');
+            }
+
+            const user: UserResponseDto = await this.service.update(id, updateData);
 
             res.status(200).json({
                 message: 'User updated successfully',
@@ -189,7 +247,9 @@ class UserController extends Controller {
             if (!req.params.id) {
                 throw new BadRequest('Id is required');
             }
-            const user: Partial<User> = await this.service.delete(req.params.id);
+
+            const user: UserResponseDeleteDto = await this.service.delete(req.params.id);
+
             res.json({
                 message: 'User deleted successfully',
                 user,

@@ -20,93 +20,93 @@ model User {
   password          String
   favorite_band     String
   profile_picture   Bytes
-  role              Role     @default(BASIC)
+  role              Roles    @default(BASIC)
   has_notifications Boolean  @default(true)
   phone_number      String?  @db.VarChar(15)
   biography         String?  @db.VarChar(255)
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
-  reviews              Review[]
-  review_comments      ReviewComment[]
-  review_likes         ReviewLike[]
-  playlists            Playlist[]
-  follows              Follow[]          @relation("following")
-  followers            Follow[]          @relation("followers")
-  notifications        Notification[]    @relation("user_notifications")
-  notificationsRelated Notification[]    @relation("user_related_notifications")
+  reviews              Reviews[]
+  review_comments      ReviewComments[]
+  review_likes         ReviewLikes[]
+  playlists            Playlists[]
+  follows              Follows[]         @relation("following")
+  followers            Follows[]         @relation("followers")
+  notifications        Notifications[]   @relation("user_notifications")
+  notificationsRelated Notifications[]   @relation("user_related_notifications")
   user_media_status    UserMediaStatus[]
-  reports              Report[]
+  reports              Reports[]
   bannedUsers          BannedUsers?
 
-  activities          Activity[]     @relation("user_activities")
-  activities_targets  Activity[]     @relation("user_activities_targets")
-  conversations_user1 Conversation[] @relation("conversation_user1")
-  conversations_user2 Conversation[] @relation("conversation_user2")
-  messages            Message[]
+  activities          Activitys[]     @relation("user_activities")
+  activities_targets  Activitys[]     @relation("user_activities_targets")
+  conversations_user1 Conversations[] @relation("conversation_user1")
+  conversations_user2 Conversations[] @relation("conversation_user2")
+  messages            Messages[]
 }
 
-enum Role {
+enum Roles {
   BASIC
   ADMIN
 }
 
-model Media {
+model Medias {
   id         String   @id @default(uuid())
   api_id     String
   created_at DateTime @default(now())
 
-  reviews           Review[]
-  playlist_items    PlaylistItem[]
+  reviews           Reviews[]
+  playlist_items    PlaylistItems[]
   user_music_status UserMediaStatus[]
-  notifications     Notification[]
-  activities        Activity[]
+  notifications     Notifications[]
+  activities        Activitys[]
 }
 
-model Review {
+model Reviews {
   id         String   @id @default(uuid())
   user       User     @relation(fields: [user_id], references: [id])
   user_id    String
-  media      Media    @relation(fields: [media_id], references: [id])
+  media      Medias   @relation(fields: [media_id], references: [id])
   media_id   String
   rating     Float
   content    String   @db.VarChar(1000)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  comments ReviewComment[]
-  likes    ReviewLike[]
-  reports  Report[]
+  comments ReviewComments[]
+  likes    ReviewLikes[]
+  reports  Reports[]
 
-  notifications Notification[]
+  notifications Notifications[]
 
-  activities Activity[]
+  activities Activitys[]
 
   @@unique([user_id, media_id])
 }
 
-model ReviewComment {
-  id         String   @id @default(uuid())
-  review     Review   @relation(fields: [review_id], references: [id])
+model ReviewComments {
+  id         String    @id @default(uuid())
+  review     Reviews   @relation(fields: [review_id], references: [id])
   review_id  String
-  user       User     @relation(fields: [user_id], references: [id])
+  user       User      @relation(fields: [user_id], references: [id])
   user_id    String
-  content    String   @db.VarChar(1000)
-  created_at DateTime @default(now())
-  reports    Report[]
+  content    String    @db.VarChar(1000)
+  created_at DateTime  @default(now())
+  reports    Reports[]
 }
 
-model ReviewLike {
+model ReviewLikes {
   user       User     @relation(fields: [user_id], references: [id])
   user_id    String
-  review     Review   @relation(fields: [review_id], references: [id])
+  review     Reviews  @relation(fields: [review_id], references: [id])
   review_id  String
   created_at DateTime @default(now())
 
   @@id([user_id, review_id])
 }
 
-model Playlist {
+model Playlists {
   id         String   @id @default(uuid())
   user       User     @relation(fields: [user_id], references: [id])
   user_id    String
@@ -115,16 +115,16 @@ model Playlist {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  items PlaylistItem[]
+  items PlaylistItems[]
 
   @@unique([user_id, name])
 }
 
-model PlaylistItem {
-  id          String   @id @default(uuid())
-  playlist    Playlist @relation(fields: [playlist_id], references: [id])
+model PlaylistItems {
+  id          String    @id @default(uuid())
+  playlist    Playlists @relation(fields: [playlist_id], references: [id])
   playlist_id String
-  media       Media    @relation(fields: [media_id], references: [id])
+  media       Medias    @relation(fields: [media_id], references: [id])
   media_id    String
 
   @@unique([playlist_id, media_id])
@@ -133,7 +133,7 @@ model PlaylistItem {
 model UserMediaStatus {
   user       User        @relation(fields: [user_id], references: [id])
   user_id    String
-  media      Media       @relation(fields: [media_id], references: [id])
+  media      Medias      @relation(fields: [media_id], references: [id])
   media_id   String
   status     MediaStatus
   created_at DateTime    @default(now())
@@ -148,29 +148,29 @@ enum MediaStatus {
   abandoned
 }
 
-model Activity {
-  id               String         @id @default(uuid())
-  user             User           @relation("user_activities", fields: [user_id], references: [id])
+model Activitys {
+  id               String          @id @default(uuid())
+  user             User            @relation("user_activities", fields: [user_id], references: [id])
   user_id          String
-  target_user      User?          @relation("user_activities_targets", fields: [target_user_id], references: [id])
+  target_user      User?           @relation("user_activities_targets", fields: [target_user_id], references: [id])
   target_user_id   String?
-  review           Review?        @relation(fields: [review_id], references: [id])
+  review           Reviews?        @relation(fields: [review_id], references: [id])
   review_id        String?
-  media            Media?         @relation(fields: [media_id], references: [id])
+  media            Medias?         @relation(fields: [media_id], references: [id])
   media_id         String?
   rating_from_user Int?
-  action           ActivityAction
-  created_at       DateTime       @default(now())
+  action           ActivityActions
+  created_at       DateTime        @default(now())
 }
 
-enum ActivityAction {
+enum ActivityActions {
   review_created
   rating_added
   playlist_added
   follow
 }
 
-model Follow {
+model Follows {
   user           User     @relation("following", fields: [user_id], references: [id])
   user_id        String
   follow_user    User     @relation("followers", fields: [follow_user_id], references: [id])
@@ -180,75 +180,76 @@ model Follow {
   @@id([user_id, follow_user_id])
 }
 
-model Report {
-  id          String     @id @default(uuid())
-  reporter    User       @relation(fields: [reporter_id], references: [id])
+model Reports {
+  id          String      @id @default(uuid())
+  reporter    User        @relation(fields: [reporter_id], references: [id])
   reporter_id String
-  review      Review?    @relation(fields: [review_id], references: [id])
+  review      Reviews?    @relation(fields: [review_id], references: [id])
   review_id   String?
   reason      String
-  reason_type ReportType
-  is_checked  Boolean    @default(false)
-  created_at  DateTime   @default(now())
+  reason_type ReportTypes
+  is_checked  Boolean     @default(false)
+  created_at  DateTime    @default(now())
 
-  reviewComments ReviewComment[]
+  reviewComments ReviewComments[]
 }
 
-enum ReportType {
+enum ReportTypes {
   comment
   profile
   review
 }
 
-model Notification {
-  id              String             @id @default(uuid())
-  user            User               @relation("user_notifications", fields: [user_id], references: [id])
+model Notifications {
+  id              String              @id @default(uuid())
+  user            User                @relation("user_notifications", fields: [user_id], references: [id])
   user_id         String
-  action          NotificationAction
-  related_user    User?              @relation("user_related_notifications", fields: [related_user_id], references: [id])
+  action          NotificationActions
+  related_user    User?               @relation("user_related_notifications", fields: [related_user_id], references: [id])
   related_user_id String?
-  review          Review?            @relation(fields: [review_id], references: [id])
+  review          Reviews?            @relation(fields: [review_id], references: [id])
   review_id       String?
-  media           Media?             @relation(fields: [media_id], references: [id])
+  media           Medias?             @relation(fields: [media_id], references: [id])
   media_id        String?
-  is_read         Boolean            @default(false)
+  is_read         Boolean             @default(false)
   read_at         DateTime?
-  created_at      DateTime           @default(now())
+  created_at      DateTime            @default(now())
 }
 
 model BannedUsers {
-  id      String @id @default(uuid())
-  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id String @unique
-  content String @db.VarChar(255)
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String   @unique
+  content    String   @db.VarChar(255)
+  created_at DateTime @default(now())
 }
 
-enum NotificationAction {
+enum NotificationActions {
   like_added
   comment_added
   new_follow
   recommendation
 }
 
-model Conversation {
-  id         String    @id @default(uuid())
-  user1      User      @relation("conversation_user1", fields: [user1_id], references: [id])
+model Conversations {
+  id         String     @id @default(uuid())
+  user1      User       @relation("conversation_user1", fields: [user1_id], references: [id])
   user1_id   String
-  user2      User      @relation("conversation_user2", fields: [user2_id], references: [id])
+  user2      User       @relation("conversation_user2", fields: [user2_id], references: [id])
   user2_id   String
-  created_at DateTime  @default(now())
-  messages   Message[]
+  created_at DateTime   @default(now())
+  messages   Messages[]
 
   @@unique([user1_id, user2_id])
 }
 
-model Message {
-  id              String       @id @default(uuid())
-  conversation    Conversation @relation(fields: [conversation_id], references: [id])
+model Messages {
+  id              String        @id @default(uuid())
+  conversation    Conversations @relation(fields: [conversation_id], references: [id])
   conversation_id String
-  sender          User         @relation(fields: [sender_id], references: [id])
+  sender          User          @relation(fields: [sender_id], references: [id])
   sender_id       String
-  content         String       @db.VarChar(1000)
-  is_read         Boolean      @default(false)
-  created_at      DateTime     @default(now())
+  content         String        @db.VarChar(1000)
+  is_read         Boolean       @default(false)
+  created_at      DateTime      @default(now())
 }

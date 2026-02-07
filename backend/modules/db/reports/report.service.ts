@@ -1,5 +1,5 @@
 import {PrismaDb} from '../../../config/database.js';
-import {ReportType} from '../../../generated/prisma/browser.js';
+import {ReportTypes} from '../../../generated/prisma/browser.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
 
@@ -9,7 +9,7 @@ export class ReportService {
         reporter_id: string;
         review_id?: string;
         reason: string;
-        reason_type: ReportType;
+        reason_type: ReportTypes;
     }) {
         const {
             reporter_id,
@@ -27,7 +27,7 @@ export class ReportService {
             throw new BadRequest('reason cannot be empty');
         }
 
-        if (!reason_type || !Object.values(ReportType).includes(reason_type)) {
+        if (!reason_type || !Object.values(ReportTypes).includes(reason_type)) {
             throw new BadRequest('Invalid report type');
         }
 
@@ -41,20 +41,20 @@ export class ReportService {
             throw new BadRequest('Reporter not found');
         }
 
-        if (reason_type === ReportType.review) {
+        if (reason_type === ReportTypes.review) {
 
             if (!review_id) {
                 throw new BadRequest('review_id is required for review reports');
             }
 
-            const review = await PrismaDb.review.findUnique({where: {id: review_id}});
+            const review = await PrismaDb.reviews.findUnique({where: {id: review_id}});
 
             if (!review) {
                 throw new BadRequest('Review not found');
             }
         }
 
-        return PrismaDb.report.create({
+        return PrismaDb.reports.create({
             data: {
                 reporter_id,
                 review_id,
@@ -79,7 +79,7 @@ export class ReportService {
     }
 
     async getAll() {
-        return PrismaDb.report.findMany({
+        return PrismaDb.reports.findMany({
             include: {
                 reporter: {
                     select: {
@@ -106,7 +106,7 @@ export class ReportService {
             throw new BadRequest('Report id is required');
         }
 
-        const report = await PrismaDb.report.findUnique({
+        const report = await PrismaDb.reports.findUnique({
             where: {
                 id
             },
@@ -137,7 +137,7 @@ export class ReportService {
             throw new BadRequest('review_id is required');
         }
 
-        const review = await PrismaDb.review.findUnique({
+        const review = await PrismaDb.reviews.findUnique({
             where: {
                 id: review_id
             }
@@ -147,7 +147,7 @@ export class ReportService {
             throw new NotFound('Review not found');
         }
 
-        return PrismaDb.report.findMany({
+        return PrismaDb.reports.findMany({
             where: {
                 review_id
             },
@@ -171,7 +171,7 @@ export class ReportService {
             throw new BadRequest('Report id is required');
         }
 
-        const report = await PrismaDb.report.findUnique({
+        const report = await PrismaDb.reports.findUnique({
             where: {
                 id
             }
@@ -181,7 +181,7 @@ export class ReportService {
             throw new NotFound('Report not found');
         }
 
-        return PrismaDb.report.update({
+        return PrismaDb.reports.update({
             where: {
                 id
             },
@@ -211,7 +211,7 @@ export class ReportService {
             throw new BadRequest('Report id is required');
         }
 
-        const report = await PrismaDb.report.findUnique({
+        const report = await PrismaDb.reports.findUnique({
             where: {
                 id
             }
@@ -221,7 +221,7 @@ export class ReportService {
             throw new NotFound('Report not found');
         }
 
-        return PrismaDb.report.delete({
+        return PrismaDb.reports.delete({
             where: {
                 id
             },

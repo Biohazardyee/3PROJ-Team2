@@ -1,4 +1,4 @@
-import {Role} from '../generated/prisma/enums';
+import {Roles} from '../../generated/prisma/enums';
 
 // Response Interface
 export interface UserResponseDto {
@@ -7,19 +7,31 @@ export interface UserResponseDto {
     email: string;
     phone_number: string | null;
     profile_picture: Uint8Array<ArrayBuffer>;
-    role: Role;
+    role: Roles;
     biography: string | null;
     favorite_band: string;
     has_notifications: boolean;
     created_at: Date;
-    updated_at: Date
+    updated_at: Date;
 }
 
 export interface UserResponseLoginDto {
     id: string,
     email: string;
     username: string,
-    role: Role,
+    role: Roles,
+}
+
+export interface UserResponseDeleteDto {
+    id: string,
+    email: string;
+    username: string,
+}
+
+export interface UserResponseAddDto {
+    id: string;
+    username: string;
+    created_at: Date;
 }
 
 // Post Interface
@@ -35,7 +47,6 @@ export interface UserUpdateDto {
     email?: string;
     username?: string;
     password?: string;
-    role?: Role;
     phone_number?: string | null;
     biography?: string | null
     favorite_band?: string
@@ -47,3 +58,22 @@ export interface LoginDto {
     email: string;
     password: string;
 }
+
+export type SelectableUserField =
+    | 'id'
+    | 'email'
+    | 'username'
+    | 'role'
+    | 'phone_number'
+    | 'biography'
+    | 'favorite_band'
+    | 'has_notifications'
+    | 'profile_picture'
+    | 'created_at'
+    | 'updated_at';
+
+export interface UserFieldsQuery {
+    fields: SelectableUserField[];
+}
+
+export type PartialUserResponseDto = Partial<UserResponseDto>;

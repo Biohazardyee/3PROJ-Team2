@@ -2,39 +2,51 @@ import type {Request, Response, NextFunction} from 'express';
 
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {BanUserService, banUserService} from './ban.user.service.js';
+import {Controller} from "../../controller";
+import {
+    BannedUserAddDto,
+    BannedUserDeleteDto,
+    BannedUserResponseDto,
+    BannedUserUpdateDto
+} from "../../../types/users/bannedUser.dto";
+import {UserResponseDeleteDto} from "../../../types/users/user.dto";
 
-
-class UserBanController {
+class UserBanController extends Controller {
 
     constructor(private readonly service: BanUserService = banUserService) {
+        super();
     }
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id,
-                content
-            } = req.body;
+            const banningData: BannedUserAddDto = {
+                id: req.body.id,
+                user_id: req.body.user_id,
+                content: req.body.content,
+            };
 
-            if (!id || !content) {
-                throw new BadRequest('User id and a ban reason are required');
+            if (!banningData.id || banningData.content) {
+                throw new BadRequest('User ID and Content are needed');
             }
 
-            const bannedUser = await this.service.create({
-                id, 
-                content
-            });
+            const bannedUser: BannedUserResponseDto = await this.service.create(banningData);
 
-            res.status(201).json({message: 'User banned successfully', bannedUser});
-        } catch (error) {
-            next(error);
+            res.status(201).json({
+                message: 'Banned user created successfully',
+                bannedUser,
+            });
+        } catch (err) {
+            next(err);
         }
     }
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const bannedUsers = await this.service.getAll();
-            res.status(200).json({message: 'Banned users retrieved successfully', bannedUsers});
+            const bannedUsers: BannedUserResponseDto[] = await this.service.getAll();
+            res.status(200).json({
+                message: 'Banned users retrieved successfully',
+                bannedUsers
+            });
         } catch (error) {
             next(error);
         }
@@ -42,60 +54,55 @@ class UserBanController {
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id
-            } = req.params;
-
-            if (!user_id) {
-                throw new BadRequest('User id is required');
+            if (!req.params.id) {
+                throw new BadRequest('Id is required');
             }
-
-            const bannedUser = await this.service.getById(user_id);
-            res.status(200).json({message: 'Banned user retrieved successfully', bannedUser});
-        } catch (error) {
-            next(error);
+            const bannedUser: BannedUserResponseDto = await this.service.getById(req.params.id);
+            res.json(bannedUser);
+        } catch (err) {
+            next(err);
         }
     }
 
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
-
-            const {
-                content
-            } = req.body;
+            const id: string = req.params.id;
 
             if (!id) {
-                throw new BadRequest('Banned user id is required');
+                throw new BadRequest('Id is required');
             }
 
-            if (!content) {
-                throw new BadRequest('Content is required');
+            const updateData: BannedUserUpdateDto = {};
+
+            if (req.body.content !== undefined) {
+                updateData.content = req.body.content;
             }
 
-            const updatedBannedUser = await this.service.update(id, {content});
-            res.status(200).json({message: 'Banned user updated successfully', bannedUser: updatedBannedUser});
-        } catch (error) {
-            next(error);
+            const bannedUser: BannedUserResponseDto = await this.service.update(id, updateData);
+
+            res.status(200).json({
+                message: 'Banned user updated successfully',
+                bannedUser,
+            });
+        } catch (err) {
+            next(err);
         }
     }
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
-            
-            if (!id) {
-                throw new BadRequest('Banned user id is required');
+            if (!req.params.id) {
+                throw new BadRequest('Id is required');
             }
 
-            const deletedBannedUser = await this.service.delete(id);
-            res.status(200).json({message: 'Banned user deleted successfully', bannedUser: deletedBannedUser});
-        } catch (error) {
-            next(error);
+            const bannedUser: BannedUserDeleteDto = await this.service.delete(req.params.id);
+
+            res.json({
+                message: 'User deleted successfully',
+                bannedUser,
+            });
+        } catch (err) {
+            next(err);
         }
     }
 }

@@ -42,7 +42,7 @@ export class ReviewService {
             throw new BadRequest('User with this id does not exist');
         }
 
-        const media = await PrismaDb.media.findUnique({
+        const media = await PrismaDb.medias.findUnique({
             where: {
                 id: data.media_id
             },
@@ -52,7 +52,7 @@ export class ReviewService {
             throw new BadRequest('Media with this id does not exist');
         }
 
-        const alreadyReviewed = await PrismaDb.review.findFirst({
+        const alreadyReviewed = await PrismaDb.reviews.findFirst({
             where: {
                 user_id: data.user_id,
                 media_id: data.media_id,
@@ -63,7 +63,7 @@ export class ReviewService {
             throw new BadRequest('User has already reviewed this media');
         }
 
-        return PrismaDb.review.create({
+        return PrismaDb.reviews.create({
             data: {
                 user_id: data.user_id,
                 media_id: data.media_id,
@@ -79,7 +79,7 @@ export class ReviewService {
             throw new BadRequest('Review id cannot be empty');
         }
 
-        const review = await PrismaDb.review.findUnique({
+        const review = await PrismaDb.reviews.findUnique({
             where: {
                 id
             },
@@ -93,7 +93,7 @@ export class ReviewService {
     }
 
     async getAll() {
-        return PrismaDb.review.findMany();
+        return PrismaDb.reviews.findMany();
     }
 
     async update(id: string, data: {
@@ -104,7 +104,7 @@ export class ReviewService {
         if (isEmptyString(id)) {
             throw new BadRequest('Review id cannot be empty');
         }
-        const review = await PrismaDb.review.findUnique({
+        const review = await PrismaDb.reviews.findUnique({
             where: {
                 id
             }
@@ -138,7 +138,7 @@ export class ReviewService {
             }
         }
 
-        return PrismaDb.review.update({
+        return PrismaDb.reviews.update({
             where: {
                 id
             },
@@ -151,7 +151,7 @@ export class ReviewService {
             throw new BadRequest('Review id cannot be empty');
         }
 
-        const review = await PrismaDb.review.findUnique({
+        const review = await PrismaDb.reviews.findUnique({
             where: {
                 id
             },
@@ -161,7 +161,7 @@ export class ReviewService {
             throw new NotFound('Review not found');
         }
 
-        return PrismaDb.review.delete({
+        return PrismaDb.reviews.delete({
             where: {
                 id
             },

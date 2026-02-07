@@ -175,7 +175,7 @@ export type UserMediaStatusWhereInput = {
   status?: Prisma.EnumMediaStatusFilter<"UserMediaStatus"> | $Enums.MediaStatus
   created_at?: Prisma.DateTimeFilter<"UserMediaStatus"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
+  media?: Prisma.XOR<Prisma.MediasScalarRelationFilter, Prisma.MediasWhereInput>
 }
 
 export type UserMediaStatusOrderByWithRelationInput = {
@@ -184,7 +184,7 @@ export type UserMediaStatusOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
-  media?: Prisma.MediaOrderByWithRelationInput
+  media?: Prisma.MediasOrderByWithRelationInput
 }
 
 export type UserMediaStatusWhereUniqueInput = Prisma.AtLeast<{
@@ -197,7 +197,7 @@ export type UserMediaStatusWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumMediaStatusFilter<"UserMediaStatus"> | $Enums.MediaStatus
   created_at?: Prisma.DateTimeFilter<"UserMediaStatus"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
+  media?: Prisma.XOR<Prisma.MediasScalarRelationFilter, Prisma.MediasWhereInput>
 }, "user_id_media_id">
 
 export type UserMediaStatusOrderByWithAggregationInput = {
@@ -224,7 +224,7 @@ export type UserMediaStatusCreateInput = {
   status: $Enums.MediaStatus
   created_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutUser_media_statusInput
-  media: Prisma.MediaCreateNestedOneWithoutUser_music_statusInput
+  media: Prisma.MediasCreateNestedOneWithoutUser_music_statusInput
 }
 
 export type UserMediaStatusUncheckedCreateInput = {
@@ -238,7 +238,7 @@ export type UserMediaStatusUpdateInput = {
   status?: Prisma.EnumMediaStatusFieldUpdateOperationsInput | $Enums.MediaStatus
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutUser_media_statusNestedInput
-  media?: Prisma.MediaUpdateOneRequiredWithoutUser_music_statusNestedInput
+  media?: Prisma.MediasUpdateOneRequiredWithoutUser_music_statusNestedInput
 }
 
 export type UserMediaStatusUncheckedUpdateInput = {
@@ -394,7 +394,7 @@ export type EnumMediaStatusFieldUpdateOperationsInput = {
 export type UserMediaStatusCreateWithoutUserInput = {
   status: $Enums.MediaStatus
   created_at?: Date | string
-  media: Prisma.MediaCreateNestedOneWithoutUser_music_statusInput
+  media: Prisma.MediasCreateNestedOneWithoutUser_music_statusInput
 }
 
 export type UserMediaStatusUncheckedCreateWithoutUserInput = {
@@ -486,7 +486,7 @@ export type UserMediaStatusCreateManyUserInput = {
 export type UserMediaStatusUpdateWithoutUserInput = {
   status?: Prisma.EnumMediaStatusFieldUpdateOperationsInput | $Enums.MediaStatus
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  media?: Prisma.MediaUpdateOneRequiredWithoutUser_music_statusNestedInput
+  media?: Prisma.MediasUpdateOneRequiredWithoutUser_music_statusNestedInput
 }
 
 export type UserMediaStatusUncheckedUpdateWithoutUserInput = {
@@ -533,7 +533,7 @@ export type UserMediaStatusSelect<ExtArgs extends runtime.Types.Extensions.Inter
   status?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userMediaStatus"]>
 
 export type UserMediaStatusSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -542,7 +542,7 @@ export type UserMediaStatusSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   status?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userMediaStatus"]>
 
 export type UserMediaStatusSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -551,7 +551,7 @@ export type UserMediaStatusSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   status?: boolean
   created_at?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userMediaStatus"]>
 
 export type UserMediaStatusSelectScalar = {
@@ -564,22 +564,22 @@ export type UserMediaStatusSelectScalar = {
 export type UserMediaStatusOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"user_id" | "media_id" | "status" | "created_at", ExtArgs["result"]["userMediaStatus"]>
 export type UserMediaStatusInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }
 export type UserMediaStatusIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }
 export type UserMediaStatusIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  media?: boolean | Prisma.MediaDefaultArgs<ExtArgs>
+  media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }
 
 export type $UserMediaStatusPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "UserMediaStatus"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
-    media: Prisma.$MediaPayload<ExtArgs>
+    media: Prisma.$MediasPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     user_id: string
@@ -981,7 +981,7 @@ readonly fields: UserMediaStatusFieldRefs;
 export interface Prisma__UserMediaStatusClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  media<T extends Prisma.MediaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaDefaultArgs<ExtArgs>>): Prisma.Prisma__MediaClient<runtime.Types.Result.GetResult<Prisma.$MediaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  media<T extends Prisma.MediasDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediasDefaultArgs<ExtArgs>>): Prisma.Prisma__MediasClient<runtime.Types.Result.GetResult<Prisma.$MediasPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
