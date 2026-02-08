@@ -1,15 +1,13 @@
 import type {Request, Response, NextFunction} from 'express';
-
-import {BadRequest, NotFound} from '../../../utils/errors.js';
+import {BadRequest} from '../../../utils/errors.js';
 import {BanUserService, banUserService} from './ban.user.service.js';
-import {Controller} from "../../controller";
+import {Controller} from "../../controller.js";
 import {
     BannedUserAddDto,
     BannedUserDeleteDto,
     BannedUserResponseDto,
     BannedUserUpdateDto
-} from "../../../types/users/bannedUser.dto";
-import {UserResponseDeleteDto} from "../../../types/users/user.dto";
+} from "../../../types/users/banned.user.dto.js";
 
 class UserBanController extends Controller {
 

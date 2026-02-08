@@ -3,6 +3,13 @@ import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js'
 import {ReviewService} from './review.service.js';
+import {
+    ReviewAddDto,
+    ReviewResponseAddDto,
+    ReviewResponseDeleteDto,
+    ReviewResponseDto,
+    ReviewUpdateDto
+} from "../../../types/reviews/review.dto";
 
 class ReviewController extends Controller {
 
@@ -12,23 +19,19 @@ class ReviewController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id,
-                media_id,
-                rating,
-                content
-            } = req.body;
+            const createData: ReviewAddDto = {
+                user_id: req.body.user_id,
+                media_id: req.body.media_id,
+                rating: req.body.rating,
+                content: req.body.content,
+            };
 
-            if (!user_id || !media_id || !rating || !content) {
-                throw new BadRequest('Missing required fields');
+            if (!createData.user_id || !createData.media_id || !createData.rating || !createData.content) {
+                throw new BadRequest('User_id, media_id, rating & content is required');
             }
-            const review = await this.service.create({
-                user_id,
-                media_id,
-                rating,
-                content,
-                created_at: new Date()
-            });
+
+            const review: ReviewResponseAddDto = await this.service.create(createData);
+
             res.status(201).json({
                 message: 'Review created successfully',
                 review,
@@ -38,29 +41,11 @@ class ReviewController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
-                throw new BadRequest('Missing required fields');
-            }
-            const review = await this.service.getById(id);
-            res.status(200).json({
-                message: 'Review retrieved successfully',
-                review,
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const reviews = await this.service.getAll();
-            res.status(200).json({
+            const reviews: ReviewResponseDto[] = await this.service.getAll();
+            res.status(201).json({
                 message: 'Reviews retrieved successfully',
                 reviews,
             });
@@ -69,65 +54,68 @@ class ReviewController extends Controller {
         }
     }
 
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            if (!req.params.id) {
+                throw new BadRequest('Id is required');
+            }
+            const review: ReviewResponseDto = await this.service.getById(req.params.id);
+            res.status(201).json({
+                message: 'Review retrieved successfully',
+                review
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
+            const id: string = req.params.id;
 
             if (!id) {
-                throw new BadRequest('Missing required fields');
+                throw new BadRequest('Id is required');
             }
 
-            const {
-                user_id,
-                media_id,
-                rating,
-                content
-            } = req.body;
+            const updateData: ReviewUpdateDto = {};
 
-            let data: any = {}
-
-            if (user_id) {
-                data.user_id = user_id;
+            if (req.body.rating !== undefined) {
+                updateData.rating = req.body.rating;
             }
 
-            if (media_id) {
-                data.media_id = media_id;
+            if (req.body.content !== undefined) {
+                updateData.content = req.body.content;
             }
 
-            if (rating) {
-                data.rating = rating;
+            if (Object.keys(updateData).length === 0) {
+                throw new BadRequest('No fields provided');
             }
 
-            if (content) {
-                data.content = content;
-            }
+            const review: ReviewResponseDto = await this.service.update(id, updateData);
 
-            if (Object.keys(data).length === 0) {
-                throw new BadRequest("No fields provided")
-            }
-
-            const review = await this.service.update(id, data);
-
-            res.status(200).json({
+            res.status(201).json({
                 message: 'Review updated successfully',
                 review,
             });
-        } catch (error) {
-            next(error);
+        } catch (err) {
+            next(err);
         }
     }
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
-            await this.service.delete(id);
-            res.status(200).json({
+
+            if (!req.params.id) {
+                throw new BadRequest('Id is required');
+            }
+
+            const reviewDelete: ReviewResponseDeleteDto = await this.service.delete(req.params.id);
+
+            res.status(201).json({
                 message: 'Review deleted successfully',
+                reviewDelete,
             });
+
         } catch (error) {
             next(error);
         }

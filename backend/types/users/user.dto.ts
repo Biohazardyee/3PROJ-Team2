@@ -1,4 +1,4 @@
-import {Roles} from '../../generated/prisma/enums';
+import {Roles} from '../../generated/prisma/enums.js';
 
 // Response Interface
 export interface UserResponseDto {

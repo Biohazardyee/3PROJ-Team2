@@ -324,11 +324,23 @@ export class UserService {
         }
 
         try {
-            const user: User = await PrismaDb.user.delete({
-                where: {id},
+            const user: User | null = await PrismaDb.user.findUnique({
+                where: {
+                    id
+                },
+            })
+
+            if (!user) {
+                throw new NotFound('User not found');
+            }
+
+            const userToDelete: User = await PrismaDb.user.delete({
+                where: {
+                    id
+                },
             });
 
-            return userMapper.toDeleteDto(user);
+            return userMapper.toDeleteDto(userToDelete);
 
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {

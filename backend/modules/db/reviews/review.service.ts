@@ -1,16 +1,19 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString, isValidStringLength} from "../../../utils/helpers.js";
+import {
+    ReviewAddDto,
+    ReviewResponseAddDto, ReviewResponseDeleteDto,
+    ReviewResponseDto,
+    ReviewUpdateDto
+} from "../../../types/reviews/review.dto";
+import {Prisma} from '../../../generated/prisma/client.js';
+import {Medias, User, Reviews} from "../../../generated/prisma/browser.js";
+import {reviewMapper} from "../../../mappers/reviews/review.mapper";
 
 export class ReviewService {
 
-    async create(data: {
-        user_id: string,
-        media_id: string,
-        rating: number,
-        content: string,
-        created_at: Date,
-    }) {
+    async create(data: ReviewAddDto): Promise<ReviewResponseAddDto> {
 
         if (isEmptyString(data.user_id)) {
             throw new BadRequest('user_id cannot be empty');
@@ -32,7 +35,7 @@ export class ReviewService {
             throw new BadRequest('Content is too long (max 1000 characters)');
         }
 
-        const user = await PrismaDb.user.findUnique({
+        const user: User | null = await PrismaDb.user.findUnique({
             where: {
                 id: data.user_id
             },
@@ -42,7 +45,7 @@ export class ReviewService {
             throw new BadRequest('User with this id does not exist');
         }
 
-        const media = await PrismaDb.medias.findUnique({
+        const media: Medias | null = await PrismaDb.medias.findUnique({
             where: {
                 id: data.media_id
             },
@@ -52,7 +55,7 @@ export class ReviewService {
             throw new BadRequest('Media with this id does not exist');
         }
 
-        const alreadyReviewed = await PrismaDb.reviews.findFirst({
+        const alreadyReviewed: Reviews | null = await PrismaDb.reviews.findFirst({
             where: {
                 user_id: data.user_id,
                 media_id: data.media_id,
@@ -63,23 +66,30 @@ export class ReviewService {
             throw new BadRequest('User has already reviewed this media');
         }
 
-        return PrismaDb.reviews.create({
-            data: {
-                user_id: data.user_id,
-                media_id: data.media_id,
-                rating: normalizeRating(data.rating),
-                content: data.content.trim(),
-            },
-        });
+        const review: Reviews = await PrismaDb.reviews.create({
+            data
+        })
+
+        return reviewMapper.toAddDto(review);
     }
 
-    async getById(id: string) {
+    async getAll(): Promise<ReviewResponseDto[]> {
+        const reviews: Reviews[] = await PrismaDb.reviews.findMany({
+            orderBy: {
+                created_at: 'desc'
+            }
+        });
+
+        return reviewMapper.toDtoList(reviews);
+    }
+
+    async getById(id: string):Promise<ReviewResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Review id cannot be empty');
         }
 
-        const review = await PrismaDb.reviews.findUnique({
+        const review: Reviews | null = await PrismaDb.reviews.findUnique({
             where: {
                 id
             },
@@ -89,22 +99,16 @@ export class ReviewService {
             throw new NotFound('Review not found');
         }
 
-        return review;
+        return reviewMapper.toDto(review);
     }
 
-    async getAll() {
-        return PrismaDb.reviews.findMany();
-    }
-
-    async update(id: string, data: {
-        rating?: number,
-        content?: string,
-    }) {
+    async update(id: string, data: ReviewUpdateDto): Promise<ReviewResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Review id cannot be empty');
         }
-        const review = await PrismaDb.reviews.findUnique({
+
+        const review: Reviews | null = await PrismaDb.reviews.findUnique({
             where: {
                 id
             }
@@ -114,57 +118,62 @@ export class ReviewService {
             throw new NotFound('Review not found');
         }
 
-        const allowedFields: string[] = [
-            'rating',
-            'content'
-        ];
+        const updateData: Prisma.ReviewsUpdateInput = {};
 
-        for (const key of Object.keys(data)) {
-            if (!allowedFields.includes(key)) {
-                throw new BadRequest(`Field "${key}" cannot be updated`);
+        if (data.rating !== undefined) {
+            if (!isValidFloatRating(data.rating)) {
+                throw new BadRequest('Rating must be a float between 0 and 5');
             }
         }
 
-        if (data.rating && !isValidFloatRating(data.rating)) {
-            throw new BadRequest('Rating must be a float between 0 and 5');
-        }
-
-        if (data.content) {
+        if (data.content !== undefined) {
             if (isEmptyString(data.content)) {
                 throw new BadRequest('Content is required');
             }
             if (!isValidStringLength(data.content, 1000)) {
                 throw new BadRequest('Content is too long (max 1000 characters)');
             }
+
+            updateData.content = data.content.trim();
         }
 
-        return PrismaDb.reviews.update({
+        const reviewUpdate: Reviews = await PrismaDb.reviews.update({
             where: {
                 id
             },
-            data,
+            data: updateData,
         });
+
+        return reviewMapper.toDto(reviewUpdate);
     }
 
-    async delete(id: string) {
+    async delete(id: string): Promise<ReviewResponseDeleteDto> {
+
         if (isEmptyString(id)) {
             throw new BadRequest('Review id cannot be empty');
         }
 
-        const review = await PrismaDb.reviews.findUnique({
-            where: {
-                id
-            },
-        });
+        try {
+            const review: Reviews | null = await PrismaDb.reviews.findUnique({
+                where: {
+                    id
+                },
+            });
 
-        if (!review) {
-            throw new NotFound('Review not found');
+            if (!review) {
+                throw new NotFound('Review not found');
+            }
+
+            const reviewToDelete: Reviews = await PrismaDb.reviews.delete({
+                where: {
+                    id
+                },
+            })
+
+            return reviewMapper.toDeleteDto(reviewToDelete);
+
+        } catch (error) {
+            throw error;
         }
-
-        return PrismaDb.reviews.delete({
-            where: {
-                id
-            },
-        });
     }
 }

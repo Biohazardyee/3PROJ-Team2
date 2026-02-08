@@ -6,7 +6,7 @@ import {ReviewLikeService, reviewLikeService} from './review.like.service.js';
 
 class ReviewLikeController extends Controller {
 
-    constructor(private readonly service:ReviewLikeService = reviewLikeService) {
+    constructor(private readonly service: ReviewLikeService = reviewLikeService) {
         super();
     }
 

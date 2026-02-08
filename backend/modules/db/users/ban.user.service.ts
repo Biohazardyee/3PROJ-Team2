@@ -7,9 +7,9 @@ import {
     BannedUserDeleteDto,
     BannedUserResponseDto,
     BannedUserUpdateDto
-} from "../../../types/users/bannedUser.dto";
+} from "../../../types/users/banned.user.dto.js";
 import {BannedUsers} from "../../../generated/prisma/browser.js";
-import {bannedUserMapper} from "../../../mappers/users/bannedUser.mapper";
+import {bannedUserMapper} from "../../../mappers/users/banned.user.mapper.js";
 
 export class BanUserService {
 
