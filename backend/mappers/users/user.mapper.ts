@@ -1,12 +1,12 @@
 // mappers/user.mapper.ts
-import type {User} from '../../generated/prisma/browser';
+import type {User} from '../../generated/prisma/browser.js';
 import {
     UserResponseAddDto,
     UserResponseDeleteDto,
     UserResponseDto,
     UserResponseLoginDto,
-} from '../../types/users/user.dto';
-import {BaseMapper} from '../base.mapper';
+} from '../../types/users/user.dto.js';
+import {BaseMapper} from '../base.mapper.js';
 
 
 export class UserMapper extends BaseMapper<User, UserResponseDto> {

@@ -1,15 +1,18 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isValidStringLength, isEmptyString} from "../../../utils/helpers.js";
+import {
+    ReviewCommentAddDto,
+    ReviewCommentResponseDto,
+    ReviewCommentUpdateDto
+} from "../../../types/reviews/review.comment.dto.js";
+import {User, Reviews, ReviewComments} from "../../../generated/prisma/browser.js";
+import {reviewCommentMapper} from "../../../mappers/reviews/review.comment.mapper.js";
+import {Prisma} from '../../../generated/prisma/client.js';
 
 export class ReviewCommentService {
 
-    async create(data: {
-        user_id: string,
-        review_id: string,
-        content: string,
-        created_at: Date,
-    }) {
+    async create(data: ReviewCommentAddDto): Promise<ReviewCommentResponseDto> {
 
         if (isEmptyString(data.user_id)) {
             throw new BadRequest("User_id cannot be empty");
@@ -27,7 +30,7 @@ export class ReviewCommentService {
             throw new BadRequest("Content length cannot exceed 1000 characters");
         }
 
-        const user = await PrismaDb.user.findUnique({
+        const user: User | null = await PrismaDb.user.findUnique({
             where: {
                 id: data.user_id,
             }
@@ -37,7 +40,7 @@ export class ReviewCommentService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const review = await PrismaDb.review.findUnique({
+        const review: Reviews | null = await PrismaDb.reviews.findUnique({
             where: {
                 id: data.review_id,
             }
@@ -47,62 +50,49 @@ export class ReviewCommentService {
             throw new BadRequest('The review doesn\'t exist');
         }
 
-        return PrismaDb.reviewComment.create({
+        const reviewComment: ReviewComments = await PrismaDb.reviewComments.create({
             data,
-            select: {
-                user_id: true,
-                review_id: true,
-                content: true,
-                created_at: true,
-            },
         });
+
+        return reviewCommentMapper.toDto(reviewComment);
     }
 
-    async getAll() {
-        return PrismaDb.reviewComment.findMany({
-            select: {
-                user_id: true,
-                review_id: true,
-                content: true,
-                created_at: true,
+    async getAll(): Promise<ReviewCommentResponseDto[]> {
+        const ReviewComments: ReviewComments[] = await PrismaDb.reviewComments.findMany({
+            orderBy: {
+                created_at: 'desc'
             }
         });
+
+        return reviewCommentMapper.toDtoList(ReviewComments);
     }
 
-    async getById(id: string) {
+    async getById(id: string): Promise<ReviewCommentResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest("ID cannot be empty");
         }
 
-        const reviewComment = await PrismaDb.reviewComment.findUnique({
+        const reviewComment: ReviewComments | null = await PrismaDb.reviewComments.findUnique({
             where: {
-                id: id,
+                id,
             },
-            select: {
-                user_id: true,
-                review_id: true,
-                content: true,
-                created_at: true
-            }
         });
 
         if (!reviewComment) {
             throw new NotFound('Comment not found');
         }
 
-        return reviewComment;
+        return reviewCommentMapper.toDto(reviewComment);
     }
 
-    async update(id: string, data: {
-        content?: string
-    }) {
+    async update(id: string, data: ReviewCommentUpdateDto): Promise<ReviewCommentResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest("ID cannot be empty");
         }
 
-        const reviewComment = await PrismaDb.reviewComment.findUnique({
+        const reviewComment: ReviewComments | null = await PrismaDb.reviewComments.findUnique({
             where: {
                 id: id,
             }
@@ -112,56 +102,52 @@ export class ReviewCommentService {
             throw new NotFound('Comment does not exist');
         }
 
-        const allowedFields: string[] = [
-            'content'
-        ];
+        const updateData: Prisma.ReviewCommentsUpdateInput = {};
 
-        for (const key of Object.keys(data)) {
-            if (!allowedFields.includes(key)) {
-                throw new BadRequest(`Field "${key}" cannot be updated`);
-            }
-        }
-
-        if (data.content) {
+        if (data.content !== undefined) {
             if (isEmptyString(data.content)) {
                 throw new BadRequest('Content cannot be empty');
             }
             if (!isValidStringLength(data.content, 1000)) {
                 throw new BadRequest('Content cannot be much than 1000 characters');
             }
+            updateData.content = data.content.trim();
         }
 
-        return PrismaDb.reviewComment.update({
+        const updatedReviewComment: ReviewComments = await PrismaDb.reviewComments.update({
             where: {
-                id
+                id: id,
             },
-            data,
-            select: {
-                user_id: true,
-                review_id: true,
-                content: true,
-                created_at: true,
-            }
+            data: updateData,
         });
+
+        return reviewCommentMapper.toDto(updatedReviewComment);
     }
 
-    async delete(id: string) {
+    async delete(id: string): Promise<ReviewCommentResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest("ID cannot be empty");
         }
 
-        return PrismaDb.reviewComment.delete({
+        const reviewComment: ReviewComments | null = await PrismaDb.reviewComments.findUnique({
             where: {
                 id: id,
-            },
-            select: {
-                user_id: true,
-                review_id: true,
-                content: true,
-                created_at: true
-            },
-        });
+            }
+        })
+
+        if (!reviewComment) {
+            throw new NotFound('Comment does not exist');
+        }
+
+        const reviewCommentToDelete: ReviewCommentResponseDto = await PrismaDb.reviewComments.delete({
+            where: {
+                id: id,
+            }
+        })
+
+        return reviewCommentMapper.toDto(reviewCommentToDelete);
+
     }
 }
 

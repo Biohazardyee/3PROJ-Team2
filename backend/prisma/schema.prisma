@@ -36,7 +36,8 @@ model User {
   notifications        Notifications[]   @relation("user_notifications")
   notificationsRelated Notifications[]   @relation("user_related_notifications")
   user_media_status    UserMediaStatus[]
-  reports              Reports[]
+  reporter_reports     Reports[]         @relation("reporter_reports")
+  profile_reports      Reports[]         @relation("profile_reports")
   bannedUsers          BannedUsers?
 
   activities          Activitys[]     @relation("user_activities")
@@ -182,16 +183,18 @@ model Follows {
 
 model Reports {
   id          String      @id @default(uuid())
-  reporter    User        @relation(fields: [reporter_id], references: [id])
+  reporter    User        @relation("reporter_reports", fields: [reporter_id], references: [id])
   reporter_id String
   review      Reviews?    @relation(fields: [review_id], references: [id])
   review_id   String?
+  profile     User?       @relation("profile_reports", fields: [profile_id], references: [id])
+  profile_id  String?
+  comment     ReviewComments? @relation(fields: [comment_id], references: [id])
+  comment_id  String?
   reason      String
   reason_type ReportTypes
   is_checked  Boolean     @default(false)
   created_at  DateTime    @default(now())
-
-  reviewComments ReviewComments[]
 }
 
 enum ReportTypes {

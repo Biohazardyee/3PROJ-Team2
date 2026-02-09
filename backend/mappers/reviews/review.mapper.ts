@@ -1,6 +1,6 @@
-import {BaseMapper} from '../base.mapper';
-import {Reviews} from "../../generated/prisma/browser";
-import {ReviewResponseAddDto, ReviewResponseDeleteDto, ReviewResponseDto} from "../../types/reviews/review.dto";
+import {BaseMapper} from '../base.mapper.js';
+import {Reviews} from "../../generated/prisma/browser.js";
+import {ReviewResponseAddDto, ReviewResponseDeleteDto, ReviewResponseDto} from "../../types/reviews/review.dto.js";
 
 class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
 

@@ -28,6 +28,8 @@ export type ReportsMinAggregateOutputType = {
   id: string | null
   reporter_id: string | null
   review_id: string | null
+  profile_id: string | null
+  comment_id: string | null
   reason: string | null
   reason_type: $Enums.ReportTypes | null
   is_checked: boolean | null
@@ -38,6 +40,8 @@ export type ReportsMaxAggregateOutputType = {
   id: string | null
   reporter_id: string | null
   review_id: string | null
+  profile_id: string | null
+  comment_id: string | null
   reason: string | null
   reason_type: $Enums.ReportTypes | null
   is_checked: boolean | null
@@ -48,6 +52,8 @@ export type ReportsCountAggregateOutputType = {
   id: number
   reporter_id: number
   review_id: number
+  profile_id: number
+  comment_id: number
   reason: number
   reason_type: number
   is_checked: number
@@ -60,6 +66,8 @@ export type ReportsMinAggregateInputType = {
   id?: true
   reporter_id?: true
   review_id?: true
+  profile_id?: true
+  comment_id?: true
   reason?: true
   reason_type?: true
   is_checked?: true
@@ -70,6 +78,8 @@ export type ReportsMaxAggregateInputType = {
   id?: true
   reporter_id?: true
   review_id?: true
+  profile_id?: true
+  comment_id?: true
   reason?: true
   reason_type?: true
   is_checked?: true
@@ -80,6 +90,8 @@ export type ReportsCountAggregateInputType = {
   id?: true
   reporter_id?: true
   review_id?: true
+  profile_id?: true
+  comment_id?: true
   reason?: true
   reason_type?: true
   is_checked?: true
@@ -163,6 +175,8 @@ export type ReportsGroupByOutputType = {
   id: string
   reporter_id: string
   review_id: string | null
+  profile_id: string | null
+  comment_id: string | null
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked: boolean
@@ -194,26 +208,32 @@ export type ReportsWhereInput = {
   id?: Prisma.StringFilter<"Reports"> | string
   reporter_id?: Prisma.StringFilter<"Reports"> | string
   review_id?: Prisma.StringNullableFilter<"Reports"> | string | null
+  profile_id?: Prisma.StringNullableFilter<"Reports"> | string | null
+  comment_id?: Prisma.StringNullableFilter<"Reports"> | string | null
   reason?: Prisma.StringFilter<"Reports"> | string
   reason_type?: Prisma.EnumReportTypesFilter<"Reports"> | $Enums.ReportTypes
   is_checked?: Prisma.BoolFilter<"Reports"> | boolean
   created_at?: Prisma.DateTimeFilter<"Reports"> | Date | string
   reporter?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   review?: Prisma.XOR<Prisma.ReviewsNullableScalarRelationFilter, Prisma.ReviewsWhereInput> | null
-  reviewComments?: Prisma.ReviewCommentsListRelationFilter
+  profile?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  comment?: Prisma.XOR<Prisma.ReviewCommentsNullableScalarRelationFilter, Prisma.ReviewCommentsWhereInput> | null
 }
 
 export type ReportsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   reporter_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  profile_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  comment_id?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrder
   reason_type?: Prisma.SortOrder
   is_checked?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   reporter?: Prisma.UserOrderByWithRelationInput
   review?: Prisma.ReviewsOrderByWithRelationInput
-  reviewComments?: Prisma.ReviewCommentsOrderByRelationAggregateInput
+  profile?: Prisma.UserOrderByWithRelationInput
+  comment?: Prisma.ReviewCommentsOrderByWithRelationInput
 }
 
 export type ReportsWhereUniqueInput = Prisma.AtLeast<{
@@ -223,19 +243,24 @@ export type ReportsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ReportsWhereInput | Prisma.ReportsWhereInput[]
   reporter_id?: Prisma.StringFilter<"Reports"> | string
   review_id?: Prisma.StringNullableFilter<"Reports"> | string | null
+  profile_id?: Prisma.StringNullableFilter<"Reports"> | string | null
+  comment_id?: Prisma.StringNullableFilter<"Reports"> | string | null
   reason?: Prisma.StringFilter<"Reports"> | string
   reason_type?: Prisma.EnumReportTypesFilter<"Reports"> | $Enums.ReportTypes
   is_checked?: Prisma.BoolFilter<"Reports"> | boolean
   created_at?: Prisma.DateTimeFilter<"Reports"> | Date | string
   reporter?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   review?: Prisma.XOR<Prisma.ReviewsNullableScalarRelationFilter, Prisma.ReviewsWhereInput> | null
-  reviewComments?: Prisma.ReviewCommentsListRelationFilter
+  profile?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  comment?: Prisma.XOR<Prisma.ReviewCommentsNullableScalarRelationFilter, Prisma.ReviewCommentsWhereInput> | null
 }, "id">
 
 export type ReportsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   reporter_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  profile_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  comment_id?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrder
   reason_type?: Prisma.SortOrder
   is_checked?: Prisma.SortOrder
@@ -252,6 +277,8 @@ export type ReportsScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Reports"> | string
   reporter_id?: Prisma.StringWithAggregatesFilter<"Reports"> | string
   review_id?: Prisma.StringNullableWithAggregatesFilter<"Reports"> | string | null
+  profile_id?: Prisma.StringNullableWithAggregatesFilter<"Reports"> | string | null
+  comment_id?: Prisma.StringNullableWithAggregatesFilter<"Reports"> | string | null
   reason?: Prisma.StringWithAggregatesFilter<"Reports"> | string
   reason_type?: Prisma.EnumReportTypesWithAggregatesFilter<"Reports"> | $Enums.ReportTypes
   is_checked?: Prisma.BoolWithAggregatesFilter<"Reports"> | boolean
@@ -264,20 +291,22 @@ export type ReportsCreateInput = {
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reporter: Prisma.UserCreateNestedOneWithoutReportsInput
+  reporter: Prisma.UserCreateNestedOneWithoutReporter_reportsInput
   review?: Prisma.ReviewsCreateNestedOneWithoutReportsInput
-  reviewComments?: Prisma.ReviewCommentsCreateNestedManyWithoutReportsInput
+  profile?: Prisma.UserCreateNestedOneWithoutProfile_reportsInput
+  comment?: Prisma.ReviewCommentsCreateNestedOneWithoutReportsInput
 }
 
 export type ReportsUncheckedCreateInput = {
   id?: string
   reporter_id: string
   review_id?: string | null
+  profile_id?: string | null
+  comment_id?: string | null
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reviewComments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutReportsInput
 }
 
 export type ReportsUpdateInput = {
@@ -286,26 +315,30 @@ export type ReportsUpdateInput = {
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reporter?: Prisma.UserUpdateOneRequiredWithoutReportsNestedInput
+  reporter?: Prisma.UserUpdateOneRequiredWithoutReporter_reportsNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutReportsNestedInput
-  reviewComments?: Prisma.ReviewCommentsUpdateManyWithoutReportsNestedInput
+  profile?: Prisma.UserUpdateOneWithoutProfile_reportsNestedInput
+  comment?: Prisma.ReviewCommentsUpdateOneWithoutReportsNestedInput
 }
 
 export type ReportsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reporter_id?: Prisma.StringFieldUpdateOperationsInput | string
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviewComments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportsCreateManyInput = {
   id?: string
   reporter_id: string
   review_id?: string | null
+  profile_id?: string | null
+  comment_id?: string | null
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
@@ -324,6 +357,8 @@ export type ReportsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reporter_id?: Prisma.StringFieldUpdateOperationsInput | string
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -344,6 +379,8 @@ export type ReportsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   reporter_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
+  profile_id?: Prisma.SortOrder
+  comment_id?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   reason_type?: Prisma.SortOrder
   is_checked?: Prisma.SortOrder
@@ -354,6 +391,8 @@ export type ReportsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   reporter_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
+  profile_id?: Prisma.SortOrder
+  comment_id?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   reason_type?: Prisma.SortOrder
   is_checked?: Prisma.SortOrder
@@ -364,6 +403,8 @@ export type ReportsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   reporter_id?: Prisma.SortOrder
   review_id?: Prisma.SortOrder
+  profile_id?: Prisma.SortOrder
+  comment_id?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   reason_type?: Prisma.SortOrder
   is_checked?: Prisma.SortOrder
@@ -377,10 +418,24 @@ export type ReportsCreateNestedManyWithoutReporterInput = {
   connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
 }
 
+export type ReportsCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ReportsCreateWithoutProfileInput, Prisma.ReportsUncheckedCreateWithoutProfileInput> | Prisma.ReportsCreateWithoutProfileInput[] | Prisma.ReportsUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutProfileInput | Prisma.ReportsCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ReportsCreateManyProfileInputEnvelope
+  connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+}
+
 export type ReportsUncheckedCreateNestedManyWithoutReporterInput = {
   create?: Prisma.XOR<Prisma.ReportsCreateWithoutReporterInput, Prisma.ReportsUncheckedCreateWithoutReporterInput> | Prisma.ReportsCreateWithoutReporterInput[] | Prisma.ReportsUncheckedCreateWithoutReporterInput[]
   connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutReporterInput | Prisma.ReportsCreateOrConnectWithoutReporterInput[]
   createMany?: Prisma.ReportsCreateManyReporterInputEnvelope
+  connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+}
+
+export type ReportsUncheckedCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.ReportsCreateWithoutProfileInput, Prisma.ReportsUncheckedCreateWithoutProfileInput> | Prisma.ReportsCreateWithoutProfileInput[] | Prisma.ReportsUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutProfileInput | Prisma.ReportsCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.ReportsCreateManyProfileInputEnvelope
   connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
 }
 
@@ -398,6 +453,20 @@ export type ReportsUpdateManyWithoutReporterNestedInput = {
   deleteMany?: Prisma.ReportsScalarWhereInput | Prisma.ReportsScalarWhereInput[]
 }
 
+export type ReportsUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportsCreateWithoutProfileInput, Prisma.ReportsUncheckedCreateWithoutProfileInput> | Prisma.ReportsCreateWithoutProfileInput[] | Prisma.ReportsUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutProfileInput | Prisma.ReportsCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ReportsUpsertWithWhereUniqueWithoutProfileInput | Prisma.ReportsUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ReportsCreateManyProfileInputEnvelope
+  set?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+  disconnect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+  delete?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+  connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+  update?: Prisma.ReportsUpdateWithWhereUniqueWithoutProfileInput | Prisma.ReportsUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ReportsUpdateManyWithWhereWithoutProfileInput | Prisma.ReportsUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.ReportsScalarWhereInput | Prisma.ReportsScalarWhereInput[]
+}
+
 export type ReportsUncheckedUpdateManyWithoutReporterNestedInput = {
   create?: Prisma.XOR<Prisma.ReportsCreateWithoutReporterInput, Prisma.ReportsUncheckedCreateWithoutReporterInput> | Prisma.ReportsCreateWithoutReporterInput[] | Prisma.ReportsUncheckedCreateWithoutReporterInput[]
   connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutReporterInput | Prisma.ReportsCreateOrConnectWithoutReporterInput[]
@@ -409,6 +478,20 @@ export type ReportsUncheckedUpdateManyWithoutReporterNestedInput = {
   connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
   update?: Prisma.ReportsUpdateWithWhereUniqueWithoutReporterInput | Prisma.ReportsUpdateWithWhereUniqueWithoutReporterInput[]
   updateMany?: Prisma.ReportsUpdateManyWithWhereWithoutReporterInput | Prisma.ReportsUpdateManyWithWhereWithoutReporterInput[]
+  deleteMany?: Prisma.ReportsScalarWhereInput | Prisma.ReportsScalarWhereInput[]
+}
+
+export type ReportsUncheckedUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportsCreateWithoutProfileInput, Prisma.ReportsUncheckedCreateWithoutProfileInput> | Prisma.ReportsCreateWithoutProfileInput[] | Prisma.ReportsUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutProfileInput | Prisma.ReportsCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.ReportsUpsertWithWhereUniqueWithoutProfileInput | Prisma.ReportsUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.ReportsCreateManyProfileInputEnvelope
+  set?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+  disconnect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+  delete?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+  connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
+  update?: Prisma.ReportsUpdateWithWhereUniqueWithoutProfileInput | Prisma.ReportsUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.ReportsUpdateManyWithWhereWithoutProfileInput | Prisma.ReportsUpdateManyWithWhereWithoutProfileInput[]
   deleteMany?: Prisma.ReportsScalarWhereInput | Prisma.ReportsScalarWhereInput[]
 }
 
@@ -454,41 +537,45 @@ export type ReportsUncheckedUpdateManyWithoutReviewNestedInput = {
   deleteMany?: Prisma.ReportsScalarWhereInput | Prisma.ReportsScalarWhereInput[]
 }
 
-export type ReportsCreateNestedManyWithoutReviewCommentsInput = {
-  create?: Prisma.XOR<Prisma.ReportsCreateWithoutReviewCommentsInput, Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput> | Prisma.ReportsCreateWithoutReviewCommentsInput[] | Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput[]
-  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutReviewCommentsInput | Prisma.ReportsCreateOrConnectWithoutReviewCommentsInput[]
+export type ReportsCreateNestedManyWithoutCommentInput = {
+  create?: Prisma.XOR<Prisma.ReportsCreateWithoutCommentInput, Prisma.ReportsUncheckedCreateWithoutCommentInput> | Prisma.ReportsCreateWithoutCommentInput[] | Prisma.ReportsUncheckedCreateWithoutCommentInput[]
+  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutCommentInput | Prisma.ReportsCreateOrConnectWithoutCommentInput[]
+  createMany?: Prisma.ReportsCreateManyCommentInputEnvelope
   connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
 }
 
-export type ReportsUncheckedCreateNestedManyWithoutReviewCommentsInput = {
-  create?: Prisma.XOR<Prisma.ReportsCreateWithoutReviewCommentsInput, Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput> | Prisma.ReportsCreateWithoutReviewCommentsInput[] | Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput[]
-  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutReviewCommentsInput | Prisma.ReportsCreateOrConnectWithoutReviewCommentsInput[]
+export type ReportsUncheckedCreateNestedManyWithoutCommentInput = {
+  create?: Prisma.XOR<Prisma.ReportsCreateWithoutCommentInput, Prisma.ReportsUncheckedCreateWithoutCommentInput> | Prisma.ReportsCreateWithoutCommentInput[] | Prisma.ReportsUncheckedCreateWithoutCommentInput[]
+  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutCommentInput | Prisma.ReportsCreateOrConnectWithoutCommentInput[]
+  createMany?: Prisma.ReportsCreateManyCommentInputEnvelope
   connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
 }
 
-export type ReportsUpdateManyWithoutReviewCommentsNestedInput = {
-  create?: Prisma.XOR<Prisma.ReportsCreateWithoutReviewCommentsInput, Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput> | Prisma.ReportsCreateWithoutReviewCommentsInput[] | Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput[]
-  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutReviewCommentsInput | Prisma.ReportsCreateOrConnectWithoutReviewCommentsInput[]
-  upsert?: Prisma.ReportsUpsertWithWhereUniqueWithoutReviewCommentsInput | Prisma.ReportsUpsertWithWhereUniqueWithoutReviewCommentsInput[]
+export type ReportsUpdateManyWithoutCommentNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportsCreateWithoutCommentInput, Prisma.ReportsUncheckedCreateWithoutCommentInput> | Prisma.ReportsCreateWithoutCommentInput[] | Prisma.ReportsUncheckedCreateWithoutCommentInput[]
+  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutCommentInput | Prisma.ReportsCreateOrConnectWithoutCommentInput[]
+  upsert?: Prisma.ReportsUpsertWithWhereUniqueWithoutCommentInput | Prisma.ReportsUpsertWithWhereUniqueWithoutCommentInput[]
+  createMany?: Prisma.ReportsCreateManyCommentInputEnvelope
   set?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
   disconnect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
   delete?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
   connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
-  update?: Prisma.ReportsUpdateWithWhereUniqueWithoutReviewCommentsInput | Prisma.ReportsUpdateWithWhereUniqueWithoutReviewCommentsInput[]
-  updateMany?: Prisma.ReportsUpdateManyWithWhereWithoutReviewCommentsInput | Prisma.ReportsUpdateManyWithWhereWithoutReviewCommentsInput[]
+  update?: Prisma.ReportsUpdateWithWhereUniqueWithoutCommentInput | Prisma.ReportsUpdateWithWhereUniqueWithoutCommentInput[]
+  updateMany?: Prisma.ReportsUpdateManyWithWhereWithoutCommentInput | Prisma.ReportsUpdateManyWithWhereWithoutCommentInput[]
   deleteMany?: Prisma.ReportsScalarWhereInput | Prisma.ReportsScalarWhereInput[]
 }
 
-export type ReportsUncheckedUpdateManyWithoutReviewCommentsNestedInput = {
-  create?: Prisma.XOR<Prisma.ReportsCreateWithoutReviewCommentsInput, Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput> | Prisma.ReportsCreateWithoutReviewCommentsInput[] | Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput[]
-  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutReviewCommentsInput | Prisma.ReportsCreateOrConnectWithoutReviewCommentsInput[]
-  upsert?: Prisma.ReportsUpsertWithWhereUniqueWithoutReviewCommentsInput | Prisma.ReportsUpsertWithWhereUniqueWithoutReviewCommentsInput[]
+export type ReportsUncheckedUpdateManyWithoutCommentNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportsCreateWithoutCommentInput, Prisma.ReportsUncheckedCreateWithoutCommentInput> | Prisma.ReportsCreateWithoutCommentInput[] | Prisma.ReportsUncheckedCreateWithoutCommentInput[]
+  connectOrCreate?: Prisma.ReportsCreateOrConnectWithoutCommentInput | Prisma.ReportsCreateOrConnectWithoutCommentInput[]
+  upsert?: Prisma.ReportsUpsertWithWhereUniqueWithoutCommentInput | Prisma.ReportsUpsertWithWhereUniqueWithoutCommentInput[]
+  createMany?: Prisma.ReportsCreateManyCommentInputEnvelope
   set?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
   disconnect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
   delete?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
   connect?: Prisma.ReportsWhereUniqueInput | Prisma.ReportsWhereUniqueInput[]
-  update?: Prisma.ReportsUpdateWithWhereUniqueWithoutReviewCommentsInput | Prisma.ReportsUpdateWithWhereUniqueWithoutReviewCommentsInput[]
-  updateMany?: Prisma.ReportsUpdateManyWithWhereWithoutReviewCommentsInput | Prisma.ReportsUpdateManyWithWhereWithoutReviewCommentsInput[]
+  update?: Prisma.ReportsUpdateWithWhereUniqueWithoutCommentInput | Prisma.ReportsUpdateWithWhereUniqueWithoutCommentInput[]
+  updateMany?: Prisma.ReportsUpdateManyWithWhereWithoutCommentInput | Prisma.ReportsUpdateManyWithWhereWithoutCommentInput[]
   deleteMany?: Prisma.ReportsScalarWhereInput | Prisma.ReportsScalarWhereInput[]
 }
 
@@ -503,17 +590,19 @@ export type ReportsCreateWithoutReporterInput = {
   is_checked?: boolean
   created_at?: Date | string
   review?: Prisma.ReviewsCreateNestedOneWithoutReportsInput
-  reviewComments?: Prisma.ReviewCommentsCreateNestedManyWithoutReportsInput
+  profile?: Prisma.UserCreateNestedOneWithoutProfile_reportsInput
+  comment?: Prisma.ReviewCommentsCreateNestedOneWithoutReportsInput
 }
 
 export type ReportsUncheckedCreateWithoutReporterInput = {
   id?: string
   review_id?: string | null
+  profile_id?: string | null
+  comment_id?: string | null
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reviewComments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutReportsInput
 }
 
 export type ReportsCreateOrConnectWithoutReporterInput = {
@@ -523,6 +612,38 @@ export type ReportsCreateOrConnectWithoutReporterInput = {
 
 export type ReportsCreateManyReporterInputEnvelope = {
   data: Prisma.ReportsCreateManyReporterInput | Prisma.ReportsCreateManyReporterInput[]
+  skipDuplicates?: boolean
+}
+
+export type ReportsCreateWithoutProfileInput = {
+  id?: string
+  reason: string
+  reason_type: $Enums.ReportTypes
+  is_checked?: boolean
+  created_at?: Date | string
+  reporter: Prisma.UserCreateNestedOneWithoutReporter_reportsInput
+  review?: Prisma.ReviewsCreateNestedOneWithoutReportsInput
+  comment?: Prisma.ReviewCommentsCreateNestedOneWithoutReportsInput
+}
+
+export type ReportsUncheckedCreateWithoutProfileInput = {
+  id?: string
+  reporter_id: string
+  review_id?: string | null
+  comment_id?: string | null
+  reason: string
+  reason_type: $Enums.ReportTypes
+  is_checked?: boolean
+  created_at?: Date | string
+}
+
+export type ReportsCreateOrConnectWithoutProfileInput = {
+  where: Prisma.ReportsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReportsCreateWithoutProfileInput, Prisma.ReportsUncheckedCreateWithoutProfileInput>
+}
+
+export type ReportsCreateManyProfileInputEnvelope = {
+  data: Prisma.ReportsCreateManyProfileInput | Prisma.ReportsCreateManyProfileInput[]
   skipDuplicates?: boolean
 }
 
@@ -549,10 +670,28 @@ export type ReportsScalarWhereInput = {
   id?: Prisma.StringFilter<"Reports"> | string
   reporter_id?: Prisma.StringFilter<"Reports"> | string
   review_id?: Prisma.StringNullableFilter<"Reports"> | string | null
+  profile_id?: Prisma.StringNullableFilter<"Reports"> | string | null
+  comment_id?: Prisma.StringNullableFilter<"Reports"> | string | null
   reason?: Prisma.StringFilter<"Reports"> | string
   reason_type?: Prisma.EnumReportTypesFilter<"Reports"> | $Enums.ReportTypes
   is_checked?: Prisma.BoolFilter<"Reports"> | boolean
   created_at?: Prisma.DateTimeFilter<"Reports"> | Date | string
+}
+
+export type ReportsUpsertWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ReportsWhereUniqueInput
+  update: Prisma.XOR<Prisma.ReportsUpdateWithoutProfileInput, Prisma.ReportsUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.ReportsCreateWithoutProfileInput, Prisma.ReportsUncheckedCreateWithoutProfileInput>
+}
+
+export type ReportsUpdateWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.ReportsWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReportsUpdateWithoutProfileInput, Prisma.ReportsUncheckedUpdateWithoutProfileInput>
+}
+
+export type ReportsUpdateManyWithWhereWithoutProfileInput = {
+  where: Prisma.ReportsScalarWhereInput
+  data: Prisma.XOR<Prisma.ReportsUpdateManyMutationInput, Prisma.ReportsUncheckedUpdateManyWithoutProfileInput>
 }
 
 export type ReportsCreateWithoutReviewInput = {
@@ -561,18 +700,20 @@ export type ReportsCreateWithoutReviewInput = {
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reporter: Prisma.UserCreateNestedOneWithoutReportsInput
-  reviewComments?: Prisma.ReviewCommentsCreateNestedManyWithoutReportsInput
+  reporter: Prisma.UserCreateNestedOneWithoutReporter_reportsInput
+  profile?: Prisma.UserCreateNestedOneWithoutProfile_reportsInput
+  comment?: Prisma.ReviewCommentsCreateNestedOneWithoutReportsInput
 }
 
 export type ReportsUncheckedCreateWithoutReviewInput = {
   id?: string
   reporter_id: string
+  profile_id?: string | null
+  comment_id?: string | null
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reviewComments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutReportsInput
 }
 
 export type ReportsCreateOrConnectWithoutReviewInput = {
@@ -601,50 +742,70 @@ export type ReportsUpdateManyWithWhereWithoutReviewInput = {
   data: Prisma.XOR<Prisma.ReportsUpdateManyMutationInput, Prisma.ReportsUncheckedUpdateManyWithoutReviewInput>
 }
 
-export type ReportsCreateWithoutReviewCommentsInput = {
+export type ReportsCreateWithoutCommentInput = {
   id?: string
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reporter: Prisma.UserCreateNestedOneWithoutReportsInput
+  reporter: Prisma.UserCreateNestedOneWithoutReporter_reportsInput
   review?: Prisma.ReviewsCreateNestedOneWithoutReportsInput
+  profile?: Prisma.UserCreateNestedOneWithoutProfile_reportsInput
 }
 
-export type ReportsUncheckedCreateWithoutReviewCommentsInput = {
+export type ReportsUncheckedCreateWithoutCommentInput = {
   id?: string
   reporter_id: string
   review_id?: string | null
+  profile_id?: string | null
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
 }
 
-export type ReportsCreateOrConnectWithoutReviewCommentsInput = {
+export type ReportsCreateOrConnectWithoutCommentInput = {
   where: Prisma.ReportsWhereUniqueInput
-  create: Prisma.XOR<Prisma.ReportsCreateWithoutReviewCommentsInput, Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput>
+  create: Prisma.XOR<Prisma.ReportsCreateWithoutCommentInput, Prisma.ReportsUncheckedCreateWithoutCommentInput>
 }
 
-export type ReportsUpsertWithWhereUniqueWithoutReviewCommentsInput = {
-  where: Prisma.ReportsWhereUniqueInput
-  update: Prisma.XOR<Prisma.ReportsUpdateWithoutReviewCommentsInput, Prisma.ReportsUncheckedUpdateWithoutReviewCommentsInput>
-  create: Prisma.XOR<Prisma.ReportsCreateWithoutReviewCommentsInput, Prisma.ReportsUncheckedCreateWithoutReviewCommentsInput>
+export type ReportsCreateManyCommentInputEnvelope = {
+  data: Prisma.ReportsCreateManyCommentInput | Prisma.ReportsCreateManyCommentInput[]
+  skipDuplicates?: boolean
 }
 
-export type ReportsUpdateWithWhereUniqueWithoutReviewCommentsInput = {
+export type ReportsUpsertWithWhereUniqueWithoutCommentInput = {
   where: Prisma.ReportsWhereUniqueInput
-  data: Prisma.XOR<Prisma.ReportsUpdateWithoutReviewCommentsInput, Prisma.ReportsUncheckedUpdateWithoutReviewCommentsInput>
+  update: Prisma.XOR<Prisma.ReportsUpdateWithoutCommentInput, Prisma.ReportsUncheckedUpdateWithoutCommentInput>
+  create: Prisma.XOR<Prisma.ReportsCreateWithoutCommentInput, Prisma.ReportsUncheckedCreateWithoutCommentInput>
 }
 
-export type ReportsUpdateManyWithWhereWithoutReviewCommentsInput = {
+export type ReportsUpdateWithWhereUniqueWithoutCommentInput = {
+  where: Prisma.ReportsWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReportsUpdateWithoutCommentInput, Prisma.ReportsUncheckedUpdateWithoutCommentInput>
+}
+
+export type ReportsUpdateManyWithWhereWithoutCommentInput = {
   where: Prisma.ReportsScalarWhereInput
-  data: Prisma.XOR<Prisma.ReportsUpdateManyMutationInput, Prisma.ReportsUncheckedUpdateManyWithoutReviewCommentsInput>
+  data: Prisma.XOR<Prisma.ReportsUpdateManyMutationInput, Prisma.ReportsUncheckedUpdateManyWithoutCommentInput>
 }
 
 export type ReportsCreateManyReporterInput = {
   id?: string
   review_id?: string | null
+  profile_id?: string | null
+  comment_id?: string | null
+  reason: string
+  reason_type: $Enums.ReportTypes
+  is_checked?: boolean
+  created_at?: Date | string
+}
+
+export type ReportsCreateManyProfileInput = {
+  id?: string
+  reporter_id: string
+  review_id?: string | null
+  comment_id?: string | null
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
@@ -658,22 +819,59 @@ export type ReportsUpdateWithoutReporterInput = {
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   review?: Prisma.ReviewsUpdateOneWithoutReportsNestedInput
-  reviewComments?: Prisma.ReviewCommentsUpdateManyWithoutReportsNestedInput
+  profile?: Prisma.UserUpdateOneWithoutProfile_reportsNestedInput
+  comment?: Prisma.ReviewCommentsUpdateOneWithoutReportsNestedInput
 }
 
 export type ReportsUncheckedUpdateWithoutReporterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviewComments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportsUncheckedUpdateManyWithoutReporterInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
+  is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ReportsUpdateWithoutProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
+  is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reporter?: Prisma.UserUpdateOneRequiredWithoutReporter_reportsNestedInput
+  review?: Prisma.ReviewsUpdateOneWithoutReportsNestedInput
+  comment?: Prisma.ReviewCommentsUpdateOneWithoutReportsNestedInput
+}
+
+export type ReportsUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporter_id?: Prisma.StringFieldUpdateOperationsInput | string
+  review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
+  is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ReportsUncheckedUpdateManyWithoutProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reporter_id?: Prisma.StringFieldUpdateOperationsInput | string
+  review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -683,6 +881,8 @@ export type ReportsUncheckedUpdateManyWithoutReporterInput = {
 export type ReportsCreateManyReviewInput = {
   id?: string
   reporter_id: string
+  profile_id?: string | null
+  comment_id?: string | null
   reason: string
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
@@ -695,152 +895,157 @@ export type ReportsUpdateWithoutReviewInput = {
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reporter?: Prisma.UserUpdateOneRequiredWithoutReportsNestedInput
-  reviewComments?: Prisma.ReviewCommentsUpdateManyWithoutReportsNestedInput
+  reporter?: Prisma.UserUpdateOneRequiredWithoutReporter_reportsNestedInput
+  profile?: Prisma.UserUpdateOneWithoutProfile_reportsNestedInput
+  comment?: Prisma.ReviewCommentsUpdateOneWithoutReportsNestedInput
 }
 
 export type ReportsUncheckedUpdateWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reporter_id?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviewComments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutReportsNestedInput
 }
 
 export type ReportsUncheckedUpdateManyWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reporter_id?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ReportsUpdateWithoutReviewCommentsInput = {
+export type ReportsCreateManyCommentInput = {
+  id?: string
+  reporter_id: string
+  review_id?: string | null
+  profile_id?: string | null
+  reason: string
+  reason_type: $Enums.ReportTypes
+  is_checked?: boolean
+  created_at?: Date | string
+}
+
+export type ReportsUpdateWithoutCommentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reporter?: Prisma.UserUpdateOneRequiredWithoutReportsNestedInput
+  reporter?: Prisma.UserUpdateOneRequiredWithoutReporter_reportsNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutReportsNestedInput
+  profile?: Prisma.UserUpdateOneWithoutProfile_reportsNestedInput
 }
 
-export type ReportsUncheckedUpdateWithoutReviewCommentsInput = {
+export type ReportsUncheckedUpdateWithoutCommentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reporter_id?: Prisma.StringFieldUpdateOperationsInput | string
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ReportsUncheckedUpdateManyWithoutReviewCommentsInput = {
+export type ReportsUncheckedUpdateManyWithoutCommentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   reporter_id?: Prisma.StringFieldUpdateOperationsInput | string
   review_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.StringFieldUpdateOperationsInput | string
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-
-/**
- * Count Type ReportsCountOutputType
- */
-
-export type ReportsCountOutputType = {
-  reviewComments: number
-}
-
-export type ReportsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  reviewComments?: boolean | ReportsCountOutputTypeCountReviewCommentsArgs
-}
-
-/**
- * ReportsCountOutputType without action
- */
-export type ReportsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ReportsCountOutputType
-   */
-  select?: Prisma.ReportsCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * ReportsCountOutputType without action
- */
-export type ReportsCountOutputTypeCountReviewCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReviewCommentsWhereInput
-}
 
 
 export type ReportsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   reporter_id?: boolean
   review_id?: boolean
+  profile_id?: boolean
+  comment_id?: boolean
   reason?: boolean
   reason_type?: boolean
   is_checked?: boolean
   created_at?: boolean
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
-  reviewComments?: boolean | Prisma.Reports$reviewCommentsArgs<ExtArgs>
-  _count?: boolean | Prisma.ReportsCountOutputTypeDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
+  comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
 }, ExtArgs["result"]["reports"]>
 
 export type ReportsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   reporter_id?: boolean
   review_id?: boolean
+  profile_id?: boolean
+  comment_id?: boolean
   reason?: boolean
   reason_type?: boolean
   is_checked?: boolean
   created_at?: boolean
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
+  profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
+  comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
 }, ExtArgs["result"]["reports"]>
 
 export type ReportsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   reporter_id?: boolean
   review_id?: boolean
+  profile_id?: boolean
+  comment_id?: boolean
   reason?: boolean
   reason_type?: boolean
   is_checked?: boolean
   created_at?: boolean
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
+  profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
+  comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
 }, ExtArgs["result"]["reports"]>
 
 export type ReportsSelectScalar = {
   id?: boolean
   reporter_id?: boolean
   review_id?: boolean
+  profile_id?: boolean
+  comment_id?: boolean
   reason?: boolean
   reason_type?: boolean
   is_checked?: boolean
   created_at?: boolean
 }
 
-export type ReportsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reporter_id" | "review_id" | "reason" | "reason_type" | "is_checked" | "created_at", ExtArgs["result"]["reports"]>
+export type ReportsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reporter_id" | "review_id" | "profile_id" | "comment_id" | "reason" | "reason_type" | "is_checked" | "created_at", ExtArgs["result"]["reports"]>
 export type ReportsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
-  reviewComments?: boolean | Prisma.Reports$reviewCommentsArgs<ExtArgs>
-  _count?: boolean | Prisma.ReportsCountOutputTypeDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
+  comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
 }
 export type ReportsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
+  profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
+  comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
 }
 export type ReportsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
+  profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
+  comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
 }
 
 export type $ReportsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -848,12 +1053,15 @@ export type $ReportsPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     reporter: Prisma.$UserPayload<ExtArgs>
     review: Prisma.$ReviewsPayload<ExtArgs> | null
-    reviewComments: Prisma.$ReviewCommentsPayload<ExtArgs>[]
+    profile: Prisma.$UserPayload<ExtArgs> | null
+    comment: Prisma.$ReviewCommentsPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     reporter_id: string
     review_id: string | null
+    profile_id: string | null
+    comment_id: string | null
     reason: string
     reason_type: $Enums.ReportTypes
     is_checked: boolean
@@ -1254,7 +1462,8 @@ export interface Prisma__ReportsClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   reporter<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   review<T extends Prisma.Reports$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reports$reviewArgs<ExtArgs>>): Prisma.Prisma__ReviewsClient<runtime.Types.Result.GetResult<Prisma.$ReviewsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  reviewComments<T extends Prisma.Reports$reviewCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reports$reviewCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewCommentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  profile<T extends Prisma.Reports$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reports$profileArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  comment<T extends Prisma.Reports$commentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reports$commentArgs<ExtArgs>>): Prisma.Prisma__ReviewCommentsClient<runtime.Types.Result.GetResult<Prisma.$ReviewCommentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1287,6 +1496,8 @@ export interface ReportsFieldRefs {
   readonly id: Prisma.FieldRef<"Reports", 'String'>
   readonly reporter_id: Prisma.FieldRef<"Reports", 'String'>
   readonly review_id: Prisma.FieldRef<"Reports", 'String'>
+  readonly profile_id: Prisma.FieldRef<"Reports", 'String'>
+  readonly comment_id: Prisma.FieldRef<"Reports", 'String'>
   readonly reason: Prisma.FieldRef<"Reports", 'String'>
   readonly reason_type: Prisma.FieldRef<"Reports", 'ReportTypes'>
   readonly is_checked: Prisma.FieldRef<"Reports", 'Boolean'>
@@ -1706,9 +1917,28 @@ export type Reports$reviewArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * Reports.reviewComments
+ * Reports.profile
  */
-export type Reports$reviewCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Reports$profileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Reports.comment
+ */
+export type Reports$commentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the ReviewComments
    */
@@ -1722,11 +1952,6 @@ export type Reports$reviewCommentsArgs<ExtArgs extends runtime.Types.Extensions.
    */
   include?: Prisma.ReviewCommentsInclude<ExtArgs> | null
   where?: Prisma.ReviewCommentsWhereInput
-  orderBy?: Prisma.ReviewCommentsOrderByWithRelationInput | Prisma.ReviewCommentsOrderByWithRelationInput[]
-  cursor?: Prisma.ReviewCommentsWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ReviewCommentsScalarFieldEnum | Prisma.ReviewCommentsScalarFieldEnum[]
 }
 
 /**

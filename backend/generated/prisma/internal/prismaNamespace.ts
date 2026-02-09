@@ -1685,6 +1685,8 @@ export const ReportsScalarFieldEnum = {
   id: 'id',
   reporter_id: 'reporter_id',
   review_id: 'review_id',
+  profile_id: 'profile_id',
+  comment_id: 'comment_id',
   reason: 'reason',
   reason_type: 'reason_type',
   is_checked: 'is_checked',

@@ -9,7 +9,7 @@ import {
     ReviewResponseDeleteDto,
     ReviewResponseDto,
     ReviewUpdateDto
-} from "../../../types/reviews/review.dto";
+} from "../../../types/reviews/review.dto.js";
 
 class ReviewController extends Controller {
 

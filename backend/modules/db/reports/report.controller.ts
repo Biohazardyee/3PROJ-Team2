@@ -1,33 +1,40 @@
 import type {Request, Response, NextFunction} from 'express';
 import {ReportService, reportService} from './report.service.js';
 import {BadRequest} from '../../../utils/errors.js';
+import {Controller} from "../../controller.js";
+import {
+    ReportAddDto, ReportDeleteResponseDto,
+    ReportResponseAddDto,
+    ReportResponseDto,
+} from "../../../types/reports/report.dto.js";
 
-class ReportController {
+class ReportController extends Controller {
 
     constructor(private readonly service: ReportService = reportService) {
+        super();
     }
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                reporter_id,
-                review_id,
-                reason,
-                reason_type
-            } = req.body;
+            const createData: ReportAddDto = {
+                reporter_id: req.body.reporter_id,
+                review_id: req.body.review_id,
+                profile_id: req.body.profile_id,
+                comment_id: req.body.comment_id,
+                reason: req.body.reason,
+                reason_type: req.body.reason_type,
+            };
 
-            if (!reporter_id || !reason || !reason_type) {
-                throw new BadRequest('reporter_id, reason and reason_type are required');
+            if (!createData.reporter_id || !createData.reason || !createData.reason_type) {
+                throw new BadRequest('Reporter_id, Reason and Reason_type are required');
             }
 
-            const report = await this.service.create({
-                reporter_id,
-                review_id,
-                reason,
-                reason_type
-            });
+            const report: ReportResponseAddDto = await this.service.create(createData);
 
-            res.status(201).json({message: 'Report created successfully', report});
+            res.status(201).json({
+                message: 'Report created successfully',
+                report
+            });
         } catch (error) {
             next(error);
         }
@@ -35,8 +42,11 @@ class ReportController {
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const reports = await this.service.getAll();
-            res.status(200).json({message: 'Reports retrieved successfully', reports});
+            const reports: ReportResponseDto[] = await this.service.getAll();
+            res.status(201).json({
+                message: 'Reports retrieved successfully',
+                reports
+            });
         } catch (error) {
             next(error);
         }
@@ -44,16 +54,15 @@ class ReportController {
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('Report id is required');
             }
 
-            const report = await this.service.getById(id);
-            res.status(200).json({message: 'Report retrieved successfully', report});
+            const report: ReportResponseDto = await this.service.getById(req.params.id);
+            res.status(200).json({
+                message: 'Report retrieved successfully',
+                report
+            });
         } catch (error) {
             next(error);
         }
@@ -61,50 +70,37 @@ class ReportController {
 
     async getByReview(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                review_id
-            } = req.params;
-
-            if (!review_id) {
+            if (!req.params.review_id) {
                 throw new BadRequest('review_id is required');
             }
 
-            const reports = await this.service.getByReview(review_id);
-            res.status(200).json({message: 'Reports retrieved successfully', reports});
+            const reports: ReportResponseDto[] = await this.service.getByReview(req.params.review_id);
+
+            res.status(200).json({
+                message: 'Reports retrieved successfully',
+                reports
+            });
         } catch (error) {
             next(error);
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
-                throw new BadRequest('Report id is required');
-            }
-
-            const report = await this.service.update(id);
-            res.status(200).json({message: 'Report marked as checked', report});
-        } catch (error) {
-            next(error);
-        }
+    async update(): Promise<void> {
+        // no implementation needed.
     }
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('Report id is required');
             }
 
-            const report = await this.service.delete(id);
-            res.status(200).json({message: 'Report deleted', report});
+            const report: ReportDeleteResponseDto = await this.service.delete(req.params.id);
+            res.status(201).json({
+                message: 'Report deleted',
+                report
+            });
         } catch (error) {
             next(error);
         }

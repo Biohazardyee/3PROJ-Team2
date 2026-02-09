@@ -1,8 +1,8 @@
 import {BaseMapper} from '../base.mapper';
-import {ReviewLikes,} from "../../generated/prisma/browser";
-import {ReviewLikeResponseDto} from "../../types/reviews/review.like.dto";
+import {ReviewLikes,} from "../../generated/prisma/browser.js";
+import {ReviewLikeResponseDto} from "../../types/reviews/review.like.dto.js";
 
-class ReviewMapper extends BaseMapper<ReviewLikes, ReviewLikeResponseDto> {
+class ReviewLikeMapper extends BaseMapper<ReviewLikes, ReviewLikeResponseDto> {
 
     /**
      * Implémentation de la méthode abstraite
@@ -14,8 +14,6 @@ class ReviewMapper extends BaseMapper<ReviewLikes, ReviewLikeResponseDto> {
             created_at: reviewLike.created_at
         };
     }
-
-
 }
 
-export const reviewLikeMapper = new ReviewMapper();
+export const reviewLikeMapper = new ReviewLikeMapper();

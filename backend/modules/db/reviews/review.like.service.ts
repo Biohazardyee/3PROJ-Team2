@@ -1,14 +1,14 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
-import {isValidStringLength, isEmptyString} from "../../../utils/helpers.js";
+import {isEmptyString} from "../../../utils/helpers.js";
+import {ReviewLikeAddDto, ReviewLikeResponseDto} from "../../../types/reviews/review.like.dto.js";
+import {User, Reviews} from "../../../generated/prisma/client.js";
+import {ReviewLikes} from "../../../generated/prisma/browser.js";
+import {reviewLikeMapper} from "../../../mappers/reviews/review.like.mapper.js";
 
 export class ReviewLikeService {
 
-    async create(data: {
-        user_id: string,
-        review_id: string,
-        created_at: Date,
-    }) {
+    async create(data: ReviewLikeAddDto): Promise<ReviewLikeResponseDto> {
 
         if (isEmptyString(data.user_id)) {
             throw new BadRequest("User_id cannot be empty");
@@ -18,7 +18,7 @@ export class ReviewLikeService {
             throw new BadRequest("Review_id cannot be empty");
         }
 
-        const user = await PrismaDb.user.findUnique({
+        const user: User | null = await PrismaDb.user.findUnique({
             where: {
                 id: data.user_id,
             }
@@ -28,7 +28,7 @@ export class ReviewLikeService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const review = await PrismaDb.reviews.findUnique({
+        const review: Reviews | null = await PrismaDb.reviews.findUnique({
             where: {
                 id: data.review_id,
             }
@@ -38,7 +38,7 @@ export class ReviewLikeService {
             throw new BadRequest('The review doesn\'t exist');
         }
 
-        const alreadyLiked = await PrismaDb.reviewLikes.findUnique({
+        const alreadyLiked: ReviewLikes | null = await PrismaDb.reviewLikes.findUnique({
             where: {
                 user_id_review_id: {
                     user_id: data.user_id,
@@ -51,28 +51,24 @@ export class ReviewLikeService {
             throw new BadRequest('Already Liked');
         }
 
-        return PrismaDb.reviewLikes.create({
+        const reviewLike: ReviewLikes = await PrismaDb.reviewLikes.create({
             data,
-            select: {
-                user_id: true,
-                review_id: true,
-                created_at: true,
-            },
         });
+
+        return reviewLikeMapper.toDto(reviewLike);
     }
 
-
-    async getAll() {
-        return PrismaDb.reviewLikes.findMany({
-            select: {
-                user_id: true,
-                review_id: true,
-                created_at: true,
+    async getAll(): Promise<ReviewLikeResponseDto[]> {
+        const reviewLikes: ReviewLikes[] = await PrismaDb.reviewLikes.findMany({
+            orderBy: {
+                created_at: 'desc'
             }
         });
+
+        return reviewLikeMapper.toDtoList(reviewLikes);
     }
 
-    async getById(user_id: string, review_id: string) {
+    async getById(user_id: string, review_id: string): Promise<ReviewLikeResponseDto> {
 
         if (isEmptyString(user_id)) {
             throw new BadRequest('User_id cannot be empty');
@@ -82,25 +78,20 @@ export class ReviewLikeService {
             throw new BadRequest('Review_id cannot be empty');
         }
 
-        const reviewLike = await PrismaDb.reviewLikes.findUnique({
+        const reviewLike: ReviewLikes | null = await PrismaDb.reviewLikes.findUnique({
             where: {
                 user_id_review_id: {
                     user_id: user_id,
                     review_id: review_id
                 },
             },
-            select: {
-                user_id: true,
-                review_id: true,
-                created_at: true
-            }
         });
 
         if (!reviewLike) {
             throw new NotFound('ReviewLike not found');
         }
 
-        return reviewLike;
+        return reviewLikeMapper.toDto(reviewLike);
     }
 
     async update(): Promise<null> {
@@ -118,23 +109,36 @@ export class ReviewLikeService {
             throw new BadRequest('Review_id cannot be empty');
         }
 
-        try {
-            return await PrismaDb.reviewLikes.delete({
-                where: {
-                    user_id_review_id: {
-                        user_id: user_id,
-                        review_id: review_id
-                    },
-                },
-                select: {
-                    user_id: true,
-                    review_id: true,
-                    created_at: true
-                },
-            });
-        } catch {
-            throw new NotFound('User not found');
+        const user: User | null = await PrismaDb.user.findUnique({
+            where: {
+                id: user_id,
+            }
+        })
+
+        if (!user) {
+            throw new BadRequest("The user doesn't exist");
         }
+
+        const review: Reviews | null = await PrismaDb.reviews.findUnique({
+            where: {
+                id: review_id,
+            }
+        })
+
+        if (!review) {
+            throw new BadRequest('The review doesn\'t exist');
+        }
+
+        const likeToDelete: ReviewLikes = await PrismaDb.reviewLikes.delete({
+            where: {
+                user_id_review_id: {
+                    user_id: user_id,
+                    review_id: review_id
+                },
+            },
+        })
+
+        return reviewLikeMapper.toDto(likeToDelete);
     }
 }
 

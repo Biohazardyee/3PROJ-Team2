@@ -8,16 +8,15 @@
 // @@id([user_id, review_id])
 // }
 
-
+// Response Interfaces
 export interface ReviewLikeResponseDto {
     user_id : string;
     review_id : string;
     created_at: Date;
 }
 
-export interface ReviewLikeAddResponseDto {
-    id: string;
+// Post Interfaces
+export interface ReviewLikeAddDto {
     user_id: string;
     review_id : string;
-    created_at: Date;
 }

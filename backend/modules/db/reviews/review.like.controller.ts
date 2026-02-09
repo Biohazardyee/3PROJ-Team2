@@ -1,8 +1,8 @@
 import type {Request, Response, NextFunction} from 'express';
-
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {ReviewLikeService, reviewLikeService} from './review.like.service.js';
+import {ReviewLikeAddDto, ReviewLikeResponseDto} from "../../../types/reviews/review.like.dto.js";
 
 class ReviewLikeController extends Controller {
 
@@ -12,36 +12,32 @@ class ReviewLikeController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id,
-                review_id,
-            } = req.body;
+            const createData: ReviewLikeAddDto = {
+                user_id: req.body.user_id,
+                review_id: req.body.review_id,
+            };
 
-            if (!review_id || !user_id) {
-                throw new BadRequest('User_id & review_id are required');
+            if (!createData.user_id || !createData.review_id) {
+                throw new BadRequest('User_id & Review_id is required');
             }
 
-            const reviewLike = await this.service.create({
-                review_id,
-                user_id,
-                created_at: new Date(),
-            });
+            const review: ReviewLikeResponseDto = await this.service.create(createData);
 
             res.status(201).json({
-                message: 'Like created successfully',
-                reviewLike,
+                message: 'Review created successfully',
+                review,
             });
-        } catch (err) {
-            next(err);
+        } catch (error) {
+            next(error);
         }
     }
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const reviewsLike = await this.service.getAll();
+            const reviewsLikes: ReviewLikeResponseDto[] = await this.service.getAll();
             res.status(201).json({
                 message: 'All likes retrieved successfully',
-                reviewsLike,
+                reviewsLikes,
             });
         } catch (err) {
             next(err);
@@ -50,16 +46,12 @@ class ReviewLikeController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id,
-                review_id
-            } = req.params;
 
-            if (!user_id || !review_id) {
+            if (!req.params.user_id || !req.params.review_id) {
                 throw new BadRequest('User_id & review_id are required');
             }
 
-            const reviewsLike = await this.service.getById(user_id, review_id);
+            const reviewsLike: ReviewLikeResponseDto = await this.service.getById(req.params.user_id, req.params.review_id);
             res.status(201).json({
                 message: `Like retrieved successfully`,
                 reviewsLike,
@@ -76,17 +68,12 @@ class ReviewLikeController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id,
-                review_id
-            } = req.params;
-
-            if (!user_id || !review_id) {
+            if (!req.params.user_id || !req.params.review_id) {
                 throw new BadRequest('User_id & review_id are required');
             }
 
-            const reviewsLike = await this.service.delete(user_id, review_id);
-            res.json({
+            const reviewsLike: ReviewLikeResponseDto = await this.service.delete(req.params.user_id, req.params.review_id);
+            res.status(201).json({
                 message: 'Like deleted successfully',
                 reviewsLike,
             });

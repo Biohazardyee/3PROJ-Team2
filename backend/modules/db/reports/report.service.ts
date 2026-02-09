@@ -1,39 +1,35 @@
 import {PrismaDb} from '../../../config/database.js';
-import {ReportTypes} from '../../../generated/prisma/browser.js';
+import {Reports, ReportTypes} from '../../../generated/prisma/browser.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
+import {
+    ReportAddDto, ReportDeleteResponseDto,
+    ReportResponseAddDto,
+    ReportResponseDto
+} from "../../../types/reports/report.dto.js";
+import {User, Reviews, Prisma, ReviewComments} from "../../../generated/prisma/browser.js";
+import {reportMapper} from "../../../mappers/reports/report.mapper.js";
+
 
 export class ReportService {
 
-    async create(data: {
-        reporter_id: string;
-        review_id?: string;
-        reason: string;
-        reason_type: ReportTypes;
-    }) {
-        const {
-            reporter_id,
-            review_id,
-            reason,
-            reason_type
-        } = data;
+    async create(data: ReportAddDto): Promise<ReportResponseAddDto> {
 
-
-        if (isEmptyString(reporter_id)) {
-            throw new BadRequest('reporter_id is required');
+        if (isEmptyString(data.reporter_id)) {
+            throw new BadRequest('Reporter_id is required');
         }
 
-        if (isEmptyString(reason)) {
-            throw new BadRequest('reason cannot be empty');
+        if (isEmptyString(data.reason)) {
+            throw new BadRequest('Reason cannot be empty');
         }
 
-        if (!reason_type || !Object.values(ReportTypes).includes(reason_type)) {
+        if (!data.reason_type || !Object.values(ReportTypes).includes(data.reason_type)) {
             throw new BadRequest('Invalid report type');
         }
 
-        const reporter = await PrismaDb.user.findUnique({
+        const reporter: User | null = await PrismaDb.user.findUnique({
             where: {
-                id: reporter_id
+                id: data.reporter_id
             }
         });
 
@@ -41,103 +37,112 @@ export class ReportService {
             throw new BadRequest('Reporter not found');
         }
 
-        if (reason_type === ReportTypes.review) {
+        const createData: Prisma.ReportsUncheckedCreateInput = {
+            reporter_id: data.reporter_id,
+            profile_id: data.profile_id,
+            reason: data.reason,
+            reason_type: data.reason_type,
+        }
 
-            if (!review_id) {
-                throw new BadRequest('review_id is required for review reports');
+        if (createData.reason_type === ReportTypes.review) {
+
+            if (!data.review_id) {
+                throw new BadRequest('Review_id is required for review reports');
             }
 
-            const review = await PrismaDb.reviews.findUnique({where: {id: review_id}});
+            const review: Reviews | null = await PrismaDb.reviews.findUnique({
+                where: {
+                    id: data.review_id
+                }
+            });
 
             if (!review) {
                 throw new BadRequest('Review not found');
             }
+
+            createData.review_id = data.review_id;
         }
 
-        return PrismaDb.reports.create({
-            data: {
-                reporter_id,
-                review_id,
-                reason,
-                reason_type
-            },
-            include: {
-                reporter: {
-                    select: {
-                        id: true,
-                        username: true
-                    }
-                },
-                review: {
-                    select: {
-                        id: true,
-                        rating: true
-                    }
-                },
-            },
-        });
+        if (createData.reason_type === ReportTypes.profile) {
+
+            if (!data.profile_id) {
+                throw new BadRequest('Profile_id is required for profile reports');
+            }
+
+            const user: User | null = await PrismaDb.user.findUnique({
+                where: {
+                    id: data.profile_id
+                }
+            });
+
+            if (!user) {
+                throw new BadRequest('Profile not found');
+            }
+
+            createData.profile_id = data.profile_id;
+        }
+
+        if (createData.reason_type === ReportTypes.comment) {
+
+            if (!data.comment_id) {
+                throw new BadRequest('Comment_id is required for profile reports');
+            }
+
+            const comment: ReviewComments | null = await PrismaDb.reviewComments.findUnique({
+                where: {
+                    id: data.comment_id
+                }
+            });
+
+            if (!comment) {
+                throw new BadRequest('Comment not found');
+            }
+
+            createData.comment_id = data.comment_id;
+        }
+
+        const report: Reports = await PrismaDb.reports.create({
+            data: createData,
+        })
+
+        return reportMapper.toAddDto(report)
+
     }
 
-    async getAll() {
-        return PrismaDb.reports.findMany({
-            include: {
-                reporter: {
-                    select: {
-                        id: true,
-                        username: true,
-                        email: true
-                    }
-                },
-                review: {
-                    select: {
-                        id: true,
-                        rating: true
-                    }
-                },
-            },
+    async getAll(): Promise<ReportResponseDto[]> {
+        const reports: Reports[] = await PrismaDb.reports.findMany({
             orderBy: {
-                created_at: 'desc'
-            },
+                created_at: 'asc'
+            }
         });
+
+        return reportMapper.toDtoList(reports)
     }
 
-    async getById(id: string) {
+    async getById(id: string): Promise<ReportResponseDto> {
+
         if (isEmptyString(id)) {
             throw new BadRequest('Report id is required');
         }
 
-        const report = await PrismaDb.reports.findUnique({
+        const report: Reports | null = await PrismaDb.reports.findUnique({
             where: {
                 id
-            },
-            include: {
-                reporter: {
-                    select: {
-                        id: true,
-                        username: true,
-                        email: true
-                    }
-                },
-                review: {
-                    select: {
-                        id: true,
-                        rating: true
-                    }
-                },
             },
         });
 
         if (!report) throw new NotFound('Report not found');
-        return report;
+
+        return reportMapper.toDto(report)
     }
 
-    async getByReview(review_id: string) {
+    async getByReview(review_id: string): Promise<ReportResponseDto[]> {
 
         if (isEmptyString(review_id)) {
             throw new BadRequest('review_id is required');
         }
 
-        const review = await PrismaDb.reviews.findUnique({
+        const review: Reviews | null = await PrismaDb.reviews.findUnique({
             where: {
                 id: review_id
             }
@@ -147,31 +152,29 @@ export class ReportService {
             throw new NotFound('Review not found');
         }
 
-        return PrismaDb.reports.findMany({
+        const reports: Reports[] = await PrismaDb.reports.findMany({
             where: {
                 review_id
             },
-            include: {
-                reporter: {
-                    select: {
-                        id: true,
-                        username: true
-                    }
-                },
-            },
             orderBy: {
                 created_at: 'desc'
-            },
+            }
         });
+
+        return reportMapper.toDtoList(reports);
     }
 
-    async update(id: string) {
+    async update(): Promise<void> {
+        // no implementation needed.
+    }
+
+    async delete(id: string): Promise<ReportDeleteResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Report id is required');
         }
 
-        const report = await PrismaDb.reports.findUnique({
+        const report: Reports | null = await PrismaDb.reports.findUnique({
             where: {
                 id
             }
@@ -181,65 +184,13 @@ export class ReportService {
             throw new NotFound('Report not found');
         }
 
-        return PrismaDb.reports.update({
-            where: {
-                id
-            },
-            data: {
-                is_checked: true
-            },
-            include: {
-                reporter: {
-                    select: {
-                        id: true,
-                        username: true
-                    }
-                },
-                review: {
-                    select: {
-                        id: true,
-                        rating: true
-                    }
-                },
-            },
-        });
-    }
-
-    async delete(id: string) {
-
-        if (isEmptyString(id)) {
-            throw new BadRequest('Report id is required');
-        }
-
-        const report = await PrismaDb.reports.findUnique({
+        const reportToDelete: Reports = await PrismaDb.reports.delete({
             where: {
                 id
             }
-        });
+        })
 
-        if (!report) {
-            throw new NotFound('Report not found');
-        }
-
-        return PrismaDb.reports.delete({
-            where: {
-                id
-            },
-            include: {
-                reporter: {
-                    select: {
-                        id: true,
-                        username: true
-                    }
-                },
-                review: {
-                    select: {
-                        id: true,
-                        rating: true
-                    }
-                },
-            },
-        });
+        return reportMapper.toDto(reportToDelete);
     }
 }
 

@@ -1,8 +1,12 @@
 import type {Request, Response, NextFunction} from 'express';
-
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {ReviewCommentService, reviewCommentService} from './review.comment.service.js';
+import {
+    ReviewCommentAddDto,
+    ReviewCommentResponseDto,
+    ReviewCommentUpdateDto
+} from "../../../types/reviews/review.comment.dto.js";
 
 class ReviewCommentController extends Controller {
 
@@ -12,30 +16,17 @@ class ReviewCommentController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id,
-                review_id,
-                content,
-            } = req.body;
+            const createData: ReviewCommentAddDto = {
+                user_id: req.body.user_id,
+                review_id: req.body.review_id,
+                content: req.body.content
+            };
 
-            if (!review_id) {
-                throw new BadRequest('Review_id is required');
+            if (!createData.user_id || !createData.review_id || !createData.content) {
+                throw new BadRequest('Review_id, user_id and content are required');
             }
 
-            if (!user_id) {
-                throw new BadRequest('User_id is required');
-            }
-
-            if (!content) {
-                throw new BadRequest('Content is required');
-            }
-
-            const reviewComment = await this.service.create({
-                review_id,
-                user_id,
-                content,
-                created_at: new Date(),
-            });
+            const reviewComment: ReviewCommentAddDto = await this.service.create(createData);
 
             res.status(201).json({
                 message: 'Comment created successfully',
@@ -48,7 +39,7 @@ class ReviewCommentController extends Controller {
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const reviewsComment = await this.service.getAll();
+            const reviewsComment: ReviewCommentResponseDto[] = await this.service.getAll();
             res.status(201).json({
                 message: 'All comments retrieved successfully',
                 reviewsComment,
@@ -60,15 +51,12 @@ class ReviewCommentController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('ID is required');
             }
 
-            const reviewComment = await this.service.getById(id);
+            const reviewComment: ReviewCommentResponseDto = await this.service.getById(req.params.id);
 
             res.status(201).json({
                 message: `Comment retrieved successfully`,
@@ -87,25 +75,21 @@ class ReviewCommentController extends Controller {
                 throw new BadRequest('ID is required');
             }
 
-            const {
-                content,
-            } = req.body;
+            const updateData: ReviewCommentUpdateDto = {};
 
-            let data: any = {}
-
-            if (content) {
-                data.content = content;
+            if (req.body.content !== undefined) {
+                updateData.content = req.body.content;
             }
 
-            if (Object.keys(data).length === 0) {
-                throw new BadRequest("No fields provided")
+            if (Object.keys(updateData).length === 0) {
+                throw new BadRequest('No fields provided');
             }
 
-            const reviewComment = this.service.update(id, data)
+            const review: ReviewCommentResponseDto = await this.service.update(id, updateData);
 
             res.status(201).json({
-                message: `Comment updated successfully`,
-                reviewComment,
+                message: 'Review updated successfully',
+                review,
             });
         } catch (err) {
             next(err);
@@ -114,16 +98,14 @@ class ReviewCommentController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('ID is required');
             }
 
-            const reviewComment = await this.service.delete(id);
-            res.json({
+            const reviewComment: ReviewCommentResponseDto = await this.service.delete(req.params.id);
+
+            res.status(201).json({
                 message: 'Comment deleted successfully',
                 reviewComment,
             });
