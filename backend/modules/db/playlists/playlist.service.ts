@@ -1,15 +1,19 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
-import {isEmptyString, isValidStringLength} from "../../../utils/helpers.js";
+import {isEmptyString, isValidBoolean, isValidStringLength} from "../../../utils/helpers.js";
+import {
+    PlaylistAddDto,
+    PlaylistResponseAddDto, PlaylistResponseDeleteDto,
+    PlaylistResponseDto,
+    PlaylistResponseUpdateDto, PlaylistUpdateDto
+} from "../../../types/playlists/playlist.dto.js";
+import {Playlists, Reports, User} from "../../../generated/prisma/browser.js";
+import {playlistMapper} from "../../../mappers/playlists/playlist.mapper.js";
+import {Prisma} from "../../../generated/prisma/client";
 
 export class PlaylistService {
 
-    async create(data: {
-        name: string,
-        user_id: string,
-        is_public: boolean
-        created_at: Date,
-    }) {
+    async create(data: PlaylistAddDto): Promise<PlaylistResponseAddDto> {
 
         if (isEmptyString(data.name)) {
             throw new BadRequest('Playlist name cannot be empty');
@@ -25,7 +29,11 @@ export class PlaylistService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user = await PrismaDb.user.findUnique({
+        if (!isValidBoolean(data.is_public)) {
+            throw new BadRequest('Is_public must be a boolean value');
+        }
+
+        const user: User | null = await PrismaDb.user.findUnique({
             where: {
                 id: data.user_id
             },
@@ -35,9 +43,9 @@ export class PlaylistService {
             throw new BadRequest('User with this id does not exist');
         }
 
-        const cleanName = data.name.trim();
+        const cleanName: string = data.name.trim();
 
-        const exists = await PrismaDb.playlist.findFirst({
+        const exists: Playlists | null = await PrismaDb.playlists.findFirst({
             where: {
                 user_id: data.user_id,
                 name: cleanName,
@@ -45,29 +53,23 @@ export class PlaylistService {
         });
 
         if (exists) {
-            throw new BadRequest(
-                'Playlist with this name already exists for the user'
-            );
+            throw new BadRequest('Playlist with this name already exists for the user');
         }
 
-        return PrismaDb.playlist.create({
-            data,
-            select: {
-                id: true,
-                name: true,
-                created_at: true,
-                user_id: true,
-            },
+        const playlist: Playlists = await PrismaDb.playlists.create({
+            data
         });
+
+        return playlistMapper.toAddDto(playlist);
     }
 
-    async getPlaylistsByUserId(user_id: string) {
+    async getPlaylistsByUserId(user_id: string): Promise<PlaylistResponseDto[]> {
 
         if (isEmptyString(user_id)) {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user = await PrismaDb.user.findUnique({
+        const user: User | null = await PrismaDb.user.findUnique({
             where: {
                 id: user_id
             },
@@ -77,46 +79,33 @@ export class PlaylistService {
             throw new BadRequest('User with this id does not exist');
         }
 
-        return PrismaDb.playlist.findMany({
+        const playlists: Playlists[] = await PrismaDb.playlists.findMany({
             where: {
                 user_id
             },
-            select: {
-                id: true,
-                name: true,
-                is_public: true,
-                created_at: true,
-                user_id: true,
-            },
         });
+
+        return playlistMapper.toDtoListFiltered(playlists);
     }
 
-    async getAll() {
-        return PrismaDb.playlist.findMany({
-            select: {
-                id: true,
-                name: true,
-                user_id: true,
-                is_public: true,
-                created_at: true,
-            },
+    async getAll(): Promise<PlaylistResponseDto[]> {
+        const playlists: Playlists[] = await PrismaDb.playlists.findMany({
+            orderBy: {
+                created_at: 'asc'
+            }
         });
+
+        return playlistMapper.toDtoList(playlists);
     }
 
-    async getById(id: string) {
+    async getById(id: string): Promise<PlaylistResponseDto> {
         if (isEmptyString(id)) {
             throw new BadRequest('Playlist id cannot be empty');
         }
 
-        const playlist = await PrismaDb.playlist.findUnique({
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
             where: {
                 id
-            },
-            select: {
-                id: true,
-                name: true,
-                created_at: true,
-                user_id: true,
             },
         });
 
@@ -124,28 +113,28 @@ export class PlaylistService {
             throw new NotFound('Playlist not found');
         }
 
-        return playlist;
+        return playlistMapper.toDto(playlist);
     }
 
-    async update(id: string, data: {
-        name: string,
-        user_id: string,
-        is_public: boolean
-    }) {
+    async update(id: string, data: PlaylistUpdateDto): Promise<PlaylistResponseUpdateDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('ID cannot be empty');
         }
 
-        const allowedFields: string[] = ['name', 'is_public'];
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
+            where: {
+                id
+            },
+        });
 
-        for (const key of Object.keys(data)) {
-            if (!allowedFields.includes(key)) {
-                throw new BadRequest(`Field "${key}" cannot be updated`);
-            }
+        if (!playlist) {
+            throw new NotFound('Playlist not found');
         }
 
-        if (data.name) {
+        const updateData: Prisma.PlaylistsUpdateInput = {};
+
+        if (data.name !== undefined) {
             if (isEmptyString(data.name)) {
                 throw new BadRequest('Playlist name cannot be empty');
             }
@@ -156,10 +145,10 @@ export class PlaylistService {
                 );
             }
 
-            const exists = await PrismaDb.playlist.findFirst({
+            const exists: Playlists | null = await PrismaDb.playlists.findFirst({
                 where: {
                     name: data.name.trim(),
-                    user_id: data.user_id,
+                    user_id: playlist.user_id,
                 },
             });
 
@@ -168,51 +157,49 @@ export class PlaylistService {
                     'Playlist with this name already exists for the user'
                 );
             }
+
+            updateData.name = data.name.trim();
         }
 
-        try {
-            return await PrismaDb.playlist.update({
-                where: {
-                    id: id,
-                },
-                data: {
-                    name: data.name?.trim(),
-                    is_public: data.is_public,
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    user_id: true,
-                    created_at: true,
-                    updated_at: true,
-                },
-            });
-        } catch {
-            throw new NotFound('Playlist not found or unauthorized');
+        if (data.is_public !== undefined) {
+            if (!isValidBoolean(data.is_public)) {
+                throw new BadRequest('Is_public must be a boolean value');
+            }
+
+            updateData.is_public = data.is_public;
         }
+
+        const updatedPlaylist: Playlists = await PrismaDb.playlists.update({
+            where: {
+                id
+            },
+            data: updateData,
+        });
+
+        return playlistMapper.toUpdateDto(updatedPlaylist);
     }
 
-    async delete(id: string) {
+    async delete(id: string): Promise<PlaylistResponseDeleteDto> {
         if (isEmptyString(id)) {
             throw new BadRequest('Playlist id cannot be empty');
         }
 
-        try {
-            return await PrismaDb.playlist.delete({
-                where: {
-                    id
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    created_at: true,
-                    user_id: true,
-                },
-            });
-        } catch {
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if (!playlist) {
             throw new NotFound('Playlist not found');
         }
+
+        const deletePlaylist: Playlists = await PrismaDb.playlists.delete({
+            where: {
+                id
+            }
+        });
+
+        return playlistMapper.toDeleteDto(deletePlaylist);
     }
 }
-
-export const playlistService = new PlaylistService();

@@ -247,7 +247,7 @@ export type PlaylistsScalarWhereWithAggregatesInput = {
 export type PlaylistsCreateInput = {
   id?: string
   name: string
-  is_public?: boolean
+  is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPlaylistsInput
@@ -258,7 +258,7 @@ export type PlaylistsUncheckedCreateInput = {
   id?: string
   user_id: string
   name: string
-  is_public?: boolean
+  is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
   items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutPlaylistInput
@@ -288,7 +288,7 @@ export type PlaylistsCreateManyInput = {
   id?: string
   user_id: string
   name: string
-  is_public?: boolean
+  is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -416,7 +416,7 @@ export type PlaylistsUpdateOneRequiredWithoutItemsNestedInput = {
 export type PlaylistsCreateWithoutUserInput = {
   id?: string
   name: string
-  is_public?: boolean
+  is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
   items?: Prisma.PlaylistItemsCreateNestedManyWithoutPlaylistInput
@@ -425,7 +425,7 @@ export type PlaylistsCreateWithoutUserInput = {
 export type PlaylistsUncheckedCreateWithoutUserInput = {
   id?: string
   name: string
-  is_public?: boolean
+  is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
   items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutPlaylistInput
@@ -472,7 +472,7 @@ export type PlaylistsScalarWhereInput = {
 export type PlaylistsCreateWithoutItemsInput = {
   id?: string
   name: string
-  is_public?: boolean
+  is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPlaylistsInput
@@ -482,7 +482,7 @@ export type PlaylistsUncheckedCreateWithoutItemsInput = {
   id?: string
   user_id: string
   name: string
-  is_public?: boolean
+  is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -524,7 +524,7 @@ export type PlaylistsUncheckedUpdateWithoutItemsInput = {
 export type PlaylistsCreateManyUserInput = {
   id?: string
   name: string
-  is_public?: boolean
+  is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }

@@ -1,5 +1,5 @@
 import {BaseMapper} from '../base.mapper.js';
-import {Reports, ReportTypes} from "../../generated/prisma/client.js";
+import {Reports} from "../../generated/prisma/client.js";
 import {ReportResponseAddDto, ReportResponseDto} from "../../types/reports/report.dto";
 
 

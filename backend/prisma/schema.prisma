@@ -112,7 +112,7 @@ model Playlists {
   user       User     @relation(fields: [user_id], references: [id])
   user_id    String
   name       String   @db.VarChar(30)
-  is_public  Boolean  @default(true)
+  is_public  Boolean
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

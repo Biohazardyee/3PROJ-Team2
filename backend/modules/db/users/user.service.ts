@@ -1,6 +1,6 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
-import {isValidStringLength, isEmptyString} from "../../../utils/helpers.js";
+import {isValidStringLength, isEmptyString, isValidBoolean} from "../../../utils/helpers.js";
 import {isValidEmail, isValidUsername, isValidPassword} from "./user.helper.js";
 import {Prisma} from '../../../generated/prisma/client.js';
 import bcrypt from "bcrypt";
@@ -285,6 +285,9 @@ export class UserService {
         }
 
         if (data.phone_number !== undefined) {
+            if (data.phone_number && isEmptyString(data.phone_number)) {
+                throw new BadRequest('Phone numer cannot be empty');
+            }
             updateData.phone_number = data.phone_number;
         }
 
@@ -296,10 +299,16 @@ export class UserService {
         }
 
         if (data.favorite_band !== undefined) {
+            if (data.favorite_band && isEmptyString(data.favorite_band)) {
+                throw new BadRequest('Favorite band cannot be empty');
+            }
             updateData.favorite_band = data.favorite_band;
         }
 
         if (data.has_notifications !== undefined) {
+            if (isValidBoolean(data.has_notifications)) {
+                throw new BadRequest('Has_notifications must be a boolean value');
+            }
             updateData.has_notifications = data.has_notifications;
         }
 

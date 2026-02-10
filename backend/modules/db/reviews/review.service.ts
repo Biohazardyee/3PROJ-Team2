@@ -124,6 +124,8 @@ export class ReviewService {
             if (!isValidFloatRating(data.rating)) {
                 throw new BadRequest('Rating must be a float between 0 and 5');
             }
+
+            updateData.rating = data.rating;
         }
 
         if (data.content !== undefined) {

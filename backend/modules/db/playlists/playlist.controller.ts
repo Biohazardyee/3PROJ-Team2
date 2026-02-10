@@ -3,6 +3,12 @@ import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {PlaylistService} from './playlist.service.js';
+import {
+    PlaylistAddDto,
+    PlaylistResponseAddDto, PlaylistResponseDeleteDto,
+    PlaylistResponseDto, PlaylistResponseUpdateDto,
+    PlaylistUpdateDto
+} from "../../../types/playlists/playlist.dto.js";
 
 class PlaylistController extends Controller {
 
@@ -12,22 +18,17 @@ class PlaylistController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                name,
-                user_id,
-                is_public,
-            } = req.body;
+            const createData: PlaylistAddDto = {
+                name: req.body.name,
+                user_id: req.body.user_id,
+                is_public: req.body.is_public,
+            };
 
-            if (!name || !user_id) {
-                throw new BadRequest('Missing required fields');
+            if (!createData.name || !createData.user_id || !createData.is_public) {
+                throw new BadRequest('Name, User_id and Is_Public are required');
             }
 
-            const playlist = await this.service.create({
-                name,
-                user_id,
-                is_public,
-                created_at: new Date(),
-            });
+            const playlist: PlaylistResponseAddDto = await this.service.create(createData);
 
             res.status(201).json({
                 message: 'Playlist created successfully',
@@ -40,15 +41,11 @@ class PlaylistController extends Controller {
 
     async getPlaylistsByUserId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id
-            } = req.params;
-
-            if (!user_id) {
+            if (!req.params.user_id) {
                 throw new BadRequest('Missing required fields');
             }
 
-            const playlists = await this.service.getPlaylistsByUserId(user_id);
+            const playlists: PlaylistResponseDto[] = await this.service.getPlaylistsByUserId(req.params.user_id);
 
             res.status(200).json({
                 message: 'Playlists retrieved successfully',
@@ -62,7 +59,7 @@ class PlaylistController extends Controller {
 
     async getAll(_req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const playlists = await this.service.getAll();
+            const playlists: PlaylistResponseDto[] = await this.service.getAll();
             res.status(200).json({
                 message: 'Playlists retrieved successfully',
                 playlists,
@@ -74,15 +71,11 @@ class PlaylistController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('Missing required fields');
             }
 
-            const playlist = await this.service.getById(id);
+            const playlist: PlaylistResponseDto = await this.service.getById(req.params.id);
             res.status(200).json({
                 message: 'Playlist retrieved successfully',
                 playlist,
@@ -94,55 +87,44 @@ class PlaylistController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
+            const id: string = req.params.id;
 
-            if (!id){
-                throw new BadRequest('Missing required fields');
+            if (!id) {
+                throw new BadRequest('Id is required');
             }
 
-            const {
-                name,
-                is_public
-            } = req.body;
+            const updateData: PlaylistUpdateDto = {};
 
-            let data: any = {}
-
-            if (name) {
-                data.name = name;
+            if (req.body.name !== undefined) {
+                updateData.name = req.body.name;
             }
 
-            if (is_public) {
-                data.is_public = is_public;
+            if (req.body.is_public !== undefined) {
+                updateData.is_public = req.body.is_public;
             }
 
-            if (Object.keys(data).length === 0) {
-                throw new BadRequest("No fields provided")
+            if (Object.keys(updateData).length === 0) {
+                throw new BadRequest('No fields provided');
             }
 
-            const playlist = await this.service.update(id, data);
+            const playlist: PlaylistResponseUpdateDto = await this.service.update(id, updateData);
 
-            res.status(200).json({
+            res.status(201).json({
                 message: 'Playlist updated successfully',
                 playlist,
             });
-        } catch (error) {
-            next(error);
+        } catch (err) {
+            next(err);
         }
     }
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('Missing required fields');
             }
 
-            const playlist = await this.service.delete(id);
+            const playlist: PlaylistResponseDeleteDto = await this.service.delete(req.params.id);
             res.status(200).json({
                 message: 'Playlist deleted successfully',
                 playlist,
