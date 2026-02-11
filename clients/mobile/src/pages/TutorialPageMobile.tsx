@@ -41,7 +41,7 @@ export default function Onboarding() {
     return (
         /* Degradé */
         <LinearGradient
-            colors={['#000000', '#2D1B4E', '#ad46ff']}
+            colors={['#000000', '#959496', '#dedede']}
             locations={[0, 0.6, 1]}
             style={styles.container}
         >

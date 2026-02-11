@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from 'expo-router';
@@ -12,7 +11,7 @@ export default function AutGuard() {
     const router = useRouter();
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <HeaderStart />
             <View style={styles.content}>
                 {/* Logo */}
@@ -63,7 +62,7 @@ export default function AutGuard() {
                 </TouchableOpacity>
 
             </View>
-        </SafeAreaView>
+        </View>
     );
 }
 

@@ -89,7 +89,7 @@ const HomeMobile: React.FC = () => {
                     <View style={styles.searchBar}>
                         <Ionicons name="search-outline" size={20} color="#888" style={{ marginRight: 10 }} />
                         <TextInput
-                            placeholder="Rechercher des albums ou des artistes"
+                            placeholder="Rechercher des albums etc..."
                             placeholderTextColor="#888"
                             style={styles.searchInput}
                         />
