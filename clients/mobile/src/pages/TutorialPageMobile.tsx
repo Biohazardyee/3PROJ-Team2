@@ -41,14 +41,29 @@ export default function Onboarding() {
     return (
         /* Degradé */
         <LinearGradient
-            colors={['#000000', '#959496', '#dedede']}
+            colors={['#000000', '#2D1B4E', '#ad46ff']}
             locations={[0, 0.6, 1]}
             style={styles.container}
         >
-            <SafeAreaView style={{ flex: 1 }}>
-
-                {/* Contenu du texte */}
+            <View style={{ flex: 1 }}>
+                <View style={styles.top}>
+                    {/* Fond Logo */}
+                    <LinearGradient
+                        colors={['#6366f1', '#ec4899']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.logo}
+                    >
+                        {/* Logo */}
+                        <Ionicons
+                            name="musical-notes-outline"
+                            size={50}
+                            color="white"
+                        />
+                    </LinearGradient>
+                </View>
                 <View style={styles.content}>
+                    {/* Contenu du texte */}
                     <Text style={styles.title}>{slides[currentIndex].title}</Text>
                     <Text style={styles.description}>{slides[currentIndex].text}</Text>
                 </View>
@@ -79,11 +94,11 @@ export default function Onboarding() {
                         <Ionicons
                             name={currentIndex === slides.length - 1 ? "checkmark-circle" : "arrow-forward"}
                             size={28}
-                            color="#ad46ff"
+                            color="#ffffff"
                         />
                     </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+            </View>
         </LinearGradient>
     );
 }
@@ -92,8 +107,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    top: {
+        flex: 1, 
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 20,
+    },
+    logo: {
+        width: 110,
+        height: 110,
+        borderRadius: 28, 
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 15,
+        elevation: 10,
+    },
     content: {
-        flex: 1,
+        flex: 2,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 40,
@@ -102,7 +135,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 32,
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: 16,
         textAlign: 'center',
     },
     description: {
@@ -112,11 +145,11 @@ const styles = StyleSheet.create({
         lineHeight: 26,
     },
     footer: {
+        flex : 1 ,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 30,
-        paddingBottom: 40,
     },
     navButton: {
         width: 50,
@@ -134,10 +167,10 @@ const styles = StyleSheet.create({
     },
     activeDot: {
         width: 24,
-        backgroundColor: '#ad46ff',
+        backgroundColor: '#ffffff',
     },
     inactiveDot: {
         width: 8,
-        backgroundColor: '#334155',
+        backgroundColor: '#848689',
     },
 });

@@ -33,7 +33,7 @@ const RegisterMobile: React.FC = () => {
         <InputMobile label="Nom d'utilisateur" placeholder="fan" icon="person-circle-outline" />
         <InputMobile label="Mot de passe" placeholder="••••••••" icon="lock-closed-outline" secureTextEntry />
 
-        <ButtonMobile title="Créer le compte" style={{ marginTop: 10 }} onPress={() => router.push('/onboarding' as any)} />
+        <ButtonMobile title="Créer le compte" style={{ marginTop: 10 }} onPress={() => router.push('/OnBoarding')} />
 
         <View style={styles.separator}>
           <View style={styles.line} /><Text style={styles.sepText}>OU</Text><View style={styles.line} />

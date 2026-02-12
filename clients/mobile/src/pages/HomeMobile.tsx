@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import HeaderStart from "@/src/components/HeaderStart";
+import { StatusBar } from 'expo-status-bar';
 
 // Données fictives pour les albums
 const ALBUMS = [
@@ -74,6 +75,8 @@ const HomeMobile: React.FC = () => {
     return (
 
         <View style={styles.container}>
+            {/* Ne fonctionne pas probablement à cause de Expo go */}
+            <StatusBar style='light' backgroundColor='#1C1C28' translucent={false}/>
             <HeaderStart />
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
