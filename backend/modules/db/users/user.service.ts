@@ -77,7 +77,7 @@ export class UserService {
             profile_picture: data.profile_picture,
         };
 
-        const user = await PrismaDb.user.create({
+        const user: User = await PrismaDb.user.create({
             data: createData,
         });
 

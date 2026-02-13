@@ -31,7 +31,7 @@ model User {
   review_comments      ReviewComments[]
   review_likes         ReviewLikes[]
   playlists            Playlists[]
-  follows              Follows[]         @relation("following")
+      follows              Follows[]         @relation("following")
   followers            Follows[]         @relation("followers")
   notifications        Notifications[]   @relation("user_notifications")
   notificationsRelated Notifications[]   @relation("user_related_notifications")

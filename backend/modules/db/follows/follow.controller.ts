@@ -1,22 +1,27 @@
-import type { Request, Response, NextFunction } from 'express';
-
-import { Controller } from '../../controller.js';
-import { BadRequest } from '../../../utils/errors.js';
+import type {Request, Response, NextFunction} from 'express';
+import {BadRequest} from '../../../utils/errors.js';
 import {FollowService, followService} from './follow.service.js';
+import {FollowCreateDto, FollowResponseDto} from "../../../types/follows/follows.dto";
 
 class FollowController {
 
-    constructor(private readonly service: FollowService = followService) { }
+    constructor(private readonly service: FollowService = followService) {
+    }
 
     async create(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { user_id, follow_user_id } = req.body;
 
-            if (!user_id || !follow_user_id) {
+            const creationData: FollowCreateDto = {
+                user_id: req.body.user_id,
+                follow_user_id: req.body.follow_user_id
+            }
+
+
+            if (!creationData.user_id || !creationData.follow_user_id) {
                 throw new BadRequest('user_id and follow_user_id are required');
             }
 
-            const follow = await this.service.create({ user_id, follow_user_id });
+            const follow: FollowResponseDto = await this.service.create(creationData);
 
             res.status(201).json({
                 message: 'User followed successfully',
@@ -29,17 +34,14 @@ class FollowController {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { user_id, follow_user_id } = req.body;
-
-            if (!user_id || !follow_user_id) {
-                throw new BadRequest('user_id and follow_user_id are required');
-            }
-
-            const unfollow = await this.service.delete(user_id, follow_user_id);
+            const unfollow: FollowResponseDto = await this.service.delete(
+                req.body.user_id,
+                req.body.follow_user_id
+            );
 
             res.status(200).json({
                 message: 'User unfollowed successfully',
-                unfollow,
+                data: unfollow,
             });
         } catch (error) {
             next(error);
@@ -48,17 +50,11 @@ class FollowController {
 
     async getFollowers(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { user_id } = req.params;
-
-            if (!user_id) {
-                throw new BadRequest('user_id is required');
-            }
-
-            const followers = await this.service.getFollowers(user_id);
+            const followers: FollowResponseDto[] = await this.service.getFollowers(req.params.user_id);
 
             res.status(200).json({
                 message: 'Followers retrieved successfully',
-                followers,
+                data: followers,
             });
         } catch (error) {
             next(error);
@@ -67,21 +63,16 @@ class FollowController {
 
     async getFollowing(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { user_id } = req.params;
-
-            if (!user_id) {
-                throw new BadRequest('user_id is required');
-            }
-
-            const following = await this.service.getFollowing(user_id);
+            const following: FollowResponseDto[] = await this.service.getFollowing(req.params.user_id);
 
             res.status(200).json({
                 message: 'Following retrieved successfully',
-                following,
+                data: following,
             });
         } catch (error) {
             next(error);
         }
     }
 }
+
 export default new FollowController();
