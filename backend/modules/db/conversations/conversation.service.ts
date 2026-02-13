@@ -1,14 +1,17 @@
-import { PrismaDb } from '../../../config/database.js';
-import { NotFound, BadRequest } from '../../../utils/errors.js';
-import { isValidStringLength, isEmptyString } from "../../../utils/helpers.js";
+import {PrismaDb} from '../../../config/database.js';
+import {NotFound, BadRequest} from '../../../utils/errors.js';
+import {isEmptyString} from "../../../utils/helpers.js";
+import {
+    ConversationAddDto,
+    ConversationAddResponseDto, ConversationResponseDeleteDto,
+    ConversationResponseDto
+} from "../../../types/conversations/conversations.dto";
+import {User, Conversations, Prisma} from "../../../generated/prisma/browser.js";
+import {conversationMapper} from "../../../mappers/conversations/conversations.mapper";
 
 export class ConversationService {
 
-    async create(data: {
-        user1_id: string,
-        user2_id: string,
-        created_at: Date,
-    }) {
+    async create(data: ConversationAddDto): Promise<ConversationAddResponseDto> {
 
         if (isEmptyString(data.user1_id)) {
             throw new BadRequest("User1_id cannot be empty");
@@ -18,7 +21,7 @@ export class ConversationService {
             throw new BadRequest("User2_id cannot be empty");
         }
 
-        const user1 = await PrismaDb.user.findUnique({
+        const user1: User | null = await PrismaDb.user.findUnique({
             where: {
                 id: data.user1_id,
             }
@@ -28,7 +31,7 @@ export class ConversationService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const user2 = await PrismaDb.user.findUnique({
+        const user2: User | null = await PrismaDb.user.findUnique({
             where: {
                 id: data.user2_id,
             }
@@ -38,7 +41,7 @@ export class ConversationService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const conversation = await PrismaDb.conversation.findUnique({
+        const conversation: Conversations | null = await PrismaDb.conversations.findUnique({
             where: {
                 user1_id_user2_id: {
                     user1_id: data.user1_id,
@@ -51,48 +54,44 @@ export class ConversationService {
             throw new BadRequest('The conversation already exists between these two users');
         }
 
-        return PrismaDb.conversation.create({
-            data,
-            select: {
-                user1_id: true,
-                user2_id: true,
-                created_at: true,
-            },
+        const createData: Prisma.ConversationsUncheckedCreateInput = {
+            user1_id: data.user1_id,
+            user2_id: data.user2_id,
+        }
+
+        const conversationToCreate = await PrismaDb.conversations.create({
+            data: createData,
         });
+
+        return conversationMapper.toAddDto(conversationToCreate)
     }
 
-    async getAll() {
-        return PrismaDb.conversation.findMany({
-            select: {
-                user1_id: true,
-                user2_id: true,
-                created_at: true,
+    async getAll(): Promise<ConversationResponseDto[]> {
+        const conversations: Conversations[] = await PrismaDb.conversations.findMany({
+            orderBy: {
+                created_at: 'desc'
             }
-        });
+        })
+        return conversationMapper.toDtoList(conversations);
     }
 
-    async getById(id: string) {
+    async getById(id: string): Promise<ConversationResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest("ID cannot be empty");
         }
 
-        const conversation = await PrismaDb.conversation.findUnique({
+        const conversation: Conversations | null = await PrismaDb.conversations.findUnique({
             where: {
-                id: id,
+                id
             },
-            select: {
-                user1_id: true,
-                user2_id: true,
-                created_at: true
-            }
         });
 
         if (!conversation) {
             throw new NotFound('Conversation not found');
         }
 
-        return conversation;
+        return conversationMapper.toDto(conversation);
     }
 
     async update(): Promise<null> {
@@ -100,22 +99,30 @@ export class ConversationService {
         return null
     }
 
-    async delete(id: string) {
+    async delete(id: string): Promise<ConversationResponseDeleteDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest("ID cannot be empty");
         }
 
-        return PrismaDb.conversation.delete({
+        const conversation: Conversations | null = await PrismaDb.conversations.findUnique({
             where: {
-                id: id,
+                id
             },
-            select: {
-                user1_id: true,
-                user2_id: true,
-                created_at: true
+        })
+
+        if (!conversation) {
+            throw new NotFound('Conversation not found');
+        }
+
+        const conversationToDelete: Conversations = await PrismaDb.conversations.delete({
+            where: {
+                id
             },
-        });
+        })
+
+
+        return conversationMapper.toDeleteDto(conversationToDelete)
     }
 }
 

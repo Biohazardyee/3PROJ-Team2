@@ -1,8 +1,13 @@
-import type { Request, Response, NextFunction } from 'express';
+import type {Request, Response, NextFunction} from 'express';
 
-import { Controller } from '../../controller.js';
-import { BadRequest } from '../../../utils/errors.js';
+import {Controller} from '../../controller.js';
+import {BadRequest} from '../../../utils/errors.js';
 import {ConversationService, conversationService} from './conversation.service.js';
+import {
+    ConversationAddDto,
+    ConversationAddResponseDto, ConversationResponseDeleteDto,
+    ConversationResponseDto
+} from "../../../types/conversations/conversations.dto";
 
 class ConversationController extends Controller {
 
@@ -12,27 +17,26 @@ class ConversationController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user1_id,
-                user2_id,
-            } = req.body;
 
-            if (!user1_id) {
+            const addData: ConversationAddDto = {
+                user1_id: req.body.user1_id,
+                user2_id: req.body.user2_id
+            }
+
+            if (!addData.user1_id) {
                 throw new BadRequest('User_id1 is required');
             }
 
-            if (!user2_id) {
+            if (!addData.user2_id) {
                 throw new BadRequest('User_id2 is required');
             }
 
-            const conversation = await this.service.create({
-                user1_id,
-                user2_id,
-                created_at: new Date(),
-            });
+            const conversation: ConversationAddResponseDto = await this.service.create(
+                addData
+            );
 
             res.status(201).json({
-                message: 'Conervsation created successfully',
+                message: 'Conversation created successfully',
                 conversation,
             });
         } catch (err) {
@@ -42,7 +46,7 @@ class ConversationController extends Controller {
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const conversations = await this.service.getAll();
+            const conversations: ConversationResponseDto[] = await this.service.getAll();
             res.status(201).json({
                 message: 'All conversations retrieved successfully',
                 conversations,
@@ -54,15 +58,12 @@ class ConversationController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('ID is required');
             }
 
-            const conversation = await this.service.getById(id);
+            const conversation: ConversationResponseDto = await this.service.getById(req.params.id);
 
             res.status(201).json({
                 message: `Conversation retrieved successfully`,
@@ -73,23 +74,20 @@ class ConversationController extends Controller {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction): Promise<null> {
+    async update(_req: Request, _res: Response, _next: NextFunction): Promise<null> {
         // This function don't have to be used for this table
         return null
     }
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('ID is required');
             }
 
-            const conversation = await this.service.delete(id);
-            res.json({
+            const conversation: ConversationResponseDeleteDto = await this.service.delete(req.params.id);
+            res.status(201).json({
                 message: 'Conversation deleted successfully',
                 conversation,
             });

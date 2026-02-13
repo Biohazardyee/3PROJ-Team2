@@ -1,43 +1,44 @@
 import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
-import {Prisma} from '../../../generated/prisma/client.js';
+import { Prisma} from '../../../generated/prisma/client.js';
+import {
+    ActivityAddDto,
+    ActivityDeleteResponseDto,
+    ActivityResponseDto
+} from '../../../types/activities/activities.dto.js';
+import {activityMapper} from '../../../mappers/activities/activities.mapper.js';
+import {Activitys} from "../../../generated/prisma/browser.js";
+
 
 export class ActivityService {
 
-    async create(data: Prisma.ActivityUncheckedCreateInput) {
-        const {
-            user_id,
-            action,
-            target_user_id,
-            review_id,
-            media_id,
-            rating_from_user
-        } = data;
+    async create(data: ActivityAddDto): Promise<ActivityResponseDto> {
 
-        if (isEmptyString(user_id)) {
+
+        if (isEmptyString(data.user_id)) {
             throw new BadRequest('The value of user_id cannot be empty');
         }
 
-        if (!action) {
+        if (!data.action) {
             throw new BadRequest('Invalid activity action');
         }
 
         const user = await PrismaDb.user.findUnique({
-            where: {id: user_id},
+            where: {id: data.user_id},
         });
 
         if (!user) {
             throw new BadRequest('User not found');
         }
 
-        if (target_user_id) {
-            if (target_user_id === user_id) {
+        if (data.target_user_id) {
+            if (data.target_user_id === data.user_id) {
                 throw new BadRequest('target_user_id cannot be the same as user_id');
             }
 
             const targetUser = await PrismaDb.user.findUnique({
-                where: {id: target_user_id},
+                where: {id: data.target_user_id},
             });
 
             if (!targetUser) {
@@ -45,9 +46,9 @@ export class ActivityService {
             }
         }
 
-        if (review_id) {
-            const review = await PrismaDb.review.findUnique({
-                where: {id: review_id},
+        if (data.review_id) {
+            const review = await PrismaDb.reviews.findUnique({
+                where: {id: data.review_id},
             });
 
             if (!review) {
@@ -55,9 +56,9 @@ export class ActivityService {
             }
         }
 
-        if (media_id) {
-            const media = await PrismaDb.media.findUnique({
-                where: {id: media_id},
+        if (data.media_id) {
+            const media = await PrismaDb.medias.findUnique({
+                where: {id: data.media_id},
             });
 
             if (!media) {
@@ -65,151 +66,114 @@ export class ActivityService {
             }
         }
 
-        if (rating_from_user !== undefined && rating_from_user !== null) {
-            if (rating_from_user < 0 || rating_from_user > 5) {
+        if (data.rating_from_user !== undefined && data.rating_from_user !== null) {
+            if (data.rating_from_user < 0 || data.rating_from_user > 5) {
                 throw new BadRequest('rating_from_user must be between 0 and 5');
             }
         }
 
-        return PrismaDb.activity.create({
-            data,
-            select: {
-                id: true,
-                user_id: true,
-                action: true,
-                target_user_id: true,
-                review_id: true,
-                media_id: true,
-                rating_from_user: true,
-                created_at: true,
-            },
+        const createData: Prisma.ActivitysUncheckedCreateInput = {
+            user_id: data.user_id,
+            action: data.action,
+            target_user_id: data.target_user_id || null,
+            review_id: data.review_id || null,
+            media_id: data.media_id || null,
+            rating_from_user: data.rating_from_user !== undefined ? data.rating_from_user : null,
+        };
+
+        const activity = await PrismaDb.activitys.create({
+            data: createData,
         });
+
+        return activityMapper.toDto(activity);
     }
 
-    async getByUserFeed(user_id: string) {
+    // async getByUserFeed(user_id: string) {
+    //
+    //     if (isEmptyString(user_id)) {
+    //         throw new BadRequest('The value of user_id cannot be empty');
+    //     }
+    //
+    //
+    //     const user: User | null = await PrismaDb.user.findUnique({
+    //         where: {
+    //             id: user_id
+    //         }
+    //     });
+    //
+    //     if (!user) {
+    //         throw new NotFound('User not found')
+    //     }
+    //
+    //     const following: {follow_user_id: string}[] = await PrismaDb.follows.findMany({
+    //         where: { user_id },
+    //         select: { follow_user_id: true },
+    //     });
+    //
+    //     const userIds: string[] = [user_id, ...following.map(f => f.follow_user_id)];
+    //
+    //     const activities: Activitys[] | null = await PrismaDb.activitys.findMany({
+    //         where: {
+    //             user_id: {
+    //                 in: userIds
+    //             }
+    //         },
+    //     });
+    //
+    //     return activityMapper.toGetUserFeedDto(activities)
+    // }
 
-        if (isEmptyString(user_id)) {
-            throw new BadRequest('The value of user_id cannot be empty');
-        }
-
-
-        const user = await PrismaDb.user.findUnique({
-            where: {
-                id: user_id
-            }
-        });
-
-        if (!user) {
-            throw new NotFound('User not found')
-        }
-
-        const following = await PrismaDb.follow.findMany({
-            where: {user_id},
-            select: {follow_user_id: true},
-        });
-
-        const userIds: string[] = [user_id, ...following.map(f => f.follow_user_id)];
-
-        return PrismaDb.activity.findMany({
-            where: {
-                user_id: {
-                    in: userIds
-                }
-            },
-            orderBy: {created_at: 'desc'},
-            select: {
-                id: true,
-                user_id: true,
-                action: true,
-                created_at: true,
-                rating_from_user: true,
-                target_user_id: true,
-                review_id: true,
-                media_id: true,
-                user: {
-                    select: {
-                        id: true,
-                        username: true
-                    }
-                },
-                target_user: {
-                    select: {
-                        id: true,
-                        username: true
-                    }
-                },
-                review: {
-                    select: {
-                        id: true, rating: true
-                    }
-                },
-                media: {
-                    select: {
-                        id: true,
-                        api_id: true
-                    }
-                },
-            },
-        });
-    }
-
-    async delete(id: string) {
+    async delete(id: string): Promise<ActivityDeleteResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Activity id cannot be empty');
         }
 
         try {
-            return await PrismaDb.activity.delete({
-                where: {id},
-                select: {id: true},
-            });
-        } catch {
-            throw new NotFound('Activity not found');
+            const activityToDelete: Activitys | null = await PrismaDb.activitys.delete(
+                {
+                    where: {
+                        id
+                    },
+                })
+
+            if (!activityToDelete) {
+                throw new BadRequest('Activity not found');
+            }
+
+
+           return activityMapper.ToDeleteDto(activityToDelete)
+        } catch(error) {
+            throw error;
         }
     }
 
-    async getAll() {
-        return PrismaDb.activity.findMany({
-            orderBy: {created_at: 'desc'},
-            select: {
-                id: true,
-                user_id: true,
-                action: true,
-                created_at: true,
-                target_user_id: true,
-                review_id: true,
-                media_id: true,
-                rating_from_user: true,
-            },
-        });
+    async getAll(): Promise<ActivityResponseDto[]> {
+
+        const activities: Activitys[] = await PrismaDb.activitys.findMany({
+            orderBy: {
+                created_at: 'desc'
+            }
+        })
+
+        return activityMapper.toDtoList(activities);
     }
 
-    async getById(id: string) {
+    async getById(id: string): Promise<ActivityResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Activity id cannot be empty');
         }
 
-        const activity = await PrismaDb.activity.findUnique({
+        const activity: Activitys | null = await PrismaDb.activitys.findUnique({
             where: {id},
-            select: {
-                id: true,
-                user_id: true,
-                action: true,
-                created_at: true,
-                target_user_id: true,
-                review_id: true,
-                media_id: true,
-                rating_from_user: true,
-            },
         });
 
         if (!activity) {
             throw new NotFound('Activity not found');
         }
 
-        return activity;
+        return activityMapper.toDto(activity);
     }
 }
 

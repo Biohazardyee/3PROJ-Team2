@@ -2,6 +2,11 @@ import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {ActivityService, activityService} from './activity.service.js';
+import {
+    ActivityAddDto,
+    ActivityDeleteResponseDto,
+    ActivityResponseDto
+} from '../../../types/activities/activities.dto.js';
 
 class ActivityController extends Controller {
 
@@ -11,27 +16,21 @@ class ActivityController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id,
-                action,
-                target_user_id,
-                review_id,
-                media_id,
-                rating_from_user
-            } = req.body;
 
-            if (!user_id || !action) {
+            const ActivityCreationData: ActivityAddDto = {
+                user_id: req.body.user_id,
+                action: req.body.action,
+                target_user_id: req.body.target_user_id,
+                review_id: req.body.review_id,
+                media_id: req.body.media_id,
+                rating_from_user: req.body.rating_from_user,
+            }
+
+            if (!ActivityCreationData.user_id || !ActivityCreationData.action) {
                 throw new BadRequest('user_id and action are required');
             }
 
-            const activity = await this.service.create({
-                user_id,
-                action,
-                target_user_id,
-                review_id,
-                media_id,
-                rating_from_user,
-            });
+            const activity: ActivityResponseDto = await this.service.create(ActivityCreationData);
 
             res.status(201).json({
                 message: 'Activity created successfully',
@@ -42,36 +41,36 @@ class ActivityController extends Controller {
         }
     }
 
-    async getFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const {user_id} = req.params;
-
-            if (!user_id) {
-                throw new BadRequest('user_id is required')
-            }
-
-            const activities = await this.service.getByUserFeed(user_id);
-
-            res.status(200).json({
-                message: 'Activity feed retrieved successfully',
-                activities,
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
+    // async getFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
+    //     try {
+    //
+    //
+    //         if (!req.params.user_id) {
+    //             throw new BadRequest('user_id is required')
+    //         }
+    //
+    //         const activities: ActivityResponseDto[] = await this.service.getByUserFeed(req.params.user_id);
+    //
+    //         res.status(201).json({
+    //             message: 'Activity feed retrieved successfully',
+    //             activities,
+    //         });
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // }
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {id} = req.params;
 
-            if (!id) {
+
+            if (!req.params.id) {
                 throw new BadRequest('Activity id is required');
             }
 
-            const activity = await this.service.delete(id);
+            const activity: ActivityDeleteResponseDto = await this.service.delete(req.params.id);
 
-            res.status(200).json({
+            res.status(201).json({
                 message: 'Activity deleted',
                 activity,
             });
@@ -80,10 +79,14 @@ class ActivityController extends Controller {
         }
     }
 
-    async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const activities = await this.service.getAll();
-            res.status(200).json(activities);
+            const activities: ActivityResponseDto[] = await this.service.getAll();
+            res.status(201).json(
+                {
+                    message: 'Retrieved activities list successfully',
+                    activities
+                });
         } catch (error) {
             next(error);
         }
@@ -91,14 +94,13 @@ class ActivityController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {id} = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('Activity id is required');
             }
 
-            const activity = await this.service.getById(id);
-            res.status(200).json(activity);
+            const activity: ActivityResponseDto = await this.service.getById(req.params.id);
+            res.status(201).json(activity);
         } catch (error) {
             next(error);
         }

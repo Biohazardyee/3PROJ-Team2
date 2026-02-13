@@ -103,7 +103,7 @@ class UserController extends Controller {
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const users: UserResponseDto[] = await this.service.getAll();
-            res.status(200).json(
+            res.status(201).json(
                 {
                     message: 'All users retrieved',
                     users
@@ -148,7 +148,7 @@ class UserController extends Controller {
                 throw new BadRequest('Id is required');
             }
             const user: UserResponseDto = await this.service.getById(req.params.id);
-            res.status(200).json({
+            res.status(201).json({
                 message: 'User retrieved successfully',
                 user
             });
@@ -260,7 +260,7 @@ class UserController extends Controller {
 
             const user: UserResponseDeleteDto = await this.service.delete(req.params.id);
 
-            res.status(200).json({
+            res.status(201).json({
                 message: 'User deleted successfully',
                 user,
             });
