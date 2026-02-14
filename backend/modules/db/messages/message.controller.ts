@@ -3,6 +3,12 @@ import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {MessageService, messageService} from './message.service.js';
+import {
+    MessageAddDto,
+    MessageAddResponseDto, MessageDeleteResponseDto,
+    MessageResponseDto,
+    MessageUpdateDto
+} from "../../../types/messages/messages.dto";
 
 class MessageController extends Controller {
 
@@ -12,20 +18,18 @@ class MessageController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                conversation_id,
-                sender_id,
-                content,
-                is_read
-            } = req.body;
 
-            const message = await this.service.create({
-                conversation_id,
-                sender_id,
-                content,
-                is_read,
-                created_at: new Date(),
-            });
+            const creationData: MessageAddDto = {
+                conversation_id: req.body.conversation_id,
+                sender_id: req.body.sender_id,
+                content: req.body.content,
+            }
+
+            if (!creationData.conversation_id || !req.body.sender_id || !req.body.content) {
+                throw new BadRequest('conversation_id, sender_id and content are required');
+            }
+
+            const message: MessageAddResponseDto = await this.service.create(creationData)
 
             res.status(201).json({
                 message_text: 'Message created successfully',
@@ -39,7 +43,7 @@ class MessageController extends Controller {
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const messages = await this.service.getAll();
+            const messages: MessageResponseDto[] = await this.service.getAll();
             res.status(201).json({
                 message: 'All messages retrieved successfully',
                 messages,
@@ -51,15 +55,12 @@ class MessageController extends Controller {
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('ID is required');
             }
 
-            const message = await this.service.getById(id);
+            const message: MessageResponseDto = await this.service.getById(req.params.id);
 
             res.status(201).json({
                 message_text: `Message retrieved successfully`,
@@ -73,34 +74,29 @@ class MessageController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const id = req.params.id;
+            const id: string = req.params.id;
 
             if (!id) {
                 throw new BadRequest('ID is required');
             }
 
-            const {
-                content,
-                is_read,
-            } = req.body;
+            const updateData: MessageUpdateDto = {}
 
-            let data: any = {}
-
-            if (content) {
-                data.content = content;
+            if (req.body.content) {
+                updateData.content = req.body.content;
             }
 
-            if (is_read) {
-                data.is_read = is_read;
+            if (req.body.is_read !== undefined) {
+                updateData.is_read = req.body.is_read;
             }
 
-            if (Object.keys(data).length === 0) {
+            if (Object.keys(updateData).length === 0) {
                 throw new BadRequest("No fields provided")
             }
 
-            const message = this.service.update(id, data)
+            const message: MessageResponseDto = await this.service.update(id, updateData)
 
-            res.status(201).json({
+            res.status(200).json({
                 message_text: `Message updated successfully`,
                 message,
             });
@@ -112,16 +108,13 @@ class MessageController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('ID is required');
             }
 
-            const message = await this.service.delete(id);
-            res.json({
+            const message: MessageDeleteResponseDto = await this.service.delete(req.params.id);
+            res.status(200).json({
                 message_text: 'Comment deleted successfully',
                 message,
             });

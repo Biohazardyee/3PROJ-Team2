@@ -127,7 +127,7 @@ export class UserService {
             select[field] = true;
         });
 
-        const users = await PrismaDb.user.findMany({
+        const users: User[] = await PrismaDb.user.findMany({
             select,
             orderBy: {
                 created_at: 'desc'

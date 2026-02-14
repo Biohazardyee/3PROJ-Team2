@@ -1,37 +1,30 @@
 import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
-import {isEmptyString} from '../../../utils/helpers.js';
-import {NotificationAction} from '../../../generated/prisma/enums.js';
+import {isEmptyString, isValidBoolean} from '../../../utils/helpers.js';
+import {NotificationActions} from '../../../generated/prisma/enums.js';
+import {
+    NotificationsCreationDto,
+    NotificationsCreationResponseDto, NotificationsResponseDeleteDto, NotificationsResponseDto, NotificationsUpdateDto
+} from "../../../types/notifications/notifications.dto.js";
+import {Medias, Reviews, User, Prisma, Notifications} from "../../../generated/prisma/browser.js";
+import {notificationsMapper} from "../../../mappers/notifications/notifications.mapper.js";
+
 
 export class NotificationService {
 
-    async create(data: {
-        user_id: string;
-        action: NotificationAction;
-        related_user_id?: string;
-        review_id?: string;
-        media_id?: string;
-    }) {
-        const {
-            user_id,
-            action,
-            related_user_id,
-            review_id,
-            media_id
-        } = data;
+    async create(data: NotificationsCreationDto): Promise<NotificationsCreationResponseDto> {
 
-
-        if (isEmptyString(user_id)) {
+        if (isEmptyString(data.user_id)) {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        if (!action || !Object.values(NotificationAction).includes(action)) {
+        if (!data.action || !Object.values(NotificationActions).includes(data.action)) {
             throw new BadRequest('Invalid notification action');
         }
 
-        const user = await PrismaDb.user.findUnique({
+        const user: User | null = await PrismaDb.user.findUnique({
             where: {
-                id: user_id
+                id: data.user_id
             }
         });
 
@@ -40,10 +33,10 @@ export class NotificationService {
         }
 
 
-        if (related_user_id) {
-            const relatedUser = await PrismaDb.user.findUnique({
+        if (data.related_user_id !== undefined) {
+            const relatedUser: User | null = await PrismaDb.user.findUnique({
                 where: {
-                    id: related_user_id
+                    id: data.related_user_id
                 }
             });
 
@@ -52,10 +45,10 @@ export class NotificationService {
             }
         }
 
-        if (review_id) {
-            const review = await PrismaDb.review.findUnique({
+        if (data.review_id !== undefined) {
+            const review: Reviews | null = await PrismaDb.reviews.findUnique({
                 where: {
-                    id: review_id
+                    id: data.review_id
                 }
             });
             if (!review) {
@@ -63,10 +56,10 @@ export class NotificationService {
             }
         }
 
-        if (media_id) {
-            const media = await PrismaDb.media.findUnique({
+        if (data.media_id !== undefined) {
+            const media: Medias | null = await PrismaDb.medias.findUnique({
                 where: {
-                    id: media_id
+                    id: data.media_id
                 }
             });
             if (!media) {
@@ -74,149 +67,111 @@ export class NotificationService {
             }
         }
 
-        return PrismaDb.notification.create({
-            data,
-            select: {
-                id: true,
-                user_id: true,
-                action: true,
-                is_read: true,
-                created_at: true,
-                related_user_id: true,
-                review_id: true,
-                media_id: true,
-            },
-        });
+        const createData: Prisma.NotificationsUncheckedCreateInput = {
+            user_id: data.user_id,
+            action: data.action,
+            related_user_id: data.related_user_id,
+            review_id: data.review_id,
+            media_id: data.media_id,
+        }
+
+        const notification: Notifications = await PrismaDb.notifications.create({
+            data: createData,
+        })
+
+        return notificationsMapper.toAddDto(notification)
     }
 
-    async getByUserId(user_id: string) {
+    async getByUserId(user_id: string): Promise<NotificationsResponseDto[]> {
 
         if (isEmptyString(user_id)) {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user = await PrismaDb.user.findUnique({
+        const user: User | null = await PrismaDb.user.findUnique({
             where: {
                 id: user_id
             }
         });
+
         if (!user) {
             throw new NotFound('User not found');
         }
 
-        return PrismaDb.notification.findMany({
+        const userNotifications: Notifications[] = await PrismaDb.notifications.findMany({
             where: {
                 user_id
             },
             orderBy: {
                 created_at: 'desc'
-            },
-            select: {
-                id: true,
-                action: true,
-                is_read: true,
-                read_at: true,
-                created_at: true,
-                related_user: {
-                    select: {
-                        id: true, 
-                        username: true
-                    }
-                },
-                review: {
-                    select: {
-                        id: true, 
-                        rating: true
-                    }
-                },
-                media: {
-                    select: {
-                        id: true,
-                        api_id: true
-                    }
-                },
-            },
-        });
+            }
+        })
+
+        return notificationsMapper.toDtoList(userNotifications);
     }
 
-    async update(id: string) {
+    async update(id: string, data: NotificationsUpdateDto): Promise<NotificationsResponseDto> {
+
         if (isEmptyString(id)) {
             throw new BadRequest('Notification id cannot be empty');
         }
 
-        try {
-            return await PrismaDb.notification.update({
-                where: {
-                    id
-                },
-                data: {
-                    is_read: true,
-                    read_at: new Date()
-                },
-                select: {
-                    id: true,
-                    is_read: true,
-                    read_at: true
-                },
-            });
-        } catch {
+        const notification: Notifications | null = await PrismaDb.notifications.findUnique({
+            where: {
+                id: id
+            },
+        })
+
+        if (!notification) {
             throw new NotFound('Notification not found');
         }
-    }
 
-    async delete(id: string) {
+        const updateData: Prisma.NotificationsUpdateInput = {}
 
-        if (isEmptyString(id)) {
-            throw new BadRequest('Notification id cannot be empty');
+        if (data.is_read !== undefined) {
+            if (!isValidBoolean(data.is_read)) {
+                throw new BadRequest('is_read must be a boolean');
+            }
+            updateData.is_read = data.is_read;
+
+            if (data.is_read) {
+                updateData.read_at = new Date();
+            } else {
+                updateData.read_at = null;
+            }
         }
 
-        try {
-            return await PrismaDb.notification.delete({
-                where: {
-                    id
-                },
-                select: {id: true},
-            });
-        } catch {
-            throw new NotFound('Notification not found');
-        }
-    }
-
-    async getAll() {
-        return PrismaDb.notification.findMany({
-            orderBy: {
-                created_at: 'desc'
-            },
-            select: {
-                id: true,
-                user_id: true,
-                action: true,
-                is_read: true,
-                created_at: true,
-            },
-        });
-    }
-
-    async getById(id: string) {
-
-        if (isEmptyString(id)) {
-            throw new BadRequest('Notification id cannot be empty');
-        }
-
-        const notification = await PrismaDb.notification.findUnique({
+        const notificationToUpdate: Notifications = await PrismaDb.notifications.update({
             where: {
                 id
             },
-            select: {
-                id: true,
-                user_id: true,
-                action: true,
-                is_read: true,
-                read_at: true,
-                created_at: true,
-                related_user_id: true,
-                review_id: true,
-                media_id: true,
+            data: updateData
+        });
+
+        return notificationsMapper.toDto(notificationToUpdate);
+    }
+
+
+    async getAll(): Promise<NotificationsResponseDto[]> {
+        const notifications: Notifications[] = await PrismaDb.notifications.findMany({
+            orderBy: {
+                created_at: 'desc'
+            }
+        })
+
+        return notificationsMapper.toDtoList(notifications);
+
+    }
+
+    async getById(id: string): Promise<NotificationsResponseDto> {
+
+        if (isEmptyString(id)) {
+            throw new BadRequest('Notification id cannot be empty');
+        }
+
+        const notification: Notifications | null = await PrismaDb.notifications.findUnique({
+            where: {
+                id
             },
         });
 
@@ -224,7 +179,32 @@ export class NotificationService {
             throw new NotFound('Notification not found');
         }
 
-        return notification;
+        return notificationsMapper.toDto(notification);
+    }
+
+    async delete(id: string): Promise<NotificationsResponseDeleteDto> {
+
+        if (isEmptyString(id)) {
+            throw new BadRequest('Notification id cannot be empty');
+        }
+
+        const notification: Notifications | null = await PrismaDb.notifications.findUnique({
+            where: {
+                id
+            },
+        })
+
+        if (!notification) {
+            throw new NotFound('Notification not found');
+        }
+
+        const notificationToDelete: Notifications = await PrismaDb.notifications.delete({
+            where: {
+                id
+            },
+        });
+
+        return notificationsMapper.toDeleteDto(notificationToDelete);
     }
 }
 

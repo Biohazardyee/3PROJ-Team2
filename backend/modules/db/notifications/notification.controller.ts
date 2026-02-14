@@ -3,8 +3,12 @@ import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {NotificationService} from './notification.service.js';
+import {
+    NotificationsCreationDto,
+    NotificationsCreationResponseDto, NotificationsResponseDeleteDto, NotificationsResponseDto, NotificationsUpdateDto
+} from "../../../types/notifications/notifications.dto.js";
 
-class NotificationController extends Controller{
+class NotificationController extends Controller {
 
     constructor(private readonly service = new NotificationService()) {
         super();
@@ -12,27 +16,26 @@ class NotificationController extends Controller{
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id, 
-                action, 
-                related_user_id, 
-                review_id, 
-                media_id
-            } = req.body;
 
-            if (!user_id || !action) {
+            const creationData: NotificationsCreationDto = {
+                user_id: req.body.user_id,
+                action: req.body.action,
+                related_user_id: req.body.related_user_id,
+                review_id: req.body.review_id,
+                media_id: req.body.media_id,
+            }
+
+            if (!creationData.user_id || !creationData.action) {
                 throw new BadRequest('user_id and action are required');
             }
 
-            const notification = await this.service.create({
-                user_id,
-                action,
-                related_user_id,
-                review_id,
-                media_id,
-            });
+            const notification: NotificationsCreationResponseDto = await this.service.create(creationData);
 
-            res.status(201).json({message: 'Notification created successfully', notification});
+            res.status(201).json(
+                {
+                    message: 'Notification created successfully',
+                    notification
+                });
         } catch (error) {
             next(error);
         }
@@ -40,17 +43,17 @@ class NotificationController extends Controller{
 
     async getByUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id
-            } = req.params;
 
-            if (!user_id) {
+            if (!req.params.user_id) {
                 throw new BadRequest('user_id is required');
             }
 
-            const notifications = await this.service.getByUserId(user_id);
+            const notifications: NotificationsResponseDto[] = await this.service.getByUserId(req.params.user_id);
 
-            res.status(200).json({message: 'Notifications retrieved successfully', notifications});
+            res.status(200).json({
+                message: 'Notifications retrieved successfully',
+                notifications
+            });
         } catch (error) {
             next(error);
         }
@@ -58,42 +61,39 @@ class NotificationController extends Controller{
 
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('Notification id is required');
             }
 
-            const notification = await this.service.update(id);
-            res.status(200).json({message: 'Notification marked as read', notification});
+            const updateData: NotificationsUpdateDto = {}
+
+            if (req.body.is_read !== undefined) {
+                updateData.is_read = req.body.is_read;
+            }
+
+            if (Object.keys(updateData).length === 0) {
+                throw new BadRequest("No fields provided");
+            }
+
+            const notification: NotificationsResponseDto = await this.service.update(req.params.id, updateData);
+
+            res.status(200).json({
+                message: 'Notification updated successfully',
+                notification
+            });
         } catch (error) {
             next(error);
         }
     }
 
-    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
-                throw new BadRequest('Notification id is required');
-            }
-
-            const notification = await this.service.delete(id);
-            res.status(200).json({message: 'Notification deleted', notification});
-        } catch (error) {
-            next(error);
-        }
-    }
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const notifications = await this.service.getAll();
-            res.status(200).json({message: 'All notifications retrieved successfully', notifications});
+            const notifications: NotificationsResponseDto[] = await this.service.getAll();
+            res.status(200).json({
+                message: 'All notifications retrieved successfully',
+                notifications
+            });
         } catch (error) {
             next(error);
         }
@@ -101,16 +101,33 @@ class NotificationController extends Controller{
 
     async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
 
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest('Notification id is required');
             }
 
-            const notification = await this.service.getById(id);
-            res.status(200).json({message: 'Notification retrieved successfully', notification});
+            const notification: NotificationsResponseDto = await this.service.getById(req.params.id);
+            res.status(200).json({
+                message: 'Notification retrieved successfully',
+                notification
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+
+            if (!req.params.id) {
+                throw new BadRequest('Notification id is required');
+            }
+
+            const notification: NotificationsResponseDeleteDto = await this.service.delete(req.params.id);
+            res.status(200).json({
+                message: 'Notification deleted',
+                notification
+            });
         } catch (error) {
             next(error);
         }

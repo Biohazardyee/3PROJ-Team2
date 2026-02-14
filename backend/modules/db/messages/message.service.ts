@@ -1,43 +1,36 @@
 import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString, isValidBoolean, isValidStringLength} from '../../../utils/helpers.js';
+import {
+    MessageAddDto,
+    MessageAddResponseDto, MessageDeleteResponseDto,
+    MessageResponseDto,
+    MessageUpdateDto
+} from "../../../types/messages/messages.dto";
+import {Conversations, User, Prisma, Messages} from "../../../generated/prisma/client.js";
+import {MessagesUncheckedCreateInput} from "../../../generated/prisma/models/Messages";
+import {messagesMapper} from "../../../mappers/messages/messages.mapper";
+
 
 export class MessageService {
 
-    async create(data: {
-        conversation_id: string,
-        sender_id: string,
-        content: string,
-        is_read: boolean,
-        created_at: Date,
-    }) {
-        const {
-            conversation_id,
-            sender_id,
-            content,
-            is_read,
-        } = data;
+    async create(data: MessageAddDto): Promise<MessageAddResponseDto> {
 
-
-        if (isEmptyString(conversation_id)) {
+        if (isEmptyString(data.conversation_id)) {
             throw new BadRequest('ConversationID cannot be empty');
         }
 
-        if (isEmptyString(sender_id)) {
+        if (isEmptyString(data.sender_id)) {
             throw new BadRequest('SenderID cannot be empty');
         }
 
-        if (isEmptyString(content)) {
+        if (isEmptyString(data.content)) {
             throw new BadRequest('Conversation content cannot be empty');
         }
 
-        if (!isValidBoolean(is_read)) {
-            throw new BadRequest('is_read must be a boolean');
-        }
-
-        const conversation = await PrismaDb.conversation.findUnique({
+        const conversation: Conversations | null = await PrismaDb.conversations.findUnique({
             where: {
-                id: conversation_id
+                id: data.conversation_id
             }
         });
 
@@ -45,9 +38,9 @@ export class MessageService {
             throw new BadRequest('Conversation not found');
         }
 
-        const sender = await PrismaDb.user.findUnique({
+        const sender: User | null = await PrismaDb.user.findUnique({
             where: {
-                id: sender_id
+                id: data.sender_id
             }
         });
 
@@ -55,74 +48,56 @@ export class MessageService {
             throw new BadRequest('Sender not found');
         }
 
-        if (isEmptyString(content)) {
-            throw new BadRequest('Content cannot be empty');
+        const createData: Prisma.MessagesUncheckedCreateInput = {
+            conversation_id: data.conversation_id,
+            sender_id: data.sender_id,
+            content: data.content
         }
 
-        return PrismaDb.message.create({
-            data,
-            select: {
-                id: true,
-                conversation_id: true,
-                sender_id: true,
-                content: true,
-                is_read: true,
-                created_at: true,
-            },
+        const message: Messages = await PrismaDb.messages.create({
+            data: createData
         });
+
+        return messagesMapper.toAddDto(message);
+
     }
 
-    async getAll() {
-        return PrismaDb.message.findMany({
-            select: {
-                id: true,
-                conversation_id: true,
-                sender_id: true,
-                content: true,
-                is_read: true,
-                created_at: true,
-            },
+    async getAll(): Promise<MessageResponseDto[]> {
+        const messages: Messages[] = await PrismaDb.messages.findMany({
             orderBy: {
                 created_at: 'desc'
-            },
-        });
+            }
+        })
+
+        return messagesMapper.toDtoList(messages);
     }
 
-    async getById(id: string) {
+    async getById(id: string): Promise<MessageResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Message id is required');
         }
 
-        const message = await PrismaDb.message.findUnique({
+        const message: Messages | null = await PrismaDb.messages.findUnique({
             where: {
                 id
             },
-            select: {
-                id: true,
-                conversation_id: true,
-                sender_id: true,
-                content: true,
-                is_read: true,
-                created_at: true,
-            },
         });
 
-        if (!message) throw new NotFound('Report not found');
+        if (!message) {
+            throw new NotFound('Report not found');
+        }
 
-        return message;
+        return messagesMapper.toDto(message);
     }
 
-    async update(id: string, data: {
-        content?: string,
-        is_read?: boolean,
-    }) {
+    async update(id: string, data: MessageUpdateDto): Promise<MessageResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Message id cannot be empty');
         }
 
-        const message = await PrismaDb.message.findUnique({
+        const message: Messages | null = await PrismaDb.messages.findUnique({
             where: {
                 id
             }
@@ -132,73 +107,63 @@ export class MessageService {
             throw new NotFound('Message not found');
         }
 
-        const allowedFields: string[] = [
-            'content',
-            'is_read'
-        ];
+        const updateData: Prisma.MessagesUpdateInput = {}
 
-        for (const key of Object.keys(data)) {
-            if (!allowedFields.includes(key)) {
-                throw new BadRequest(`Field "${key}" cannot be updated`);
-            }
-        }
 
-        if (data.content) {
+        if (data.content !== undefined) {
             if (isEmptyString(data.content)) {
                 throw new BadRequest('Content cannot be empty');
             }
             if (!isValidStringLength(data.content, 1000)) {
                 throw new BadRequest('Content cannot be much than 1000 characters');
             }
+            updateData.content = data.content;
         }
 
         if (data.is_read) {
             if (!isValidBoolean(data.is_read)) {
                 throw new BadRequest('is_read must be a boolean');
             }
+            updateData.is_read = data.is_read;
         }
 
-        return PrismaDb.message.update({
+        const messageToUpdate: Messages = await PrismaDb.messages.update({
             where: {
                 id
             },
-            data,
-            select: {
-                id: true,
-                conversation_id: true,
-                sender_id: true,
-                content: true,
-                is_read: true,
-                created_at: true,
-            }
-        });
+            data: updateData
+        })
+
+        return messagesMapper.toDto(messageToUpdate);
     }
 
 
-    async delete(id: string) {
+    async delete(id: string): Promise<MessageDeleteResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Message id cannot be empty');
         }
 
-        const message = await PrismaDb.message.findUnique({where: {id}});
+        const message: Messages | null = await PrismaDb.messages.findUnique(
+            {
+                where: {
+                    id
+                }
+            }
+        );
+
         if (!message) {
             throw new NotFound('Message not found');
         }
 
-        return PrismaDb.message.delete({
-            where: {
-                id
-            },
-            select: {
-                id: true,
-                conversation_id: true,
-                sender_id: true,
-                content: true,
-                is_read: true,
-                created_at: true,
+        const messageToDelete: Messages = await PrismaDb.messages.delete({
+                where: {
+                    id
+                }
             }
-        });
+        )
+
+        return messagesMapper.toDeleteDto(messageToDelete);
     }
 }
 
