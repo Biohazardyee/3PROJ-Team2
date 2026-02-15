@@ -9,7 +9,7 @@ router.get('/', activityController.getAll);
 
 router.get('/:id', activityController.getById);
 
-router.get('/feed/:user_id', activityController.getFeed);
+// router.get('/feed/:user_id', activityController.getFeed);
 
 router.delete('/:id', activityController.delete);
 

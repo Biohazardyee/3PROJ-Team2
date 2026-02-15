@@ -3,7 +3,7 @@ import {
     NotificationsResponseDto
 } from "../../types/notifications/notifications.dto.js";
 import {BaseMapper} from "../base.mapper.js";
-import {NotificationActions, Notifications} from "../../generated/prisma/browser.js";
+import {Notifications} from "../../generated/prisma/browser.js";
 
 class NotificationsMapper extends BaseMapper<Notifications, NotificationsResponseDto> {
     protected mapOne(notification: Notifications): NotificationsResponseDto {

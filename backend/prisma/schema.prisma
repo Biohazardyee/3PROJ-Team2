@@ -31,7 +31,7 @@ model User {
   review_comments      ReviewComments[]
   review_likes         ReviewLikes[]
   playlists            Playlists[]
-      follows              Follows[]         @relation("following")
+  follows              Follows[]         @relation("following")
   followers            Follows[]         @relation("followers")
   notifications        Notifications[]   @relation("user_notifications")
   notificationsRelated Notifications[]   @relation("user_related_notifications")
@@ -127,6 +127,7 @@ model PlaylistItems {
   playlist_id String
   media       Medias    @relation(fields: [media_id], references: [id])
   media_id    String
+  created_at  DateTime  @default(now())
 
   @@unique([playlist_id, media_id])
 }
@@ -182,19 +183,19 @@ model Follows {
 }
 
 model Reports {
-  id          String      @id @default(uuid())
-  reporter    User        @relation("reporter_reports", fields: [reporter_id], references: [id])
+  id          String          @id @default(uuid())
+  reporter    User            @relation("reporter_reports", fields: [reporter_id], references: [id])
   reporter_id String
-  review      Reviews?    @relation(fields: [review_id], references: [id])
+  review      Reviews?        @relation(fields: [review_id], references: [id])
   review_id   String?
-  profile     User?       @relation("profile_reports", fields: [profile_id], references: [id])
+  profile     User?           @relation("profile_reports", fields: [profile_id], references: [id])
   profile_id  String?
   comment     ReviewComments? @relation(fields: [comment_id], references: [id])
   comment_id  String?
   reason      String
   reason_type ReportTypes
-  is_checked  Boolean     @default(false)
-  created_at  DateTime    @default(now())
+  is_checked  Boolean         @default(false)
+  created_at  DateTime        @default(now())
 }
 
 enum ReportTypes {

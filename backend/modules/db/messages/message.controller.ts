@@ -8,7 +8,7 @@ import {
     MessageAddResponseDto, MessageDeleteResponseDto,
     MessageResponseDto,
     MessageUpdateDto
-} from "../../../types/messages/messages.dto";
+} from "../../../types/messages/messages.dto.js";
 
 class MessageController extends Controller {
 

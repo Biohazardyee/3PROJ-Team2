@@ -8,7 +8,6 @@ import {
 } from '../../types/users/user.dto.js';
 import {BaseMapper} from '../base.mapper.js';
 
-
 export class UserMapper extends BaseMapper<User, UserResponseDto> {
 
     /**

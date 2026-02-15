@@ -1,32 +1,37 @@
 import {Request, Response, NextFunction} from 'express';
 import {BadRequest} from '../../../utils/errors.js';
 import {MediaStatusService} from './media.status.service.js';
-import {MediaStatus} from '../../../generated/prisma/enums.js';
+import {Controller} from "../../controller.js";
+import {
+    MediaStatusCreateDto,
+    MediaStatusResponseDto,
+    MediaStatusUpdateDto
+} from "../../../types/medias/media.status.dto.js";
 
-class MediaStatusController {
+class MediaStatusController extends Controller {
     constructor(private readonly service = new MediaStatusService()) {
+        super();
     }
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id, 
-                media_id, 
-                status
-            } = req.body;
+            const createData: MediaStatusCreateDto = {
+                user_id: req.body.user_id,
+                media_id: req.body.media_id,
+                status: req.body.status
+            };
 
-            if (!user_id) {
-                throw new BadRequest('user_id is required')
+            if (!createData.user_id) {
+                throw new BadRequest('User_id is required')
             }
-            if (!media_id) {
-                throw new BadRequest('media_id is required')
+            if (!createData.media_id) {
+                throw new BadRequest('Media_id is required')
+            }
+            if (!createData.status) {
+                throw new BadRequest('Status is required')
             }
 
-            if (!Object.values(MediaStatus).includes(status)) {
-                throw new BadRequest(`Invalid status value. Must be one of: ${Object.values(MediaStatus).join(', ')}`);
-            }
-
-            const mediaStatus = await this.service.create({user_id, media_id, status});
+            const mediaStatus: MediaStatusResponseDto = await this.service.create(createData);
             res.status(201).json({message: 'Media status created successfully', mediaStatus});
 
         } catch (error) {
@@ -34,53 +39,51 @@ class MediaStatusController {
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id, 
-                media_id
-            } = req.params;
-
-            const {
-                status
-            } = req.body;
-
-            if (!user_id) {
-                throw new BadRequest('user_id is required')
-            }
-
-            if (!media_id) {
-                throw new BadRequest('media_id is required')
-            }
-
-            if (!Object.values(MediaStatus).includes(status)) {
-                throw new BadRequest(`Invalid status value. Must be one of: ${Object.values(MediaStatus).join(', ')}`);
-            }
-
-            const mediaStatus = await this.service.update(user_id, media_id, status);
-            res.status(200).json({message: 'Media status updated successfully', mediaStatus});
-
+            const mediasStatus: MediaStatusResponseDto[] = await this.service.getAll();
+            res.status(201).json({message: 'UserMediasStatus retrieved successfully', mediasStatus});
         } catch (error) {
             next(error);
         }
     }
 
-    async getStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id, 
-                media_id
-            } = req.params;
+            if (!req.params.user_id){
+                throw new BadRequest('User_id is required');
+            }
+            if (!req.params.media_id){
+                throw new BadRequest('Media_id is required');
+            }
+            const mediaStatus: MediaStatusResponseDto = await this.service.getById(req.params.user_id, req.params.media_id);
+            res.status(201).json({message: 'MediaStatus retrieved successfully', mediaStatus});
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const user_id: string = req.params.user_id;
+            const media_id: string = req.params.media_id;
 
             if (!user_id) {
-                throw new BadRequest('user_id is required')
+                throw new BadRequest('User_id is required');
             }
             if (!media_id) {
-                throw new BadRequest('media_id is required')
+                throw new BadRequest('Media_id is required');
             }
 
-            const mediaStatus = await this.service.getStatus(user_id, media_id);
-            res.status(200).json({message: 'Media status retrieved successfully', mediaStatus});
+            const updateData: MediaStatusUpdateDto = {};
+
+            if (req.body.status !== undefined) {
+                updateData.status = req.body.status;
+            }
+
+            const mediaStatus: MediaStatusResponseDto = await this.service.update(user_id, media_id, updateData);
+            res.status(201).json({message: 'Media status updated successfully', mediaStatus});
+
         } catch (error) {
             next(error);
         }
@@ -88,21 +91,15 @@ class MediaStatusController {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                user_id, 
-                media_id
-            } = req.params;
-
-            if (!user_id) {
-                throw new BadRequest('user_id is required')
+            if (!req.params.user_id) {
+                throw new BadRequest('User_id is required');
             }
-            if (!media_id) {
-                throw new BadRequest('media_id is required')
+            if (!req.params.media_id) {
+                throw new BadRequest('Media_id is required');
             }
 
-            await this.service.delete(user_id, media_id);
-            res.status(200).json({message: 'Media status deleted successfully'});
-            
+            const mediaStatus: MediaStatusResponseDto = await this.service.delete(req.params.user_id, req.params.media_id);
+            res.status(201).json({message: 'MediaStatus deleted successfully', mediaStatus});
         } catch (error) {
             next(error);
         }

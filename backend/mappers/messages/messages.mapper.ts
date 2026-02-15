@@ -1,4 +1,4 @@
-import {MessageAddResponseDto, MessageDeleteResponseDto, MessageResponseDto} from "../../types/messages/messages.dto";
+import {MessageAddResponseDto, MessageDeleteResponseDto, MessageResponseDto} from "../../types/messages/messages.dto.js";
 import {BaseMapper} from "../base.mapper.js";
 import {Messages} from "../../generated/prisma/browser.js";
 

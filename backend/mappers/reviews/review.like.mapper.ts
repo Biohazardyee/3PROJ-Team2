@@ -1,4 +1,4 @@
-import {BaseMapper} from '../base.mapper';
+import {BaseMapper} from '../base.mapper.js';
 import {ReviewLikes,} from "../../generated/prisma/browser.js";
 import {ReviewLikeResponseDto} from "../../types/reviews/review.like.dto.js";
 

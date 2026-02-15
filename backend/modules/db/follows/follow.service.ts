@@ -1,8 +1,8 @@
 import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
-import {FollowCreateDto, FollowResponseDto} from "../../../types/follows/follows.dto";
-import {followsMapper} from "../../../mappers/follows/follows.mapper";
+import {FollowCreateDto, FollowResponseDto} from "../../../types/follows/follows.dto.js";
+import {followsMapper} from "../../../mappers/follows/follows.mapper.js";
 import {Follows, Prisma, User} from '../../../generated/prisma/client.js';
 
 export class FollowService {

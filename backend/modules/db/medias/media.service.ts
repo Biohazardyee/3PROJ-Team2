@@ -1,20 +1,21 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString, isValidApiId} from '../../../utils/helpers.js';
+import {MediaCreateDto, MediaResponseDto, MediaUpdateDto} from "../../../types/medias/media.dto.js";
+import {Medias} from "../../../generated/prisma/browser.js";
+import {mediaMapper} from "../../../mappers/medias/media.mapper.js";
+import {Prisma} from "../../../generated/prisma/client.js";
 
 export class MediaService {
-    async create(data: { api_id: string }) {
-        const {
-            api_id
-        } = data;
+    async create(data: MediaCreateDto) {
 
-        if (!isValidApiId(api_id)) {
-            throw new BadRequest('Invalid api_id provided');
+        if (!isEmptyString(data.api_id)) {
+            throw new BadRequest('API ID cannot be empty');
         }
 
-        const exists = await PrismaDb.media.findFirst({
+        const exists: Medias | null = await PrismaDb.medias.findFirst({
             where: {
-                api_id
+                api_id: data.api_id
             }
         });
 
@@ -22,31 +23,57 @@ export class MediaService {
             throw new BadRequest('Media with this API ID already exists');
         }
 
-        return PrismaDb.media.create({
-            data: {
-                api_id,
-                created_at: new Date()
-            },
-            select: {
-                id: true,
-                api_id: true,
-                created_at: true
-            },
+        const media: Medias = await PrismaDb.medias.create({
+            data
         });
+
+        return mediaMapper.toDto(media);
     }
 
-    async update(id: string, data: { api_id: string }) {
+    async getAll(): Promise<MediaResponseDto[]> {
+        const medias: Medias[] = await PrismaDb.medias.findMany({
+            orderBy: {
+                created_at: 'desc'
+            }
+        });
+
+        return mediaMapper.toDtoList(medias);
+    }
+
+    async getById(id: string): Promise<MediaResponseDto> {
+
+        if (isEmptyString(id)) {
+            throw new BadRequest('Media id cannot be empty');
+        }
+
+        const media: Medias | null = await PrismaDb.medias.findUnique({
+            where: {
+                id
+            },
+        });
+        if (!media) {
+            throw new NotFound('Media not found');
+        }
+
+        return mediaMapper.toDto(media);
+    }
+
+    async update(id: string, data: MediaUpdateDto): Promise<MediaResponseDto> {
         if (isEmptyString(id)) {
             throw new BadRequest('Media id is required');
         }
 
-        const media = await PrismaDb.media.findUnique({where: {id}});
+        const media: Medias | null = await PrismaDb.medias.findUnique({
+            where: {
+                id
+            }
+        });
 
         if (!media) {
             throw new NotFound('Media not found');
         }
 
-        const updateData: any = {};
+        const updateData: Prisma.MediasUpdateInput = {};
 
         if (data.api_id !== undefined) {
             if (!isValidApiId(data.api_id)) {
@@ -55,78 +82,38 @@ export class MediaService {
             updateData.api_id = data.api_id;
         }
 
-        return PrismaDb.media.update({
+        const updateMedia: Medias = await PrismaDb.medias.update({
             where: {
                 id
             },
-            data: updateData,
-            select: {
-                id: true,
-                api_id: true,
-                created_at: true
-            },
-        });
+            data: updateData
+        })
+
+        return mediaMapper.toDto(updateMedia);
     }
 
-    async getById(id: string) {
+    async delete(id: string): Promise<MediaResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Media id cannot be empty');
         }
 
-        const media = await PrismaDb.media.findUnique({
+        const media: Medias | null = await PrismaDb.medias.findUnique({
             where: {
                 id
-            },
-            select: {
-                id: true,
-                api_id: true,
-                created_at: true
-            },
+            }
         });
-        if (!media) {
-            throw new NotFound('Media not found');
-        }
-
-        return media;
-    }
-
-    async getAll() {
-        return PrismaDb.media.findMany({
-            select: {
-                id: true,
-                api_id: true,
-                created_at: true
-            },
-        });
-    }
-
-    async delete(id: string) {
-
-        if (isEmptyString(id)) {
-            throw new BadRequest('Media id cannot be empty');
-        }
-
-        const media = await PrismaDb.media.findUnique(
-            {
-                where: {
-                    id
-                }
-            });
 
         if (!media) {
             throw new NotFound('Media not found');
         }
 
-        return PrismaDb.media.delete({
+        const deletedMedia: Medias = await PrismaDb.medias.delete({
             where: {
                 id
-            },
-            select: {
-                id: true,
-                api_id: true,
-                created_at: true
-            },
+            }
         });
+
+        return mediaMapper.toDto(deletedMedia);
     }
 }

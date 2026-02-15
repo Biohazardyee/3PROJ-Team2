@@ -7,7 +7,7 @@ import {
     ConversationAddDto,
     ConversationAddResponseDto, ConversationResponseDeleteDto,
     ConversationResponseDto
-} from "../../../types/conversations/conversations.dto";
+} from "../../../types/conversations/conversations.dto.js";
 
 class ConversationController extends Controller {
 

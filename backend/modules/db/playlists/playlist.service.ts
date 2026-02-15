@@ -9,7 +9,7 @@ import {
 } from "../../../types/playlists/playlist.dto.js";
 import {Playlists, Reports, User} from "../../../generated/prisma/browser.js";
 import {playlistMapper} from "../../../mappers/playlists/playlist.mapper.js";
-import {Prisma} from "../../../generated/prisma/client";
+import {Prisma} from "../../../generated/prisma/client.js";
 
 export class PlaylistService {
 

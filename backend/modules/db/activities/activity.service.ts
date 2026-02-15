@@ -10,7 +10,6 @@ import {
 import {activityMapper} from '../../../mappers/activities/activities.mapper.js';
 import {Activitys} from "../../../generated/prisma/browser.js";
 
-
 export class ActivityService {
 
     async create(data: ActivityAddDto): Promise<ActivityResponseDto> {

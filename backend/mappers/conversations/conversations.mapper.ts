@@ -3,7 +3,7 @@ import {
     ConversationAddDto,
     ConversationAddResponseDto, ConversationResponseDeleteDto,
     ConversationResponseDto
-} from "../../types/conversations/conversations.dto";
+} from "../../types/conversations/conversations.dto.js";
 import {Conversations, Prisma} from "../../generated/prisma/client.js";
 
 // Il faut dire qu'onm veut utiliser la relation ici, Prisma ne le fait pas automatiquement

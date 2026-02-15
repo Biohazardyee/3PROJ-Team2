@@ -1,7 +1,7 @@
 import type {Request, Response, NextFunction} from 'express';
 import {BadRequest} from '../../../utils/errors.js';
 import {FollowService, followService} from './follow.service.js';
-import {FollowCreateDto, FollowResponseDto} from "../../../types/follows/follows.dto";
+import {FollowCreateDto, FollowResponseDto} from "../../../types/follows/follows.dto.js";
 
 class FollowController {
 

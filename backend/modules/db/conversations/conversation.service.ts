@@ -5,9 +5,9 @@ import {
     ConversationAddDto,
     ConversationAddResponseDto, ConversationResponseDeleteDto,
     ConversationResponseDto
-} from "../../../types/conversations/conversations.dto";
+} from "../../../types/conversations/conversations.dto.js";
 import {User, Conversations, Prisma} from "../../../generated/prisma/browser.js";
-import {conversationMapper} from "../../../mappers/conversations/conversations.mapper";
+import {conversationMapper} from "../../../mappers/conversations/conversations.mapper.js";
 
 export class ConversationService {
 

@@ -6,11 +6,9 @@ import {
     MessageAddResponseDto, MessageDeleteResponseDto,
     MessageResponseDto,
     MessageUpdateDto
-} from "../../../types/messages/messages.dto";
+} from "../../../types/messages/messages.dto.js";
 import {Conversations, User, Prisma, Messages} from "../../../generated/prisma/client.js";
-import {MessagesUncheckedCreateInput} from "../../../generated/prisma/models/Messages";
-import {messagesMapper} from "../../../mappers/messages/messages.mapper";
-
+import {messagesMapper} from "../../../mappers/messages/messages.mapper.js";
 
 export class MessageService {
 

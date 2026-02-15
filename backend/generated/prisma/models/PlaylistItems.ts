@@ -28,18 +28,21 @@ export type PlaylistItemsMinAggregateOutputType = {
   id: string | null
   playlist_id: string | null
   media_id: string | null
+  created_at: Date | null
 }
 
 export type PlaylistItemsMaxAggregateOutputType = {
   id: string | null
   playlist_id: string | null
   media_id: string | null
+  created_at: Date | null
 }
 
 export type PlaylistItemsCountAggregateOutputType = {
   id: number
   playlist_id: number
   media_id: number
+  created_at: number
   _all: number
 }
 
@@ -48,18 +51,21 @@ export type PlaylistItemsMinAggregateInputType = {
   id?: true
   playlist_id?: true
   media_id?: true
+  created_at?: true
 }
 
 export type PlaylistItemsMaxAggregateInputType = {
   id?: true
   playlist_id?: true
   media_id?: true
+  created_at?: true
 }
 
 export type PlaylistItemsCountAggregateInputType = {
   id?: true
   playlist_id?: true
   media_id?: true
+  created_at?: true
   _all?: true
 }
 
@@ -139,6 +145,7 @@ export type PlaylistItemsGroupByOutputType = {
   id: string
   playlist_id: string
   media_id: string
+  created_at: Date
   _count: PlaylistItemsCountAggregateOutputType | null
   _min: PlaylistItemsMinAggregateOutputType | null
   _max: PlaylistItemsMaxAggregateOutputType | null
@@ -166,6 +173,7 @@ export type PlaylistItemsWhereInput = {
   id?: Prisma.StringFilter<"PlaylistItems"> | string
   playlist_id?: Prisma.StringFilter<"PlaylistItems"> | string
   media_id?: Prisma.StringFilter<"PlaylistItems"> | string
+  created_at?: Prisma.DateTimeFilter<"PlaylistItems"> | Date | string
   playlist?: Prisma.XOR<Prisma.PlaylistsScalarRelationFilter, Prisma.PlaylistsWhereInput>
   media?: Prisma.XOR<Prisma.MediasScalarRelationFilter, Prisma.MediasWhereInput>
 }
@@ -174,6 +182,7 @@ export type PlaylistItemsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   playlist_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
   playlist?: Prisma.PlaylistsOrderByWithRelationInput
   media?: Prisma.MediasOrderByWithRelationInput
 }
@@ -186,6 +195,7 @@ export type PlaylistItemsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PlaylistItemsWhereInput | Prisma.PlaylistItemsWhereInput[]
   playlist_id?: Prisma.StringFilter<"PlaylistItems"> | string
   media_id?: Prisma.StringFilter<"PlaylistItems"> | string
+  created_at?: Prisma.DateTimeFilter<"PlaylistItems"> | Date | string
   playlist?: Prisma.XOR<Prisma.PlaylistsScalarRelationFilter, Prisma.PlaylistsWhereInput>
   media?: Prisma.XOR<Prisma.MediasScalarRelationFilter, Prisma.MediasWhereInput>
 }, "id" | "playlist_id_media_id">
@@ -194,6 +204,7 @@ export type PlaylistItemsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   playlist_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
   _count?: Prisma.PlaylistItemsCountOrderByAggregateInput
   _max?: Prisma.PlaylistItemsMaxOrderByAggregateInput
   _min?: Prisma.PlaylistItemsMinOrderByAggregateInput
@@ -206,10 +217,12 @@ export type PlaylistItemsScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"PlaylistItems"> | string
   playlist_id?: Prisma.StringWithAggregatesFilter<"PlaylistItems"> | string
   media_id?: Prisma.StringWithAggregatesFilter<"PlaylistItems"> | string
+  created_at?: Prisma.DateTimeWithAggregatesFilter<"PlaylistItems"> | Date | string
 }
 
 export type PlaylistItemsCreateInput = {
   id?: string
+  created_at?: Date | string
   playlist: Prisma.PlaylistsCreateNestedOneWithoutItemsInput
   media: Prisma.MediasCreateNestedOneWithoutPlaylist_itemsInput
 }
@@ -218,10 +231,12 @@ export type PlaylistItemsUncheckedCreateInput = {
   id?: string
   playlist_id: string
   media_id: string
+  created_at?: Date | string
 }
 
 export type PlaylistItemsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   playlist?: Prisma.PlaylistsUpdateOneRequiredWithoutItemsNestedInput
   media?: Prisma.MediasUpdateOneRequiredWithoutPlaylist_itemsNestedInput
 }
@@ -230,22 +245,26 @@ export type PlaylistItemsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   playlist_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PlaylistItemsCreateManyInput = {
   id?: string
   playlist_id: string
   media_id: string
+  created_at?: Date | string
 }
 
 export type PlaylistItemsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PlaylistItemsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   playlist_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PlaylistItemsListRelationFilter = {
@@ -267,18 +286,21 @@ export type PlaylistItemsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   playlist_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
 }
 
 export type PlaylistItemsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   playlist_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
 }
 
 export type PlaylistItemsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   playlist_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
 }
 
 export type PlaylistItemsCreateNestedManyWithoutMediaInput = {
@@ -367,12 +389,14 @@ export type PlaylistItemsUncheckedUpdateManyWithoutPlaylistNestedInput = {
 
 export type PlaylistItemsCreateWithoutMediaInput = {
   id?: string
+  created_at?: Date | string
   playlist: Prisma.PlaylistsCreateNestedOneWithoutItemsInput
 }
 
 export type PlaylistItemsUncheckedCreateWithoutMediaInput = {
   id?: string
   playlist_id: string
+  created_at?: Date | string
 }
 
 export type PlaylistItemsCreateOrConnectWithoutMediaInput = {
@@ -408,16 +432,19 @@ export type PlaylistItemsScalarWhereInput = {
   id?: Prisma.StringFilter<"PlaylistItems"> | string
   playlist_id?: Prisma.StringFilter<"PlaylistItems"> | string
   media_id?: Prisma.StringFilter<"PlaylistItems"> | string
+  created_at?: Prisma.DateTimeFilter<"PlaylistItems"> | Date | string
 }
 
 export type PlaylistItemsCreateWithoutPlaylistInput = {
   id?: string
+  created_at?: Date | string
   media: Prisma.MediasCreateNestedOneWithoutPlaylist_itemsInput
 }
 
 export type PlaylistItemsUncheckedCreateWithoutPlaylistInput = {
   id?: string
   media_id: string
+  created_at?: Date | string
 }
 
 export type PlaylistItemsCreateOrConnectWithoutPlaylistInput = {
@@ -449,41 +476,49 @@ export type PlaylistItemsUpdateManyWithWhereWithoutPlaylistInput = {
 export type PlaylistItemsCreateManyMediaInput = {
   id?: string
   playlist_id: string
+  created_at?: Date | string
 }
 
 export type PlaylistItemsUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   playlist?: Prisma.PlaylistsUpdateOneRequiredWithoutItemsNestedInput
 }
 
 export type PlaylistItemsUncheckedUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   playlist_id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PlaylistItemsUncheckedUpdateManyWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   playlist_id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PlaylistItemsCreateManyPlaylistInput = {
   id?: string
   media_id: string
+  created_at?: Date | string
 }
 
 export type PlaylistItemsUpdateWithoutPlaylistInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   media?: Prisma.MediasUpdateOneRequiredWithoutPlaylist_itemsNestedInput
 }
 
 export type PlaylistItemsUncheckedUpdateWithoutPlaylistInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PlaylistItemsUncheckedUpdateManyWithoutPlaylistInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -492,6 +527,7 @@ export type PlaylistItemsSelect<ExtArgs extends runtime.Types.Extensions.Interna
   id?: boolean
   playlist_id?: boolean
   media_id?: boolean
+  created_at?: boolean
   playlist?: boolean | Prisma.PlaylistsDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["playlistItems"]>
@@ -500,6 +536,7 @@ export type PlaylistItemsSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   id?: boolean
   playlist_id?: boolean
   media_id?: boolean
+  created_at?: boolean
   playlist?: boolean | Prisma.PlaylistsDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["playlistItems"]>
@@ -508,6 +545,7 @@ export type PlaylistItemsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   id?: boolean
   playlist_id?: boolean
   media_id?: boolean
+  created_at?: boolean
   playlist?: boolean | Prisma.PlaylistsDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["playlistItems"]>
@@ -516,9 +554,10 @@ export type PlaylistItemsSelectScalar = {
   id?: boolean
   playlist_id?: boolean
   media_id?: boolean
+  created_at?: boolean
 }
 
-export type PlaylistItemsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "playlist_id" | "media_id", ExtArgs["result"]["playlistItems"]>
+export type PlaylistItemsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "playlist_id" | "media_id" | "created_at", ExtArgs["result"]["playlistItems"]>
 export type PlaylistItemsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   playlist?: boolean | Prisma.PlaylistsDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
@@ -542,6 +581,7 @@ export type $PlaylistItemsPayload<ExtArgs extends runtime.Types.Extensions.Inter
     id: string
     playlist_id: string
     media_id: string
+    created_at: Date
   }, ExtArgs["result"]["playlistItems"]>
   composites: {}
 }
@@ -970,6 +1010,7 @@ export interface PlaylistItemsFieldRefs {
   readonly id: Prisma.FieldRef<"PlaylistItems", 'String'>
   readonly playlist_id: Prisma.FieldRef<"PlaylistItems", 'String'>
   readonly media_id: Prisma.FieldRef<"PlaylistItems", 'String'>
+  readonly created_at: Prisma.FieldRef<"PlaylistItems", 'DateTime'>
 }
     
 

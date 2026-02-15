@@ -9,7 +9,6 @@ import {
 import {Medias, Reviews, User, Prisma, Notifications} from "../../../generated/prisma/browser.js";
 import {notificationsMapper} from "../../../mappers/notifications/notifications.mapper.js";
 
-
 export class NotificationService {
 
     async create(data: NotificationsCreationDto): Promise<NotificationsCreationResponseDto> {

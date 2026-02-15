@@ -1,7 +1,6 @@
 import {BaseMapper} from '../base.mapper.js';
 import {Reports} from "../../generated/prisma/client.js";
-import {ReportResponseAddDto, ReportResponseDto} from "../../types/reports/report.dto";
-
+import {ReportResponseAddDto, ReportResponseDto} from "../../types/reports/report.dto.js";
 
 class ReportMapper extends BaseMapper<Reports, ReportResponseDto> {
 

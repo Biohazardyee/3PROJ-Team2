@@ -1,37 +1,34 @@
 import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
+import {PlaylistItemCreateDto, PlaylistItemResponseDto} from "../../../types/playlists/playlist.item.dto.js";
+import {Playlists, Medias, PlaylistItems} from "../../../generated/prisma/browser.js";
+import {playlistItemMapper} from "../../../mappers/playlists/playlist.item.mapper.js";
 
 export class PlaylistItemService {
 
-    async add(data: {
-        playlist_id: string;
-        media_id: string
-    }) {
-        const {
-            playlist_id, 
-            media_id
-        } = data;
+    async add(data: PlaylistItemCreateDto): Promise<PlaylistItemResponseDto> {
 
-        if (isEmptyString(playlist_id)) {
-            throw new BadRequest('playlist_id is required');
+        if (isEmptyString(data.playlist_id)) {
+            throw new BadRequest('Playlist_id is required');
         }
-        if (isEmptyString(media_id)) {
-            throw new BadRequest('media_id is required');
+        if (isEmptyString(data.media_id)) {
+            throw new BadRequest('Media_id is required');
         }
 
-        const playlist = await PrismaDb.playlist.findUnique({
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
             where: {
-                id: playlist_id
+                id: data.playlist_id
             }
         });
+
         if (!playlist) {
             throw new NotFound('Playlist not found');
         }
 
-        const media = await PrismaDb.media.findUnique({
+        const media: Medias | null = await PrismaDb.medias.findUnique({
             where: {
-                id: media_id
+                id: data.media_id
             }
         });
 
@@ -39,36 +36,59 @@ export class PlaylistItemService {
             throw new NotFound('Media not found');
         }
 
-        const exists = await PrismaDb.playlistItem.findFirst({
+        const exists: PlaylistItems | null = await PrismaDb.playlistItems.findFirst({
             where: {
-                playlist_id,
-                media_id
+                playlist_id: data.playlist_id,
+                media_id: data.media_id,
             },
         });
+
         if (exists) {
             throw new BadRequest('Media already in this playlist');
         }
 
-        return PrismaDb.playlistItem.create({
-            data: {
-                playlist_id,
-                media_id
-            },
-            select: {
-                id: true,
-                playlist_id: true,
-                media_id: true
-            },
+        const playlistItem: PlaylistItems = await PrismaDb.playlistItems.create({
+            data
         });
+
+        return playlistItemMapper.toDto(playlistItem);
     }
 
-    async getByPlaylistId(playlist_id: string) {
+    async getAll(): Promise<PlaylistItemResponseDto[]> {
+        const playlistItems: PlaylistItems[] = await PrismaDb.playlistItems.findMany({
+            orderBy: {
+                created_at: 'asc'
+            }
+        });
+        return playlistItemMapper.toDtoList(playlistItems);
+    }
+
+    async getById(id: string): Promise<PlaylistItemResponseDto> {
+
+        if (isEmptyString(id)) {
+            throw new BadRequest('Playlist item id is required');
+        }
+
+        const playlistItem: PlaylistItems | null = await PrismaDb.playlistItems.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if (!playlistItem) {
+            throw new NotFound('Playlist item not found');
+        }
+
+        return playlistItemMapper.toDto(playlistItem);
+    }
+
+    async getByPlaylistId(playlist_id: string): Promise<PlaylistItemResponseDto[]> {
 
         if (isEmptyString(playlist_id)) {
             throw new BadRequest('playlist_id is required');
         }
 
-        const playlist = await PrismaDb.playlist.findUnique({
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
             where: {
                 id: playlist_id
             }
@@ -78,82 +98,38 @@ export class PlaylistItemService {
             throw new NotFound('Playlist not found');
         }
 
-        return PrismaDb.playlistItem.findMany({
+        const playlistItems: PlaylistItems[] = await PrismaDb.playlistItems.findMany({
             where: {
                 playlist_id
-            },
-            select: {
-                id: true,
-                media_id: true,
-                media: {
-                    select: {
-                        id: true,
-                        api_id: true
-                    }
-                },
-            },
+            }
         });
+
+        return playlistItemMapper.toDtoList(playlistItems);
     }
 
-    async delete(id: string) {
+    async delete(id: string): Promise<PlaylistItemResponseDto> {
 
         if (isEmptyString(id)) {
             throw new BadRequest('Playlist item id is required');
         }
 
-        const item = await PrismaDb.playlistItem.findUnique({
+        const playlistItem: PlaylistItems | null = await PrismaDb.playlistItems.findUnique({
             where: {
                 id
             }
         });
 
-        if (!item) {
+        if (!playlistItem) {
             throw new NotFound('Playlist item not found');
         }
 
-        return PrismaDb.playlistItem.delete({
+        const deletePlaylistItem: PlaylistItems = await PrismaDb.playlistItems.delete({
             where: {
                 id
-            },
-            select: {
-                id: true,
-                playlist_id: true,
-                media_id: true
-            },
-        });
-    }
-
-    async getAll() {
-        return PrismaDb.playlistItem.findMany({
-            select: {
-                id: true,
-                playlist_id: true,
-                media_id: true
-            },
-        });
-    }
-
-    async getById(id: string) {
-
-        if (isEmptyString(id)) {
-            throw new BadRequest('Playlist item id is required');
-        }
-
-        const item = await PrismaDb.playlistItem.findUnique({
-            where: {
-                id
-            },
-            select: {
-                id: true,
-                playlist_id: true,
-                media_id: true
             }
         });
 
-        if (!item) {
-            throw new NotFound('Playlist item not found');
-        }
-        return item;
+        return playlistItemMapper.toDto(deletePlaylistItem);
     }
 }
 

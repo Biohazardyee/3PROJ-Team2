@@ -74,12 +74,12 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
  * Enums
  */
 
-export const TransactionIsolationLevel = {
+export const TransactionIsolationLevel = runtime.makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
   RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
-} as const
+} as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
@@ -159,7 +159,8 @@ export type PlaylistsScalarFieldEnum = (typeof PlaylistsScalarFieldEnum)[keyof t
 export const PlaylistItemsScalarFieldEnum = {
   id: 'id',
   playlist_id: 'playlist_id',
-  media_id: 'media_id'
+  media_id: 'media_id',
+  created_at: 'created_at'
 } as const
 
 export type PlaylistItemsScalarFieldEnum = (typeof PlaylistItemsScalarFieldEnum)[keyof typeof PlaylistItemsScalarFieldEnum]

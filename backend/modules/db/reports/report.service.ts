@@ -10,7 +10,6 @@ import {
 import {User, Reviews, Prisma, ReviewComments} from "../../../generated/prisma/browser.js";
 import {reportMapper} from "../../../mappers/reports/report.mapper.js";
 
-
 export class ReportService {
 
     async create(data: ReportAddDto): Promise<ReportResponseAddDto> {

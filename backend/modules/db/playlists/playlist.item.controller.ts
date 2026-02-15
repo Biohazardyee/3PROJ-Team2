@@ -3,6 +3,7 @@ import type {Request, Response, NextFunction} from 'express';
 import {Controller} from '../../controller.js';
 import {BadRequest} from '../../../utils/errors.js';
 import {PlaylistItemService, playlistItemService} from './playlist.item.service.js';
+import {PlaylistItemCreateDto, PlaylistItemResponseDto} from "../../../types/playlists/playlist.item.dto.js";
 
 class PlaylistItemController extends Controller {
 
@@ -12,21 +13,40 @@ class PlaylistItemController extends Controller {
 
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                playlist_id,
-                media_id
-            } = req.body;
+            const createData: PlaylistItemCreateDto = {
+                playlist_id: req.body.playlist_id,
+                media_id: req.body.media_id
+            };
 
-            if (!playlist_id || !media_id) {
-                throw new BadRequest('playlist_id and media_id are required');
+            if (!createData.playlist_id || !createData.media_id) {
+                throw new BadRequest('Playlist_id and Media_id are required');
             }
 
-            const item = await this.service.add({
-                playlist_id,
-                media_id
-            });
+            const playlistItem: PlaylistItemResponseDto = await this.service.add(createData);
 
-            res.status(201).json({message: 'Media added to playlist successfully', item});
+            res.status(201).json({message: 'Media added to playlist successfully', playlistItem});
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const playlistItems: PlaylistItemResponseDto[] = await this.service.getAll();
+            res.status(201).json({message: 'Playlist items retrieved successfully', playlistItems});
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            if (!req.params.id) {
+                throw new BadRequest("Item ID is required as a parameter");
+            }
+
+            const playlistItem: PlaylistItemResponseDto = await this.service.getById(req.params.id);
+            res.status(200).json({message: 'Playlist item retrieved successfully', playlistItem});
         } catch (error) {
             next(error);
         }
@@ -34,19 +54,15 @@ class PlaylistItemController extends Controller {
 
     async getByPlaylistId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                playlist_id
-            } = req.params;
-
-            if (!playlist_id) {
-                throw new BadRequest('playlist_id is required');
+            if (!req.params.playlist_id) {
+                throw new BadRequest('Playlist_id is required');
             }
 
-            const items = await this.service.getByPlaylistId(playlist_id);
+            const playlistItems: PlaylistItemResponseDto[] = await this.service.getByPlaylistId(req.params.playlist_id);
 
             res.status(200).json({
                 message: 'Playlist items retrieved successfully',
-                items
+                playlistItems
             });
         } catch (error) {
             next(error);
@@ -55,43 +71,13 @@ class PlaylistItemController extends Controller {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
+            if (!req.params.id) {
                 throw new BadRequest("Item ID is required as a parameter");
             }
 
-            const item = await this.service.delete(id);
+            const playlistItem: PlaylistItemResponseDto = await this.service.delete(req.params.id);
 
-            res.status(200).json({message: 'Playlist item removed successfully', item});
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const items = await this.service.getAll();
-            res.status(200).json({message: 'Playlist items retrieved successfully', items});
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const {
-                id
-            } = req.params;
-
-            if (!id) {
-                throw new BadRequest("Item ID is required as a parameter");
-            }
-
-            const item = await this.service.getById(id);
-            res.status(200).json({message: 'Playlist item retrieved successfully', item});
+            res.status(200).json({message: 'Playlist item removed successfully', playlistItem});
         } catch (error) {
             next(error);
         }
