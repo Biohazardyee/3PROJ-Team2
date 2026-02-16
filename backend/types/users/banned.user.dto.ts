@@ -1,14 +1,16 @@
 // Response Interface
 export interface BannedUserResponseDto {
-    id: string;
-    user_id: string;
-    content: string;
-    created_at: Date;
+  id: string;
+  user_id: string;
+  username: string;
+  email: string;
+  content: string;
+  created_at: Date;
 }
+
 
 // Post Interface
 export interface BannedUserAddDto {
-    id: string;
     user_id: string;
     content: string;
 }

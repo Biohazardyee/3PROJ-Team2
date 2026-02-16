@@ -38,7 +38,6 @@ model User {
   user_media_status    UserMediaStatus[]
   reporter_reports     Reports[]         @relation("reporter_reports")
   profile_reports      Reports[]         @relation("profile_reports")
-  bannedUsers          BannedUsers?
 
   activities          Activitys[]     @relation("user_activities")
   activities_targets  Activitys[]     @relation("user_activities_targets")
@@ -222,8 +221,9 @@ model Notifications {
 
 model BannedUsers {
   id         String   @id @default(uuid())
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id    String   @unique
+  username   String   @db.VarChar(25)
+  email      String   @db.VarChar(320)
   content    String   @db.VarChar(255)
   created_at DateTime @default(now())
 }

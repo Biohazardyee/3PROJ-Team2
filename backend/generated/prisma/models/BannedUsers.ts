@@ -27,6 +27,8 @@ export type AggregateBannedUsers = {
 export type BannedUsersMinAggregateOutputType = {
   id: string | null
   user_id: string | null
+  username: string | null
+  email: string | null
   content: string | null
   created_at: Date | null
 }
@@ -34,6 +36,8 @@ export type BannedUsersMinAggregateOutputType = {
 export type BannedUsersMaxAggregateOutputType = {
   id: string | null
   user_id: string | null
+  username: string | null
+  email: string | null
   content: string | null
   created_at: Date | null
 }
@@ -41,6 +45,8 @@ export type BannedUsersMaxAggregateOutputType = {
 export type BannedUsersCountAggregateOutputType = {
   id: number
   user_id: number
+  username: number
+  email: number
   content: number
   created_at: number
   _all: number
@@ -50,6 +56,8 @@ export type BannedUsersCountAggregateOutputType = {
 export type BannedUsersMinAggregateInputType = {
   id?: true
   user_id?: true
+  username?: true
+  email?: true
   content?: true
   created_at?: true
 }
@@ -57,6 +65,8 @@ export type BannedUsersMinAggregateInputType = {
 export type BannedUsersMaxAggregateInputType = {
   id?: true
   user_id?: true
+  username?: true
+  email?: true
   content?: true
   created_at?: true
 }
@@ -64,6 +74,8 @@ export type BannedUsersMaxAggregateInputType = {
 export type BannedUsersCountAggregateInputType = {
   id?: true
   user_id?: true
+  username?: true
+  email?: true
   content?: true
   created_at?: true
   _all?: true
@@ -144,6 +156,8 @@ export type BannedUsersGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type BannedUsersGroupByOutputType = {
   id: string
   user_id: string
+  username: string
+  email: string
   content: string
   created_at: Date
   _count: BannedUsersCountAggregateOutputType | null
@@ -172,17 +186,19 @@ export type BannedUsersWhereInput = {
   NOT?: Prisma.BannedUsersWhereInput | Prisma.BannedUsersWhereInput[]
   id?: Prisma.StringFilter<"BannedUsers"> | string
   user_id?: Prisma.StringFilter<"BannedUsers"> | string
+  username?: Prisma.StringFilter<"BannedUsers"> | string
+  email?: Prisma.StringFilter<"BannedUsers"> | string
   content?: Prisma.StringFilter<"BannedUsers"> | string
   created_at?: Prisma.DateTimeFilter<"BannedUsers"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type BannedUsersOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type BannedUsersWhereUniqueInput = Prisma.AtLeast<{
@@ -191,14 +207,17 @@ export type BannedUsersWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.BannedUsersWhereInput | Prisma.BannedUsersWhereInput[]
   OR?: Prisma.BannedUsersWhereInput[]
   NOT?: Prisma.BannedUsersWhereInput | Prisma.BannedUsersWhereInput[]
+  username?: Prisma.StringFilter<"BannedUsers"> | string
+  email?: Prisma.StringFilter<"BannedUsers"> | string
   content?: Prisma.StringFilter<"BannedUsers"> | string
   created_at?: Prisma.DateTimeFilter<"BannedUsers"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id" | "user_id">
 
 export type BannedUsersOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   _count?: Prisma.BannedUsersCountOrderByAggregateInput
@@ -212,34 +231,44 @@ export type BannedUsersScalarWhereWithAggregatesInput = {
   NOT?: Prisma.BannedUsersScalarWhereWithAggregatesInput | Prisma.BannedUsersScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"BannedUsers"> | string
   user_id?: Prisma.StringWithAggregatesFilter<"BannedUsers"> | string
+  username?: Prisma.StringWithAggregatesFilter<"BannedUsers"> | string
+  email?: Prisma.StringWithAggregatesFilter<"BannedUsers"> | string
   content?: Prisma.StringWithAggregatesFilter<"BannedUsers"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"BannedUsers"> | Date | string
 }
 
 export type BannedUsersCreateInput = {
   id?: string
+  user_id: string
+  username: string
+  email: string
   content: string
   created_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutBannedUsersInput
 }
 
 export type BannedUsersUncheckedCreateInput = {
   id?: string
   user_id: string
+  username: string
+  email: string
   content: string
   created_at?: Date | string
 }
 
 export type BannedUsersUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutBannedUsersNestedInput
 }
 
 export type BannedUsersUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -247,12 +276,17 @@ export type BannedUsersUncheckedUpdateInput = {
 export type BannedUsersCreateManyInput = {
   id?: string
   user_id: string
+  username: string
+  email: string
   content: string
   created_at?: Date | string
 }
 
 export type BannedUsersUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -260,18 +294,17 @@ export type BannedUsersUpdateManyMutationInput = {
 export type BannedUsersUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type BannedUsersNullableScalarRelationFilter = {
-  is?: Prisma.BannedUsersWhereInput | null
-  isNot?: Prisma.BannedUsersWhereInput | null
 }
 
 export type BannedUsersCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
@@ -279,6 +312,8 @@ export type BannedUsersCountOrderByAggregateInput = {
 export type BannedUsersMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
@@ -286,80 +321,10 @@ export type BannedUsersMaxOrderByAggregateInput = {
 export type BannedUsersMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
-}
-
-export type BannedUsersCreateNestedOneWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.BannedUsersCreateWithoutUserInput, Prisma.BannedUsersUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.BannedUsersCreateOrConnectWithoutUserInput
-  connect?: Prisma.BannedUsersWhereUniqueInput
-}
-
-export type BannedUsersUncheckedCreateNestedOneWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.BannedUsersCreateWithoutUserInput, Prisma.BannedUsersUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.BannedUsersCreateOrConnectWithoutUserInput
-  connect?: Prisma.BannedUsersWhereUniqueInput
-}
-
-export type BannedUsersUpdateOneWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.BannedUsersCreateWithoutUserInput, Prisma.BannedUsersUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.BannedUsersCreateOrConnectWithoutUserInput
-  upsert?: Prisma.BannedUsersUpsertWithoutUserInput
-  disconnect?: Prisma.BannedUsersWhereInput | boolean
-  delete?: Prisma.BannedUsersWhereInput | boolean
-  connect?: Prisma.BannedUsersWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BannedUsersUpdateToOneWithWhereWithoutUserInput, Prisma.BannedUsersUpdateWithoutUserInput>, Prisma.BannedUsersUncheckedUpdateWithoutUserInput>
-}
-
-export type BannedUsersUncheckedUpdateOneWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.BannedUsersCreateWithoutUserInput, Prisma.BannedUsersUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.BannedUsersCreateOrConnectWithoutUserInput
-  upsert?: Prisma.BannedUsersUpsertWithoutUserInput
-  disconnect?: Prisma.BannedUsersWhereInput | boolean
-  delete?: Prisma.BannedUsersWhereInput | boolean
-  connect?: Prisma.BannedUsersWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BannedUsersUpdateToOneWithWhereWithoutUserInput, Prisma.BannedUsersUpdateWithoutUserInput>, Prisma.BannedUsersUncheckedUpdateWithoutUserInput>
-}
-
-export type BannedUsersCreateWithoutUserInput = {
-  id?: string
-  content: string
-  created_at?: Date | string
-}
-
-export type BannedUsersUncheckedCreateWithoutUserInput = {
-  id?: string
-  content: string
-  created_at?: Date | string
-}
-
-export type BannedUsersCreateOrConnectWithoutUserInput = {
-  where: Prisma.BannedUsersWhereUniqueInput
-  create: Prisma.XOR<Prisma.BannedUsersCreateWithoutUserInput, Prisma.BannedUsersUncheckedCreateWithoutUserInput>
-}
-
-export type BannedUsersUpsertWithoutUserInput = {
-  update: Prisma.XOR<Prisma.BannedUsersUpdateWithoutUserInput, Prisma.BannedUsersUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.BannedUsersCreateWithoutUserInput, Prisma.BannedUsersUncheckedCreateWithoutUserInput>
-  where?: Prisma.BannedUsersWhereInput
-}
-
-export type BannedUsersUpdateToOneWithWhereWithoutUserInput = {
-  where?: Prisma.BannedUsersWhereInput
-  data: Prisma.XOR<Prisma.BannedUsersUpdateWithoutUserInput, Prisma.BannedUsersUncheckedUpdateWithoutUserInput>
-}
-
-export type BannedUsersUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type BannedUsersUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -367,53 +332,49 @@ export type BannedUsersUncheckedUpdateWithoutUserInput = {
 export type BannedUsersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   user_id?: boolean
+  username?: boolean
+  email?: boolean
   content?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bannedUsers"]>
 
 export type BannedUsersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   user_id?: boolean
+  username?: boolean
+  email?: boolean
   content?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bannedUsers"]>
 
 export type BannedUsersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   user_id?: boolean
+  username?: boolean
+  email?: boolean
   content?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bannedUsers"]>
 
 export type BannedUsersSelectScalar = {
   id?: boolean
   user_id?: boolean
+  username?: boolean
+  email?: boolean
   content?: boolean
   created_at?: boolean
 }
 
-export type BannedUsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "content" | "created_at", ExtArgs["result"]["bannedUsers"]>
-export type BannedUsersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type BannedUsersIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type BannedUsersIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
+export type BannedUsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "username" | "email" | "content" | "created_at", ExtArgs["result"]["bannedUsers"]>
 
 export type $BannedUsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BannedUsers"
-  objects: {
-    user: Prisma.$UserPayload<ExtArgs>
-  }
+  objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     user_id: string
+    username: string
+    email: string
     content: string
     created_at: Date
   }, ExtArgs["result"]["bannedUsers"]>
@@ -810,7 +771,6 @@ readonly fields: BannedUsersFieldRefs;
  */
 export interface Prisma__BannedUsersClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -842,6 +802,8 @@ export interface Prisma__BannedUsersClient<T, Null = never, ExtArgs extends runt
 export interface BannedUsersFieldRefs {
   readonly id: Prisma.FieldRef<"BannedUsers", 'String'>
   readonly user_id: Prisma.FieldRef<"BannedUsers", 'String'>
+  readonly username: Prisma.FieldRef<"BannedUsers", 'String'>
+  readonly email: Prisma.FieldRef<"BannedUsers", 'String'>
   readonly content: Prisma.FieldRef<"BannedUsers", 'String'>
   readonly created_at: Prisma.FieldRef<"BannedUsers", 'DateTime'>
 }
@@ -861,10 +823,6 @@ export type BannedUsersFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
-  /**
    * Filter, which BannedUsers to fetch.
    */
   where: Prisma.BannedUsersWhereUniqueInput
@@ -883,10 +841,6 @@ export type BannedUsersFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
-  /**
    * Filter, which BannedUsers to fetch.
    */
   where: Prisma.BannedUsersWhereUniqueInput
@@ -904,10 +858,6 @@ export type BannedUsersFindFirstArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the BannedUsers
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
   /**
    * Filter, which BannedUsers to fetch.
    */
@@ -957,10 +907,6 @@ export type BannedUsersFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
-  /**
    * Filter, which BannedUsers to fetch.
    */
   where?: Prisma.BannedUsersWhereInput
@@ -1009,10 +955,6 @@ export type BannedUsersFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
-  /**
    * Filter, which BannedUsers to fetch.
    */
   where?: Prisma.BannedUsersWhereInput
@@ -1056,10 +998,6 @@ export type BannedUsersCreateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
-  /**
    * The data needed to create a BannedUsers.
    */
   data: Prisma.XOR<Prisma.BannedUsersCreateInput, Prisma.BannedUsersUncheckedCreateInput>
@@ -1093,10 +1031,6 @@ export type BannedUsersCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    */
   data: Prisma.BannedUsersCreateManyInput | Prisma.BannedUsersCreateManyInput[]
   skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1111,10 +1045,6 @@ export type BannedUsersUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the BannedUsers
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
   /**
    * The data needed to update a BannedUsers.
    */
@@ -1167,10 +1097,6 @@ export type BannedUsersUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many BannedUsers to update.
    */
   limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1185,10 +1111,6 @@ export type BannedUsersUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the BannedUsers
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
   /**
    * The filter to search for the BannedUsers to update in case it exists.
    */
@@ -1215,10 +1137,6 @@ export type BannedUsersDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the BannedUsers
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
   /**
    * Filter which BannedUsers to delete.
    */
@@ -1251,8 +1169,4 @@ export type BannedUsersDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the BannedUsers
    */
   omit?: Prisma.BannedUsersOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
 }

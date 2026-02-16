@@ -249,7 +249,6 @@ export type UserWhereInput = {
   user_media_status?: Prisma.UserMediaStatusListRelationFilter
   reporter_reports?: Prisma.ReportsListRelationFilter
   profile_reports?: Prisma.ReportsListRelationFilter
-  bannedUsers?: Prisma.XOR<Prisma.BannedUsersNullableScalarRelationFilter, Prisma.BannedUsersWhereInput> | null
   activities?: Prisma.ActivitysListRelationFilter
   activities_targets?: Prisma.ActivitysListRelationFilter
   conversations_user1?: Prisma.ConversationsListRelationFilter
@@ -281,7 +280,6 @@ export type UserOrderByWithRelationInput = {
   user_media_status?: Prisma.UserMediaStatusOrderByRelationAggregateInput
   reporter_reports?: Prisma.ReportsOrderByRelationAggregateInput
   profile_reports?: Prisma.ReportsOrderByRelationAggregateInput
-  bannedUsers?: Prisma.BannedUsersOrderByWithRelationInput
   activities?: Prisma.ActivitysOrderByRelationAggregateInput
   activities_targets?: Prisma.ActivitysOrderByRelationAggregateInput
   conversations_user1?: Prisma.ConversationsOrderByRelationAggregateInput
@@ -316,7 +314,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   user_media_status?: Prisma.UserMediaStatusListRelationFilter
   reporter_reports?: Prisma.ReportsListRelationFilter
   profile_reports?: Prisma.ReportsListRelationFilter
-  bannedUsers?: Prisma.XOR<Prisma.BannedUsersNullableScalarRelationFilter, Prisma.BannedUsersWhereInput> | null
   activities?: Prisma.ActivitysListRelationFilter
   activities_targets?: Prisma.ActivitysListRelationFilter
   conversations_user1?: Prisma.ConversationsListRelationFilter
@@ -384,7 +381,6 @@ export type UserCreateInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -416,7 +412,6 @@ export type UserUncheckedCreateInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -448,7 +443,6 @@ export type UserUpdateInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -480,7 +474,6 @@ export type UserUncheckedUpdateInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -800,20 +793,6 @@ export type UserUpdateOneWithoutNotificationsRelatedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsRelatedInput, Prisma.UserUpdateWithoutNotificationsRelatedInput>, Prisma.UserUncheckedUpdateWithoutNotificationsRelatedInput>
 }
 
-export type UserCreateNestedOneWithoutBannedUsersInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutBannedUsersInput, Prisma.UserUncheckedCreateWithoutBannedUsersInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBannedUsersInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutBannedUsersNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutBannedUsersInput, Prisma.UserUncheckedCreateWithoutBannedUsersInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBannedUsersInput
-  upsert?: Prisma.UserUpsertWithoutBannedUsersInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBannedUsersInput, Prisma.UserUpdateWithoutBannedUsersInput>, Prisma.UserUncheckedUpdateWithoutBannedUsersInput>
-}
-
 export type UserCreateNestedOneWithoutConversations_user1Input = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutConversations_user1Input, Prisma.UserUncheckedCreateWithoutConversations_user1Input>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutConversations_user1Input
@@ -879,7 +858,6 @@ export type UserCreateWithoutReviewsInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -910,7 +888,6 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -957,7 +934,6 @@ export type UserUpdateWithoutReviewsInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -988,7 +964,6 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -1019,7 +994,6 @@ export type UserCreateWithoutReview_commentsInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -1050,7 +1024,6 @@ export type UserUncheckedCreateWithoutReview_commentsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -1097,7 +1070,6 @@ export type UserUpdateWithoutReview_commentsInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -1128,7 +1100,6 @@ export type UserUncheckedUpdateWithoutReview_commentsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -1159,7 +1130,6 @@ export type UserCreateWithoutReview_likesInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -1190,7 +1160,6 @@ export type UserUncheckedCreateWithoutReview_likesInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -1237,7 +1206,6 @@ export type UserUpdateWithoutReview_likesInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -1268,7 +1236,6 @@ export type UserUncheckedUpdateWithoutReview_likesInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -1299,7 +1266,6 @@ export type UserCreateWithoutPlaylistsInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -1330,7 +1296,6 @@ export type UserUncheckedCreateWithoutPlaylistsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -1377,7 +1342,6 @@ export type UserUpdateWithoutPlaylistsInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -1408,7 +1372,6 @@ export type UserUncheckedUpdateWithoutPlaylistsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -1439,7 +1402,6 @@ export type UserCreateWithoutUser_media_statusInput = {
   notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -1470,7 +1432,6 @@ export type UserUncheckedCreateWithoutUser_media_statusInput = {
   notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -1517,7 +1478,6 @@ export type UserUpdateWithoutUser_media_statusInput = {
   notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -1548,7 +1508,6 @@ export type UserUncheckedUpdateWithoutUser_media_statusInput = {
   notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -1580,7 +1539,6 @@ export type UserCreateWithoutActivitiesInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
@@ -1611,7 +1569,6 @@ export type UserUncheckedCreateWithoutActivitiesInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
@@ -1647,7 +1604,6 @@ export type UserCreateWithoutActivities_targetsInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
@@ -1678,7 +1634,6 @@ export type UserUncheckedCreateWithoutActivities_targetsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
@@ -1725,7 +1680,6 @@ export type UserUpdateWithoutActivitiesInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
@@ -1756,7 +1710,6 @@ export type UserUncheckedUpdateWithoutActivitiesInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
@@ -1798,7 +1751,6 @@ export type UserUpdateWithoutActivities_targetsInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
@@ -1829,7 +1781,6 @@ export type UserUncheckedUpdateWithoutActivities_targetsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
@@ -1859,7 +1810,6 @@ export type UserCreateWithoutFollowsInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -1890,7 +1840,6 @@ export type UserUncheckedCreateWithoutFollowsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -1926,7 +1875,6 @@ export type UserCreateWithoutFollowersInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -1957,7 +1905,6 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -2004,7 +1951,6 @@ export type UserUpdateWithoutFollowsInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -2035,7 +1981,6 @@ export type UserUncheckedUpdateWithoutFollowsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -2077,7 +2022,6 @@ export type UserUpdateWithoutFollowersInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -2108,7 +2052,6 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -2139,7 +2082,6 @@ export type UserCreateWithoutReporter_reportsInput = {
   notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -2170,7 +2112,6 @@ export type UserUncheckedCreateWithoutReporter_reportsInput = {
   notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -2206,7 +2147,6 @@ export type UserCreateWithoutProfile_reportsInput = {
   notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -2237,7 +2177,6 @@ export type UserUncheckedCreateWithoutProfile_reportsInput = {
   notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -2284,7 +2223,6 @@ export type UserUpdateWithoutReporter_reportsInput = {
   notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -2315,7 +2253,6 @@ export type UserUncheckedUpdateWithoutReporter_reportsInput = {
   notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -2357,7 +2294,6 @@ export type UserUpdateWithoutProfile_reportsInput = {
   notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -2388,7 +2324,6 @@ export type UserUncheckedUpdateWithoutProfile_reportsInput = {
   notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -2419,7 +2354,6 @@ export type UserCreateWithoutNotificationsInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -2450,7 +2384,6 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -2486,7 +2419,6 @@ export type UserCreateWithoutNotificationsRelatedInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -2517,7 +2449,6 @@ export type UserUncheckedCreateWithoutNotificationsRelatedInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -2564,7 +2495,6 @@ export type UserUpdateWithoutNotificationsInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -2595,7 +2525,6 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -2637,7 +2566,6 @@ export type UserUpdateWithoutNotificationsRelatedInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -2665,147 +2593,6 @@ export type UserUncheckedUpdateWithoutNotificationsRelatedInput = {
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
-  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
-  reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
-  profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
-}
-
-export type UserCreateWithoutBannedUsersInput = {
-  id?: string
-  username: string
-  email: string
-  password: string
-  favorite_band: string
-  profile_picture: runtime.Bytes
-  role?: $Enums.Roles
-  has_notifications?: boolean
-  phone_number?: string | null
-  biography?: string | null
-  created_at?: Date | string
-  updated_at?: Date | string
-  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
-  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
-  reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
-  profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
-}
-
-export type UserUncheckedCreateWithoutBannedUsersInput = {
-  id?: string
-  username: string
-  email: string
-  password: string
-  favorite_band: string
-  profile_picture: runtime.Bytes
-  role?: $Enums.Roles
-  has_notifications?: boolean
-  phone_number?: string | null
-  biography?: string | null
-  created_at?: Date | string
-  updated_at?: Date | string
-  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
-  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
-  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
-  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
-  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
-  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
-  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
-  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
-  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
-  reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
-  profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
-  activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
-  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
-  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
-  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
-}
-
-export type UserCreateOrConnectWithoutBannedUsersInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutBannedUsersInput, Prisma.UserUncheckedCreateWithoutBannedUsersInput>
-}
-
-export type UserUpsertWithoutBannedUsersInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutBannedUsersInput, Prisma.UserUncheckedUpdateWithoutBannedUsersInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutBannedUsersInput, Prisma.UserUncheckedCreateWithoutBannedUsersInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutBannedUsersInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutBannedUsersInput, Prisma.UserUncheckedUpdateWithoutBannedUsersInput>
-}
-
-export type UserUpdateWithoutBannedUsersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
-  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
-  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
-  reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
-  profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
-  activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
-  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
-  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
-  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
-}
-
-export type UserUncheckedUpdateWithoutBannedUsersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
-  profile_picture?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
-  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
-  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
-  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
-  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
-  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
-  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
-  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
-  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
-  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
@@ -2840,7 +2627,6 @@ export type UserCreateWithoutConversations_user1Input = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
@@ -2871,7 +2657,6 @@ export type UserUncheckedCreateWithoutConversations_user1Input = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
@@ -2907,7 +2692,6 @@ export type UserCreateWithoutConversations_user2Input = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -2938,7 +2722,6 @@ export type UserUncheckedCreateWithoutConversations_user2Input = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -2985,7 +2768,6 @@ export type UserUpdateWithoutConversations_user1Input = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
@@ -3016,7 +2798,6 @@ export type UserUncheckedUpdateWithoutConversations_user1Input = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
@@ -3058,7 +2839,6 @@ export type UserUpdateWithoutConversations_user2Input = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -3089,7 +2869,6 @@ export type UserUncheckedUpdateWithoutConversations_user2Input = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -3120,7 +2899,6 @@ export type UserCreateWithoutMessagesInput = {
   user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
@@ -3151,7 +2929,6 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
   reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
   profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
-  bannedUsers?: Prisma.BannedUsersUncheckedCreateNestedOneWithoutUserInput
   activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutUserInput
   activities_targets?: Prisma.ActivitysUncheckedCreateNestedManyWithoutTarget_userInput
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
@@ -3198,7 +2975,6 @@ export type UserUpdateWithoutMessagesInput = {
   user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
@@ -3229,7 +3005,6 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
   reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
   profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
-  bannedUsers?: Prisma.BannedUsersUncheckedUpdateOneWithoutUserNestedInput
   activities?: Prisma.ActivitysUncheckedUpdateManyWithoutUserNestedInput
   activities_targets?: Prisma.ActivitysUncheckedUpdateManyWithoutTarget_userNestedInput
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
@@ -3426,7 +3201,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   user_media_status?: boolean | Prisma.User$user_media_statusArgs<ExtArgs>
   reporter_reports?: boolean | Prisma.User$reporter_reportsArgs<ExtArgs>
   profile_reports?: boolean | Prisma.User$profile_reportsArgs<ExtArgs>
-  bannedUsers?: boolean | Prisma.User$bannedUsersArgs<ExtArgs>
   activities?: boolean | Prisma.User$activitiesArgs<ExtArgs>
   activities_targets?: boolean | Prisma.User$activities_targetsArgs<ExtArgs>
   conversations_user1?: boolean | Prisma.User$conversations_user1Args<ExtArgs>
@@ -3493,7 +3267,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   user_media_status?: boolean | Prisma.User$user_media_statusArgs<ExtArgs>
   reporter_reports?: boolean | Prisma.User$reporter_reportsArgs<ExtArgs>
   profile_reports?: boolean | Prisma.User$profile_reportsArgs<ExtArgs>
-  bannedUsers?: boolean | Prisma.User$bannedUsersArgs<ExtArgs>
   activities?: boolean | Prisma.User$activitiesArgs<ExtArgs>
   activities_targets?: boolean | Prisma.User$activities_targetsArgs<ExtArgs>
   conversations_user1?: boolean | Prisma.User$conversations_user1Args<ExtArgs>
@@ -3518,7 +3291,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     user_media_status: Prisma.$UserMediaStatusPayload<ExtArgs>[]
     reporter_reports: Prisma.$ReportsPayload<ExtArgs>[]
     profile_reports: Prisma.$ReportsPayload<ExtArgs>[]
-    bannedUsers: Prisma.$BannedUsersPayload<ExtArgs> | null
     activities: Prisma.$ActivitysPayload<ExtArgs>[]
     activities_targets: Prisma.$ActivitysPayload<ExtArgs>[]
     conversations_user1: Prisma.$ConversationsPayload<ExtArgs>[]
@@ -3943,7 +3715,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   user_media_status<T extends Prisma.User$user_media_statusArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$user_media_statusArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserMediaStatusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reporter_reports<T extends Prisma.User$reporter_reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reporter_reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   profile_reports<T extends Prisma.User$profile_reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$profile_reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  bannedUsers<T extends Prisma.User$bannedUsersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bannedUsersArgs<ExtArgs>>): Prisma.Prisma__BannedUsersClient<runtime.Types.Result.GetResult<Prisma.$BannedUsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   activities<T extends Prisma.User$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivitysPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activities_targets<T extends Prisma.User$activities_targetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activities_targetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivitysPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversations_user1<T extends Prisma.User$conversations_user1Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversations_user1Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4639,25 +4410,6 @@ export type User$profile_reportsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ReportsScalarFieldEnum | Prisma.ReportsScalarFieldEnum[]
-}
-
-/**
- * User.bannedUsers
- */
-export type User$bannedUsersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the BannedUsers
-   */
-  select?: Prisma.BannedUsersSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the BannedUsers
-   */
-  omit?: Prisma.BannedUsersOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BannedUsersInclude<ExtArgs> | null
-  where?: Prisma.BannedUsersWhereInput
 }
 
 /**
