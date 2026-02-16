@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
             </TouchableOpacity>
 
             {/* Bibliotheque */}
-            <TouchableOpacity onPress={() => router.push('/restriction')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/library')} style={styles.icon}>
                 <Ionicons
                     name="library-outline"
                     size={26}
