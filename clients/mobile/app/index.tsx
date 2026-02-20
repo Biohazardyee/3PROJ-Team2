@@ -1,5 +1,5 @@
-import RegisterMobile from '../src/RegisterMobile';
+import HomeMobile from '../src/pages/HomeMobile';
 
 export default function Page() {
-  return <RegisterMobile />;
+    return <HomeMobile />;
 }

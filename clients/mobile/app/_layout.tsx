@@ -1,11 +1,34 @@
 import { Stack } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Footer from "@/src/components/Footer";
 
 export default function RootLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      {/* Ces noms correspondent aux fichiers que nous allons lier */}
-      <Stack.Screen name="index" /> 
-      <Stack.Screen name="login" />
-    </Stack>
+      <View style={[styles.container]}>
+        <LayoutContent />
+      </View>
   );
 }
+
+function LayoutContent() {
+    const insets = useSafeAreaInsets();
+    return (
+        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+
+            <View style={{ flex: 1 }}>
+                <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="index" />
+                </Stack>
+            </View>
+            <Footer />
+        </View>
+    );
+}
+
+const styles= StyleSheet.create({
+  container: {
+    flex : 1,
+    backgroundColor: '#13131a',
+  }
+})

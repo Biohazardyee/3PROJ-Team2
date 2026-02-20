@@ -51,19 +51,21 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User',
-  Media: 'Media',
-  Review: 'Review',
-  ReviewComment: 'ReviewComment',
-  ReviewLike: 'ReviewLike',
-  Playlist: 'Playlist',
-  PlaylistItem: 'PlaylistItem',
+  Users: 'Users',
+  Medias: 'Medias',
+  Reviews: 'Reviews',
+  ReviewComments: 'ReviewComments',
+  ReviewLikes: 'ReviewLikes',
+  Playlists: 'Playlists',
+  PlaylistItems: 'PlaylistItems',
   UserMediaStatus: 'UserMediaStatus',
-  Activity: 'Activity',
-  Follow: 'Follow',
-  Report: 'Report',
-  Notification: 'Notification',
-  BannedUsers: 'BannedUsers'
+  Activities: 'Activities',
+  Follows: 'Follows',
+  Reports: 'Reports',
+  Notifications: 'Notifications',
+  BannedUsers: 'BannedUsers',
+  Conversations: 'Conversations',
+  Messages: 'Messages'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -82,34 +84,35 @@ export const TransactionIsolationLevel = {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const UserScalarFieldEnum = {
+export const UsersScalarFieldEnum = {
   id: 'id',
   username: 'username',
   email: 'email',
   password: 'password',
-  phone_number: 'phone_number',
+  favorite_band: 'favorite_band',
   profile_picture: 'profile_picture',
   role: 'role',
-  biography: 'biography',
-  favorite_band: 'favorite_band',
   has_notifications: 'has_notifications',
+  phone_number: 'phone_number',
+  biography: 'biography',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
 
 
-export const MediaScalarFieldEnum = {
+export const MediasScalarFieldEnum = {
   id: 'id',
   api_id: 'api_id',
+  rating: 'rating',
   created_at: 'created_at'
 } as const
 
-export type MediaScalarFieldEnum = (typeof MediaScalarFieldEnum)[keyof typeof MediaScalarFieldEnum]
+export type MediasScalarFieldEnum = (typeof MediasScalarFieldEnum)[keyof typeof MediasScalarFieldEnum]
 
 
-export const ReviewScalarFieldEnum = {
+export const ReviewsScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
   media_id: 'media_id',
@@ -119,10 +122,10 @@ export const ReviewScalarFieldEnum = {
   updated_at: 'updated_at'
 } as const
 
-export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+export type ReviewsScalarFieldEnum = (typeof ReviewsScalarFieldEnum)[keyof typeof ReviewsScalarFieldEnum]
 
 
-export const ReviewCommentScalarFieldEnum = {
+export const ReviewCommentsScalarFieldEnum = {
   id: 'id',
   review_id: 'review_id',
   user_id: 'user_id',
@@ -130,19 +133,19 @@ export const ReviewCommentScalarFieldEnum = {
   created_at: 'created_at'
 } as const
 
-export type ReviewCommentScalarFieldEnum = (typeof ReviewCommentScalarFieldEnum)[keyof typeof ReviewCommentScalarFieldEnum]
+export type ReviewCommentsScalarFieldEnum = (typeof ReviewCommentsScalarFieldEnum)[keyof typeof ReviewCommentsScalarFieldEnum]
 
 
-export const ReviewLikeScalarFieldEnum = {
+export const ReviewLikesScalarFieldEnum = {
   user_id: 'user_id',
   review_id: 'review_id',
   created_at: 'created_at'
 } as const
 
-export type ReviewLikeScalarFieldEnum = (typeof ReviewLikeScalarFieldEnum)[keyof typeof ReviewLikeScalarFieldEnum]
+export type ReviewLikesScalarFieldEnum = (typeof ReviewLikesScalarFieldEnum)[keyof typeof ReviewLikesScalarFieldEnum]
 
 
-export const PlaylistScalarFieldEnum = {
+export const PlaylistsScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
   name: 'name',
@@ -151,16 +154,17 @@ export const PlaylistScalarFieldEnum = {
   updated_at: 'updated_at'
 } as const
 
-export type PlaylistScalarFieldEnum = (typeof PlaylistScalarFieldEnum)[keyof typeof PlaylistScalarFieldEnum]
+export type PlaylistsScalarFieldEnum = (typeof PlaylistsScalarFieldEnum)[keyof typeof PlaylistsScalarFieldEnum]
 
 
-export const PlaylistItemScalarFieldEnum = {
+export const PlaylistItemsScalarFieldEnum = {
   id: 'id',
   playlist_id: 'playlist_id',
-  media_id: 'media_id'
+  media_id: 'media_id',
+  created_at: 'created_at'
 } as const
 
-export type PlaylistItemScalarFieldEnum = (typeof PlaylistItemScalarFieldEnum)[keyof typeof PlaylistItemScalarFieldEnum]
+export type PlaylistItemsScalarFieldEnum = (typeof PlaylistItemsScalarFieldEnum)[keyof typeof PlaylistItemsScalarFieldEnum]
 
 
 export const UserMediaStatusScalarFieldEnum = {
@@ -173,7 +177,7 @@ export const UserMediaStatusScalarFieldEnum = {
 export type UserMediaStatusScalarFieldEnum = (typeof UserMediaStatusScalarFieldEnum)[keyof typeof UserMediaStatusScalarFieldEnum]
 
 
-export const ActivityScalarFieldEnum = {
+export const ActivitiesScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
   target_user_id: 'target_user_id',
@@ -184,32 +188,34 @@ export const ActivityScalarFieldEnum = {
   created_at: 'created_at'
 } as const
 
-export type ActivityScalarFieldEnum = (typeof ActivityScalarFieldEnum)[keyof typeof ActivityScalarFieldEnum]
+export type ActivitiesScalarFieldEnum = (typeof ActivitiesScalarFieldEnum)[keyof typeof ActivitiesScalarFieldEnum]
 
 
-export const FollowScalarFieldEnum = {
+export const FollowsScalarFieldEnum = {
   user_id: 'user_id',
   follow_user_id: 'follow_user_id',
   created_at: 'created_at'
 } as const
 
-export type FollowScalarFieldEnum = (typeof FollowScalarFieldEnum)[keyof typeof FollowScalarFieldEnum]
+export type FollowsScalarFieldEnum = (typeof FollowsScalarFieldEnum)[keyof typeof FollowsScalarFieldEnum]
 
 
-export const ReportScalarFieldEnum = {
+export const ReportsScalarFieldEnum = {
   id: 'id',
   reporter_id: 'reporter_id',
   review_id: 'review_id',
+  profile_id: 'profile_id',
+  comment_id: 'comment_id',
   reason: 'reason',
   reason_type: 'reason_type',
   is_checked: 'is_checked',
   created_at: 'created_at'
 } as const
 
-export type ReportScalarFieldEnum = (typeof ReportScalarFieldEnum)[keyof typeof ReportScalarFieldEnum]
+export type ReportsScalarFieldEnum = (typeof ReportsScalarFieldEnum)[keyof typeof ReportsScalarFieldEnum]
 
 
-export const NotificationScalarFieldEnum = {
+export const NotificationsScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
   action: 'action',
@@ -221,16 +227,41 @@ export const NotificationScalarFieldEnum = {
   created_at: 'created_at'
 } as const
 
-export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+export type NotificationsScalarFieldEnum = (typeof NotificationsScalarFieldEnum)[keyof typeof NotificationsScalarFieldEnum]
 
 
 export const BannedUsersScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
-  content: 'content'
+  username: 'username',
+  email: 'email',
+  content: 'content',
+  created_at: 'created_at'
 } as const
 
 export type BannedUsersScalarFieldEnum = (typeof BannedUsersScalarFieldEnum)[keyof typeof BannedUsersScalarFieldEnum]
+
+
+export const ConversationsScalarFieldEnum = {
+  id: 'id',
+  user1_id: 'user1_id',
+  user2_id: 'user2_id',
+  created_at: 'created_at'
+} as const
+
+export type ConversationsScalarFieldEnum = (typeof ConversationsScalarFieldEnum)[keyof typeof ConversationsScalarFieldEnum]
+
+
+export const MessagesScalarFieldEnum = {
+  id: 'id',
+  conversation_id: 'conversation_id',
+  sender_id: 'sender_id',
+  content: 'content',
+  is_read: 'is_read',
+  created_at: 'created_at'
+} as const
+
+export type MessagesScalarFieldEnum = (typeof MessagesScalarFieldEnum)[keyof typeof MessagesScalarFieldEnum]
 
 
 export const SortOrder = {
