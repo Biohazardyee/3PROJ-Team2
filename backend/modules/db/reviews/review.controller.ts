@@ -26,7 +26,12 @@ class ReviewController extends Controller {
                 content: req.body.content,
             };
 
-            if (!createData.user_id || !createData.media_id || !createData.rating || !createData.content) {
+            if (
+                !createData.user_id ||
+                !createData.media_id ||
+                createData.rating === undefined ||
+                !createData.content
+            ) {
                 throw new BadRequest('User_id, media_id, rating & content is required');
             }
 

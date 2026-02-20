@@ -17,7 +17,7 @@ import {
     UserResponseLoginDto,
     UserUpdateDto
 } from '../../../types/users/user.dto';
-import {User} from "../../../generated/prisma/client.js";
+import {Users} from "../../../generated/prisma/client.js";
 
 dotenv.config();
 
@@ -63,7 +63,7 @@ class UserController extends Controller {
                 throw new BadRequest('Email and password required');
             }
 
-            const user: User | null = await this.service.getByEmailForAuth(loginData.email);
+            const user: Users | null = await this.service.getByEmailForAuth(loginData.email);
 
             if (!user) {
                 throw new Unauthorized('Invalid email or password');

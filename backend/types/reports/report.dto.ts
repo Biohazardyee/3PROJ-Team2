@@ -37,7 +37,7 @@ export interface ReportAddDto {
 
 export interface ReportUpdateDto {
     reason?: string;
-    is_checked: boolean;
+    is_checked?: boolean;
 }
 
 export interface ReportDeleteResponseDto {

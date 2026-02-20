@@ -1,13 +1,12 @@
 import {PrismaDb} from '../../../config/database.js';
-import {Reports, ReportTypes} from '../../../generated/prisma/browser.js';
+import {Reports, ReportTypes, Users, Reviews, Prisma, ReviewComments} from '../../../generated/prisma/browser.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
-import {isEmptyString} from '../../../utils/helpers.js';
+import {isEmptyString, isValidBoolean} from '../../../utils/helpers.js';
 import {
     ReportAddDto, ReportDeleteResponseDto,
     ReportResponseAddDto,
-    ReportResponseDto
+    ReportResponseDto, ReportUpdateDto
 } from "../../../types/reports/report.dto.js";
-import {User, Reviews, Prisma, ReviewComments} from "../../../generated/prisma/browser.js";
 import {reportMapper} from "../../../mappers/reports/report.mapper.js";
 
 export class ReportService {
@@ -26,7 +25,7 @@ export class ReportService {
             throw new BadRequest('Invalid report type');
         }
 
-        const reporter: User | null = await PrismaDb.user.findUnique({
+        const reporter: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.reporter_id
             }
@@ -68,7 +67,7 @@ export class ReportService {
                 throw new BadRequest('Profile_id is required for profile reports');
             }
 
-            const user: User | null = await PrismaDb.user.findUnique({
+            const user: Users | null = await PrismaDb.users.findUnique({
                 where: {
                     id: data.profile_id
                 }
@@ -163,8 +162,48 @@ export class ReportService {
         return reportMapper.toDtoList(reports);
     }
 
-    async update(): Promise<void> {
-        // no implementation needed.
+    async update(id: string, data: ReportUpdateDto): Promise<ReportResponseDto> {
+
+        if (isEmptyString(id)) {
+            throw new BadRequest('Report id cannot be empty');
+        }
+
+        const exist: Reports | null = await PrismaDb.reports.findUnique({
+            where: {
+                id
+            },
+        });
+
+        if (!exist) {
+            throw new NotFound('Report not found');
+        }
+
+        const updateData: Prisma.ReportsUpdateInput = {};
+
+        if (data.reason !== undefined) {
+            if (isEmptyString(data.reason)) {
+                throw new BadRequest('Reason cannot be empty');
+            }
+            updateData.reason = data.reason;
+        }
+
+        if (data.is_checked !== undefined) {
+            if (!isValidBoolean(data.is_checked)) {
+                throw new BadRequest(
+                    'Is_checked must be a correct boolean'
+                );
+            }
+            updateData.is_checked = data.is_checked;
+        }
+
+        const report: Reports = await PrismaDb.reports.update({
+            where: {
+                id
+            },
+            data: updateData,
+        });
+
+        return reportMapper.toDto(report);
     }
 
     async delete(id: string): Promise<ReportDeleteResponseDto> {

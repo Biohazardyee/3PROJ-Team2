@@ -1,14 +1,14 @@
 import {BaseMapper} from '../base.mapper.js';
-import {Activitys} from "../../generated/prisma/client.js";
+import {Activities} from "../../generated/prisma/client.js";
 import {
     ActivityDeleteResponseDto,
     ActivityResponseDto,
-    ActivityUserFeedResponseDto
+
 } from "../../types/activities/activities.dto.js";
 
-class ActivityMapper extends BaseMapper<Activitys, ActivityResponseDto> {
+class ActivityMapper extends BaseMapper<Activities, ActivityResponseDto> {
 
-    protected mapOne(activity: Activitys): ActivityResponseDto {
+    protected mapOne(activity: Activities): ActivityResponseDto {
         return {
             id: activity.id,
             user_id: activity.user_id,
@@ -21,7 +21,7 @@ class ActivityMapper extends BaseMapper<Activitys, ActivityResponseDto> {
         };
     }
 
-    ToDeleteDto(activity: Activitys): ActivityDeleteResponseDto {
+    ToDeleteDto(activity: Activities): ActivityDeleteResponseDto {
         return {
             id: activity.id,
             user_id: activity.user_id

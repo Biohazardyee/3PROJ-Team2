@@ -7,7 +7,7 @@ import {
     MessageResponseDto,
     MessageUpdateDto
 } from "../../../types/messages/messages.dto.js";
-import {Conversations, User, Prisma, Messages} from "../../../generated/prisma/client.js";
+import {Conversations, Users, Prisma, Messages} from "../../../generated/prisma/client.js";
 import {messagesMapper} from "../../../mappers/messages/messages.mapper.js";
 
 export class MessageService {
@@ -36,7 +36,7 @@ export class MessageService {
             throw new BadRequest('Conversation not found');
         }
 
-        const sender: User | null = await PrismaDb.user.findUnique({
+        const sender: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.sender_id
             }

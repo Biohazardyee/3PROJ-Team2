@@ -20,45 +20,69 @@ export type MediasModel = runtime.Types.Result.DefaultSelection<Prisma.$MediasPa
 
 export type AggregateMedias = {
   _count: MediasCountAggregateOutputType | null
+  _avg: MediasAvgAggregateOutputType | null
+  _sum: MediasSumAggregateOutputType | null
   _min: MediasMinAggregateOutputType | null
   _max: MediasMaxAggregateOutputType | null
+}
+
+export type MediasAvgAggregateOutputType = {
+  rating: number | null
+}
+
+export type MediasSumAggregateOutputType = {
+  rating: number | null
 }
 
 export type MediasMinAggregateOutputType = {
   id: string | null
   api_id: string | null
+  rating: number | null
   created_at: Date | null
 }
 
 export type MediasMaxAggregateOutputType = {
   id: string | null
   api_id: string | null
+  rating: number | null
   created_at: Date | null
 }
 
 export type MediasCountAggregateOutputType = {
   id: number
   api_id: number
+  rating: number
   created_at: number
   _all: number
 }
 
 
+export type MediasAvgAggregateInputType = {
+  rating?: true
+}
+
+export type MediasSumAggregateInputType = {
+  rating?: true
+}
+
 export type MediasMinAggregateInputType = {
   id?: true
   api_id?: true
+  rating?: true
   created_at?: true
 }
 
 export type MediasMaxAggregateInputType = {
   id?: true
   api_id?: true
+  rating?: true
   created_at?: true
 }
 
 export type MediasCountAggregateInputType = {
   id?: true
   api_id?: true
+  rating?: true
   created_at?: true
   _all?: true
 }
@@ -101,6 +125,18 @@ export type MediasAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: MediasAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: MediasSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: MediasMinAggregateInputType
@@ -131,6 +167,8 @@ export type MediasGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: MediasCountAggregateInputType | true
+  _avg?: MediasAvgAggregateInputType
+  _sum?: MediasSumAggregateInputType
   _min?: MediasMinAggregateInputType
   _max?: MediasMaxAggregateInputType
 }
@@ -138,8 +176,11 @@ export type MediasGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 export type MediasGroupByOutputType = {
   id: string
   api_id: string
+  rating: number | null
   created_at: Date
   _count: MediasCountAggregateOutputType | null
+  _avg: MediasAvgAggregateOutputType | null
+  _sum: MediasSumAggregateOutputType | null
   _min: MediasMinAggregateOutputType | null
   _max: MediasMaxAggregateOutputType | null
 }
@@ -165,23 +206,25 @@ export type MediasWhereInput = {
   NOT?: Prisma.MediasWhereInput | Prisma.MediasWhereInput[]
   id?: Prisma.StringFilter<"Medias"> | string
   api_id?: Prisma.StringFilter<"Medias"> | string
+  rating?: Prisma.FloatNullableFilter<"Medias"> | number | null
   created_at?: Prisma.DateTimeFilter<"Medias"> | Date | string
   reviews?: Prisma.ReviewsListRelationFilter
   playlist_items?: Prisma.PlaylistItemsListRelationFilter
   user_music_status?: Prisma.UserMediaStatusListRelationFilter
   notifications?: Prisma.NotificationsListRelationFilter
-  activities?: Prisma.ActivitysListRelationFilter
+  activities?: Prisma.ActivitiesListRelationFilter
 }
 
 export type MediasOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   api_id?: Prisma.SortOrder
+  rating?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   reviews?: Prisma.ReviewsOrderByRelationAggregateInput
   playlist_items?: Prisma.PlaylistItemsOrderByRelationAggregateInput
   user_music_status?: Prisma.UserMediaStatusOrderByRelationAggregateInput
   notifications?: Prisma.NotificationsOrderByRelationAggregateInput
-  activities?: Prisma.ActivitysOrderByRelationAggregateInput
+  activities?: Prisma.ActivitiesOrderByRelationAggregateInput
 }
 
 export type MediasWhereUniqueInput = Prisma.AtLeast<{
@@ -190,21 +233,25 @@ export type MediasWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MediasWhereInput[]
   NOT?: Prisma.MediasWhereInput | Prisma.MediasWhereInput[]
   api_id?: Prisma.StringFilter<"Medias"> | string
+  rating?: Prisma.FloatNullableFilter<"Medias"> | number | null
   created_at?: Prisma.DateTimeFilter<"Medias"> | Date | string
   reviews?: Prisma.ReviewsListRelationFilter
   playlist_items?: Prisma.PlaylistItemsListRelationFilter
   user_music_status?: Prisma.UserMediaStatusListRelationFilter
   notifications?: Prisma.NotificationsListRelationFilter
-  activities?: Prisma.ActivitysListRelationFilter
+  activities?: Prisma.ActivitiesListRelationFilter
 }, "id">
 
 export type MediasOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   api_id?: Prisma.SortOrder
+  rating?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   _count?: Prisma.MediasCountOrderByAggregateInput
+  _avg?: Prisma.MediasAvgOrderByAggregateInput
   _max?: Prisma.MediasMaxOrderByAggregateInput
   _min?: Prisma.MediasMinOrderByAggregateInput
+  _sum?: Prisma.MediasSumOrderByAggregateInput
 }
 
 export type MediasScalarWhereWithAggregatesInput = {
@@ -213,87 +260,106 @@ export type MediasScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MediasScalarWhereWithAggregatesInput | Prisma.MediasScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Medias"> | string
   api_id?: Prisma.StringWithAggregatesFilter<"Medias"> | string
+  rating?: Prisma.FloatNullableWithAggregatesFilter<"Medias"> | number | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Medias"> | Date | string
 }
 
 export type MediasCreateInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsCreateNestedManyWithoutMediaInput
   playlist_items?: Prisma.PlaylistItemsCreateNestedManyWithoutMediaInput
   user_music_status?: Prisma.UserMediaStatusCreateNestedManyWithoutMediaInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutMediaInput
 }
 
 export type MediasUncheckedCreateInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutMediaInput
   playlist_items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutMediaInput
   user_music_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutMediaInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediasUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUpdateManyWithoutMediaNestedInput
   playlist_items?: Prisma.PlaylistItemsUpdateManyWithoutMediaNestedInput
   user_music_status?: Prisma.UserMediaStatusUpdateManyWithoutMediaNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutMediaNestedInput
   playlist_items?: Prisma.PlaylistItemsUncheckedUpdateManyWithoutMediaNestedInput
   user_music_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutMediaNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasCreateManyInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
 }
 
 export type MediasUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MediasUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MediasCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   api_id?: Prisma.SortOrder
+  rating?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+}
+
+export type MediasAvgOrderByAggregateInput = {
+  rating?: Prisma.SortOrder
 }
 
 export type MediasMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   api_id?: Prisma.SortOrder
+  rating?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
 
 export type MediasMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   api_id?: Prisma.SortOrder
+  rating?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+}
+
+export type MediasSumOrderByAggregateInput = {
+  rating?: Prisma.SortOrder
 }
 
 export type MediasScalarRelationFilter = {
@@ -304,6 +370,14 @@ export type MediasScalarRelationFilter = {
 export type MediasNullableScalarRelationFilter = {
   is?: Prisma.MediasWhereInput | null
   isNot?: Prisma.MediasWhereInput | null
+}
+
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type MediasCreateNestedOneWithoutReviewsInput = {
@@ -383,21 +457,23 @@ export type MediasUpdateOneWithoutNotificationsNestedInput = {
 export type MediasCreateWithoutReviewsInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   playlist_items?: Prisma.PlaylistItemsCreateNestedManyWithoutMediaInput
   user_music_status?: Prisma.UserMediaStatusCreateNestedManyWithoutMediaInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutMediaInput
 }
 
 export type MediasUncheckedCreateWithoutReviewsInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   playlist_items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutMediaInput
   user_music_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutMediaInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediasCreateOrConnectWithoutReviewsInput = {
@@ -419,41 +495,45 @@ export type MediasUpdateToOneWithWhereWithoutReviewsInput = {
 export type MediasUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   playlist_items?: Prisma.PlaylistItemsUpdateManyWithoutMediaNestedInput
   user_music_status?: Prisma.UserMediaStatusUpdateManyWithoutMediaNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   playlist_items?: Prisma.PlaylistItemsUncheckedUpdateManyWithoutMediaNestedInput
   user_music_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutMediaNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasCreateWithoutPlaylist_itemsInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsCreateNestedManyWithoutMediaInput
   user_music_status?: Prisma.UserMediaStatusCreateNestedManyWithoutMediaInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutMediaInput
 }
 
 export type MediasUncheckedCreateWithoutPlaylist_itemsInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutMediaInput
   user_music_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutMediaInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediasCreateOrConnectWithoutPlaylist_itemsInput = {
@@ -475,41 +555,45 @@ export type MediasUpdateToOneWithWhereWithoutPlaylist_itemsInput = {
 export type MediasUpdateWithoutPlaylist_itemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUpdateManyWithoutMediaNestedInput
   user_music_status?: Prisma.UserMediaStatusUpdateManyWithoutMediaNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasUncheckedUpdateWithoutPlaylist_itemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutMediaNestedInput
   user_music_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutMediaNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasCreateWithoutUser_music_statusInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsCreateNestedManyWithoutMediaInput
   playlist_items?: Prisma.PlaylistItemsCreateNestedManyWithoutMediaInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutMediaInput
 }
 
 export type MediasUncheckedCreateWithoutUser_music_statusInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutMediaInput
   playlist_items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutMediaInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediasCreateOrConnectWithoutUser_music_statusInput = {
@@ -531,26 +615,29 @@ export type MediasUpdateToOneWithWhereWithoutUser_music_statusInput = {
 export type MediasUpdateWithoutUser_music_statusInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUpdateManyWithoutMediaNestedInput
   playlist_items?: Prisma.PlaylistItemsUpdateManyWithoutMediaNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasUncheckedUpdateWithoutUser_music_statusInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutMediaNestedInput
   playlist_items?: Prisma.PlaylistItemsUncheckedUpdateManyWithoutMediaNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasCreateWithoutActivitiesInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsCreateNestedManyWithoutMediaInput
   playlist_items?: Prisma.PlaylistItemsCreateNestedManyWithoutMediaInput
@@ -561,6 +648,7 @@ export type MediasCreateWithoutActivitiesInput = {
 export type MediasUncheckedCreateWithoutActivitiesInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutMediaInput
   playlist_items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutMediaInput
@@ -587,6 +675,7 @@ export type MediasUpdateToOneWithWhereWithoutActivitiesInput = {
 export type MediasUpdateWithoutActivitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUpdateManyWithoutMediaNestedInput
   playlist_items?: Prisma.PlaylistItemsUpdateManyWithoutMediaNestedInput
@@ -597,6 +686,7 @@ export type MediasUpdateWithoutActivitiesInput = {
 export type MediasUncheckedUpdateWithoutActivitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutMediaNestedInput
   playlist_items?: Prisma.PlaylistItemsUncheckedUpdateManyWithoutMediaNestedInput
@@ -607,21 +697,23 @@ export type MediasUncheckedUpdateWithoutActivitiesInput = {
 export type MediasCreateWithoutNotificationsInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsCreateNestedManyWithoutMediaInput
   playlist_items?: Prisma.PlaylistItemsCreateNestedManyWithoutMediaInput
   user_music_status?: Prisma.UserMediaStatusCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutMediaInput
 }
 
 export type MediasUncheckedCreateWithoutNotificationsInput = {
   id?: string
   api_id: string
+  rating?: number | null
   created_at?: Date | string
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutMediaInput
   playlist_items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutMediaInput
   user_music_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutMediaInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutMediaInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediasCreateOrConnectWithoutNotificationsInput = {
@@ -643,21 +735,23 @@ export type MediasUpdateToOneWithWhereWithoutNotificationsInput = {
 export type MediasUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUpdateManyWithoutMediaNestedInput
   playlist_items?: Prisma.PlaylistItemsUpdateManyWithoutMediaNestedInput
   user_music_status?: Prisma.UserMediaStatusUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutMediaNestedInput
 }
 
 export type MediasUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   api_id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutMediaNestedInput
   playlist_items?: Prisma.PlaylistItemsUncheckedUpdateManyWithoutMediaNestedInput
   user_music_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutMediaNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutMediaNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 
@@ -723,13 +817,14 @@ export type MediasCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.
  * MediasCountOutputType without action
  */
 export type MediasCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ActivitysWhereInput
+  where?: Prisma.ActivitiesWhereInput
 }
 
 
 export type MediasSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   api_id?: boolean
+  rating?: boolean
   created_at?: boolean
   reviews?: boolean | Prisma.Medias$reviewsArgs<ExtArgs>
   playlist_items?: boolean | Prisma.Medias$playlist_itemsArgs<ExtArgs>
@@ -742,22 +837,25 @@ export type MediasSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 export type MediasSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   api_id?: boolean
+  rating?: boolean
   created_at?: boolean
 }, ExtArgs["result"]["medias"]>
 
 export type MediasSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   api_id?: boolean
+  rating?: boolean
   created_at?: boolean
 }, ExtArgs["result"]["medias"]>
 
 export type MediasSelectScalar = {
   id?: boolean
   api_id?: boolean
+  rating?: boolean
   created_at?: boolean
 }
 
-export type MediasOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "api_id" | "created_at", ExtArgs["result"]["medias"]>
+export type MediasOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "api_id" | "rating" | "created_at", ExtArgs["result"]["medias"]>
 export type MediasInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviews?: boolean | Prisma.Medias$reviewsArgs<ExtArgs>
   playlist_items?: boolean | Prisma.Medias$playlist_itemsArgs<ExtArgs>
@@ -776,11 +874,12 @@ export type $MediasPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     playlist_items: Prisma.$PlaylistItemsPayload<ExtArgs>[]
     user_music_status: Prisma.$UserMediaStatusPayload<ExtArgs>[]
     notifications: Prisma.$NotificationsPayload<ExtArgs>[]
-    activities: Prisma.$ActivitysPayload<ExtArgs>[]
+    activities: Prisma.$ActivitiesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     api_id: string
+    rating: number | null
     created_at: Date
   }, ExtArgs["result"]["medias"]>
   composites: {}
@@ -1180,7 +1279,7 @@ export interface Prisma__MediasClient<T, Null = never, ExtArgs extends runtime.T
   playlist_items<T extends Prisma.Medias$playlist_itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Medias$playlist_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaylistItemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user_music_status<T extends Prisma.Medias$user_music_statusArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Medias$user_music_statusArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserMediaStatusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Medias$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Medias$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  activities<T extends Prisma.Medias$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Medias$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivitysPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activities<T extends Prisma.Medias$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Medias$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivitiesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1212,6 +1311,7 @@ export interface Prisma__MediasClient<T, Null = never, ExtArgs extends runtime.T
 export interface MediasFieldRefs {
   readonly id: Prisma.FieldRef<"Medias", 'String'>
   readonly api_id: Prisma.FieldRef<"Medias", 'String'>
+  readonly rating: Prisma.FieldRef<"Medias", 'Float'>
   readonly created_at: Prisma.FieldRef<"Medias", 'DateTime'>
 }
     
@@ -1701,23 +1801,23 @@ export type Medias$notificationsArgs<ExtArgs extends runtime.Types.Extensions.In
  */
 export type Medias$activitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Activitys
+   * Select specific fields to fetch from the Activities
    */
-  select?: Prisma.ActivitysSelect<ExtArgs> | null
+  select?: Prisma.ActivitiesSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Activitys
+   * Omit specific fields from the Activities
    */
-  omit?: Prisma.ActivitysOmit<ExtArgs> | null
+  omit?: Prisma.ActivitiesOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ActivitysInclude<ExtArgs> | null
-  where?: Prisma.ActivitysWhereInput
-  orderBy?: Prisma.ActivitysOrderByWithRelationInput | Prisma.ActivitysOrderByWithRelationInput[]
-  cursor?: Prisma.ActivitysWhereUniqueInput
+  include?: Prisma.ActivitiesInclude<ExtArgs> | null
+  where?: Prisma.ActivitiesWhereInput
+  orderBy?: Prisma.ActivitiesOrderByWithRelationInput | Prisma.ActivitiesOrderByWithRelationInput[]
+  cursor?: Prisma.ActivitiesWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ActivitysScalarFieldEnum | Prisma.ActivitysScalarFieldEnum[]
+  distinct?: Prisma.ActivitiesScalarFieldEnum | Prisma.ActivitiesScalarFieldEnum[]
 }
 
 /**

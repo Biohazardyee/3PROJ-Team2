@@ -191,7 +191,7 @@ export type MessagesWhereInput = {
   is_read?: Prisma.BoolFilter<"Messages"> | boolean
   created_at?: Prisma.DateTimeFilter<"Messages"> | Date | string
   conversation?: Prisma.XOR<Prisma.ConversationsScalarRelationFilter, Prisma.ConversationsWhereInput>
-  sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  sender?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
 }
 
 export type MessagesOrderByWithRelationInput = {
@@ -202,7 +202,7 @@ export type MessagesOrderByWithRelationInput = {
   is_read?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   conversation?: Prisma.ConversationsOrderByWithRelationInput
-  sender?: Prisma.UserOrderByWithRelationInput
+  sender?: Prisma.UsersOrderByWithRelationInput
 }
 
 export type MessagesWhereUniqueInput = Prisma.AtLeast<{
@@ -216,7 +216,7 @@ export type MessagesWhereUniqueInput = Prisma.AtLeast<{
   is_read?: Prisma.BoolFilter<"Messages"> | boolean
   created_at?: Prisma.DateTimeFilter<"Messages"> | Date | string
   conversation?: Prisma.XOR<Prisma.ConversationsScalarRelationFilter, Prisma.ConversationsWhereInput>
-  sender?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  sender?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
 }, "id">
 
 export type MessagesOrderByWithAggregationInput = {
@@ -249,7 +249,7 @@ export type MessagesCreateInput = {
   is_read?: boolean
   created_at?: Date | string
   conversation: Prisma.ConversationsCreateNestedOneWithoutMessagesInput
-  sender: Prisma.UserCreateNestedOneWithoutMessagesInput
+  sender: Prisma.UsersCreateNestedOneWithoutMessagesInput
 }
 
 export type MessagesUncheckedCreateInput = {
@@ -267,7 +267,7 @@ export type MessagesUpdateInput = {
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   conversation?: Prisma.ConversationsUpdateOneRequiredWithoutMessagesNestedInput
-  sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
+  sender?: Prisma.UsersUpdateOneRequiredWithoutMessagesNestedInput
 }
 
 export type MessagesUncheckedUpdateInput = {
@@ -484,7 +484,7 @@ export type MessagesCreateWithoutConversationInput = {
   content: string
   is_read?: boolean
   created_at?: Date | string
-  sender: Prisma.UserCreateNestedOneWithoutMessagesInput
+  sender: Prisma.UsersCreateNestedOneWithoutMessagesInput
 }
 
 export type MessagesUncheckedCreateWithoutConversationInput = {
@@ -566,7 +566,7 @@ export type MessagesUpdateWithoutConversationInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sender?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
+  sender?: Prisma.UsersUpdateOneRequiredWithoutMessagesNestedInput
 }
 
 export type MessagesUncheckedUpdateWithoutConversationInput = {
@@ -595,7 +595,7 @@ export type MessagesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   is_read?: boolean
   created_at?: boolean
   conversation?: boolean | Prisma.ConversationsDefaultArgs<ExtArgs>
-  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sender?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["messages"]>
 
 export type MessagesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -606,7 +606,7 @@ export type MessagesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   is_read?: boolean
   created_at?: boolean
   conversation?: boolean | Prisma.ConversationsDefaultArgs<ExtArgs>
-  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sender?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["messages"]>
 
 export type MessagesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -617,7 +617,7 @@ export type MessagesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   is_read?: boolean
   created_at?: boolean
   conversation?: boolean | Prisma.ConversationsDefaultArgs<ExtArgs>
-  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sender?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["messages"]>
 
 export type MessagesSelectScalar = {
@@ -632,22 +632,22 @@ export type MessagesSelectScalar = {
 export type MessagesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "conversation_id" | "sender_id" | "content" | "is_read" | "created_at", ExtArgs["result"]["messages"]>
 export type MessagesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversation?: boolean | Prisma.ConversationsDefaultArgs<ExtArgs>
-  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sender?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 export type MessagesIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversation?: boolean | Prisma.ConversationsDefaultArgs<ExtArgs>
-  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sender?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 export type MessagesIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversation?: boolean | Prisma.ConversationsDefaultArgs<ExtArgs>
-  sender?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sender?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 
 export type $MessagesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Messages"
   objects: {
     conversation: Prisma.$ConversationsPayload<ExtArgs>
-    sender: Prisma.$UserPayload<ExtArgs>
+    sender: Prisma.$UsersPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1051,7 +1051,7 @@ readonly fields: MessagesFieldRefs;
 export interface Prisma__MessagesClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   conversation<T extends Prisma.ConversationsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConversationsDefaultArgs<ExtArgs>>): Prisma.Prisma__ConversationsClient<runtime.Types.Result.GetResult<Prisma.$ConversationsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  sender<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  sender<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

@@ -3,7 +3,7 @@ import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
 import {FollowCreateDto, FollowResponseDto} from "../../../types/follows/follows.dto.js";
 import {followsMapper} from "../../../mappers/follows/follows.mapper.js";
-import {Follows, Prisma, User} from '../../../generated/prisma/client.js';
+import {Follows, Prisma, Users} from '../../../generated/prisma/client.js';
 
 export class FollowService {
 
@@ -19,12 +19,12 @@ export class FollowService {
 
 
         const [user, target] = await Promise.all([
-            PrismaDb.user.findUnique({
+            PrismaDb.users.findUnique({
                 where: {
                     id: data.user_id
                 }
             }),
-            PrismaDb.user.findUnique({
+            PrismaDb.users.findUnique({
                 where: {
                     id: data.follow_user_id
                 }
@@ -72,7 +72,7 @@ export class FollowService {
 
         try {
 
-            const user: User | null = await PrismaDb.user.findUnique({
+            const user: Users | null = await PrismaDb.users.findUnique({
                 where: {
                     id: user_id
                 }
@@ -82,7 +82,7 @@ export class FollowService {
                 throw new BadRequest('User not found');
             }
 
-            const target_user: User | null = await PrismaDb.user.findUnique({
+            const target_user: Users | null = await PrismaDb.users.findUnique({
                 where: {
                     id: follow_user_id
                 }
@@ -125,7 +125,7 @@ export class FollowService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: user_id
             }
@@ -152,7 +152,7 @@ export class FollowService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: user_id
             }

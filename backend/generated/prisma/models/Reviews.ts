@@ -228,17 +228,17 @@ export type ReviewsWhereInput = {
   id?: Prisma.StringFilter<"Reviews"> | string
   user_id?: Prisma.StringFilter<"Reviews"> | string
   media_id?: Prisma.StringFilter<"Reviews"> | string
-  rating?: Prisma.FloatFilter<"Reviews"> | number
+  rating?: Prisma.IntFilter<"Reviews"> | number
   content?: Prisma.StringFilter<"Reviews"> | string
   created_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   media?: Prisma.XOR<Prisma.MediasScalarRelationFilter, Prisma.MediasWhereInput>
   comments?: Prisma.ReviewCommentsListRelationFilter
   likes?: Prisma.ReviewLikesListRelationFilter
   reports?: Prisma.ReportsListRelationFilter
   notifications?: Prisma.NotificationsListRelationFilter
-  activities?: Prisma.ActivitysListRelationFilter
+  activities?: Prisma.ActivitiesListRelationFilter
 }
 
 export type ReviewsOrderByWithRelationInput = {
@@ -249,13 +249,13 @@ export type ReviewsOrderByWithRelationInput = {
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  user?: Prisma.UsersOrderByWithRelationInput
   media?: Prisma.MediasOrderByWithRelationInput
   comments?: Prisma.ReviewCommentsOrderByRelationAggregateInput
   likes?: Prisma.ReviewLikesOrderByRelationAggregateInput
   reports?: Prisma.ReportsOrderByRelationAggregateInput
   notifications?: Prisma.NotificationsOrderByRelationAggregateInput
-  activities?: Prisma.ActivitysOrderByRelationAggregateInput
+  activities?: Prisma.ActivitiesOrderByRelationAggregateInput
 }
 
 export type ReviewsWhereUniqueInput = Prisma.AtLeast<{
@@ -266,17 +266,17 @@ export type ReviewsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ReviewsWhereInput | Prisma.ReviewsWhereInput[]
   user_id?: Prisma.StringFilter<"Reviews"> | string
   media_id?: Prisma.StringFilter<"Reviews"> | string
-  rating?: Prisma.FloatFilter<"Reviews"> | number
+  rating?: Prisma.IntFilter<"Reviews"> | number
   content?: Prisma.StringFilter<"Reviews"> | string
   created_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   media?: Prisma.XOR<Prisma.MediasScalarRelationFilter, Prisma.MediasWhereInput>
   comments?: Prisma.ReviewCommentsListRelationFilter
   likes?: Prisma.ReviewLikesListRelationFilter
   reports?: Prisma.ReportsListRelationFilter
   notifications?: Prisma.NotificationsListRelationFilter
-  activities?: Prisma.ActivitysListRelationFilter
+  activities?: Prisma.ActivitiesListRelationFilter
 }, "id" | "user_id_media_id">
 
 export type ReviewsOrderByWithAggregationInput = {
@@ -301,7 +301,7 @@ export type ReviewsScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
   user_id?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
   media_id?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
-  rating?: Prisma.FloatWithAggregatesFilter<"Reviews"> | number
+  rating?: Prisma.IntWithAggregatesFilter<"Reviews"> | number
   content?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Reviews"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Reviews"> | Date | string
@@ -313,13 +313,13 @@ export type ReviewsCreateInput = {
   content: string
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+  user: Prisma.UsersCreateNestedOneWithoutReviewsInput
   media: Prisma.MediasCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentsCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikesCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsUncheckedCreateInput = {
@@ -334,29 +334,29 @@ export type ReviewsUncheckedCreateInput = {
   likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReviewsNestedInput
   media?: Prisma.MediasUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentsUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikesUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -364,7 +364,7 @@ export type ReviewsUncheckedUpdateInput = {
   likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsCreateManyInput = {
@@ -379,7 +379,7 @@ export type ReviewsCreateManyInput = {
 
 export type ReviewsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -389,7 +389,7 @@ export type ReviewsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -542,7 +542,7 @@ export type ReviewsUncheckedUpdateManyWithoutMediaNestedInput = {
   deleteMany?: Prisma.ReviewsScalarWhereInput | Prisma.ReviewsScalarWhereInput[]
 }
 
-export type FloatFieldUpdateOperationsInput = {
+export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
@@ -637,7 +637,7 @@ export type ReviewsCreateWithoutUserInput = {
   likes?: Prisma.ReviewLikesCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsUncheckedCreateWithoutUserInput = {
@@ -651,7 +651,7 @@ export type ReviewsUncheckedCreateWithoutUserInput = {
   likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsCreateOrConnectWithoutUserInput = {
@@ -687,7 +687,7 @@ export type ReviewsScalarWhereInput = {
   id?: Prisma.StringFilter<"Reviews"> | string
   user_id?: Prisma.StringFilter<"Reviews"> | string
   media_id?: Prisma.StringFilter<"Reviews"> | string
-  rating?: Prisma.FloatFilter<"Reviews"> | number
+  rating?: Prisma.IntFilter<"Reviews"> | number
   content?: Prisma.StringFilter<"Reviews"> | string
   created_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
@@ -699,12 +699,12 @@ export type ReviewsCreateWithoutMediaInput = {
   content: string
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+  user: Prisma.UsersCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentsCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikesCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsUncheckedCreateWithoutMediaInput = {
@@ -718,7 +718,7 @@ export type ReviewsUncheckedCreateWithoutMediaInput = {
   likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsCreateOrConnectWithoutMediaInput = {
@@ -753,12 +753,12 @@ export type ReviewsCreateWithoutCommentsInput = {
   content: string
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+  user: Prisma.UsersCreateNestedOneWithoutReviewsInput
   media: Prisma.MediasCreateNestedOneWithoutReviewsInput
   likes?: Prisma.ReviewLikesCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsUncheckedCreateWithoutCommentsInput = {
@@ -772,7 +772,7 @@ export type ReviewsUncheckedCreateWithoutCommentsInput = {
   likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsCreateOrConnectWithoutCommentsInput = {
@@ -793,30 +793,30 @@ export type ReviewsUpdateToOneWithWhereWithoutCommentsInput = {
 
 export type ReviewsUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReviewsNestedInput
   media?: Prisma.MediasUpdateOneRequiredWithoutReviewsNestedInput
   likes?: Prisma.ReviewLikesUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsCreateWithoutLikesInput = {
@@ -825,12 +825,12 @@ export type ReviewsCreateWithoutLikesInput = {
   content: string
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+  user: Prisma.UsersCreateNestedOneWithoutReviewsInput
   media: Prisma.MediasCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentsCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsUncheckedCreateWithoutLikesInput = {
@@ -844,7 +844,7 @@ export type ReviewsUncheckedCreateWithoutLikesInput = {
   comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsCreateOrConnectWithoutLikesInput = {
@@ -865,30 +865,30 @@ export type ReviewsUpdateToOneWithWhereWithoutLikesInput = {
 
 export type ReviewsUpdateWithoutLikesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReviewsNestedInput
   media?: Prisma.MediasUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentsUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateWithoutLikesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsCreateWithoutActivitiesInput = {
@@ -897,7 +897,7 @@ export type ReviewsCreateWithoutActivitiesInput = {
   content: string
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+  user: Prisma.UsersCreateNestedOneWithoutReviewsInput
   media: Prisma.MediasCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentsCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikesCreateNestedManyWithoutReviewInput
@@ -937,11 +937,11 @@ export type ReviewsUpdateToOneWithWhereWithoutActivitiesInput = {
 
 export type ReviewsUpdateWithoutActivitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReviewsNestedInput
   media?: Prisma.MediasUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentsUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikesUpdateManyWithoutReviewNestedInput
@@ -953,7 +953,7 @@ export type ReviewsUncheckedUpdateWithoutActivitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -969,12 +969,12 @@ export type ReviewsCreateWithoutReportsInput = {
   content: string
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+  user: Prisma.UsersCreateNestedOneWithoutReviewsInput
   media: Prisma.MediasCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentsCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikesCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsUncheckedCreateWithoutReportsInput = {
@@ -988,7 +988,7 @@ export type ReviewsUncheckedCreateWithoutReportsInput = {
   comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutReviewInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsCreateOrConnectWithoutReportsInput = {
@@ -1009,30 +1009,30 @@ export type ReviewsUpdateToOneWithWhereWithoutReportsInput = {
 
 export type ReviewsUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReviewsNestedInput
   media?: Prisma.MediasUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentsUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikesUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsCreateWithoutNotificationsInput = {
@@ -1041,12 +1041,12 @@ export type ReviewsCreateWithoutNotificationsInput = {
   content: string
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+  user: Prisma.UsersCreateNestedOneWithoutReviewsInput
   media: Prisma.MediasCreateNestedOneWithoutReviewsInput
   comments?: Prisma.ReviewCommentsCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikesCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsUncheckedCreateWithoutNotificationsInput = {
@@ -1060,7 +1060,7 @@ export type ReviewsUncheckedCreateWithoutNotificationsInput = {
   comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutReviewInput
   likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutReviewInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReviewInput
-  activities?: Prisma.ActivitysUncheckedCreateNestedManyWithoutReviewInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutReviewInput
 }
 
 export type ReviewsCreateOrConnectWithoutNotificationsInput = {
@@ -1081,30 +1081,30 @@ export type ReviewsUpdateToOneWithWhereWithoutNotificationsInput = {
 
 export type ReviewsUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReviewsNestedInput
   media?: Prisma.MediasUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentsUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikesUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsCreateManyUserInput = {
@@ -1118,7 +1118,7 @@ export type ReviewsCreateManyUserInput = {
 
 export type ReviewsUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1127,13 +1127,13 @@ export type ReviewsUpdateWithoutUserInput = {
   likes?: Prisma.ReviewLikesUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1141,13 +1141,13 @@ export type ReviewsUncheckedUpdateWithoutUserInput = {
   likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1164,22 +1164,22 @@ export type ReviewsCreateManyMediaInput = {
 
 export type ReviewsUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReviewsNestedInput
   comments?: Prisma.ReviewCommentsUpdateManyWithoutReviewNestedInput
   likes?: Prisma.ReviewLikesUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1187,13 +1187,13 @@ export type ReviewsUncheckedUpdateWithoutMediaInput = {
   likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutReviewNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutReviewNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutReviewNestedInput
-  activities?: Prisma.ActivitysUncheckedUpdateManyWithoutReviewNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutReviewNestedInput
 }
 
 export type ReviewsUncheckedUpdateManyWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
-  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1262,7 +1262,7 @@ export type ReviewsCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime
  * ReviewsCountOutputType without action
  */
 export type ReviewsCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ActivitysWhereInput
+  where?: Prisma.ActivitiesWhereInput
 }
 
 
@@ -1274,7 +1274,7 @@ export type ReviewsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
   comments?: boolean | Prisma.Reviews$commentsArgs<ExtArgs>
   likes?: boolean | Prisma.Reviews$likesArgs<ExtArgs>
@@ -1292,7 +1292,7 @@ export type ReviewsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviews"]>
 
@@ -1304,7 +1304,7 @@ export type ReviewsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviews"]>
 
@@ -1320,7 +1320,7 @@ export type ReviewsSelectScalar = {
 
 export type ReviewsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "media_id" | "rating" | "content" | "created_at" | "updated_at", ExtArgs["result"]["reviews"]>
 export type ReviewsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
   comments?: boolean | Prisma.Reviews$commentsArgs<ExtArgs>
   likes?: boolean | Prisma.Reviews$likesArgs<ExtArgs>
@@ -1330,24 +1330,24 @@ export type ReviewsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   _count?: boolean | Prisma.ReviewsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReviewsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }
 export type ReviewsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
 }
 
 export type $ReviewsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Reviews"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    user: Prisma.$UsersPayload<ExtArgs>
     media: Prisma.$MediasPayload<ExtArgs>
     comments: Prisma.$ReviewCommentsPayload<ExtArgs>[]
     likes: Prisma.$ReviewLikesPayload<ExtArgs>[]
     reports: Prisma.$ReportsPayload<ExtArgs>[]
     notifications: Prisma.$NotificationsPayload<ExtArgs>[]
-    activities: Prisma.$ActivitysPayload<ExtArgs>[]
+    activities: Prisma.$ActivitiesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1751,13 +1751,13 @@ readonly fields: ReviewsFieldRefs;
  */
 export interface Prisma__ReviewsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   media<T extends Prisma.MediasDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediasDefaultArgs<ExtArgs>>): Prisma.Prisma__MediasClient<runtime.Types.Result.GetResult<Prisma.$MediasPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   comments<T extends Prisma.Reviews$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reviews$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewCommentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   likes<T extends Prisma.Reviews$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reviews$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewLikesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.Reviews$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reviews$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Reviews$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reviews$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  activities<T extends Prisma.Reviews$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reviews$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivitysPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activities<T extends Prisma.Reviews$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reviews$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivitiesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1790,7 +1790,7 @@ export interface ReviewsFieldRefs {
   readonly id: Prisma.FieldRef<"Reviews", 'String'>
   readonly user_id: Prisma.FieldRef<"Reviews", 'String'>
   readonly media_id: Prisma.FieldRef<"Reviews", 'String'>
-  readonly rating: Prisma.FieldRef<"Reviews", 'Float'>
+  readonly rating: Prisma.FieldRef<"Reviews", 'Int'>
   readonly content: Prisma.FieldRef<"Reviews", 'String'>
   readonly created_at: Prisma.FieldRef<"Reviews", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Reviews", 'DateTime'>
@@ -2290,23 +2290,23 @@ export type Reviews$notificationsArgs<ExtArgs extends runtime.Types.Extensions.I
  */
 export type Reviews$activitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Activitys
+   * Select specific fields to fetch from the Activities
    */
-  select?: Prisma.ActivitysSelect<ExtArgs> | null
+  select?: Prisma.ActivitiesSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Activitys
+   * Omit specific fields from the Activities
    */
-  omit?: Prisma.ActivitysOmit<ExtArgs> | null
+  omit?: Prisma.ActivitiesOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ActivitysInclude<ExtArgs> | null
-  where?: Prisma.ActivitysWhereInput
-  orderBy?: Prisma.ActivitysOrderByWithRelationInput | Prisma.ActivitysOrderByWithRelationInput[]
-  cursor?: Prisma.ActivitysWhereUniqueInput
+  include?: Prisma.ActivitiesInclude<ExtArgs> | null
+  where?: Prisma.ActivitiesWhereInput
+  orderBy?: Prisma.ActivitiesOrderByWithRelationInput | Prisma.ActivitiesOrderByWithRelationInput[]
+  cursor?: Prisma.ActivitiesWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ActivitysScalarFieldEnum | Prisma.ActivitysScalarFieldEnum[]
+  distinct?: Prisma.ActivitiesScalarFieldEnum | Prisma.ActivitiesScalarFieldEnum[]
 }
 
 /**

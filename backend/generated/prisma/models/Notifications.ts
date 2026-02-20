@@ -214,8 +214,8 @@ export type NotificationsWhereInput = {
   is_read?: Prisma.BoolFilter<"Notifications"> | boolean
   read_at?: Prisma.DateTimeNullableFilter<"Notifications"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Notifications"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  related_user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
+  related_user?: Prisma.XOR<Prisma.UsersNullableScalarRelationFilter, Prisma.UsersWhereInput> | null
   review?: Prisma.XOR<Prisma.ReviewsNullableScalarRelationFilter, Prisma.ReviewsWhereInput> | null
   media?: Prisma.XOR<Prisma.MediasNullableScalarRelationFilter, Prisma.MediasWhereInput> | null
 }
@@ -230,8 +230,8 @@ export type NotificationsOrderByWithRelationInput = {
   is_read?: Prisma.SortOrder
   read_at?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
-  related_user?: Prisma.UserOrderByWithRelationInput
+  user?: Prisma.UsersOrderByWithRelationInput
+  related_user?: Prisma.UsersOrderByWithRelationInput
   review?: Prisma.ReviewsOrderByWithRelationInput
   media?: Prisma.MediasOrderByWithRelationInput
 }
@@ -249,8 +249,8 @@ export type NotificationsWhereUniqueInput = Prisma.AtLeast<{
   is_read?: Prisma.BoolFilter<"Notifications"> | boolean
   read_at?: Prisma.DateTimeNullableFilter<"Notifications"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Notifications"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  related_user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
+  related_user?: Prisma.XOR<Prisma.UsersNullableScalarRelationFilter, Prisma.UsersWhereInput> | null
   review?: Prisma.XOR<Prisma.ReviewsNullableScalarRelationFilter, Prisma.ReviewsWhereInput> | null
   media?: Prisma.XOR<Prisma.MediasNullableScalarRelationFilter, Prisma.MediasWhereInput> | null
 }, "id">
@@ -291,8 +291,8 @@ export type NotificationsCreateInput = {
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutNotificationsInput
-  related_user?: Prisma.UserCreateNestedOneWithoutNotificationsRelatedInput
+  user: Prisma.UsersCreateNestedOneWithoutNotificationsInput
+  related_user?: Prisma.UsersCreateNestedOneWithoutNotificationsRelatedInput
   review?: Prisma.ReviewsCreateNestedOneWithoutNotificationsInput
   media?: Prisma.MediasCreateNestedOneWithoutNotificationsInput
 }
@@ -315,8 +315,8 @@ export type NotificationsUpdateInput = {
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
-  related_user?: Prisma.UserUpdateOneWithoutNotificationsRelatedNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutNotificationsNestedInput
+  related_user?: Prisma.UsersUpdateOneWithoutNotificationsRelatedNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutNotificationsNestedInput
   media?: Prisma.MediasUpdateOneWithoutNotificationsNestedInput
 }
@@ -593,7 +593,7 @@ export type NotificationsCreateWithoutUserInput = {
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
-  related_user?: Prisma.UserCreateNestedOneWithoutNotificationsRelatedInput
+  related_user?: Prisma.UsersCreateNestedOneWithoutNotificationsRelatedInput
   review?: Prisma.ReviewsCreateNestedOneWithoutNotificationsInput
   media?: Prisma.MediasCreateNestedOneWithoutNotificationsInput
 }
@@ -625,7 +625,7 @@ export type NotificationsCreateWithoutRelated_userInput = {
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutNotificationsInput
+  user: Prisma.UsersCreateNestedOneWithoutNotificationsInput
   review?: Prisma.ReviewsCreateNestedOneWithoutNotificationsInput
   media?: Prisma.MediasCreateNestedOneWithoutNotificationsInput
 }
@@ -704,8 +704,8 @@ export type NotificationsCreateWithoutMediaInput = {
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutNotificationsInput
-  related_user?: Prisma.UserCreateNestedOneWithoutNotificationsRelatedInput
+  user: Prisma.UsersCreateNestedOneWithoutNotificationsInput
+  related_user?: Prisma.UsersCreateNestedOneWithoutNotificationsRelatedInput
   review?: Prisma.ReviewsCreateNestedOneWithoutNotificationsInput
 }
 
@@ -752,8 +752,8 @@ export type NotificationsCreateWithoutReviewInput = {
   is_read?: boolean
   read_at?: Date | string | null
   created_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutNotificationsInput
-  related_user?: Prisma.UserCreateNestedOneWithoutNotificationsRelatedInput
+  user: Prisma.UsersCreateNestedOneWithoutNotificationsInput
+  related_user?: Prisma.UsersCreateNestedOneWithoutNotificationsRelatedInput
   media?: Prisma.MediasCreateNestedOneWithoutNotificationsInput
 }
 
@@ -822,7 +822,7 @@ export type NotificationsUpdateWithoutUserInput = {
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  related_user?: Prisma.UserUpdateOneWithoutNotificationsRelatedNestedInput
+  related_user?: Prisma.UsersUpdateOneWithoutNotificationsRelatedNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutNotificationsNestedInput
   media?: Prisma.MediasUpdateOneWithoutNotificationsNestedInput
 }
@@ -855,7 +855,7 @@ export type NotificationsUpdateWithoutRelated_userInput = {
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutNotificationsNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutNotificationsNestedInput
   media?: Prisma.MediasUpdateOneWithoutNotificationsNestedInput
 }
@@ -899,8 +899,8 @@ export type NotificationsUpdateWithoutMediaInput = {
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
-  related_user?: Prisma.UserUpdateOneWithoutNotificationsRelatedNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutNotificationsNestedInput
+  related_user?: Prisma.UsersUpdateOneWithoutNotificationsRelatedNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutNotificationsNestedInput
 }
 
@@ -943,8 +943,8 @@ export type NotificationsUpdateWithoutReviewInput = {
   is_read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   read_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput
-  related_user?: Prisma.UserUpdateOneWithoutNotificationsRelatedNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutNotificationsNestedInput
+  related_user?: Prisma.UsersUpdateOneWithoutNotificationsRelatedNestedInput
   media?: Prisma.MediasUpdateOneWithoutNotificationsNestedInput
 }
 
@@ -982,7 +982,7 @@ export type NotificationsSelect<ExtArgs extends runtime.Types.Extensions.Interna
   is_read?: boolean
   read_at?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notifications$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notifications$reviewArgs<ExtArgs>
   media?: boolean | Prisma.Notifications$mediaArgs<ExtArgs>
@@ -998,7 +998,7 @@ export type NotificationsSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   is_read?: boolean
   read_at?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notifications$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notifications$reviewArgs<ExtArgs>
   media?: boolean | Prisma.Notifications$mediaArgs<ExtArgs>
@@ -1014,7 +1014,7 @@ export type NotificationsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   is_read?: boolean
   read_at?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notifications$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notifications$reviewArgs<ExtArgs>
   media?: boolean | Prisma.Notifications$mediaArgs<ExtArgs>
@@ -1034,19 +1034,19 @@ export type NotificationsSelectScalar = {
 
 export type NotificationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "action" | "related_user_id" | "review_id" | "media_id" | "is_read" | "read_at" | "created_at", ExtArgs["result"]["notifications"]>
 export type NotificationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notifications$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notifications$reviewArgs<ExtArgs>
   media?: boolean | Prisma.Notifications$mediaArgs<ExtArgs>
 }
 export type NotificationsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notifications$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notifications$reviewArgs<ExtArgs>
   media?: boolean | Prisma.Notifications$mediaArgs<ExtArgs>
 }
 export type NotificationsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   related_user?: boolean | Prisma.Notifications$related_userArgs<ExtArgs>
   review?: boolean | Prisma.Notifications$reviewArgs<ExtArgs>
   media?: boolean | Prisma.Notifications$mediaArgs<ExtArgs>
@@ -1055,8 +1055,8 @@ export type NotificationsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Type
 export type $NotificationsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Notifications"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
-    related_user: Prisma.$UserPayload<ExtArgs> | null
+    user: Prisma.$UsersPayload<ExtArgs>
+    related_user: Prisma.$UsersPayload<ExtArgs> | null
     review: Prisma.$ReviewsPayload<ExtArgs> | null
     media: Prisma.$MediasPayload<ExtArgs> | null
   }
@@ -1464,8 +1464,8 @@ readonly fields: NotificationsFieldRefs;
  */
 export interface Prisma__NotificationsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  related_user<T extends Prisma.Notifications$related_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notifications$related_userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  related_user<T extends Prisma.Notifications$related_userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notifications$related_userArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   review<T extends Prisma.Notifications$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notifications$reviewArgs<ExtArgs>>): Prisma.Prisma__ReviewsClient<runtime.Types.Result.GetResult<Prisma.$ReviewsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   media<T extends Prisma.Notifications$mediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notifications$mediaArgs<ExtArgs>>): Prisma.Prisma__MediasClient<runtime.Types.Result.GetResult<Prisma.$MediasPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1906,18 +1906,18 @@ export type NotificationsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
  */
 export type Notifications$related_userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the User
+   * Select specific fields to fetch from the Users
    */
-  select?: Prisma.UserSelect<ExtArgs> | null
+  select?: Prisma.UsersSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the User
+   * Omit specific fields from the Users
    */
-  omit?: Prisma.UserOmit<ExtArgs> | null
+  omit?: Prisma.UsersOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
+  include?: Prisma.UsersInclude<ExtArgs> | null
+  where?: Prisma.UsersWhereInput
 }
 
 /**

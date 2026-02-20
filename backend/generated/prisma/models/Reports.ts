@@ -214,9 +214,9 @@ export type ReportsWhereInput = {
   reason_type?: Prisma.EnumReportTypesFilter<"Reports"> | $Enums.ReportTypes
   is_checked?: Prisma.BoolFilter<"Reports"> | boolean
   created_at?: Prisma.DateTimeFilter<"Reports"> | Date | string
-  reporter?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  reporter?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   review?: Prisma.XOR<Prisma.ReviewsNullableScalarRelationFilter, Prisma.ReviewsWhereInput> | null
-  profile?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  profile?: Prisma.XOR<Prisma.UsersNullableScalarRelationFilter, Prisma.UsersWhereInput> | null
   comment?: Prisma.XOR<Prisma.ReviewCommentsNullableScalarRelationFilter, Prisma.ReviewCommentsWhereInput> | null
 }
 
@@ -230,9 +230,9 @@ export type ReportsOrderByWithRelationInput = {
   reason_type?: Prisma.SortOrder
   is_checked?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
-  reporter?: Prisma.UserOrderByWithRelationInput
+  reporter?: Prisma.UsersOrderByWithRelationInput
   review?: Prisma.ReviewsOrderByWithRelationInput
-  profile?: Prisma.UserOrderByWithRelationInput
+  profile?: Prisma.UsersOrderByWithRelationInput
   comment?: Prisma.ReviewCommentsOrderByWithRelationInput
 }
 
@@ -249,9 +249,9 @@ export type ReportsWhereUniqueInput = Prisma.AtLeast<{
   reason_type?: Prisma.EnumReportTypesFilter<"Reports"> | $Enums.ReportTypes
   is_checked?: Prisma.BoolFilter<"Reports"> | boolean
   created_at?: Prisma.DateTimeFilter<"Reports"> | Date | string
-  reporter?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  reporter?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   review?: Prisma.XOR<Prisma.ReviewsNullableScalarRelationFilter, Prisma.ReviewsWhereInput> | null
-  profile?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  profile?: Prisma.XOR<Prisma.UsersNullableScalarRelationFilter, Prisma.UsersWhereInput> | null
   comment?: Prisma.XOR<Prisma.ReviewCommentsNullableScalarRelationFilter, Prisma.ReviewCommentsWhereInput> | null
 }, "id">
 
@@ -291,9 +291,9 @@ export type ReportsCreateInput = {
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reporter: Prisma.UserCreateNestedOneWithoutReporter_reportsInput
+  reporter: Prisma.UsersCreateNestedOneWithoutReporter_reportsInput
   review?: Prisma.ReviewsCreateNestedOneWithoutReportsInput
-  profile?: Prisma.UserCreateNestedOneWithoutProfile_reportsInput
+  profile?: Prisma.UsersCreateNestedOneWithoutProfile_reportsInput
   comment?: Prisma.ReviewCommentsCreateNestedOneWithoutReportsInput
 }
 
@@ -315,9 +315,9 @@ export type ReportsUpdateInput = {
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reporter?: Prisma.UserUpdateOneRequiredWithoutReporter_reportsNestedInput
+  reporter?: Prisma.UsersUpdateOneRequiredWithoutReporter_reportsNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutReportsNestedInput
-  profile?: Prisma.UserUpdateOneWithoutProfile_reportsNestedInput
+  profile?: Prisma.UsersUpdateOneWithoutProfile_reportsNestedInput
   comment?: Prisma.ReviewCommentsUpdateOneWithoutReportsNestedInput
 }
 
@@ -590,7 +590,7 @@ export type ReportsCreateWithoutReporterInput = {
   is_checked?: boolean
   created_at?: Date | string
   review?: Prisma.ReviewsCreateNestedOneWithoutReportsInput
-  profile?: Prisma.UserCreateNestedOneWithoutProfile_reportsInput
+  profile?: Prisma.UsersCreateNestedOneWithoutProfile_reportsInput
   comment?: Prisma.ReviewCommentsCreateNestedOneWithoutReportsInput
 }
 
@@ -621,7 +621,7 @@ export type ReportsCreateWithoutProfileInput = {
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reporter: Prisma.UserCreateNestedOneWithoutReporter_reportsInput
+  reporter: Prisma.UsersCreateNestedOneWithoutReporter_reportsInput
   review?: Prisma.ReviewsCreateNestedOneWithoutReportsInput
   comment?: Prisma.ReviewCommentsCreateNestedOneWithoutReportsInput
 }
@@ -700,8 +700,8 @@ export type ReportsCreateWithoutReviewInput = {
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reporter: Prisma.UserCreateNestedOneWithoutReporter_reportsInput
-  profile?: Prisma.UserCreateNestedOneWithoutProfile_reportsInput
+  reporter: Prisma.UsersCreateNestedOneWithoutReporter_reportsInput
+  profile?: Prisma.UsersCreateNestedOneWithoutProfile_reportsInput
   comment?: Prisma.ReviewCommentsCreateNestedOneWithoutReportsInput
 }
 
@@ -748,9 +748,9 @@ export type ReportsCreateWithoutCommentInput = {
   reason_type: $Enums.ReportTypes
   is_checked?: boolean
   created_at?: Date | string
-  reporter: Prisma.UserCreateNestedOneWithoutReporter_reportsInput
+  reporter: Prisma.UsersCreateNestedOneWithoutReporter_reportsInput
   review?: Prisma.ReviewsCreateNestedOneWithoutReportsInput
-  profile?: Prisma.UserCreateNestedOneWithoutProfile_reportsInput
+  profile?: Prisma.UsersCreateNestedOneWithoutProfile_reportsInput
 }
 
 export type ReportsUncheckedCreateWithoutCommentInput = {
@@ -819,7 +819,7 @@ export type ReportsUpdateWithoutReporterInput = {
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   review?: Prisma.ReviewsUpdateOneWithoutReportsNestedInput
-  profile?: Prisma.UserUpdateOneWithoutProfile_reportsNestedInput
+  profile?: Prisma.UsersUpdateOneWithoutProfile_reportsNestedInput
   comment?: Prisma.ReviewCommentsUpdateOneWithoutReportsNestedInput
 }
 
@@ -851,7 +851,7 @@ export type ReportsUpdateWithoutProfileInput = {
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reporter?: Prisma.UserUpdateOneRequiredWithoutReporter_reportsNestedInput
+  reporter?: Prisma.UsersUpdateOneRequiredWithoutReporter_reportsNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutReportsNestedInput
   comment?: Prisma.ReviewCommentsUpdateOneWithoutReportsNestedInput
 }
@@ -895,8 +895,8 @@ export type ReportsUpdateWithoutReviewInput = {
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reporter?: Prisma.UserUpdateOneRequiredWithoutReporter_reportsNestedInput
-  profile?: Prisma.UserUpdateOneWithoutProfile_reportsNestedInput
+  reporter?: Prisma.UsersUpdateOneRequiredWithoutReporter_reportsNestedInput
+  profile?: Prisma.UsersUpdateOneWithoutProfile_reportsNestedInput
   comment?: Prisma.ReviewCommentsUpdateOneWithoutReportsNestedInput
 }
 
@@ -939,9 +939,9 @@ export type ReportsUpdateWithoutCommentInput = {
   reason_type?: Prisma.EnumReportTypesFieldUpdateOperationsInput | $Enums.ReportTypes
   is_checked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reporter?: Prisma.UserUpdateOneRequiredWithoutReporter_reportsNestedInput
+  reporter?: Prisma.UsersUpdateOneRequiredWithoutReporter_reportsNestedInput
   review?: Prisma.ReviewsUpdateOneWithoutReportsNestedInput
-  profile?: Prisma.UserUpdateOneWithoutProfile_reportsNestedInput
+  profile?: Prisma.UsersUpdateOneWithoutProfile_reportsNestedInput
 }
 
 export type ReportsUncheckedUpdateWithoutCommentInput = {
@@ -978,7 +978,7 @@ export type ReportsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   reason_type?: boolean
   is_checked?: boolean
   created_at?: boolean
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
   profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
   comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
@@ -994,7 +994,7 @@ export type ReportsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   reason_type?: boolean
   is_checked?: boolean
   created_at?: boolean
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
   profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
   comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
@@ -1010,7 +1010,7 @@ export type ReportsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   reason_type?: boolean
   is_checked?: boolean
   created_at?: boolean
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
   profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
   comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
@@ -1030,19 +1030,19 @@ export type ReportsSelectScalar = {
 
 export type ReportsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "reporter_id" | "review_id" | "profile_id" | "comment_id" | "reason" | "reason_type" | "is_checked" | "created_at", ExtArgs["result"]["reports"]>
 export type ReportsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
   profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
   comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
 }
 export type ReportsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
   profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
   comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
 }
 export type ReportsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  reporter?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  reporter?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   review?: boolean | Prisma.Reports$reviewArgs<ExtArgs>
   profile?: boolean | Prisma.Reports$profileArgs<ExtArgs>
   comment?: boolean | Prisma.Reports$commentArgs<ExtArgs>
@@ -1051,9 +1051,9 @@ export type ReportsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $ReportsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Reports"
   objects: {
-    reporter: Prisma.$UserPayload<ExtArgs>
+    reporter: Prisma.$UsersPayload<ExtArgs>
     review: Prisma.$ReviewsPayload<ExtArgs> | null
-    profile: Prisma.$UserPayload<ExtArgs> | null
+    profile: Prisma.$UsersPayload<ExtArgs> | null
     comment: Prisma.$ReviewCommentsPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1460,9 +1460,9 @@ readonly fields: ReportsFieldRefs;
  */
 export interface Prisma__ReportsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  reporter<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  reporter<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   review<T extends Prisma.Reports$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reports$reviewArgs<ExtArgs>>): Prisma.Prisma__ReviewsClient<runtime.Types.Result.GetResult<Prisma.$ReviewsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  profile<T extends Prisma.Reports$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reports$profileArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.Reports$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reports$profileArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   comment<T extends Prisma.Reports$commentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reports$commentArgs<ExtArgs>>): Prisma.Prisma__ReviewCommentsClient<runtime.Types.Result.GetResult<Prisma.$ReviewCommentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1921,18 +1921,18 @@ export type Reports$reviewArgs<ExtArgs extends runtime.Types.Extensions.Internal
  */
 export type Reports$profileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the User
+   * Select specific fields to fetch from the Users
    */
-  select?: Prisma.UserSelect<ExtArgs> | null
+  select?: Prisma.UsersSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the User
+   * Omit specific fields from the Users
    */
-  omit?: Prisma.UserOmit<ExtArgs> | null
+  omit?: Prisma.UsersOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
+  include?: Prisma.UsersInclude<ExtArgs> | null
+  where?: Prisma.UsersWhereInput
 }
 
 /**

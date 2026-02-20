@@ -6,7 +6,7 @@ import {
     ConversationAddResponseDto, ConversationResponseDeleteDto,
     ConversationResponseDto
 } from "../../../types/conversations/conversations.dto.js";
-import {User, Conversations, Prisma} from "../../../generated/prisma/browser.js";
+import {Users, Conversations, Prisma} from "../../../generated/prisma/browser.js";
 import {conversationMapper} from "../../../mappers/conversations/conversations.mapper.js";
 
 export class ConversationService {
@@ -21,7 +21,7 @@ export class ConversationService {
             throw new BadRequest("User2_id cannot be empty");
         }
 
-        const user1: User | null = await PrismaDb.user.findUnique({
+        const user1: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.user1_id,
             }
@@ -31,7 +31,7 @@ export class ConversationService {
             throw new BadRequest("The user doesn't exist");
         }
 
-        const user2: User | null = await PrismaDb.user.findUnique({
+        const user2: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.user2_id,
             }

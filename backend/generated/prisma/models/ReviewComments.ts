@@ -183,7 +183,7 @@ export type ReviewCommentsWhereInput = {
   content?: Prisma.StringFilter<"ReviewComments"> | string
   created_at?: Prisma.DateTimeFilter<"ReviewComments"> | Date | string
   review?: Prisma.XOR<Prisma.ReviewsScalarRelationFilter, Prisma.ReviewsWhereInput>
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   reports?: Prisma.ReportsListRelationFilter
 }
 
@@ -194,7 +194,7 @@ export type ReviewCommentsOrderByWithRelationInput = {
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   review?: Prisma.ReviewsOrderByWithRelationInput
-  user?: Prisma.UserOrderByWithRelationInput
+  user?: Prisma.UsersOrderByWithRelationInput
   reports?: Prisma.ReportsOrderByRelationAggregateInput
 }
 
@@ -208,7 +208,7 @@ export type ReviewCommentsWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringFilter<"ReviewComments"> | string
   created_at?: Prisma.DateTimeFilter<"ReviewComments"> | Date | string
   review?: Prisma.XOR<Prisma.ReviewsScalarRelationFilter, Prisma.ReviewsWhereInput>
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   reports?: Prisma.ReportsListRelationFilter
 }, "id">
 
@@ -239,7 +239,7 @@ export type ReviewCommentsCreateInput = {
   content: string
   created_at?: Date | string
   review: Prisma.ReviewsCreateNestedOneWithoutCommentsInput
-  user: Prisma.UserCreateNestedOneWithoutReview_commentsInput
+  user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
   reports?: Prisma.ReportsCreateNestedManyWithoutCommentInput
 }
 
@@ -257,7 +257,7 @@ export type ReviewCommentsUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   review?: Prisma.ReviewsUpdateOneRequiredWithoutCommentsNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutReview_commentsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutCommentNestedInput
 }
 
@@ -488,7 +488,7 @@ export type ReviewCommentsCreateWithoutReviewInput = {
   id?: string
   content: string
   created_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutReview_commentsInput
+  user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
   reports?: Prisma.ReportsCreateNestedManyWithoutCommentInput
 }
 
@@ -531,7 +531,7 @@ export type ReviewCommentsCreateWithoutReportsInput = {
   content: string
   created_at?: Date | string
   review: Prisma.ReviewsCreateNestedOneWithoutCommentsInput
-  user: Prisma.UserCreateNestedOneWithoutReview_commentsInput
+  user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
 }
 
 export type ReviewCommentsUncheckedCreateWithoutReportsInput = {
@@ -563,7 +563,7 @@ export type ReviewCommentsUpdateWithoutReportsInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   review?: Prisma.ReviewsUpdateOneRequiredWithoutCommentsNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutReview_commentsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
 }
 
 export type ReviewCommentsUncheckedUpdateWithoutReportsInput = {
@@ -615,7 +615,7 @@ export type ReviewCommentsUpdateWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutReview_commentsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutCommentNestedInput
 }
 
@@ -672,7 +672,7 @@ export type ReviewCommentsSelect<ExtArgs extends runtime.Types.Extensions.Intern
   content?: boolean
   created_at?: boolean
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   reports?: boolean | Prisma.ReviewComments$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.ReviewCommentsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviewComments"]>
@@ -684,7 +684,7 @@ export type ReviewCommentsSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   content?: boolean
   created_at?: boolean
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviewComments"]>
 
 export type ReviewCommentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -694,7 +694,7 @@ export type ReviewCommentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   content?: boolean
   created_at?: boolean
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviewComments"]>
 
 export type ReviewCommentsSelectScalar = {
@@ -708,24 +708,24 @@ export type ReviewCommentsSelectScalar = {
 export type ReviewCommentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "review_id" | "user_id" | "content" | "created_at", ExtArgs["result"]["reviewComments"]>
 export type ReviewCommentsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   reports?: boolean | Prisma.ReviewComments$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.ReviewCommentsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReviewCommentsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 export type ReviewCommentsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 
 export type $ReviewCommentsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ReviewComments"
   objects: {
     review: Prisma.$ReviewsPayload<ExtArgs>
-    user: Prisma.$UserPayload<ExtArgs>
+    user: Prisma.$UsersPayload<ExtArgs>
     reports: Prisma.$ReportsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1129,7 +1129,7 @@ readonly fields: ReviewCommentsFieldRefs;
 export interface Prisma__ReviewCommentsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   review<T extends Prisma.ReviewsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReviewsDefaultArgs<ExtArgs>>): Prisma.Prisma__ReviewsClient<runtime.Types.Result.GetResult<Prisma.$ReviewsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   reports<T extends Prisma.ReviewComments$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReviewComments$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.

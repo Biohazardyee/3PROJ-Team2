@@ -5,7 +5,7 @@ import {Controller} from "../../controller.js";
 import {
     ReportAddDto, ReportDeleteResponseDto,
     ReportResponseAddDto,
-    ReportResponseDto,
+    ReportResponseDto, ReportUpdateDto,
 } from "../../../types/reports/report.dto.js";
 
 class ReportController extends Controller {
@@ -85,8 +85,37 @@ class ReportController extends Controller {
         }
     }
 
-    async update(): Promise<void> {
-        // no implementation needed.
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const id: string = req.params.id;
+
+            if (!id) {
+                throw new BadRequest('Id is required');
+            }
+
+            const updateData: ReportUpdateDto = {};
+
+            if (req.body.reason !== undefined) {
+                updateData.reason = req.body.reason;
+            }
+
+            if (req.body.is_checked !== undefined) {
+                updateData.is_checked = req.body.is_checked;
+            }
+
+            if (Object.keys(updateData).length === 0) {
+                throw new BadRequest('No fields provided');
+            }
+
+            const report: ReportResponseDto = await this.service.update(id, updateData);
+
+            res.status(200).json({
+                message: 'Report updated successfully',
+                report,
+            });
+        } catch (err) {
+            next(err);
+        }
     }
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {

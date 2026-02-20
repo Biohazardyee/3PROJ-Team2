@@ -24,7 +24,7 @@ class ReviewLikeController extends Controller {
             const review: ReviewLikeResponseDto = await this.service.create(createData);
 
             res.status(201).json({
-                message: 'Review created successfully',
+                message: 'Like created successfully',
                 review,
             });
         } catch (error) {
@@ -72,7 +72,7 @@ class ReviewLikeController extends Controller {
                 throw new BadRequest('User_id & review_id are required');
             }
 
-            const reviewsLike: ReviewLikeResponseDto = await this.service.delete(req.params.user_id, req.params.review_id);
+            const reviewsLike: ReviewLikeResponseDto = await this.service.delete(req.params.review_id, req.params.user_id);
             res.status(201).json({
                 message: 'Like deleted successfully',
                 reviewsLike,

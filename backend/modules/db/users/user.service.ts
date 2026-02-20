@@ -13,7 +13,7 @@ import {
     UserResponseDto,
     UserUpdateDto
 } from "../../../types/users/user.dto.js";
-import {User} from "../../../generated/prisma/browser.js";
+import {Users} from "../../../generated/prisma/browser.js";
 import {userMapper} from "../../../mappers/users/user.mapper.js";
 
 export class UserService {
@@ -56,7 +56,7 @@ export class UserService {
         const username: string = data.username.trim();
         const hashedPassword: string = await bcrypt.hash(data.password, 10);
 
-        const exist = await PrismaDb.user.findFirst({
+        const exist: Users | null = await PrismaDb.users.findFirst({
             where: {
                 OR: [
                     {email},
@@ -69,7 +69,7 @@ export class UserService {
             throw new BadRequest('Email or username already in use');
         }
 
-        const createData: Prisma.UserCreateInput = {
+        const createData: Prisma.UsersCreateInput = {
             email,
             username,
             password: hashedPassword,
@@ -77,7 +77,7 @@ export class UserService {
             profile_picture: data.profile_picture,
         };
 
-        const user: User = await PrismaDb.user.create({
+        const user: Users = await PrismaDb.users.create({
             data: createData,
         });
 
@@ -85,7 +85,7 @@ export class UserService {
     }
 
     async getAll(): Promise<UserResponseDto[]> {
-        const users: User[] = await PrismaDb.user.findMany({
+        const users: Users[] = await PrismaDb.users.findMany({
             orderBy: {
                 created_at: 'desc'
             }
@@ -122,12 +122,12 @@ export class UserService {
             throw new BadRequest(`Invalid fields: ${invalidFields.join(', ')}`);
         }
 
-        const select: Prisma.UserSelect = {};
+        const select: Prisma.UsersSelect = {};
         fields.forEach(field => {
             select[field] = true;
         });
 
-        const users: User[] = await PrismaDb.user.findMany({
+        const users: Users[] = await PrismaDb.users.findMany({
             select,
             orderBy: {
                 created_at: 'desc'
@@ -143,7 +143,7 @@ export class UserService {
             throw new BadRequest('User id cannot be empty');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id
             },
@@ -188,12 +188,12 @@ export class UserService {
             throw new BadRequest(`Invalid fields: ${invalidFields.join(', ')}`);
         }
 
-        const select: Prisma.UserSelect = {};
+        const select: Prisma.UsersSelect = {};
         fields.forEach(field => {
             select[field] = true;
         });
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id
             },
@@ -213,7 +213,7 @@ export class UserService {
             throw new BadRequest('User id cannot be empty');
         }
 
-        const exist: User | null = await PrismaDb.user.findUnique({
+        const exist: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id
             },
@@ -223,7 +223,7 @@ export class UserService {
             throw new NotFound('User not found');
         }
 
-        const updateData: Prisma.UserUpdateInput = {};
+        const updateData: Prisma.UsersUpdateInput = {};
 
         if (data.email !== undefined) {
             if (isEmptyString(data.email)) {
@@ -233,7 +233,7 @@ export class UserService {
                 throw new BadRequest('Email format is not correct');
             }
 
-            const emailExist: User | null = await PrismaDb.user.findFirst({
+            const emailExist: Users | null = await PrismaDb.users.findFirst({
                 where: {
                     email: data.email.trim(),
                 }
@@ -256,7 +256,7 @@ export class UserService {
                 );
             }
 
-            const usernameExists: User | null = await PrismaDb.user.findFirst({
+            const usernameExists: Users | null = await PrismaDb.users.findFirst({
                 where: {
                     username: data.username.trim(),
                     NOT: {
@@ -316,7 +316,7 @@ export class UserService {
             updateData.profile_picture = data.profile_picture;
         }
 
-        const user: User = await PrismaDb.user.update({
+        const user: Users = await PrismaDb.users.update({
             where: {
                 id
             },
@@ -333,7 +333,7 @@ export class UserService {
         }
 
         try {
-            const user: User | null = await PrismaDb.user.findUnique({
+            const user: Users | null = await PrismaDb.users.findUnique({
                 where: {
                     id
                 },
@@ -343,7 +343,7 @@ export class UserService {
                 throw new NotFound('User not found');
             }
 
-            const userToDelete: User = await PrismaDb.user.delete({
+            const userToDelete: Users = await PrismaDb.users.delete({
                 where: {
                     id
                 },
@@ -365,12 +365,12 @@ export class UserService {
      * ✅ Méthode publique mais retourne le User complet (avec password)
      * Utilisée UNIQUEMENT pour l'authentification
      */
-    async getByEmailForAuth(email: string): Promise<User | null> {
+    async getByEmailForAuth(email: string): Promise<Users | null> {
         if (isEmptyString(email)) {
             throw new BadRequest('Email cannot be empty');
         }
 
-        return PrismaDb.user.findUnique({
+        return PrismaDb.users.findUnique({
             where: {
                 email: email.trim().toLowerCase()
             }
@@ -385,7 +385,7 @@ export class UserService {
             throw new BadRequest('Email cannot be empty');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 email: email.trim().toLowerCase()
             }

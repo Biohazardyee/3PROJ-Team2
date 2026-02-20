@@ -7,7 +7,7 @@ import {
     PlaylistResponseDto,
     PlaylistResponseUpdateDto, PlaylistUpdateDto
 } from "../../../types/playlists/playlist.dto.js";
-import {Playlists, Reports, User} from "../../../generated/prisma/browser.js";
+import {Playlists, Reports, Users} from "../../../generated/prisma/browser.js";
 import {playlistMapper} from "../../../mappers/playlists/playlist.mapper.js";
 import {Prisma} from "../../../generated/prisma/client.js";
 
@@ -33,7 +33,7 @@ export class PlaylistService {
             throw new BadRequest('Is_public must be a boolean value');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.user_id
             },
@@ -63,15 +63,15 @@ export class PlaylistService {
         return playlistMapper.toAddDto(playlist);
     }
 
-    async getPlaylistsByUserId(user_id: string): Promise<PlaylistResponseDto[]> {
+    async getPlaylistsByUserId(id: string): Promise<PlaylistResponseDto[]> {
 
-        if (isEmptyString(user_id)) {
+        if (isEmptyString(id)) {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
-                id: user_id
+                id: id
             },
         });
 
@@ -81,7 +81,7 @@ export class PlaylistService {
 
         const playlists: Playlists[] = await PrismaDb.playlists.findMany({
             where: {
-                user_id
+                user_id: id
             },
         });
 

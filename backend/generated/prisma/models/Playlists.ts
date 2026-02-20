@@ -190,7 +190,7 @@ export type PlaylistsWhereInput = {
   is_public?: Prisma.BoolFilter<"Playlists"> | boolean
   created_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   items?: Prisma.PlaylistItemsListRelationFilter
 }
 
@@ -201,7 +201,7 @@ export type PlaylistsOrderByWithRelationInput = {
   is_public?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  user?: Prisma.UsersOrderByWithRelationInput
   items?: Prisma.PlaylistItemsOrderByRelationAggregateInput
 }
 
@@ -216,7 +216,7 @@ export type PlaylistsWhereUniqueInput = Prisma.AtLeast<{
   is_public?: Prisma.BoolFilter<"Playlists"> | boolean
   created_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   items?: Prisma.PlaylistItemsListRelationFilter
 }, "id" | "user_id_name">
 
@@ -250,7 +250,7 @@ export type PlaylistsCreateInput = {
   is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPlaylistsInput
+  user: Prisma.UsersCreateNestedOneWithoutPlaylistsInput
   items?: Prisma.PlaylistItemsCreateNestedManyWithoutPlaylistInput
 }
 
@@ -270,7 +270,7 @@ export type PlaylistsUpdateInput = {
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPlaylistsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutPlaylistsNestedInput
   items?: Prisma.PlaylistItemsUpdateManyWithoutPlaylistNestedInput
 }
 
@@ -475,7 +475,7 @@ export type PlaylistsCreateWithoutItemsInput = {
   is_public: boolean
   created_at?: Date | string
   updated_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPlaylistsInput
+  user: Prisma.UsersCreateNestedOneWithoutPlaylistsInput
 }
 
 export type PlaylistsUncheckedCreateWithoutItemsInput = {
@@ -509,7 +509,7 @@ export type PlaylistsUpdateWithoutItemsInput = {
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPlaylistsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutPlaylistsNestedInput
 }
 
 export type PlaylistsUncheckedUpdateWithoutItemsInput = {
@@ -593,7 +593,7 @@ export type PlaylistsSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   is_public?: boolean
   created_at?: boolean
   updated_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   items?: boolean | Prisma.Playlists$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.PlaylistsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["playlists"]>
@@ -605,7 +605,7 @@ export type PlaylistsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   is_public?: boolean
   created_at?: boolean
   updated_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["playlists"]>
 
 export type PlaylistsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -615,7 +615,7 @@ export type PlaylistsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   is_public?: boolean
   created_at?: boolean
   updated_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["playlists"]>
 
 export type PlaylistsSelectScalar = {
@@ -629,21 +629,21 @@ export type PlaylistsSelectScalar = {
 
 export type PlaylistsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "name" | "is_public" | "created_at" | "updated_at", ExtArgs["result"]["playlists"]>
 export type PlaylistsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   items?: boolean | Prisma.Playlists$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.PlaylistsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PlaylistsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 export type PlaylistsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 
 export type $PlaylistsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Playlists"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    user: Prisma.$UsersPayload<ExtArgs>
     items: Prisma.$PlaylistItemsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1047,7 +1047,7 @@ readonly fields: PlaylistsFieldRefs;
  */
 export interface Prisma__PlaylistsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.Playlists$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Playlists$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaylistItemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.

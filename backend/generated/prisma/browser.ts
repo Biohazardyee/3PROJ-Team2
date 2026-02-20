@@ -18,10 +18,10 @@ export { Prisma }
 export * as $Enums from './enums.js'
 export * from './enums.js';
 /**
- * Model User
+ * Model Users
  * 
  */
-export type User = Prisma.UserModel
+export type Users = Prisma.UsersModel
 /**
  * Model Medias
  * 
@@ -58,10 +58,10 @@ export type PlaylistItems = Prisma.PlaylistItemsModel
  */
 export type UserMediaStatus = Prisma.UserMediaStatusModel
 /**
- * Model Activitys
+ * Model Activities
  * 
  */
-export type Activitys = Prisma.ActivitysModel
+export type Activities = Prisma.ActivitiesModel
 /**
  * Model Follows
  * 

@@ -6,7 +6,7 @@ import {
     NotificationsCreationDto,
     NotificationsCreationResponseDto, NotificationsResponseDeleteDto, NotificationsResponseDto, NotificationsUpdateDto
 } from "../../../types/notifications/notifications.dto.js";
-import {Medias, Reviews, User, Prisma, Notifications} from "../../../generated/prisma/browser.js";
+import {Medias, Reviews, Users, Prisma, Notifications} from "../../../generated/prisma/browser.js";
 import {notificationsMapper} from "../../../mappers/notifications/notifications.mapper.js";
 
 export class NotificationService {
@@ -21,7 +21,7 @@ export class NotificationService {
             throw new BadRequest('Invalid notification action');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.user_id
             }
@@ -33,7 +33,7 @@ export class NotificationService {
 
 
         if (data.related_user_id !== undefined) {
-            const relatedUser: User | null = await PrismaDb.user.findUnique({
+            const relatedUser: Users | null = await PrismaDb.users.findUnique({
                 where: {
                     id: data.related_user_id
                 }
@@ -87,7 +87,7 @@ export class NotificationService {
             throw new BadRequest('user_id cannot be empty');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: user_id
             }

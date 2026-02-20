@@ -8,7 +8,7 @@ import {
     MediaStatusResponseDto,
     MediaStatusUpdateDto
 } from "../../../types/medias/media.status.dto.js";
-import {User, Medias, UserMediaStatus} from "../../../generated/prisma/browser.js";
+import {Users, Medias, UserMediaStatus} from "../../../generated/prisma/browser.js";
 import {mediaStatusMapper} from "../../../mappers/medias/media.status.mapper.js";
 
 export class MediaStatusService {
@@ -27,7 +27,7 @@ export class MediaStatusService {
             throw new BadRequest('Invalid media status');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.user_id
             },

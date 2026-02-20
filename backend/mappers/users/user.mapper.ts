@@ -1,5 +1,5 @@
 // mappers/user.mapper.ts
-import type {User} from '../../generated/prisma/browser.js';
+import type {Users} from '../../generated/prisma/browser.js';
 import {
     UserResponseAddDto,
     UserResponseDeleteDto,
@@ -8,12 +8,12 @@ import {
 } from '../../types/users/user.dto.js';
 import {BaseMapper} from '../base.mapper.js';
 
-export class UserMapper extends BaseMapper<User, UserResponseDto> {
+export class UserMapper extends BaseMapper<Users, UserResponseDto> {
 
     /**
      * Implémentation de la méthode abstraite
      */
-    protected mapOne(user: User): UserResponseDto {
+    protected mapOne(user: Users): UserResponseDto {
         return {
             id: user.id,
             email: user.email,
@@ -32,7 +32,7 @@ export class UserMapper extends BaseMapper<User, UserResponseDto> {
     /**
      * Mapper spécifique pour le login
      */
-    toLoginDto(user: User): UserResponseLoginDto {
+    toLoginDto(user: Users): UserResponseLoginDto {
         return {
             id: user.id,
             email: user.email,
@@ -41,7 +41,7 @@ export class UserMapper extends BaseMapper<User, UserResponseDto> {
         };
     }
 
-    toAddDto(user: User): UserResponseAddDto {
+    toAddDto(user: Users): UserResponseAddDto {
         return {
             id: user.id,
             username: user.username,
@@ -52,7 +52,7 @@ export class UserMapper extends BaseMapper<User, UserResponseDto> {
     /**
      * Mapper spécifique pour le delete
      */
-    toDeleteDto(user: User): UserResponseDeleteDto {
+    toDeleteDto(user: Users): UserResponseDeleteDto {
         return {
             id: user.id,
             email: user.email,
@@ -63,7 +63,7 @@ export class UserMapper extends BaseMapper<User, UserResponseDto> {
     /**
      * Mapper pour profil public (moins d'infos)
      */
-    toPublicDto(user: User) {
+    toPublicDto(user: Users) {
         return {
             id: user.id,
             username: user.username,

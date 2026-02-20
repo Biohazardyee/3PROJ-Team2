@@ -1,18 +1,33 @@
-import { Router } from 'express';
+import {NextFunction, Request, Response, Router} from "express";
 import notificationController from '../../modules/db/notifications/notification.controller.js';
+import {authGuard} from "../../middlewares/auth.js";
+import {checkAdmin} from "../../middlewares/checkAdmin.js";
+import {checkResourceOwnerOrAdmin} from "../../middlewares/checkResourceOwnerOrAdmin.js";
 
 const router: Router = Router();
 
-router.post('/', notificationController.add);
+router.post('/', authGuard, function (req: Request, res: Response, next: NextFunction): void {
+    notificationController.add(req, res, next);
+});
 
-router.get('/', notificationController.getAll);
+router.get('/', authGuard, checkAdmin, function (req: Request, res: Response, next: NextFunction): void {
+    notificationController.getAll(req, res, next);
+});
 
-router.get('/:id', notificationController.getById);
+router.get('/:id', authGuard, checkResourceOwnerOrAdmin('notifications'), function (req: Request, res: Response, next: NextFunction): void {
+    notificationController.getById(req, res, next);
+});
 
-router.get('/user/:user_id', notificationController.getByUser);
+router.get('/user/:id', authGuard, checkResourceOwnerOrAdmin('notifications'), function (req: Request, res: Response, next: NextFunction): void {
+    notificationController.getByUser(req, res, next);
+});
 
-router.patch('/:id/read', notificationController.update);
+router.put('/:id', authGuard, checkResourceOwnerOrAdmin('notifications'), function (req: Request, res: Response, next: NextFunction): void {
+    notificationController.update(req, res, next);
+});
 
-router.delete('/:id', notificationController.delete);
+router.delete('/:id', authGuard, checkAdmin, function (req: Request, res: Response, next: NextFunction): void {
+    notificationController.delete(req, res, next);
+});
 
 export default router;

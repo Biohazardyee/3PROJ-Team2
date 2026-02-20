@@ -5,8 +5,6 @@ import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-import indexRouter from './routes/db/index.js';
-
 // DB Endpoints
 import userRouter from './routes/db/users.js';
 import playlistRouter from './routes/db/playlists.js';
@@ -60,7 +58,6 @@ app.use('/medias', mediaRouter);
 app.use('/playlists', playlistRouter);
 app.use('/users', userRouter);
 app.use('/reviews', reviewRouter);
-app.use('/', indexRouter);
 
 // API routes
 app.use('/api/tracks', trackRouter);

@@ -2,7 +2,7 @@ import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString} from "../../../utils/helpers.js";
 import {ReviewLikeAddDto, ReviewLikeResponseDto} from "../../../types/reviews/review.like.dto.js";
-import {User, Reviews} from "../../../generated/prisma/client.js";
+import {Users, Reviews} from "../../../generated/prisma/client.js";
 import {ReviewLikes} from "../../../generated/prisma/browser.js";
 import {reviewLikeMapper} from "../../../mappers/reviews/review.like.mapper.js";
 
@@ -18,7 +18,7 @@ export class ReviewLikeService {
             throw new BadRequest("Review_id cannot be empty");
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.user_id,
             }
@@ -109,7 +109,7 @@ export class ReviewLikeService {
             throw new BadRequest('Review_id cannot be empty');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: user_id,
             }

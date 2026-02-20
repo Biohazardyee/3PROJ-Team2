@@ -13,7 +13,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
+model Users {
   id                String   @id @default(uuid())
   username          String   @unique @db.VarChar(25)
   email             String   @unique @db.VarChar(320)
@@ -39,8 +39,8 @@ model User {
   reporter_reports     Reports[]         @relation("reporter_reports")
   profile_reports      Reports[]         @relation("profile_reports")
 
-  activities          Activitys[]     @relation("user_activities")
-  activities_targets  Activitys[]     @relation("user_activities_targets")
+  activities          Activities[]    @relation("user_activities")
+  activities_targets  Activities[]    @relation("user_activities_targets")
   conversations_user1 Conversations[] @relation("conversation_user1")
   conversations_user2 Conversations[] @relation("conversation_user2")
   messages            Messages[]
@@ -54,22 +54,23 @@ enum Roles {
 model Medias {
   id         String   @id @default(uuid())
   api_id     String
+  rating     Float?
   created_at DateTime @default(now())
 
   reviews           Reviews[]
   playlist_items    PlaylistItems[]
   user_music_status UserMediaStatus[]
   notifications     Notifications[]
-  activities        Activitys[]
+  activities        Activities[]
 }
 
 model Reviews {
   id         String   @id @default(uuid())
-  user       User     @relation(fields: [user_id], references: [id])
+  user       Users    @relation(fields: [user_id], references: [id])
   user_id    String
   media      Medias   @relation(fields: [media_id], references: [id])
   media_id   String
-  rating     Float
+  rating     Int
   content    String   @db.VarChar(1000)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -80,7 +81,7 @@ model Reviews {
 
   notifications Notifications[]
 
-  activities Activitys[]
+  activities Activities[]
 
   @@unique([user_id, media_id])
 }
@@ -89,7 +90,7 @@ model ReviewComments {
   id         String    @id @default(uuid())
   review     Reviews   @relation(fields: [review_id], references: [id])
   review_id  String
-  user       User      @relation(fields: [user_id], references: [id])
+  user       Users     @relation(fields: [user_id], references: [id])
   user_id    String
   content    String    @db.VarChar(1000)
   created_at DateTime  @default(now())
@@ -97,7 +98,7 @@ model ReviewComments {
 }
 
 model ReviewLikes {
-  user       User     @relation(fields: [user_id], references: [id])
+  user       Users    @relation(fields: [user_id], references: [id])
   user_id    String
   review     Reviews  @relation(fields: [review_id], references: [id])
   review_id  String
@@ -108,7 +109,7 @@ model ReviewLikes {
 
 model Playlists {
   id         String   @id @default(uuid())
-  user       User     @relation(fields: [user_id], references: [id])
+  user       Users    @relation(fields: [user_id], references: [id])
   user_id    String
   name       String   @db.VarChar(30)
   is_public  Boolean
@@ -132,7 +133,7 @@ model PlaylistItems {
 }
 
 model UserMediaStatus {
-  user       User        @relation(fields: [user_id], references: [id])
+  user       Users       @relation(fields: [user_id], references: [id])
   user_id    String
   media      Medias      @relation(fields: [media_id], references: [id])
   media_id   String
@@ -149,11 +150,11 @@ enum MediaStatus {
   abandoned
 }
 
-model Activitys {
+model Activities {
   id               String          @id @default(uuid())
-  user             User            @relation("user_activities", fields: [user_id], references: [id])
+  user             Users           @relation("user_activities", fields: [user_id], references: [id])
   user_id          String
-  target_user      User?           @relation("user_activities_targets", fields: [target_user_id], references: [id])
+  target_user      Users?          @relation("user_activities_targets", fields: [target_user_id], references: [id])
   target_user_id   String?
   review           Reviews?        @relation(fields: [review_id], references: [id])
   review_id        String?
@@ -172,9 +173,9 @@ enum ActivityActions {
 }
 
 model Follows {
-  user           User     @relation("following", fields: [user_id], references: [id])
+  user           Users    @relation("following", fields: [user_id], references: [id])
   user_id        String
-  follow_user    User     @relation("followers", fields: [follow_user_id], references: [id])
+  follow_user    Users    @relation("followers", fields: [follow_user_id], references: [id])
   follow_user_id String
   created_at     DateTime @default(now())
 
@@ -183,11 +184,11 @@ model Follows {
 
 model Reports {
   id          String          @id @default(uuid())
-  reporter    User            @relation("reporter_reports", fields: [reporter_id], references: [id])
+  reporter    Users           @relation("reporter_reports", fields: [reporter_id], references: [id])
   reporter_id String
   review      Reviews?        @relation(fields: [review_id], references: [id])
   review_id   String?
-  profile     User?           @relation("profile_reports", fields: [profile_id], references: [id])
+  profile     Users?          @relation("profile_reports", fields: [profile_id], references: [id])
   profile_id  String?
   comment     ReviewComments? @relation(fields: [comment_id], references: [id])
   comment_id  String?
@@ -205,10 +206,10 @@ enum ReportTypes {
 
 model Notifications {
   id              String              @id @default(uuid())
-  user            User                @relation("user_notifications", fields: [user_id], references: [id])
+  user            Users               @relation("user_notifications", fields: [user_id], references: [id])
   user_id         String
   action          NotificationActions
-  related_user    User?               @relation("user_related_notifications", fields: [related_user_id], references: [id])
+  related_user    Users?              @relation("user_related_notifications", fields: [related_user_id], references: [id])
   related_user_id String?
   review          Reviews?            @relation(fields: [review_id], references: [id])
   review_id       String?
@@ -237,9 +238,9 @@ enum NotificationActions {
 
 model Conversations {
   id         String     @id @default(uuid())
-  user1      User       @relation("conversation_user1", fields: [user1_id], references: [id])
+  user1      Users      @relation("conversation_user1", fields: [user1_id], references: [id])
   user1_id   String
-  user2      User       @relation("conversation_user2", fields: [user2_id], references: [id])
+  user2      Users      @relation("conversation_user2", fields: [user2_id], references: [id])
   user2_id   String
   created_at DateTime   @default(now())
   messages   Messages[]
@@ -251,7 +252,7 @@ model Messages {
   id              String        @id @default(uuid())
   conversation    Conversations @relation(fields: [conversation_id], references: [id])
   conversation_id String
-  sender          User          @relation(fields: [sender_id], references: [id])
+  sender          Users         @relation(fields: [sender_id], references: [id])
   sender_id       String
   content         String        @db.VarChar(1000)
   is_read         Boolean       @default(false)

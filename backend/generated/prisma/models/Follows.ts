@@ -166,16 +166,16 @@ export type FollowsWhereInput = {
   user_id?: Prisma.StringFilter<"Follows"> | string
   follow_user_id?: Prisma.StringFilter<"Follows"> | string
   created_at?: Prisma.DateTimeFilter<"Follows"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  follow_user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
+  follow_user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
 }
 
 export type FollowsOrderByWithRelationInput = {
   user_id?: Prisma.SortOrder
   follow_user_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
-  follow_user?: Prisma.UserOrderByWithRelationInput
+  user?: Prisma.UsersOrderByWithRelationInput
+  follow_user?: Prisma.UsersOrderByWithRelationInput
 }
 
 export type FollowsWhereUniqueInput = Prisma.AtLeast<{
@@ -186,8 +186,8 @@ export type FollowsWhereUniqueInput = Prisma.AtLeast<{
   user_id?: Prisma.StringFilter<"Follows"> | string
   follow_user_id?: Prisma.StringFilter<"Follows"> | string
   created_at?: Prisma.DateTimeFilter<"Follows"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  follow_user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
+  follow_user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
 }, "user_id_follow_user_id">
 
 export type FollowsOrderByWithAggregationInput = {
@@ -210,8 +210,8 @@ export type FollowsScalarWhereWithAggregatesInput = {
 
 export type FollowsCreateInput = {
   created_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutFollowsInput
-  follow_user: Prisma.UserCreateNestedOneWithoutFollowersInput
+  user: Prisma.UsersCreateNestedOneWithoutFollowsInput
+  follow_user: Prisma.UsersCreateNestedOneWithoutFollowersInput
 }
 
 export type FollowsUncheckedCreateInput = {
@@ -222,8 +222,8 @@ export type FollowsUncheckedCreateInput = {
 
 export type FollowsUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutFollowsNestedInput
-  follow_user?: Prisma.UserUpdateOneRequiredWithoutFollowersNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutFollowsNestedInput
+  follow_user?: Prisma.UsersUpdateOneRequiredWithoutFollowersNestedInput
 }
 
 export type FollowsUncheckedUpdateInput = {
@@ -367,7 +367,7 @@ export type FollowsUncheckedUpdateManyWithoutFollow_userNestedInput = {
 
 export type FollowsCreateWithoutUserInput = {
   created_at?: Date | string
-  follow_user: Prisma.UserCreateNestedOneWithoutFollowersInput
+  follow_user: Prisma.UsersCreateNestedOneWithoutFollowersInput
 }
 
 export type FollowsUncheckedCreateWithoutUserInput = {
@@ -387,7 +387,7 @@ export type FollowsCreateManyUserInputEnvelope = {
 
 export type FollowsCreateWithoutFollow_userInput = {
   created_at?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutFollowsInput
+  user: Prisma.UsersCreateNestedOneWithoutFollowsInput
 }
 
 export type FollowsUncheckedCreateWithoutFollow_userInput = {
@@ -458,7 +458,7 @@ export type FollowsCreateManyFollow_userInput = {
 
 export type FollowsUpdateWithoutUserInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  follow_user?: Prisma.UserUpdateOneRequiredWithoutFollowersNestedInput
+  follow_user?: Prisma.UsersUpdateOneRequiredWithoutFollowersNestedInput
 }
 
 export type FollowsUncheckedUpdateWithoutUserInput = {
@@ -473,7 +473,7 @@ export type FollowsUncheckedUpdateManyWithoutUserInput = {
 
 export type FollowsUpdateWithoutFollow_userInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutFollowsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutFollowsNestedInput
 }
 
 export type FollowsUncheckedUpdateWithoutFollow_userInput = {
@@ -492,24 +492,24 @@ export type FollowsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   user_id?: boolean
   follow_user_id?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  follow_user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  follow_user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["follows"]>
 
 export type FollowsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   user_id?: boolean
   follow_user_id?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  follow_user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  follow_user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["follows"]>
 
 export type FollowsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   user_id?: boolean
   follow_user_id?: boolean
   created_at?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  follow_user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  follow_user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["follows"]>
 
 export type FollowsSelectScalar = {
@@ -520,23 +520,23 @@ export type FollowsSelectScalar = {
 
 export type FollowsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"user_id" | "follow_user_id" | "created_at", ExtArgs["result"]["follows"]>
 export type FollowsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  follow_user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  follow_user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 export type FollowsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  follow_user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  follow_user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 export type FollowsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  follow_user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  follow_user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
 }
 
 export type $FollowsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Follows"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
-    follow_user: Prisma.$UserPayload<ExtArgs>
+    user: Prisma.$UsersPayload<ExtArgs>
+    follow_user: Prisma.$UsersPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     user_id: string
@@ -936,8 +936,8 @@ readonly fields: FollowsFieldRefs;
  */
 export interface Prisma__FollowsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  follow_user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  follow_user<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

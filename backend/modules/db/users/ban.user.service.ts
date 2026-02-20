@@ -1,7 +1,7 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString, isValidStringLength} from "../../../utils/helpers.js";
-import {Prisma, User} from '../../../generated/prisma/client.js';
+import {Prisma, Users} from '../../../generated/prisma/client.js';
 import {
     BannedUserAddDto,
     BannedUserDeleteDto,
@@ -26,7 +26,7 @@ export class BanUserService {
             throw new BadRequest('Ban reason cannot be longer than 255 chars');
         }
 
-        const user = await PrismaDb.user.findUnique({
+        const user = await PrismaDb.users.findUnique({
             where: {id: data.user_id},
             select: {
                 id: true,
@@ -58,7 +58,7 @@ export class BanUserService {
                 }
             }),
 
-            PrismaDb.user.delete({
+            PrismaDb.users.delete({
                 where: {id: user.id}
             })
         ]);

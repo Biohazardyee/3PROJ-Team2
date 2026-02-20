@@ -1,23 +1,25 @@
-import express, {NextFunction, Router} from "express";
+import express, {NextFunction, Request, Response, Router} from "express";
 import conversationController from "../../modules/db/conversations/conversation.controller.js";
-import messageController from "../../modules/db/messages/message.controller.js";
+import {authGuard} from "../../middlewares/auth.js";
+import {checkResourceOwnerOrAdmin} from "../../middlewares/checkResourceOwnerOrAdmin.js";
+import {checkAdmin} from "../../middlewares/checkAdmin.js";
 
-var router: Router = express.Router();
+const router: Router = express.Router();
 
-router.get("/", function (req, res, next: NextFunction): void {
-    messageController.getAll(req, res, next);
+router.get("/", authGuard, checkAdmin, function (req: Request, res: Response, next: NextFunction): void {
+    conversationController.getAll(req, res, next);
 })
 
-router.get("/:id", function (req, res, next: NextFunction): void {
-    messageController.getById(req, res, next);
+router.get("/:id", authGuard, checkResourceOwnerOrAdmin('conversations'), function (req: Request, res: Response, next: NextFunction): void {
+    conversationController.getById(req, res, next);
 })
 
-router.post("/", function (req, res, next: NextFunction): void {
-    messageController.add(req, res, next);
+router.post("/", authGuard, function (req: Request, res: Response, next: NextFunction): void {
+    conversationController.add(req, res, next);
 })
 
-router.delete("/:id", function (req, res, next: NextFunction): void {
-    messageController.delete(req, res, next);
+router.delete("/:id", authGuard, checkResourceOwnerOrAdmin('conversations'), function (req: Request, res: Response, next: NextFunction): void {
+    conversationController.delete(req, res, next);
 })
 
 export default router;

@@ -1,12 +1,11 @@
-import {BaseMapper} from "../base.mapper";
+import {BaseMapper} from "../base.mapper.js";
 import {
-    ConversationAddDto,
     ConversationAddResponseDto, ConversationResponseDeleteDto,
     ConversationResponseDto
 } from "../../types/conversations/conversations.dto.js";
 import {Conversations, Prisma} from "../../generated/prisma/client.js";
 
-// Il faut dire qu'onm veut utiliser la relation ici, Prisma ne le fait pas automatiquement
+// Il faut dire qu'on veut utiliser la relation ici, Prisma ne le fait pas automatiquement
 type ConversationWithMessages = Prisma.ConversationsGetPayload<{
     include: { messages: true }
 }>;

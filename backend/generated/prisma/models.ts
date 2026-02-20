@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/User.js'
+export type * from './models/Users.js'
 export type * from './models/Medias.js'
 export type * from './models/Reviews.js'
 export type * from './models/ReviewComments.js'
@@ -16,7 +16,7 @@ export type * from './models/ReviewLikes.js'
 export type * from './models/Playlists.js'
 export type * from './models/PlaylistItems.js'
 export type * from './models/UserMediaStatus.js'
-export type * from './models/Activitys.js'
+export type * from './models/Activities.js'
 export type * from './models/Follows.js'
 export type * from './models/Reports.js'
 export type * from './models/Notifications.js'

@@ -1,4 +1,4 @@
-function isValidFloatRating(value: any): boolean {
+export function isValidFloatRating(value: any): boolean {
     return (
         typeof value === 'number' &&
         Number.isFinite(value) &&
@@ -7,6 +7,6 @@ function isValidFloatRating(value: any): boolean {
     );
 }
 
-function normalizeRating(value: number): number {
+export function normalizeRating(value: number): number {
     return Math.round(value * 10) / 10;
 }

@@ -1,6 +1,7 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isEmptyString, isValidStringLength} from "../../../utils/helpers.js";
+import {isValidFloatRating} from "./review.helper.js"
 import {
     ReviewAddDto,
     ReviewResponseAddDto, ReviewResponseDeleteDto,
@@ -8,7 +9,7 @@ import {
     ReviewUpdateDto
 } from "../../../types/reviews/review.dto.js";
 import {Prisma} from '../../../generated/prisma/client.js';
-import {Medias, User, Reviews} from "../../../generated/prisma/browser.js";
+import {Medias, Users, Reviews} from "../../../generated/prisma/browser.js";
 import {reviewMapper} from "../../../mappers/reviews/review.mapper.js";
 
 export class ReviewService {
@@ -35,7 +36,7 @@ export class ReviewService {
             throw new BadRequest('Content is too long (max 1000 characters)');
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.user_id
             },

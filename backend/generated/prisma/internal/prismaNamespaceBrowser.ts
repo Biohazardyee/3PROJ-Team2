@@ -51,7 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User',
+  Users: 'Users',
   Medias: 'Medias',
   Reviews: 'Reviews',
   ReviewComments: 'ReviewComments',
@@ -59,7 +59,7 @@ export const ModelName = {
   Playlists: 'Playlists',
   PlaylistItems: 'PlaylistItems',
   UserMediaStatus: 'UserMediaStatus',
-  Activitys: 'Activitys',
+  Activities: 'Activities',
   Follows: 'Follows',
   Reports: 'Reports',
   Notifications: 'Notifications',
@@ -84,7 +84,7 @@ export const TransactionIsolationLevel = {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const UserScalarFieldEnum = {
+export const UsersScalarFieldEnum = {
   id: 'id',
   username: 'username',
   email: 'email',
@@ -99,12 +99,13 @@ export const UserScalarFieldEnum = {
   updated_at: 'updated_at'
 } as const
 
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
 
 
 export const MediasScalarFieldEnum = {
   id: 'id',
   api_id: 'api_id',
+  rating: 'rating',
   created_at: 'created_at'
 } as const
 
@@ -176,7 +177,7 @@ export const UserMediaStatusScalarFieldEnum = {
 export type UserMediaStatusScalarFieldEnum = (typeof UserMediaStatusScalarFieldEnum)[keyof typeof UserMediaStatusScalarFieldEnum]
 
 
-export const ActivitysScalarFieldEnum = {
+export const ActivitiesScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
   target_user_id: 'target_user_id',
@@ -187,7 +188,7 @@ export const ActivitysScalarFieldEnum = {
   created_at: 'created_at'
 } as const
 
-export type ActivitysScalarFieldEnum = (typeof ActivitysScalarFieldEnum)[keyof typeof ActivitysScalarFieldEnum]
+export type ActivitiesScalarFieldEnum = (typeof ActivitiesScalarFieldEnum)[keyof typeof ActivitiesScalarFieldEnum]
 
 
 export const FollowsScalarFieldEnum = {

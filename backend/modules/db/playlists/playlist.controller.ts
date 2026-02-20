@@ -41,11 +41,11 @@ class PlaylistController extends Controller {
 
     async getPlaylistsByUserId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            if (!req.params.user_id) {
+            if (!req.params.id) {
                 throw new BadRequest('Missing required fields');
             }
 
-            const playlists: PlaylistResponseDto[] = await this.service.getPlaylistsByUserId(req.params.user_id);
+            const playlists: PlaylistResponseDto[] = await this.service.getPlaylistsByUserId(req.params.id);
 
             res.status(200).json({
                 message: 'Playlists retrieved successfully',

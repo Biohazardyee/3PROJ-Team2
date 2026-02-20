@@ -6,7 +6,7 @@ import {
     ReviewCommentResponseDto,
     ReviewCommentUpdateDto
 } from "../../../types/reviews/review.comment.dto.js";
-import {User, Reviews, ReviewComments} from "../../../generated/prisma/browser.js";
+import {Users, Reviews, ReviewComments} from "../../../generated/prisma/browser.js";
 import {reviewCommentMapper} from "../../../mappers/reviews/review.comment.mapper.js";
 import {Prisma} from '../../../generated/prisma/client.js';
 
@@ -30,7 +30,7 @@ export class ReviewCommentService {
             throw new BadRequest("Content length cannot exceed 1000 characters");
         }
 
-        const user: User | null = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {
                 id: data.user_id,
             }

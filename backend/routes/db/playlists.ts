@@ -1,30 +1,32 @@
-import express, {NextFunction, Router} from 'express';
+import {NextFunction, Request, Response, Router} from "express";
 import playlistController from '../../modules/db/playlists/playlist.controller.js';
+import {authGuard} from "../../middlewares/auth.js";
+import {checkAdmin} from "../../middlewares/checkAdmin.js";
+import {checkResourceOwnerOrAdmin} from "../../middlewares/checkResourceOwnerOrAdmin.js";
 
+const router: Router = Router();
 
-var router: Router = express.Router();
-
-router.post('/', function (req, res, next: NextFunction): void {
+router.post('/', authGuard, function (req: Request, res: Response, next: NextFunction): void {
     playlistController.add(req, res, next);
 });
 
-router.get('/user/:user_id', function (req, res, next: NextFunction): void {
+router.get('/user/:id', authGuard, checkResourceOwnerOrAdmin('playlists'), function (req: Request, res: Response, next: NextFunction): void {
     playlistController.getPlaylistsByUserId(req, res, next);
 });
 
-router.get('/:id', function (req, res, next: NextFunction): void {
+router.get('/:id', authGuard, checkResourceOwnerOrAdmin('playlists'), function (req: Request, res: Response, next: NextFunction): void {
     playlistController.getById(req, res, next);
 });
 
-router.put('/:playlist_id', function (req, res, next: NextFunction): void {
+router.put('/:id', authGuard, checkResourceOwnerOrAdmin('playlists'), function (req: Request, res: Response, next: NextFunction): void {
     playlistController.update(req, res, next);
 });
 
-router.get('/', function (req, res, next: NextFunction): void {
+router.get('/', authGuard, checkAdmin, function (req: Request, res: Response, next: NextFunction): void {
     playlistController.getAll(req, res, next);
 });
 
-router.delete('/:id', function (req, res, next: NextFunction): void {
+router.delete('/:id', authGuard, checkResourceOwnerOrAdmin('playlists'), function (req: Request, res: Response, next: NextFunction): void {
     playlistController.delete(req, res, next);
 });
 

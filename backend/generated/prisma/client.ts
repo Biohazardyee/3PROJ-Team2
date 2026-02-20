@@ -30,7 +30,7 @@ export * from "./enums.js"
  * ```
  * const prisma = new PrismaClient()
  * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * const users = await prisma.users.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -40,10 +40,10 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model User
+ * Model Users
  * 
  */
-export type User = Prisma.UserModel
+export type Users = Prisma.UsersModel
 /**
  * Model Medias
  * 
@@ -80,10 +80,10 @@ export type PlaylistItems = Prisma.PlaylistItemsModel
  */
 export type UserMediaStatus = Prisma.UserMediaStatusModel
 /**
- * Model Activitys
+ * Model Activities
  * 
  */
-export type Activitys = Prisma.ActivitysModel
+export type Activities = Prisma.ActivitiesModel
 /**
  * Model Follows
  * 

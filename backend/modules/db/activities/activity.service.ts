@@ -1,14 +1,14 @@
 import {PrismaDb} from '../../../config/database.js';
 import {BadRequest, NotFound} from '../../../utils/errors.js';
 import {isEmptyString} from '../../../utils/helpers.js';
-import { Prisma} from '../../../generated/prisma/client.js';
+import { Prisma, Users, Reviews, Activities, Medias} from '../../../generated/prisma/client.js';
 import {
     ActivityAddDto,
     ActivityDeleteResponseDto,
     ActivityResponseDto
 } from '../../../types/activities/activities.dto.js';
 import {activityMapper} from '../../../mappers/activities/activities.mapper.js';
-import {Activitys} from "../../../generated/prisma/browser.js";
+
 
 export class ActivityService {
 
@@ -23,7 +23,7 @@ export class ActivityService {
             throw new BadRequest('Invalid activity action');
         }
 
-        const user = await PrismaDb.user.findUnique({
+        const user: Users | null = await PrismaDb.users.findUnique({
             where: {id: data.user_id},
         });
 
@@ -36,7 +36,7 @@ export class ActivityService {
                 throw new BadRequest('target_user_id cannot be the same as user_id');
             }
 
-            const targetUser = await PrismaDb.user.findUnique({
+            const targetUser: Users | null = await PrismaDb.users.findUnique({
                 where: {id: data.target_user_id},
             });
 
@@ -46,7 +46,7 @@ export class ActivityService {
         }
 
         if (data.review_id) {
-            const review = await PrismaDb.reviews.findUnique({
+            const review: Reviews | null = await PrismaDb.reviews.findUnique({
                 where: {id: data.review_id},
             });
 
@@ -56,7 +56,7 @@ export class ActivityService {
         }
 
         if (data.media_id) {
-            const media = await PrismaDb.medias.findUnique({
+            const media: Medias | null = await PrismaDb.medias.findUnique({
                 where: {id: data.media_id},
             });
 
@@ -71,7 +71,7 @@ export class ActivityService {
             }
         }
 
-        const createData: Prisma.ActivitysUncheckedCreateInput = {
+        const createData: Prisma.ActivitiesUncheckedCreateInput = {
             user_id: data.user_id,
             action: data.action,
             target_user_id: data.target_user_id || null,
@@ -80,7 +80,7 @@ export class ActivityService {
             rating_from_user: data.rating_from_user !== undefined ? data.rating_from_user : null,
         };
 
-        const activity = await PrismaDb.activitys.create({
+        const activity: Activities = await PrismaDb.activities.create({
             data: createData,
         });
 
@@ -129,7 +129,7 @@ export class ActivityService {
         }
 
         try {
-            const activityToDelete: Activitys | null = await PrismaDb.activitys.delete(
+            const activityToDelete: Activities | null = await PrismaDb.activities.delete(
                 {
                     where: {
                         id
@@ -149,7 +149,7 @@ export class ActivityService {
 
     async getAll(): Promise<ActivityResponseDto[]> {
 
-        const activities: Activitys[] = await PrismaDb.activitys.findMany({
+        const activities: Activities[] = await PrismaDb.activities.findMany({
             orderBy: {
                 created_at: 'desc'
             }
@@ -164,7 +164,7 @@ export class ActivityService {
             throw new BadRequest('Activity id cannot be empty');
         }
 
-        const activity: Activitys | null = await PrismaDb.activitys.findUnique({
+        const activity: Activities | null = await PrismaDb.activities.findUnique({
             where: {id},
         });
 
