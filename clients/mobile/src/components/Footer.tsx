@@ -27,15 +27,16 @@ const Footer: React.FC = () => {
                 />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push('/restriction')} style={styles.icon}>
+            {/* Statistiques */}
+            <TouchableOpacity onPress={() => router.push('/stats')} style={styles.icon}>
                 <Ionicons
-                    name="paper-plane-outline"
+                    name="stats-chart"
                     size={26}
-                    color={pathname === '/feed' ? '#ec4899' : '#94a3b8'}
+                    color="#94a3b8"
                 />
             </TouchableOpacity>
 
-            {/* Bibliotheque */}
+            {/* Library */}
             <TouchableOpacity onPress={() => router.push('/library')} style={styles.icon}>
                 <Ionicons
                     name="library-outline"

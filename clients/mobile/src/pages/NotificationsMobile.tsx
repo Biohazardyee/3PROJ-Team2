@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
-import HeaderStart from "@/src/components/HeaderStart";
+import Header from "@/src/components/Header";
 
 // Simulation de données
 const Listnotifications = [
@@ -55,16 +55,16 @@ const Listnotifications = [
 export default function Notifications() {
     return (
         <View style={styles.container}>
-            <HeaderStart />
+            <Header />
             <ScrollView contentContainerStyle={styles.Content}>
 
                 {/* Haut de la page */}
                 <View style={styles.TopPage}>
                     <Text style={styles.Title}>Notifications</Text>
+                </View>
                     <TouchableOpacity>
                         <Text style={styles.markRead}>Marquer tout comme lu</Text>
                     </TouchableOpacity>
-                </View>
                 <Text style={styles.unreadText}>3 notifications non lue</Text>
 
                 {/* Filtres */}

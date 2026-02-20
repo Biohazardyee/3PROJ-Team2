@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text,TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
-import {useRouter} from "expo-router";
+import {useRouter, usePathname} from "expo-router";
 
-const HeaderStart: React.FC = () => {
+const Header: React.FC = () => {
     const router = useRouter();
-
+    const pathname = usePathname();
     return (
         <View style={styles.header}>
             <View style={styles.content}>
@@ -28,13 +28,23 @@ const HeaderStart: React.FC = () => {
                 <Text style={styles.name}>SUPCONTENT</Text>
             </View>
 
-            <TouchableOpacity onPress={() => router.push('/notifications')}>
-                <Ionicons
-                    name="notifications-outline"
-                    size={26}
-                    color="white"
-                />
-            </TouchableOpacity>
+            <View style={styles.buttons}>
+                <TouchableOpacity onPress={() => router.push('/notifications')}>
+                    <Ionicons
+                        name="notifications-outline"
+                        size={26}
+                        color="white"
+                    />
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => router.push('/restriction')} >
+                    <Ionicons
+                        name="paper-plane-outline"
+                        size={26}
+                        color={pathname === '/messages' ? 'black' : 'white'}
+                    />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -66,7 +76,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ad46ff',
         letterSpacing: 0.5,
+    },
+    buttons: {
+        flexDirection: 'row',
+        gap: 15, 
+        alignItems: 'center',
     }
 });
 
-export default HeaderStart;
+export default Header;

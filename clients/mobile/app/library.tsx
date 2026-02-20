@@ -1,7 +1,5 @@
-import Library from '@/src/pages/Library';
+import Library from '../src/pages/Library';
 
 export default function Page() {
-    return (
-        <Library />
-    );
+  return <Library />;
 }

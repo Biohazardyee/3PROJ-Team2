@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from 'expo-router';
 import { ButtonMobile } from '@/src/components/ButtonMobile';
-import HeaderStart from "@/src/components/HeaderStart";
+import Header from "@/src/components/Header";
 
 
 export default function AutGuard() {
@@ -12,7 +12,7 @@ export default function AutGuard() {
 
     return (
         <View style={styles.container}>
-            <HeaderStart />
+            <Header />
             <View style={styles.content}>
                 {/* Logo */}
                 <LinearGradient
@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
     spacer: {
         height: 15,
     },
-    // Style pour le bouton en dégradé
     registerButton: {
         height: 55,
         borderRadius: 12,

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Header from "@/src/components/Header";
 import { StatusBar } from 'expo-status-bar';
 import AlbumCard from "@/src/components/AlbumCard";
@@ -41,32 +42,10 @@ const ALBUMS = [
     },
 ];
 
-// Données pour les filtres
-const GENRES = [
-    { label: 'All Genres', value: 'all' },
-    { label: 'Techno', value: 'techno' },
-    { label: 'House', value: 'house' },
-    { label: 'Electro', value: 'electro' },
-    { label: 'EDM', value: 'edm' },
-];
 
-const SORT_OPTIONS = [
-    { label: 'Most Popular', value: 'popular' },
-    { label: 'Most Recent', value: 'recent' },
-    { label: 'Highest Rated', value: 'rated' },
-    { label: 'Title A-Z', value: 'az' },
-];
-
-const HomeMobile: React.FC = () => {
-    // États pour les menus déroulants
-    const [isGenreOpen, setIsGenreOpen] = useState(false);
-    const [isSortOpen, setIsSortOpen] = useState(false);
-
-    const [selectedGenre, setSelectedGenre] = useState('Tous les Genres');
-    const [selectedSort, setSelectedSort] = useState('Les plus populaires');
+const ListenLaterStat: React.FC = () => {
 
     return (
-
         <View style={styles.container}>
             {/* Ne fonctionne pas probablement à cause de Expo go */}
             <StatusBar style='light' backgroundColor='#1C1C28' translucent={false}/>
@@ -75,91 +54,16 @@ const HomeMobile: React.FC = () => {
 
                 {/* Header Text */}
                 <View style={styles.headerTextContainer}>
-                    <Text style={styles.title}>Explorer</Text>
-                    <Text style={styles.subtitle}>Découvrez votre prochain album préféré !</Text>
-                </View>
-
-                {/* Rechercher et Filtrer */}
-                <View style={styles.filterCard}>
-                    <Text style={styles.label}>Rechercher</Text>
-                    <View style={styles.searchBar}>
-                        <Ionicons name="search-outline" size={20} color="#888" style={{ marginRight: 10 }} />
-                        <TextInput
-                            placeholder="Rechercher des albums etc..."
-                            placeholderTextColor="#888"
-                            style={styles.searchInput}
+                    <View style={styles.headerTitle}>
+                        <Icon
+                            name="playlist-music"
+                            size={40}
+                            color="#4747ff"
                         />
+                        <Text style={styles.title}>À écouter plus tard</Text>
                     </View>
-
-                    {/* VOLET GENRE */}
-                    <Text style={styles.label}>Genre</Text>
-                    <TouchableOpacity
-                        style={styles.dropdown}
-                        onPress={() => {
-                            setIsGenreOpen(!isGenreOpen);
-                            setIsSortOpen(false);
-                        }}
-                    >
-                        <Text style={styles.dropdownText}>{selectedGenre}</Text>
-                        <Ionicons name={isGenreOpen ? "chevron-up" : "chevron-down"} size={18} color="#888" />
-                    </TouchableOpacity>
-
-                    {isGenreOpen && (
-                        <View style={styles.dropdownMenu}>
-                            {GENRES.map((item) => (
-                                <TouchableOpacity
-                                    key={item.value}
-                                    style={styles.menuItem}
-                                    onPress={() => {
-                                        setSelectedGenre(item.label);
-                                        setIsGenreOpen(false);
-                                    }}
-                                >
-                                    <Text style={styles.menuItemText}>{item.label}</Text>
-                                    {selectedGenre === item.label && <Ionicons name="checkmark" size={18} color="#4f46e5" />}
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-
-                    {/* VOLET TRIER */}
-                    <Text style={styles.label}>Trier par</Text>
-                    <TouchableOpacity
-                        style={styles.dropdown}
-                        onPress={() => {
-                            setIsSortOpen(!isSortOpen);
-                            setIsGenreOpen(false);
-                        }}
-                    >
-                        <Text style={styles.dropdownText}>{selectedSort}</Text>
-                        <Ionicons name={isSortOpen ? "chevron-up" : "chevron-down"} size={18} color="#888" />
-                    </TouchableOpacity>
-
-                    {isSortOpen && (
-                        <View style={styles.dropdownMenu}>
-                            {SORT_OPTIONS.map((item) => (
-                                <TouchableOpacity
-                                    key={item.value}
-                                    style={styles.menuItem}
-                                    onPress={() => {
-                                        setSelectedSort(item.label);
-                                        setIsSortOpen(false);
-                                    }}
-                                >
-                                    <Text style={styles.menuItemText}>{item.label}</Text>
-                                    {selectedSort === item.label && <Ionicons name="checkmark" size={18} color="#4f46e5" />}
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-
-                    <TouchableOpacity style={styles.filterButton}>
-                        <Ionicons name="options-outline" size={20} color="white" style={{ marginRight: 8 }} />
-                        <Text style={styles.filterButtonText}>Filtrer</Text>
-                    </TouchableOpacity>
+                    <Text style={styles.subtitle}>Ce que vous allez écoutés</Text>
                 </View>
-
-                <Text style={styles.resultsText}>{ALBUMS.length} albums trouvés</Text>
 
                 <View style={styles.grid}>
                     {ALBUMS.map((item) => (
@@ -180,6 +84,11 @@ const HomeMobile: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+    headerTitle: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        gap: 10,
+    },
     container: {
         flex: 1,
         backgroundColor: '#1C1C28'
@@ -192,7 +101,7 @@ const styles = StyleSheet.create({
         marginBottom: 25
     },
     title: {
-        color: 'white',
+        color: '#4747ff',
         fontSize: 32,
         fontWeight: 'bold'
     },
@@ -348,7 +257,7 @@ const styles = StyleSheet.create({
 
 
     heartButton: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)', // Fond semi-transparent
+        backgroundColor: 'rgba(255, 255, 255, 0.1)', 
         width: 40,
         height: 40,
         borderRadius: 8,
@@ -392,4 +301,4 @@ const styles = StyleSheet.create({
         fontSize: 12 },
 });
 
-export default HomeMobile;
+export default ListenLaterStat;

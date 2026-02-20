@@ -19,11 +19,6 @@ function LayoutContent() {
             <View style={{ flex: 1 }}>
                 <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="index" />
-                    <Stack.Screen name="register" />
-                    <Stack.Screen name="login" />
-                    <Stack.Screen name="restriction" />
-                    <Stack.Screen name="notifications"/>
-                    <Stack.Screen name="OnBoarding" />
                 </Stack>
             </View>
             <Footer />
