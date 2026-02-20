@@ -18,7 +18,7 @@ services:
       - ./backend/.env
     build:
       context: ./backend
-      dockerfile: Dockerfile         # Si tu veux rebuild depuis le docker-compose
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     depends_on:

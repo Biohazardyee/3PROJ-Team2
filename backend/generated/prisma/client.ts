@@ -30,7 +30,7 @@ export * from "./enums.js"
  * ```
  * const prisma = new PrismaClient()
  * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * const users = await prisma.users.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -40,67 +40,77 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model User
+ * Model Users
  * 
  */
-export type User = Prisma.UserModel
+export type Users = Prisma.UsersModel
 /**
- * Model Media
+ * Model Medias
  * 
  */
-export type Media = Prisma.MediaModel
+export type Medias = Prisma.MediasModel
 /**
- * Model Review
+ * Model Reviews
  * 
  */
-export type Review = Prisma.ReviewModel
+export type Reviews = Prisma.ReviewsModel
 /**
- * Model ReviewComment
+ * Model ReviewComments
  * 
  */
-export type ReviewComment = Prisma.ReviewCommentModel
+export type ReviewComments = Prisma.ReviewCommentsModel
 /**
- * Model ReviewLike
+ * Model ReviewLikes
  * 
  */
-export type ReviewLike = Prisma.ReviewLikeModel
+export type ReviewLikes = Prisma.ReviewLikesModel
 /**
- * Model Playlist
+ * Model Playlists
  * 
  */
-export type Playlist = Prisma.PlaylistModel
+export type Playlists = Prisma.PlaylistsModel
 /**
- * Model PlaylistItem
+ * Model PlaylistItems
  * 
  */
-export type PlaylistItem = Prisma.PlaylistItemModel
+export type PlaylistItems = Prisma.PlaylistItemsModel
 /**
  * Model UserMediaStatus
  * 
  */
 export type UserMediaStatus = Prisma.UserMediaStatusModel
 /**
- * Model Activity
+ * Model Activities
  * 
  */
-export type Activity = Prisma.ActivityModel
+export type Activities = Prisma.ActivitiesModel
 /**
- * Model Follow
+ * Model Follows
  * 
  */
-export type Follow = Prisma.FollowModel
+export type Follows = Prisma.FollowsModel
 /**
- * Model Report
+ * Model Reports
  * 
  */
-export type Report = Prisma.ReportModel
+export type Reports = Prisma.ReportsModel
 /**
- * Model Notification
+ * Model Notifications
  * 
  */
-export type Notification = Prisma.NotificationModel
+export type Notifications = Prisma.NotificationsModel
 /**
  * Model BannedUsers
  * 
  */
 export type BannedUsers = Prisma.BannedUsersModel
+/**
+ * Model Conversations
+ * 
+ */
+export type Conversations = Prisma.ConversationsModel
+/**
+ * Model Messages
+ * 
+ */
+export type Messages = Prisma.MessagesModel

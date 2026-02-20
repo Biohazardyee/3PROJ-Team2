@@ -9,12 +9,12 @@
 * 🟢 You can import this file directly.
 */
 
-export const Role = {
+export const Roles = {
   BASIC: 'BASIC',
   ADMIN: 'ADMIN'
 } as const
 
-export type Role = (typeof Role)[keyof typeof Role]
+export type Roles = (typeof Roles)[keyof typeof Roles]
 
 
 export const MediaStatus = {
@@ -27,30 +27,30 @@ export const MediaStatus = {
 export type MediaStatus = (typeof MediaStatus)[keyof typeof MediaStatus]
 
 
-export const ActivityAction = {
+export const ActivityActions = {
   review_created: 'review_created',
   rating_added: 'rating_added',
   playlist_added: 'playlist_added',
   follow: 'follow'
 } as const
 
-export type ActivityAction = (typeof ActivityAction)[keyof typeof ActivityAction]
+export type ActivityActions = (typeof ActivityActions)[keyof typeof ActivityActions]
 
 
-export const ReportType = {
+export const ReportTypes = {
   comment: 'comment',
   profile: 'profile',
   review: 'review'
 } as const
 
-export type ReportType = (typeof ReportType)[keyof typeof ReportType]
+export type ReportTypes = (typeof ReportTypes)[keyof typeof ReportTypes]
 
 
-export const NotificationAction = {
+export const NotificationActions = {
   like_added: 'like_added',
   comment_added: 'comment_added',
   new_follow: 'new_follow',
   recommendation: 'recommendation'
 } as const
 
-export type NotificationAction = (typeof NotificationAction)[keyof typeof NotificationAction]
+export type NotificationActions = (typeof NotificationActions)[keyof typeof NotificationActions]
