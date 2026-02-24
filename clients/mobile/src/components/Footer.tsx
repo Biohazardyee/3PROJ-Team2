@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
             </TouchableOpacity>
 
             {/* Feed */}
-            <TouchableOpacity onPress={() => router.push('/restriction')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/feed')} style={styles.icon}>
                 <Ionicons
                     name="rocket-outline"
                     size={26}
@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
                 <Ionicons
                     name="stats-chart"
                     size={26}
-                    color="#94a3b8"
+                    color={pathname === '/stats' ? '#cbc13e' : '#94a3b8'}
                 />
             </TouchableOpacity>
 
@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
                 <Ionicons
                     name="library-outline"
                     size={26}
-                    color="#94a3b8"
+                    color={pathname === '/library' ? '#c33131' : '#94a3b8'}
                 />
             </TouchableOpacity>
 
@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
                 <Ionicons
                     name="person-outline"
                     size={26}
-                    color="#94a3b8"
+                    color={pathname === '/restriction' ? '#fff7f7' : '#94a3b8'}
                 />
             </TouchableOpacity>
         </View>

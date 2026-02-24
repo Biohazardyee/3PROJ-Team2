@@ -57,7 +57,7 @@ const SORT_OPTIONS = [
     { label: 'Title A-Z', value: 'az' },
 ];
 
-const HomeMobile: React.FC = () => {
+const Home: React.FC = () => {
     // États pour les menus déroulants
     const [isGenreOpen, setIsGenreOpen] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
 
 
     heartButton: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)', // Fond semi-transparent
+        backgroundColor: 'rgba(255, 255, 255, 0.1)', 
         width: 40,
         height: 40,
         borderRadius: 8,
@@ -392,4 +392,4 @@ const styles = StyleSheet.create({
         fontSize: 12 },
 });
 
-export default HomeMobile;
+export default Home;

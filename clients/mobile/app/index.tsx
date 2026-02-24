@@ -1,5 +1,5 @@
-import HomeMobile from '../src/pages/HomeMobile';
+import Home from '../src/pages/Home';
 
 export default function Page() {
-    return <HomeMobile />;
+    return <Home />;
 }
