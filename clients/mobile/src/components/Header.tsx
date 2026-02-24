@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text,TouchableOpacity, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text,TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import {useRouter, usePathname} from "expo-router";
 
@@ -10,22 +9,14 @@ const Header: React.FC = () => {
     return (
         <View style={styles.header}>
             <View style={styles.content}>
-                {/* Fond Logo */}
-                <LinearGradient
-                    colors={['#6366f1', '#ec4899']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.logo}
-                >
-                    {/* Logo */}
-                    <Ionicons
-                        name="musical-notes-outline"
-                        size={24}
-                        color="white"
-                    />
-                </LinearGradient>
+                {/* Logo */}
+                <Image 
+                    source={require('@/assets/images/logo.png')} 
+                    style={styles.logoImage} 
+                />
+
                 {/* Nom de l'app */}
-                <Text style={styles.name}>SUPCONTENT</Text>
+                <Text style={styles.name}>MELODIA</Text>
             </View>
 
             <View style={styles.buttons}>
@@ -59,17 +50,14 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 15,
     },
+    logoImage : {
+        width: 50,
+        height: 50,   
+    },
     content: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
-    },
-    logo: {
-        width: 40,
-        height: 40,
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     name: {
         fontSize: 18,

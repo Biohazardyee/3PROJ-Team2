@@ -1,9 +1,8 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import { ButtonMobile } from '../components/ButtonMobile';
 import { InputMobile } from '../components/InputMobile';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 
 const RegisterMobile: React.FC = () => {
@@ -13,18 +12,11 @@ const RegisterMobile: React.FC = () => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
-        <LinearGradient
-          colors={['#6366f1', '#ec4899']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.logo}
-         >
-          <Ionicons
-              name="musical-notes-outline"
-              size={35}
-              color="white"
-           />
-        </LinearGradient>
+          {/* Logo */}
+          <Image 
+              source={require('@/assets/images/logo.png')}
+              style={styles.logoImage} 
+          />
           <Text style={styles.title}>Créer votre compte</Text>
           <Text style={styles.subtitle}>Rejoignez la communauté musicale</Text>
         </View>
@@ -51,7 +43,6 @@ const RegisterMobile: React.FC = () => {
           <ButtonMobile variant="social">
             <Ionicons name="logo-facebook" size={24} color="#FFF" />
           </ButtonMobile>
-
         </View>
 
         <TouchableOpacity onPress={() => router.push('/login')} style={styles.footer}>
@@ -71,7 +62,10 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 25
   },
-
+  logoImage : {
+      width: 80,
+      height: 80,   
+  },
   header: {
     alignItems: 'center',
     marginBottom: 30

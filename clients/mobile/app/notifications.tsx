@@ -1,4 +1,4 @@
-import Notifications from '../src/pages/NotificationsMobile';
+import Notifications from '../src/pages/Notifications';
 
 export default function Page() {
     return <Notifications />;

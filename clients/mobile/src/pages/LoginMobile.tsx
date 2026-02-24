@@ -1,9 +1,8 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { ButtonMobile } from '../components/ButtonMobile';
 import { InputMobile } from '../components/InputMobile';
-import { LinearGradient } from 'expo-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LoginMobile: React.FC = () => {
@@ -13,19 +12,10 @@ const LoginMobile: React.FC = () => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.header}>
-            <LinearGradient
-                colors={['#6366f1', '#ec4899']}
-
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.logo}
-            >
-              <Ionicons
-                  name="musical-notes-outline"
-                  size={35}
-                  color="white"
-              />
-            </LinearGradient>
+          <Image 
+              source={require('@/assets/images/logo.png')}
+              style={styles.logoImage} 
+          />
             <Text style={styles.title}>Connectez-vous !  </Text>
           </View>
 
@@ -78,13 +68,9 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 
-  logo: {
-    width: 60,
-    height: 60,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15
+  logoImage : {
+      width: 80,
+      height: 80,   
   },
 
   title: {

@@ -53,6 +53,16 @@ const Listnotifications = [
 ];
 
 export default function Notifications() {
+
+    const [filter, setFilter] = React.useState('Tout'); 
+
+    const filteredNotifications = Listnotifications.filter(item => {
+        if (filter === 'Tout') return true;
+        if (filter === 'Non lue') return parseInt(item.id) <= 3;
+        if (filter === 'Mentions') return item.action.includes('commented'); 
+        return true;
+    });
+
     return (
         <View style={styles.container}>
             <Header />
@@ -62,32 +72,37 @@ export default function Notifications() {
                 <View style={styles.TopPage}>
                     <Text style={styles.Title}>Notifications</Text>
                 </View>
-                    <TouchableOpacity>
-                        <Text style={styles.markRead}>Marquer tout comme lu</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity>
+                    <Text style={styles.markRead}>Marquer tout comme lu</Text>
+                </TouchableOpacity>
                 <Text style={styles.unreadText}>3 notifications non lue</Text>
 
                 {/* Filtres */}
                 <View style={styles.tabs}>
-                    <TouchableOpacity style={styles.tab}>
-                        <Text style={styles.tabText}>
-                            Tout
-                        </Text>
+                    <TouchableOpacity
+                        style={[styles.tab, filter === 'Tout' && styles.activeTab]}
+                        onPress={() => setFilter('Tout')}
+                    >
+                        <Text style={filter === 'Tout' ? styles.activeTabText : styles.tabText}>Tout</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.tab, styles.activeTab]}>
-                        <Text style={styles.activeTabText}>
-                            Non lue(3)
-                        </Text>
+
+                    <TouchableOpacity
+                        style={[styles.tab, filter === 'Non lue' && styles.activeTab]}
+                        onPress={() => setFilter('Non lue')}
+                    >
+                        <Text style={filter === 'Non lue' ? styles.activeTabText : styles.tabText}>Non lue</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.tab}>
-                        <Text style={styles.tabText}>
-                            Mentions
-                        </Text>
+
+                    <TouchableOpacity
+                        style={[styles.tab, filter === 'Mentions' && styles.activeTab]}
+                        onPress={() => setFilter('Mentions')}
+                    >
+                        <Text style={filter === 'Mentions' ? styles.activeTabText : styles.tabText}>Mentions</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Les Notifications */}
-                {Listnotifications.map((item) => (
+                {filteredNotifications.map((item) => (
                     <View key={item.id} style={styles.notificationCard}>
                         <View style={styles.iconPlace}>
                             <View style={[styles.Icon, { backgroundColor: '#1e1e2d' }]}>

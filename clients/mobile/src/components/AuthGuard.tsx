@@ -27,7 +27,7 @@ export default function AutGuard() {
                 {/* Texte  */}
                 <Text style={styles.title}>Contenu Exclusif</Text>
                 <Text style={styles.text}>
-                    Rejoignez SUPCONTENT pour accéder à ce contenu.
+                    Rejoignez Melodia pour accéder à ce contenu.
                 </Text>
 
                 {/* boutons */}

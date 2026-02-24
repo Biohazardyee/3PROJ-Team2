@@ -85,7 +85,7 @@ const Feed = () => {
           <Ionicons name="search" size={20} color="#6b7280" style={styles.searchIcon} />
           <TextInput 
             style={styles.searchInput}
-            placeholder="Search albums or artists..."
+            placeholder="Rechercher un utilisateur, artiste..."
             placeholderTextColor="#6b7280"
             value={searchQuery}
             onChangeText={setSearchQuery}
