@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, Image, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Header from "@/src/components/Header";
 import { StatusBar } from 'expo-status-bar';
 import AlbumCard from "@/src/components/AlbumCard";
+import AlbumDetails from './AlbumDetails';
 
 // Données fictives pour les albums
 const ALBUMS = [
@@ -67,8 +67,9 @@ const FavoriteStat: React.FC = () => {
 
                 <View style={styles.grid}>
                     {ALBUMS.map((item) => (
-                        <AlbumCard
+                        <AlbumCard 
                             key={item.id}
+                            id={item.id} 
                             title={item.title}
                             artist={item.artist}
                             rating={item.rating}

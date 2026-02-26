@@ -1,30 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from "@/src/components/Header";
 import PlaylistCard from "@/src/components/PlaylistCard"; 
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Playlist = {
   id: string;
-  title?: string;
-  count?: number;
-  image?: string;
+  title: string;
+  count: number;
+  image: string;
   isCreate?: boolean; 
 }
-
-const PLAYLISTS = [
-  { id: '1', title: 'Summer Mix', count: 12, image: 'https://picsum.photos/200' },
-  { id: '2', title: 'Techno 2024', count: 45, image: 'https://picsum.photos/201' },
-  { id: '3', title: 'Chill vibes', count: 28, image: 'https://picsum.photos/202' },
-  { id: '4', title: 'Rock Classics', count: 104, image: 'https://picsum.photos/203' },
-];
 
 const { width } = Dimensions.get('window');
 
 const Library: React.FC = () => {
+  const router = useRouter();
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+
+  const loadPlaylists = async () => {
+    try {
+      const savedData = await AsyncStorage.getItem('user_playlists');
+      if (savedData) {
+        setPlaylists(JSON.parse(savedData));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    loadPlaylists();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(loadPlaylists, 1000); 
+    return () => clearInterval(interval);
+  }, []);
+
   const dataWithCreate = [
-    ...PLAYLISTS, 
-    { id: 'create-button-id', isCreate: true }
+    ...playlists, 
+    { id: 'create-button-id', isCreate: true } as Playlist
   ];
 
   const renderItem = ({ item }: { item: Playlist }) => {
@@ -33,7 +51,7 @@ const Library: React.FC = () => {
         <View style={styles.card}>
           <TouchableOpacity 
             style={styles.createCard}
-            onPress={() => console.log('Action : Créer une playlist')}
+            onPress={() => router.push('/createplaylist')}
           >
             <Ionicons name="add" size={40} color="#ffffff" />
             <Text style={styles.createLabelInner}>Créer une playlist</Text>
@@ -46,9 +64,9 @@ const Library: React.FC = () => {
 
     return (
       <PlaylistCard 
-        title={item.title || ""} 
-        count={item.count || 0} 
-        image={item.image || ""}
+        title={item.title} 
+        count={item.count} 
+        image={item.image}
         onPress={() => console.log(`Ouvrir playlist ${item.id}`)}
       />
     );
@@ -88,7 +106,7 @@ const styles = StyleSheet.create({
   title: { 
     color: 'white', 
     fontSize: 32, 
-    fontWeight: 'bold'
+    fontWeight: 'bold' 
   },
   subtitle: { 
     color: '#888', 
@@ -100,7 +118,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100 
   },
   card: { 
-    flex: 1,
+    flex: 1, 
     margin: 8, 
     marginBottom: 20, 
     maxWidth: (width / 2) - 24 

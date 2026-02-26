@@ -165,6 +165,7 @@ const Home: React.FC = () => {
                     {ALBUMS.map((item) => (
                         <AlbumCard
                             key={item.id}
+                            id={item.id}
                             title={item.title}
                             artist={item.artist}
                             rating={item.rating}

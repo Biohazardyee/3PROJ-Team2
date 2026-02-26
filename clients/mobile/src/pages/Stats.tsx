@@ -39,7 +39,6 @@ const Stats = () => {
             count="12"
             icon="check-circle-outline"
             color="#00ffa3"
-            progress={30}
             onPress={() => router.push('/listeningstat')}
           />
 
@@ -48,7 +47,6 @@ const Stats = () => {
             count="34"
             icon="playlist-music"
             color="#4747ff"
-            progress={45}
             onPress={() => router.push('/listeninglaterstat')}
           />
 
@@ -57,7 +55,6 @@ const Stats = () => {
             count="34"
             icon="star"
             color="#fbbf24"
-            progress={45}
             onPress={() => router.push('/favoritestat')}
           />
 
@@ -66,7 +63,6 @@ const Stats = () => {
             count="5"
             icon="close-circle-outline"
             color="#f43f5e"
-            progress={15}
             onPress={() => router.push('/dontlikestat')}
           />
         </View>

@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from "expo-router";
 
 type AlbumCardProps = {
+  id: string |number;
   title: string;
   artist: string;
   rating: string;
@@ -11,28 +13,43 @@ type AlbumCardProps = {
   cover: string;
 };
 
-const AlbumCard: React.FC<AlbumCardProps> = ({ title, artist, rating, year, genre, cover }) => {
+const AlbumCard: React.FC<AlbumCardProps> = ({ id, title, artist, rating, year, genre, cover }) => {
+  const router = useRouter();
   return (
-    <View style={styles.albumCard}>
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: cover }} style={styles.albumImage} />
-        <View style={styles.genreBadge}>
-          <Text style={styles.genreText}>{genre}</Text>
-        </View>
-      </View>
-      <View style={styles.albumInfo}>
-        <Text style={styles.albumTitle} numberOfLines={1}>{title}</Text>
-        <Text style={styles.albumArtist}>{artist}</Text>
-        <View style={styles.albumFooter}>
-          <View style={styles.ratingBox}>
-            <Ionicons name="star" size={14} color="#ec4899" /> 
-            <Text style={styles.ratingText}>{rating}</Text>
+    <TouchableOpacity 
+          style={styles.albumCard} 
+          onPress={() => router.push({
+            pathname: '/albumdetails',
+            params: { id: id } 
+          })}
+          activeOpacity={0.7}
+        >
+          <Image 
+            source={{ uri: cover }} 
+            style={styles.albumCover} 
+          />
+          
+          {/* Badge Genre */}
+          {genre && (
+            <View style={styles.genreBadge}>
+              <Text style={styles.genreText}>{genre}</Text>
+            </View>
+          )}
+
+          <View style={styles.albumInfo}>
+            <Text style={styles.albumTitle}>{title}</Text>
+            <Text style={styles.artistName}>{artist}</Text>
+            
+            <View style={styles.albumFooter}>
+              <View style={styles.ratingRow}>
+                <Ionicons name="star" size={14} color="#ec4899" />
+                <Text style={styles.ratingText}>{rating}</Text>
+              </View>
+              {year && <Text style={styles.yearText}>{year}</Text>}
+            </View>
           </View>
-          <Text style={styles.yearText}>{year}</Text>
-        </View>
-      </View>
-    </View>
-  );
+        </TouchableOpacity>
+      );
 };
 
 const styles = StyleSheet.create({
@@ -44,6 +61,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#2a2a35',
+  },
+  albumCover: { 
+    width: '100%', 
+    height: 150 
   },
   imageContainer: {
     height: 180,
@@ -76,6 +97,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15
   },
+  artistName: { 
+    color: '#94a3b8', 
+    fontSize: 14, 
+    marginBottom: 10 
+  },
   albumArtist: {
     color: '#888',
     fontSize: 12,
@@ -99,7 +125,12 @@ const styles = StyleSheet.create({
   yearText: {
     color: '#555',
     fontSize: 12
-  }
+  },
+  ratingRow: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 5 
+  },
 });
 
 export default AlbumCard;

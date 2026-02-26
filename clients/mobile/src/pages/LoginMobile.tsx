@@ -16,7 +16,7 @@ const LoginMobile: React.FC = () => {
               source={require('@/assets/images/logo.png')}
               style={styles.logoImage} 
           />
-            <Text style={styles.title}>Connectez-vous !  </Text>
+            <Text style={styles.title}>Connectez-vous !</Text>
           </View>
 
         <InputMobile label="E-mail" placeholder="votre@email.com" icon="mail-outline" />
@@ -77,7 +77,8 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 28,
     marginBottom: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
 
   subtitle: {
