@@ -1,4 +1,5 @@
 import {Roles} from '../../generated/prisma/enums.js';
+import type { AuthProvider } from '../../generated/prisma/enums.js';
 
 // Response Interface
 export interface UserResponseDto {
@@ -6,7 +7,7 @@ export interface UserResponseDto {
     username: string;
     email: string;
     phone_number: string | null;
-    profile_picture: Uint8Array<ArrayBuffer>;
+    profile_picture: Uint8Array<ArrayBuffer> | null;
     role: Roles;
     biography: string | null;
     favorite_band: string;
@@ -41,6 +42,14 @@ export interface UserRegistrationDto {
     password: string;
     favorite_band: string;
     profile_picture: Uint8Array<ArrayBuffer>;
+}
+
+export interface OAuthUserDto {
+    email: string;
+    username?: string;
+    provider: AuthProvider;
+    provider_id: string;
+    profile_picture: string | undefined;
 }
 
 export interface UserUpdateDto {

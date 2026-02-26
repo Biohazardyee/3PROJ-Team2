@@ -16,7 +16,7 @@ import {
     UserResponseDto,
     UserResponseLoginDto,
     UserUpdateDto
-} from '../../../types/users/user.dto';
+} from '../../../types/users/user.dto.js';
 import {Users} from "../../../generated/prisma/client.js";
 
 dotenv.config();
@@ -60,7 +60,7 @@ class UserController extends Controller {
             };
 
             if (!loginData.email || !loginData.password) {
-                throw new BadRequest('Email and password required');
+                throw new BadRequest('Email, password and is_oauth are required');
             }
 
             const user: Users | null = await this.service.getByEmailForAuth(loginData.email);
@@ -69,10 +69,14 @@ class UserController extends Controller {
                 throw new Unauthorized('Invalid email or password');
             }
 
-            const isValid: boolean = await bcrypt.compare(loginData.password, user.password);
+            if (user.password != null) {
+                const isValid: boolean = await bcrypt.compare(loginData.password, user.password);
 
-            if (!isValid) {
-                throw new Unauthorized('Invalid email or password');
+                if (!isValid) {
+                    throw new Unauthorized('Invalid email or password');
+                }
+            } else {
+                throw new Unauthorized('User registered via OAuth, please login with the corresponding provider');
             }
 
             const token: string = jwt.sign(
@@ -103,11 +107,10 @@ class UserController extends Controller {
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const users: UserResponseDto[] = await this.service.getAll();
-            res.status(201).json(
-                {
-                    message: 'All users retrieved',
-                    users
-                });
+            res.status(201).json({
+                message: 'All users retrieved',
+                users
+            });
         } catch (err) {
             next(err);
         }

@@ -2,9 +2,10 @@ import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isValidStringLength, isEmptyString, isValidBoolean} from "../../../utils/helpers.js";
 import {isValidEmail, isValidUsername, isValidPassword} from "./user.helper.js";
-import {Prisma} from '../../../generated/prisma/client.js';
+import {AuthProvider, Prisma, Roles} from '../../../generated/prisma/client.js';
 import bcrypt from "bcrypt";
 import {
+    OAuthUserDto,
     PartialUserResponseDto,
     SelectableUserField,
     UserRegistrationDto,
@@ -82,6 +83,60 @@ export class UserService {
         });
 
         return userMapper.toAddDto(user);
+    }
+
+    /**
+     * ✅ Trouve ou crée un utilisateur OAuth
+     */
+    async findOrCreateOAuthUser(data: OAuthUserDto): Promise<UserResponseDto> {
+
+        // 1. Chercher par provider + provider_id
+        let user: Users | null = await PrismaDb.users.findUnique({
+            where: {
+                provider_provider_id: {
+                    provider: data.provider,
+                    provider_id: data.provider_id,
+                }
+            }
+        });
+
+        // 2. Créer un nouveau compte OAuth
+        const username: string = await this.generateUniqueUsername(data.username || data.email.split('@')[0]);
+
+        const newUser: Users = await PrismaDb.users.create({
+            data: {
+                email: data.email,
+                username,
+                password: null, // ✅ Pas de password pour OAuth
+                provider: data.provider,
+                provider_id: data.provider_id,
+                favorite_band: data.favorite_band,
+            }
+        });
+
+        return userMapper.toDto(newUser);
+    }
+
+    /**
+     * ✅ Génère un username unique en ajoutant un suffixe si nécessaire
+     */
+    private async generateUniqueUsername(baseUsername: string): Promise<string> {
+        let username = baseUsername.replace(/[^a-zA-Z0-9_-]/g, '').substring(0, 30);
+        let suffix = 0;
+
+        while (true) {
+            const testUsername = suffix === 0 ? username : `${username}${suffix}`;
+
+            const exists = await PrismaDb.users.findUnique({
+                where: { username: testUsername }
+            });
+
+            if (!exists) {
+                return testUsername;
+            }
+
+            suffix++;
+        }
     }
 
     async getAll(): Promise<UserResponseDto[]> {
