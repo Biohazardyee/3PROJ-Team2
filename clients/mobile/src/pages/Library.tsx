@@ -99,7 +99,10 @@ const Library: React.FC = () => {
         title={item.title} 
         count={item.count} 
         image={item.image}
-        onPress={() => console.log(`Ouvrir playlist ${item.id}`)}
+        onPress={() => router.push({
+          pathname: '/playlistdetails',
+          params: { id: item.id, title: item.title}
+        })}
         onEdit={() => showOptions(item)}
         onDelete={() => deletePlaylist(item.id)}
       />
