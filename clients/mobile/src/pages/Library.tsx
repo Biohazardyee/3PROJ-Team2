@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from "@/src/components/Header";
 import PlaylistCard from "@/src/components/PlaylistCard"; 
@@ -33,12 +33,44 @@ const Library: React.FC = () => {
 
   useEffect(() => {
     loadPlaylists();
-  }, []);
-
-  useEffect(() => {
     const interval = setInterval(loadPlaylists, 1000); 
     return () => clearInterval(interval);
   }, []);
+
+  const deletePlaylist = async (id: string) => {
+    try {
+      const newList = playlists.filter(p => p.id !== id);
+      await AsyncStorage.setItem('user_playlists', JSON.stringify(newList));
+      setPlaylists(newList);
+    } catch (error) {
+      console.error("Erreur suppression:", error);
+    }
+  };
+
+  const showOptions = (item: Playlist) => {
+    Alert.alert(
+      item.title,
+      "Options de la playlist",
+      [
+        {
+          text: "Modifier",
+          onPress: () => router.push({
+            pathname: '/createplaylist',
+            params: { id: item.id, title: item.title, image: item.image, isEditing: 'true' }
+          })
+        },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: () => Alert.alert("Supprimer", "Confirmer la suppression ?", [
+            { text: "Annuler", style: "cancel" },
+            { text: "Supprimer", onPress: () => deletePlaylist(item.id) }
+          ])
+        },
+        { text: "Annuler", style: "cancel" }
+      ]
+    );
+  };
 
   const dataWithCreate = [
     ...playlists, 
@@ -68,6 +100,8 @@ const Library: React.FC = () => {
         count={item.count} 
         image={item.image}
         onPress={() => console.log(`Ouvrir playlist ${item.id}`)}
+        onEdit={() => showOptions(item)}
+        onDelete={() => deletePlaylist(item.id)}
       />
     );
   };

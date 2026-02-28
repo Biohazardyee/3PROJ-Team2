@@ -1,26 +1,41 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
 // Définition des types pour les props du composant
-interface PlaylistCardProps {
+type PlaylistCardProps = {
   title: string;
   count: number;
   image: string;
-  onPress?: () => void;
+  onPress: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-const PlaylistCard: React.FC<PlaylistCardProps> = ({ title, count, image, onPress }) => {
+const PlaylistCard: React.FC<PlaylistCardProps> = ({ title, count, image, onPress, onEdit, onDelete }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <Image source={{ uri: image }} style={styles.cardImage} />
-      <Text style={styles.cardTitle} numberOfLines={1}>
-        {title}
-      </Text>
-      <Text style={styles.cardCount}>
-        {count} titres
-      </Text>
+
+      <View style={styles.footerCard}>
+        <View style={styles.textContainer}>
+          <Text style={styles.cardTitle} numberOfLines={1}>
+            {title}
+          </Text>
+          <Text style={styles.cardCount}>
+            {count} titres
+          </Text>
+        </View>
+
+        <TouchableOpacity 
+          onPress={onEdit} 
+          style={styles.moreButton}
+        >
+          <Ionicons name="ellipsis-vertical" size={20} color="#666" />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -38,6 +53,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: '#2A2A38' 
   },
+  footerCard: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginTop: 10,
+  },
+  textContainer: {
+    flex: 1, 
+  },
   cardTitle: { 
     color: '#fff', 
     fontWeight: 'bold', 
@@ -49,6 +73,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2
   },
+  moreButton: {
+    paddingLeft: 10,
+    paddingVertical: 5, 
+  }
 });
 
 export default PlaylistCard;

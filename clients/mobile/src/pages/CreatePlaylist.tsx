@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreatePlaylist = () => {
   const router = useRouter();
-  const [name, setName] = useState('');
-  const [image, setImage] = useState<string | null>(null);
+  const params = useLocalSearchParams();
+
+  const [name, setName] = useState((params.title as string) || '');
+  const [image, setImage] = useState<string | null>((params.image as string) || null);
+
+  const isEditing = params.isEditing === 'true';
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -23,23 +27,30 @@ const CreatePlaylist = () => {
     }
   };
 
-  const handleCreate = async () => {
+  const handleSave = async () => {
     try {
       const savedData = await AsyncStorage.getItem('user_playlists');
-      const currentPlaylists = savedData ? JSON.parse(savedData) : [];
+      let playlists = savedData ? JSON.parse(savedData) : [];
 
+      if (isEditing) {
+        playlists = playlists.map((p: any) => 
+          p.id === params.id 
+            ? { ...p, title: name, image: image || p.image } 
+            : p
+        );
+      } else {
       const newPlaylist = {
         id: Date.now().toString(),
         title: name,
         count: 0,
         image: image || 'https://picsum.photos/200',
       };
-
-      const updatedList = [...currentPlaylists, newPlaylist];
-      await AsyncStorage.setItem('user_playlists', JSON.stringify(updatedList));
+      playlists.push(newPlaylist);
+      }
+      await AsyncStorage.setItem('user_playlists', JSON.stringify(playlists));
       router.replace('/library');
     } catch (e) {
-      console.error(e);
+      console.error("Erreur lors de la sauvegarde :", e);
     }
   };
 
@@ -49,7 +60,9 @@ const CreatePlaylist = () => {
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="close" size={28} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nouvelle playlist</Text>
+        <Text style={styles.headerTitle}>
+          {isEditing ? "Modifier la playlist" : "Nouvelle playlist"}
+        </Text>
         <View style={{ width: 28 }} />
       </View>
 
@@ -71,15 +84,17 @@ const CreatePlaylist = () => {
           placeholderTextColor="#555"
           value={name}
           onChangeText={setName}
-          autoFocus
+          autoFocus={!isEditing}
         />
 
         <TouchableOpacity 
           style={[styles.btn, !name && styles.btnDisabled]} 
-          onPress={handleCreate}
+          onPress={handleSave}
           disabled={!name}
         >
-          <Text style={styles.btnText}>CRÉER LA PLAYLIST</Text>
+          <Text style={styles.btnText}>
+            {isEditing ? "ENREGISTRER LES MODIFS" : "CRÉER LA PLAYLIST"}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
