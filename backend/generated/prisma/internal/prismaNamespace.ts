@@ -386,6 +386,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   Users: 'Users',
   Medias: 'Medias',
+  Caches: 'Caches',
   Reviews: 'Reviews',
   ReviewComments: 'ReviewComments',
   ReviewLikes: 'ReviewLikes',
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "users" | "medias" | "reviews" | "reviewComments" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
+    modelProps: "users" | "medias" | "caches" | "reviews" | "reviewComments" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -563,6 +564,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.MediasCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.MediasCountAggregateOutputType> | number
+        }
+      }
+    }
+    Caches: {
+      payload: Prisma.$CachesPayload<ExtArgs>
+      fields: Prisma.CachesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CachesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CachesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
+        }
+        findFirst: {
+          args: Prisma.CachesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CachesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
+        }
+        findMany: {
+          args: Prisma.CachesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>[]
+        }
+        create: {
+          args: Prisma.CachesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
+        }
+        createMany: {
+          args: Prisma.CachesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CachesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>[]
+        }
+        delete: {
+          args: Prisma.CachesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
+        }
+        update: {
+          args: Prisma.CachesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
+        }
+        deleteMany: {
+          args: Prisma.CachesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CachesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CachesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>[]
+        }
+        upsert: {
+          args: Prisma.CachesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
+        }
+        aggregate: {
+          args: Prisma.CachesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCaches>
+        }
+        groupBy: {
+          args: Prisma.CachesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CachesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CachesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CachesCountAggregateOutputType> | number
         }
       }
     }
@@ -1597,6 +1672,16 @@ export const MediasScalarFieldEnum = {
 export type MediasScalarFieldEnum = (typeof MediasScalarFieldEnum)[keyof typeof MediasScalarFieldEnum]
 
 
+export const CachesScalarFieldEnum = {
+  id: 'id',
+  api_id: 'api_id',
+  content: 'content',
+  expires_at: 'expires_at'
+} as const
+
+export type CachesScalarFieldEnum = (typeof CachesScalarFieldEnum)[keyof typeof CachesScalarFieldEnum]
+
+
 export const ReviewsScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
@@ -1757,6 +1842,13 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -1771,6 +1863,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -1867,6 +1968,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2036,6 +2151,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   users?: Prisma.UsersOmit
   medias?: Prisma.MediasOmit
+  caches?: Prisma.CachesOmit
   reviews?: Prisma.ReviewsOmit
   reviewComments?: Prisma.ReviewCommentsOmit
   reviewLikes?: Prisma.ReviewLikesOmit

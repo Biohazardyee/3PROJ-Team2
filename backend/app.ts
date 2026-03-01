@@ -26,6 +26,9 @@ import searchRouter from './routes/api/search.js';
 import tagRouter from './routes/api/tags.js';
 import trackRouter from './routes/api/tracks.js';
 
+
+import oauthRouter from './routes/oauth/oauth'
+
 import { ApiError, InternalError } from './utils/errors.js';
 
 const __filename: string = fileURLToPath(import.meta.url);
@@ -65,6 +68,10 @@ app.use('/api/tags', tagRouter);
 app.use('/api/artists', artistsRouter); 
 app.use('/api/albums', albumsRouter);
 app.use('/api/search', searchRouter);
+
+
+app.use('/api/oauth', oauthRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next: NextFunction): void  {

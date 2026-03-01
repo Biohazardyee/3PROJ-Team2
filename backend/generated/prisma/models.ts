@@ -10,6 +10,7 @@
  */
 export type * from './models/Users.js'
 export type * from './models/Medias.js'
+export type * from './models/Caches.js'
 export type * from './models/Reviews.js'
 export type * from './models/ReviewComments.js'
 export type * from './models/ReviewLikes.js'

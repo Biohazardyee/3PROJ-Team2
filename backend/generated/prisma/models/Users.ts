@@ -206,7 +206,7 @@ export type UsersGroupByOutputType = {
   username: string
   email: string
   password: string | null
-  favorite_band: string
+  favorite_band: string | null
   profile_picture: runtime.Bytes | null
   role: $Enums.Roles
   provider: $Enums.AuthProvider | null
@@ -244,7 +244,7 @@ export type UsersWhereInput = {
   username?: Prisma.StringFilter<"Users"> | string
   email?: Prisma.StringFilter<"Users"> | string
   password?: Prisma.StringNullableFilter<"Users"> | string | null
-  favorite_band?: Prisma.StringFilter<"Users"> | string
+  favorite_band?: Prisma.StringNullableFilter<"Users"> | string | null
   profile_picture?: Prisma.BytesNullableFilter<"Users"> | runtime.Bytes | null
   role?: Prisma.EnumRolesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableFilter<"Users"> | $Enums.AuthProvider | null
@@ -277,7 +277,7 @@ export type UsersOrderByWithRelationInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
-  favorite_band?: Prisma.SortOrder
+  favorite_band?: Prisma.SortOrderInput | Prisma.SortOrder
   profile_picture?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -314,7 +314,7 @@ export type UsersWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.UsersWhereInput[]
   NOT?: Prisma.UsersWhereInput | Prisma.UsersWhereInput[]
   password?: Prisma.StringNullableFilter<"Users"> | string | null
-  favorite_band?: Prisma.StringFilter<"Users"> | string
+  favorite_band?: Prisma.StringNullableFilter<"Users"> | string | null
   profile_picture?: Prisma.BytesNullableFilter<"Users"> | runtime.Bytes | null
   role?: Prisma.EnumRolesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableFilter<"Users"> | $Enums.AuthProvider | null
@@ -347,7 +347,7 @@ export type UsersOrderByWithAggregationInput = {
   username?: Prisma.SortOrder
   email?: Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
-  favorite_band?: Prisma.SortOrder
+  favorite_band?: Prisma.SortOrderInput | Prisma.SortOrder
   profile_picture?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -370,7 +370,7 @@ export type UsersScalarWhereWithAggregatesInput = {
   username?: Prisma.StringWithAggregatesFilter<"Users"> | string
   email?: Prisma.StringWithAggregatesFilter<"Users"> | string
   password?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
-  favorite_band?: Prisma.StringWithAggregatesFilter<"Users"> | string
+  favorite_band?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
   profile_picture?: Prisma.BytesNullableWithAggregatesFilter<"Users"> | runtime.Bytes | null
   role?: Prisma.EnumRolesWithAggregatesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableWithAggregatesFilter<"Users"> | $Enums.AuthProvider | null
@@ -387,7 +387,7 @@ export type UsersCreateInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -420,7 +420,7 @@ export type UsersUncheckedCreateInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -453,7 +453,7 @@ export type UsersUpdateInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -486,7 +486,7 @@ export type UsersUncheckedUpdateInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -519,7 +519,7 @@ export type UsersCreateManyInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -536,7 +536,7 @@ export type UsersUpdateManyMutationInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -553,7 +553,7 @@ export type UsersUncheckedUpdateManyInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -894,7 +894,7 @@ export type UsersCreateWithoutReviewsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -926,7 +926,7 @@ export type UsersUncheckedCreateWithoutReviewsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -974,7 +974,7 @@ export type UsersUpdateWithoutReviewsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1006,7 +1006,7 @@ export type UsersUncheckedUpdateWithoutReviewsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1038,7 +1038,7 @@ export type UsersCreateWithoutReview_commentsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1070,7 +1070,7 @@ export type UsersUncheckedCreateWithoutReview_commentsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1118,7 +1118,7 @@ export type UsersUpdateWithoutReview_commentsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1150,7 +1150,7 @@ export type UsersUncheckedUpdateWithoutReview_commentsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1182,7 +1182,7 @@ export type UsersCreateWithoutReview_likesInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1214,7 +1214,7 @@ export type UsersUncheckedCreateWithoutReview_likesInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1262,7 +1262,7 @@ export type UsersUpdateWithoutReview_likesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1294,7 +1294,7 @@ export type UsersUncheckedUpdateWithoutReview_likesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1326,7 +1326,7 @@ export type UsersCreateWithoutPlaylistsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1358,7 +1358,7 @@ export type UsersUncheckedCreateWithoutPlaylistsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1406,7 +1406,7 @@ export type UsersUpdateWithoutPlaylistsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1438,7 +1438,7 @@ export type UsersUncheckedUpdateWithoutPlaylistsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1470,7 +1470,7 @@ export type UsersCreateWithoutUser_media_statusInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1502,7 +1502,7 @@ export type UsersUncheckedCreateWithoutUser_media_statusInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1550,7 +1550,7 @@ export type UsersUpdateWithoutUser_media_statusInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1582,7 +1582,7 @@ export type UsersUncheckedUpdateWithoutUser_media_statusInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1614,7 +1614,7 @@ export type UsersCreateWithoutActivitiesInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1646,7 +1646,7 @@ export type UsersUncheckedCreateWithoutActivitiesInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1683,7 +1683,7 @@ export type UsersCreateWithoutActivities_targetsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1715,7 +1715,7 @@ export type UsersUncheckedCreateWithoutActivities_targetsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1763,7 +1763,7 @@ export type UsersUpdateWithoutActivitiesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1795,7 +1795,7 @@ export type UsersUncheckedUpdateWithoutActivitiesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1838,7 +1838,7 @@ export type UsersUpdateWithoutActivities_targetsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1870,7 +1870,7 @@ export type UsersUncheckedUpdateWithoutActivities_targetsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -1902,7 +1902,7 @@ export type UsersCreateWithoutFollowsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1934,7 +1934,7 @@ export type UsersUncheckedCreateWithoutFollowsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -1971,7 +1971,7 @@ export type UsersCreateWithoutFollowersInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2003,7 +2003,7 @@ export type UsersUncheckedCreateWithoutFollowersInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2051,7 +2051,7 @@ export type UsersUpdateWithoutFollowsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2083,7 +2083,7 @@ export type UsersUncheckedUpdateWithoutFollowsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2126,7 +2126,7 @@ export type UsersUpdateWithoutFollowersInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2158,7 +2158,7 @@ export type UsersUncheckedUpdateWithoutFollowersInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2190,7 +2190,7 @@ export type UsersCreateWithoutReporter_reportsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2222,7 +2222,7 @@ export type UsersUncheckedCreateWithoutReporter_reportsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2259,7 +2259,7 @@ export type UsersCreateWithoutProfile_reportsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2291,7 +2291,7 @@ export type UsersUncheckedCreateWithoutProfile_reportsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2339,7 +2339,7 @@ export type UsersUpdateWithoutReporter_reportsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2371,7 +2371,7 @@ export type UsersUncheckedUpdateWithoutReporter_reportsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2414,7 +2414,7 @@ export type UsersUpdateWithoutProfile_reportsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2446,7 +2446,7 @@ export type UsersUncheckedUpdateWithoutProfile_reportsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2478,7 +2478,7 @@ export type UsersCreateWithoutNotificationsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2510,7 +2510,7 @@ export type UsersUncheckedCreateWithoutNotificationsInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2547,7 +2547,7 @@ export type UsersCreateWithoutNotificationsRelatedInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2579,7 +2579,7 @@ export type UsersUncheckedCreateWithoutNotificationsRelatedInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2627,7 +2627,7 @@ export type UsersUpdateWithoutNotificationsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2659,7 +2659,7 @@ export type UsersUncheckedUpdateWithoutNotificationsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2702,7 +2702,7 @@ export type UsersUpdateWithoutNotificationsRelatedInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2734,7 +2734,7 @@ export type UsersUncheckedUpdateWithoutNotificationsRelatedInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2766,7 +2766,7 @@ export type UsersCreateWithoutConversations_user1Input = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2798,7 +2798,7 @@ export type UsersUncheckedCreateWithoutConversations_user1Input = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2835,7 +2835,7 @@ export type UsersCreateWithoutConversations_user2Input = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2867,7 +2867,7 @@ export type UsersUncheckedCreateWithoutConversations_user2Input = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -2915,7 +2915,7 @@ export type UsersUpdateWithoutConversations_user1Input = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2947,7 +2947,7 @@ export type UsersUncheckedUpdateWithoutConversations_user1Input = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -2990,7 +2990,7 @@ export type UsersUpdateWithoutConversations_user2Input = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -3022,7 +3022,7 @@ export type UsersUncheckedUpdateWithoutConversations_user2Input = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -3054,7 +3054,7 @@ export type UsersCreateWithoutMessagesInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -3086,7 +3086,7 @@ export type UsersUncheckedCreateWithoutMessagesInput = {
   username: string
   email: string
   password?: string | null
-  favorite_band: string
+  favorite_band?: string | null
   profile_picture?: runtime.Bytes | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
@@ -3134,7 +3134,7 @@ export type UsersUpdateWithoutMessagesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -3166,7 +3166,7 @@ export type UsersUncheckedUpdateWithoutMessagesInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  favorite_band?: Prisma.StringFieldUpdateOperationsInput | string
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
@@ -3492,7 +3492,7 @@ export type $UsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     username: string
     email: string
     password: string | null
-    favorite_band: string
+    favorite_band: string | null
     profile_picture: runtime.Bytes | null
     role: $Enums.Roles
     provider: $Enums.AuthProvider | null

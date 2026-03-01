@@ -10,7 +10,7 @@ export interface UserResponseDto {
     profile_picture: Uint8Array<ArrayBuffer> | null;
     role: Roles;
     biography: string | null;
-    favorite_band: string;
+    favorite_band: string | null;
     has_notifications: boolean;
     created_at: Date;
     updated_at: Date;
@@ -49,7 +49,7 @@ export interface OAuthUserDto {
     username?: string;
     provider: AuthProvider;
     provider_id: string;
-    profile_picture: string | undefined;
+    profile_picture?: string | null;
 }
 
 export interface UserUpdateDto {

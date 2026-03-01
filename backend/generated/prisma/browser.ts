@@ -28,6 +28,11 @@ export type Users = Prisma.UsersModel
  */
 export type Medias = Prisma.MediasModel
 /**
+ * Model Caches
+ * 
+ */
+export type Caches = Prisma.CachesModel
+/**
  * Model Reviews
  * 
  */
