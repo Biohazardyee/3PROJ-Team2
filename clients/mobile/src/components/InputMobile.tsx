@@ -1,15 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-interface InputProps {
+interface InputProps extends TextInputProps{
   label: string;
   placeholder: string;
   icon: string;
   secureTextEntry?: boolean;
 }
 
-export const InputMobile: React.FC<InputProps> = ({ label, placeholder, icon, secureTextEntry }) => (
+export const InputMobile: React.FC<InputProps> = ({ label, placeholder, icon, secureTextEntry, ...rest }) => (
   <View style={styles.container}>
     <Text style={styles.label}>{label}</Text>
     <View style={styles.wrapper}>
@@ -19,6 +19,7 @@ export const InputMobile: React.FC<InputProps> = ({ label, placeholder, icon, se
         placeholder={placeholder} 
         placeholderTextColor="#555"
         secureTextEntry={secureTextEntry}
+        {...rest}
       />
     </View>
   </View>

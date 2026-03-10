@@ -7,13 +7,16 @@ interface ButtonProps {
   variant?: 'primary' | 'social';
   onPress?: () => void;
   style?: ViewStyle;
+  disabled?: boolean;
 }
 
-export const ButtonMobile: React.FC<ButtonProps> = ({ title, children, variant = 'primary', onPress, style }) => (
+
+export const ButtonMobile: React.FC<ButtonProps> = ({ title, children, variant = 'primary', onPress, style, disabled }) => (
   <TouchableOpacity 
     activeOpacity={0.8} 
     style={[styles.base, variant === 'primary' ? styles.primary : styles.social, style]} 
     onPress={onPress}
+    disabled={disabled}
   >
     {title ? <Text style={styles.text}>{title}</Text> : children}
   </TouchableOpacity>

@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ad46ff',
         letterSpacing: 0.5,
+        fontFamily: ''
     },
     buttons: {
         flexDirection: 'row',

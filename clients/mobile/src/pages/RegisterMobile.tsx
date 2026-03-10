@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, Alert} from 'react-native';
 import { ButtonMobile } from '../components/ButtonMobile';
 import { InputMobile } from '../components/InputMobile';
 import { Ionicons } from "@expo/vector-icons";
@@ -8,7 +8,53 @@ import { Ionicons } from "@expo/vector-icons";
 const RegisterMobile: React.FC = () => {
   const router = useRouter();
 
+  // State pour les champs du formulaire
+  const [email, setEmail] = React.useState('');
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleRegister = async () => {
+    // Vérification basique
+    if (!email || !username || !password) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
+      return;
+    }
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://TON_IP_LOCALE:3000/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+
+      body: JSON.stringify({
+        email: email,
+        username: username,
+        password: password,
+        }),
+      });
+
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Une erreur est survenue lors de la création du compte.");
+      }
+
+      Alert.alert('Succès', 'Votre compte a bien été créé !');
+      router.push('/onboarding'); 
+    } 
+    catch (error: any) {
+      Alert.alert('Erreur', error.message);
+    } 
+    finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
+  
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
@@ -21,11 +67,38 @@ const RegisterMobile: React.FC = () => {
           <Text style={styles.subtitle}>Rejoignez la communauté musicale</Text>
         </View>
 
-        <InputMobile label="E-mail" placeholder="votre@email.com" icon="mail-outline" />
-        <InputMobile label="Nom d'utilisateur" placeholder="fan" icon="person-circle-outline" />
-        <InputMobile label="Mot de passe" placeholder="••••••••" icon="lock-closed-outline" secureTextEntry />
+        <InputMobile
+          label="E-mail"
+          placeholder="votre@email.com"
+          icon="mail-outline"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <InputMobile 
+          label="Nom d'utilisateur" 
+          placeholder="fan" 
+          icon="person-circle-outline" 
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+        />
+        <InputMobile 
+          label="Mot de passe" 
+          placeholder="••••••••" 
+          icon="lock-closed-outline" 
+          secureTextEntry 
+          value={password}
+          onChangeText={setPassword}
+        />
 
-        <ButtonMobile title="Créer le compte" style={{ marginTop: 10 }} onPress={() => router.push('/onboarding')} />
+        <ButtonMobile 
+          title={isLoading ? "Création en cours..." : "Créer le compte"}
+          style={{ marginTop: 10 }} 
+          onPress={handleRegister}
+          disabled={isLoading}
+        />
 
         <View style={styles.separator}>
           <View style={styles.line} /><Text style={styles.sepText}>OU</Text><View style={styles.line} />
