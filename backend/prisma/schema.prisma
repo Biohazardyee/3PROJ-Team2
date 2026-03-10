@@ -14,13 +14,17 @@ datasource db {
 }
 
 model Users {
-  id                String   @id @default(uuid())
-  username          String   @unique @db.VarChar(25)
-  email             String   @unique @db.VarChar(320)
-  password          String
-  favorite_band     String
-  profile_picture   Bytes
-  role              Roles    @default(BASIC)
+  id              String  @id @default(uuid())
+  username        String  @unique @db.VarChar(25)
+  email           String  @unique @db.VarChar(320)
+  password        String?
+  favorite_band   String?
+  profile_picture Bytes?
+  role            Roles   @default(BASIC)
+
+  provider    AuthProvider?
+  provider_id String?
+
   has_notifications Boolean  @default(true)
   phone_number      String?  @db.VarChar(15)
   biography         String?  @db.VarChar(255)
@@ -44,6 +48,15 @@ model Users {
   conversations_user1 Conversations[] @relation("conversation_user1")
   conversations_user2 Conversations[] @relation("conversation_user2")
   messages            Messages[]
+
+  @@unique([provider, provider_id])
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  DISCORD
+  FACEBOOK
 }
 
 enum Roles {
@@ -62,6 +75,13 @@ model Medias {
   user_music_status UserMediaStatus[]
   notifications     Notifications[]
   activities        Activities[]
+}
+
+model Caches {
+  id         String   @id @default(uuid())
+  api_id     String   @unique
+  content    Json
+  expires_at DateTime
 }
 
 model Reviews {

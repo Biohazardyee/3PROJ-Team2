@@ -1,10 +1,11 @@
 import {PrismaDb} from '../../../config/database.js';
 import {NotFound, BadRequest} from '../../../utils/errors.js';
 import {isValidStringLength, isEmptyString, isValidBoolean} from "../../../utils/helpers.js";
-import {isValidEmail, isValidUsername, isValidPassword} from "./user.helper.js";
-import {Prisma} from '../../../generated/prisma/client.js';
+import {isValidEmail, isValidUsername, isValidPassword, generateUniqueUsername} from "./user.helper.js";
+import {AuthProvider, Prisma, Roles} from '../../../generated/prisma/client.js';
 import bcrypt from "bcrypt";
 import {
+    OAuthUserDto,
     PartialUserResponseDto,
     SelectableUserField,
     UserRegistrationDto,
@@ -83,6 +84,72 @@ export class UserService {
 
         return userMapper.toAddDto(user);
     }
+
+
+    /**
+     * ✅ Trouve ou crée un utilisateur OAuth
+     */
+    async findOrCreateOAuthUser(data: OAuthUserDto): Promise<UserResponseDto> {
+        try {
+        console.log('🔍 findOrCreateOAuthUser called with:', data); // ← log
+
+        // 1. Chercher par provider + provider_id
+        const existing: Users | null = await PrismaDb.users.findUnique({
+            where: {
+                provider_provider_id: {
+                    provider: data.provider,
+                    provider_id: data.provider_id,
+                }
+            }
+        });
+
+
+        // 2. Retourner l'utilisateur existant directement
+        if (existing) {
+            console.log('User already exists'); // ← log
+            return userMapper.toDto(existing);
+        }
+
+        console.log('🆕 Creating new OAuth user...'); // ← log
+
+        // 3. Vérifier si l'email est déjà utilisé (compte local)
+        const emailConflict: Users | null = await PrismaDb.users.findUnique({
+            where: { email: data.email }
+        });
+
+        if (emailConflict) {
+            // Option : lier les comptes ou throw une erreur claire
+            throw new BadRequest('An account with this email already exists. Please log in with your password.');
+        }
+
+        console.log('2️⃣ email conflict check done');
+
+
+        // 4. Créer le nouveau compte OAuth
+        const username: string = await generateUniqueUsername(
+            data.username || data.email.split('@')[0]
+        );
+
+        console.log('3️⃣ username generated:', username);
+
+        const newUser: Users = await PrismaDb.users.create({
+            data: {
+                email: data.email,
+                username,
+                password: null,
+                provider: data.provider,
+                provider_id: data.provider_id,
+            }
+        });
+
+        console.log('✅ New user created:', newUser.id); // ← log
+
+        return userMapper.toDto(newUser);
+    } catch (err) {
+        console.error('❌ Error in findOrCreateOAuthUser:', err); // ← catch ici
+        throw err;
+    }}
+
 
     async getAll(): Promise<UserResponseDto[]> {
         const users: Users[] = await PrismaDb.users.findMany({
