@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text,TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import {useRouter, usePathname} from "expo-router";
+import { useFonts, Audiowide_400Regular } from '@expo-google-fonts/audiowide';
 
 const Header: React.FC = () => {
     const router = useRouter();
@@ -60,11 +61,11 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     name: {
-        fontSize: 18,
+        fontSize: 21,
         fontWeight: 'bold',
         color: '#ad46ff',
         letterSpacing: 0.5,
-        fontFamily: ''
+        fontFamily: 'Audiowide_400Regular', // Ne fonctionne pas sur Android, à revoir
     },
     buttons: {
         flexDirection: 'row',

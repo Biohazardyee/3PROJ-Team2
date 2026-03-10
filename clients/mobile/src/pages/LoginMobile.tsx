@@ -1,13 +1,47 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
 import { ButtonMobile } from '../components/ButtonMobile';
 import { InputMobile } from '../components/InputMobile';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LoginMobile: React.FC = () => {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://192.168.0.24:3000/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Succès', 'Connexion réussie !');
+        router.replace('/'); 
+      } else {
+        throw new Error(data.message || 'Identifiants incorrects');
+      }
+    } catch (error: any) {
+      Alert.alert('Erreur', error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -19,11 +53,30 @@ const LoginMobile: React.FC = () => {
             <Text style={styles.title}>Connectez-vous !</Text>
           </View>
 
-        <InputMobile label="E-mail" placeholder="votre@email.com" icon="mail-outline" />
-        <InputMobile label="Mot de passe" placeholder="••••••••" icon="lock-closed-outline" secureTextEntry />
-        
+        <InputMobile 
+          label="E-mail" 
+          placeholder="votre@email.com" 
+          icon="mail-outline" 
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <InputMobile 
+          label="Mot de passe" 
+          placeholder="••••••••" 
+          icon="lock-closed-outline" 
+          secureTextEntry 
+          value={password}
+          onChangeText={setPassword}
+        />
+
         <Text style={styles.forgot}>Mot de passe oublié ?</Text>
-        <ButtonMobile title="Se connecter" />
+        <ButtonMobile 
+          title="Se connecter" 
+          onPress={handleLogin}
+          disabled={isLoading}
+        />
 
         <View style={styles.separator}>
           <View style={styles.line} /><Text style={styles.sepText}>OU</Text><View style={styles.line} />

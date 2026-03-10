@@ -23,7 +23,7 @@ const RegisterMobile: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://TON_IP_LOCALE:3000/signin', {
+      const response = await fetch('http://192.168.0.24:3000/users/signin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
