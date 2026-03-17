@@ -5,7 +5,7 @@ import {ActivityService, activityService} from './activity.service.js';
 import {
     ActivityAddDto,
     ActivityDeleteResponseDto,
-    ActivityResponseDto
+    ActivityResponseDto, FeedItem
 } from '../../../types/activities/activities.dto.js';
 
 class ActivityController extends Controller {
@@ -109,6 +109,20 @@ class ActivityController extends Controller {
     async update(_: Request, __: Response, next: NextFunction): Promise<void> {
         // Not implemented
         next();
+    }
+
+    async getFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const user_id: string = req.params.user_id;
+            const limit: number = parseInt(req.query.limit as string) || 20;
+            const offset: number = parseInt(req.query.offset as string) || 0;
+
+            const feed: FeedItem[] = await this.service.getUserFeed(user_id, limit, offset);
+
+            res.status(200).json({ message: 'Feed retrieved', feed });
+        } catch (err) {
+            next(err);
+        }
     }
 }
 
