@@ -12,18 +12,64 @@ const RegisterMobile: React.FC = () => {
   const [email, setEmail] = React.useState('');
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [favorite_band, setfavorite_band] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
+  const [suggestions, setSuggestions] = React.useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
+
+  const searchTimeout = React.useRef<any>(null);
+
+  const searchArtists = async (text: string) => {
+    setfavorite_band(text);
+
+
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+    if (text.length > 2) {
+      searchTimeout.current = setTimeout(async () => {
+        try {
+          const response = await fetch(`http://192.168.1.74:3000/api/search?query=${text}`);
+          const data = await response.json();
+
+          const albums = data.searchResults?.results?.albummatches?.album || [];
+        
+          const artistNames: string[] = albums.map((item: any) => item.artist);
+          const uniqueArtists = [...new Set(artistNames)];
+
+          const sortedArtists = uniqueArtists
+            .map(name => ({ name }))
+            .sort((a, b) => {
+              const aStartsWith = a.name.toLowerCase().startsWith(text.toLowerCase());
+              const bStartsWith = b.name.toLowerCase().startsWith(text.toLowerCase());
+              
+              if (aStartsWith && !bStartsWith) return -1;
+              if (!aStartsWith && bStartsWith) return 1;
+              return a.name.localeCompare(b.name);
+            })
+            .slice(0, 8);
+
+          setSuggestions(sortedArtists);
+          setShowSuggestions(true);
+        } catch (error) {
+          console.error("Erreur recherche:", error);
+        }
+      }, 300); 
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
 
   const handleRegister = async () => {
-    // Vérification basique
-    if (!email || !username || !password) {
+
+    if (!email || !username || !password || !favorite_band) {
       Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
       return;
     }
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://192.168.0.24:3000/users/signin', {
+      const response = await fetch('http://192.168.1.74:3000/users/signin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,6 +79,7 @@ const RegisterMobile: React.FC = () => {
         email: email,
         username: username,
         password: password,
+        favorite_band: favorite_band
         }),
       });
 
@@ -92,6 +139,38 @@ const RegisterMobile: React.FC = () => {
           value={password}
           onChangeText={setPassword}
         />
+        <View style={{ zIndex: 1000 }}>
+          <InputMobile 
+            label="Artiste préféré" 
+            placeholder="Ex: Daft Punk, Angèle..." 
+            icon="musical-note-outline" 
+            value={favorite_band} 
+            onChangeText={searchArtists} 
+            onFocus={() => favorite_band.length > 2 && setShowSuggestions(true)}
+          />
+
+          {showSuggestions && suggestions.length > 0 && (
+            <View style={styles.suggestionsContainer}>
+              <ScrollView 
+                style={{ maxHeight: 200 }} 
+                keyboardShouldPersistTaps="handled" 
+              >
+              {suggestions.map((item, index) => (
+                <TouchableOpacity 
+                  key={index} 
+                  style={styles.suggestionItem}
+                  onPress={() => {
+                    setfavorite_band(item.name); 
+                    setShowSuggestions(false);  
+                  }}
+                >
+                  <Text style={styles.suggestionText}>{item.name}</Text>
+                </TouchableOpacity>
+              ))}
+              </ScrollView>
+            </View>
+          )}
+        </View>
 
         <ButtonMobile 
           title={isLoading ? "Création en cours..." : "Créer le compte"}
@@ -163,6 +242,24 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 14,
     marginTop: 5
+  },
+  suggestionsContainer: {
+    backgroundColor: '#2D2D3F',
+    borderRadius: 8,
+    marginTop: -10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#3b82f6',
+    overflow: 'hidden',
+ },
+  suggestionItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  suggestionText: {
+    color: '#FFF',
+    fontSize: 14,
   },
 
   separator: {
