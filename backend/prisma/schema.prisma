@@ -66,22 +66,17 @@ enum Roles {
 
 model Medias {
   id         String   @id @default(uuid())
-  api_id     String
+  api_id     String   @unique
+  content    Json
   rating     Float?
   created_at DateTime @default(now())
+  expires_at DateTime
 
   reviews           Reviews[]
   playlist_items    PlaylistItems[]
   user_music_status UserMediaStatus[]
   notifications     Notifications[]
   activities        Activities[]
-}
-
-model Caches {
-  id         String   @id @default(uuid())
-  api_id     String   @unique
-  content    Json
-  expires_at DateTime
 }
 
 model Reviews {

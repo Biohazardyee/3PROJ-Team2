@@ -2,7 +2,6 @@ import type {Request, Response, NextFunction} from 'express';
 import {BadRequest} from '../../../utils/errors.js';
 import {AlbumService, albumService} from './album.service.js';
 
-
 export class AlbumController {
 
     constructor(private readonly service: AlbumService = albumService) {}
@@ -48,7 +47,6 @@ export class AlbumController {
             next(err);
         }
     }
-
 
     async albumGetTags(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {

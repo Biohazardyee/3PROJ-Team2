@@ -85,4 +85,11 @@ export interface UserFieldsQuery {
     fields: SelectableUserField[];
 }
 
+export interface SocketUser {
+    id: string;
+    email: string;
+    username: string;
+    role: string;
+}
+
 export type PartialUserResponseDto = Partial<UserResponseDto>;

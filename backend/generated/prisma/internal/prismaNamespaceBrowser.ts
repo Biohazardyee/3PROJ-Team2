@@ -53,7 +53,6 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Users: 'Users',
   Medias: 'Medias',
-  Caches: 'Caches',
   Reviews: 'Reviews',
   ReviewComments: 'ReviewComments',
   ReviewLikes: 'ReviewLikes',
@@ -108,21 +107,13 @@ export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof Us
 export const MediasScalarFieldEnum = {
   id: 'id',
   api_id: 'api_id',
-  rating: 'rating',
-  created_at: 'created_at'
-} as const
-
-export type MediasScalarFieldEnum = (typeof MediasScalarFieldEnum)[keyof typeof MediasScalarFieldEnum]
-
-
-export const CachesScalarFieldEnum = {
-  id: 'id',
-  api_id: 'api_id',
   content: 'content',
+  rating: 'rating',
+  created_at: 'created_at',
   expires_at: 'expires_at'
 } as const
 
-export type CachesScalarFieldEnum = (typeof CachesScalarFieldEnum)[keyof typeof CachesScalarFieldEnum]
+export type MediasScalarFieldEnum = (typeof MediasScalarFieldEnum)[keyof typeof MediasScalarFieldEnum]
 
 
 export const ReviewsScalarFieldEnum = {

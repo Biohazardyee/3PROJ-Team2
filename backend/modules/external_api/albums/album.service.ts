@@ -42,7 +42,7 @@ export class AlbumService {
         const api_id = `album:${mbid}`;
 
         // Vérifier le cache
-        const cached = await PrismaDb.caches.findFirst({
+        const cached = await PrismaDb.medias.findFirst({
             where: {
                 api_id,
                 expires_at: { gt: new Date() },
@@ -68,7 +68,7 @@ export class AlbumService {
         }
 
         // Mettre en cache
-        await PrismaDb.caches.upsert({
+        await PrismaDb.medias.upsert({
             where: { api_id },
             update: {
                 content: albumInfo,
@@ -94,7 +94,7 @@ export class AlbumService {
         const api_id = `album:tags:${mbid}`;
 
         // Vérifier le cache
-        const cached = await PrismaDb.caches.findFirst({
+        const cached = await PrismaDb.medias.findFirst({
             where: {
                 api_id,
                 expires_at: { gt: new Date() },
@@ -120,7 +120,7 @@ export class AlbumService {
         }
 
         // Mettre en cache
-        await PrismaDb.caches.upsert({
+        await PrismaDb.medias.upsert({
             where: { api_id },
             update: {
                 content: tagsInfo,

@@ -5,6 +5,7 @@ import {connectDB} from '../config/database.js';
 import debugLib from 'debug';
 import http from 'http';
 import {AddressInfo} from "node:net";
+import {initSocket} from "../modules/web_socket/socker_server.js"
 
 const debug = debugLib('lab4:server');
 
@@ -19,6 +20,7 @@ app.set('port', port);
  */
 const server = http.createServer(app);
 
+initSocket(server);
 /**
  * Connect to database then start server
  */
