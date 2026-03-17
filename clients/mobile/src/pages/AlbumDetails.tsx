@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {StyleSheet,Text,View,Image,ScrollView,TouchableOpacity,Dimensions} from 'react-native';
+import {StyleSheet,Text,View,Image,ScrollView,TouchableOpacity,Dimensions, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from "@/src/components/Header"; 
 import StatCard from "@/src/components/StatCard"; 
@@ -43,14 +43,28 @@ const ALBUMS = [
 
 const { width } = Dimensions.get('window');
 
+const PLAYLISTS = [
+  { id: '1', title: 'Favoris du moment' },
+  { id: '2', title: 'Sport & Motivation' },
+  { id: '3', title: 'Découvertes Hebdo' },
+];
+
 type TabType = 'Reviews' | 'Similar';
 
 const AlbumDetails = () => {
 
   const { id } = useLocalSearchParams();
   const [activeTab, setActiveTab] = useState<TabType>('Reviews');
+  const [showPlaylistSelector, setShowPlaylistSelector] = useState(false);
+
   const album = ALBUMS.find(a => a.id === id) || ALBUMS[0];
   const router = useRouter();
+
+  const handleAddToPlaylist = (playlistName: string) => {
+    Alert.alert("Succès", `L'album "${album.title}" a été ajouté à "${playlistName}"`);
+    setShowPlaylistSelector(false); 
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -138,8 +152,40 @@ const AlbumDetails = () => {
                 />
             </View>
 
-            <TouchableOpacity style={styles.primaryButton}>
-              <Text style={styles.primaryButtonText}>Donner votre avis</Text>
+            <TouchableOpacity style={styles.primaryButton} onPress={() => setShowPlaylistSelector(!showPlaylistSelector)} >
+              <Text style={styles.primaryButtonText}>
+                {showPlaylistSelector ? "Annuler" : "Ajouter à une playlist"}
+              </Text>
+            </TouchableOpacity>
+
+            {showPlaylistSelector && (
+              <View style={styles.playlistSelector}>
+                <Text style={styles.playlistSubtitle}>Choisir une playlist :</Text>
+                {PLAYLISTS.map((playlist) => (
+                  <TouchableOpacity 
+                    key={playlist.id} 
+                    style={styles.playlistItem}
+                    onPress={() => handleAddToPlaylist(playlist.title)}
+                  >
+                    <Ionicons name="add-circle-outline" size={20} color="#ec4899" />
+                    <Text style={styles.playlistItemText}>{playlist.title}</Text>
+                  </TouchableOpacity>
+                ))}
+
+                <TouchableOpacity 
+                  style={[styles.playlistItem, { borderBottomWidth: 0 }]}
+                  onPress={() => router.push('/createplaylist') } 
+                >
+                  <Ionicons name="create-outline" size={20} color="#94a3b8" />
+                  <Text style={[styles.playlistItemText, { color: '#94a3b8' }]}>
+                    Nouvelle playlist...
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <TouchableOpacity style={styles.secondaryButton}>
+              <Text style={styles.secondaryButtonText}>Donner votre avis</Text>
             </TouchableOpacity>
           </View>
 
@@ -283,7 +329,7 @@ grid: {
   },
 
   primaryButton: { 
-    backgroundColor: '#3b82f6', 
+    backgroundColor: '#c61ebd', 
     padding: 15, 
     borderRadius: 12, 
     alignItems: 'center'
@@ -293,101 +339,139 @@ grid: {
     fontWeight: 'bold', 
     fontSize: 16 
 },
-  aboutSection: { 
-    marginTop: 30
-},
-  sectionTitle: { 
-    color: 'white', 
-    fontSize: 20, 
-    fontWeight: 'bold', 
-    marginBottom: 10 
-},
-  aboutText: { 
-    color: '#94a3b8', 
-    fontSize: 16, 
-    lineHeight: 24 
-},
-  tabsContainer: { 
-    flexDirection: 'row', 
-    backgroundColor: '#1a1d29', 
-    margin: 20, 
-    padding: 5, 
-    borderRadius: 12 
-},
-  tab: { 
-    flex: 1, 
-    paddingVertical: 10, 
-    alignItems: 'center', 
-    borderRadius: 8 
-},
-  activeTab: { 
-    backgroundColor: '#2d2d3f'
-},
-  tabText: { 
-    color: '#64748b', 
-    fontWeight: 'bold'
-},
-  activeTabText: { 
-    color: 'white'
-},
-  tabContent: { 
-    paddingHorizontal: 20
-},
-  reviewCard: { 
+playlistSelector: {
     backgroundColor: '#1a1d29',
-     padding: 15,
-     borderRadius: 16, 
-     borderLeftWidth: 1, 
-     borderColor: '#2d2d3f'
+    borderRadius: 16,
+    padding: 15,
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: '#2d2d3f',
 },
-  reviewHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center' 
+playlistSubtitle: {
+    color: '#94a3b8',
+    fontSize: 14,
+    marginBottom: 10,
+    fontWeight: '600',
 },
-  reviewerAvatar: { 
-    width: 32, 
-    height: 32, 
+playlistItem: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: '#2d2d3f',
+  gap: 10,
+},
+playlistItemText: {
+  color: 'white',
+  fontSize: 16,
+},
+
+secondaryButton: { 
+  backgroundColor: '#3b82f6', 
+  padding: 15, 
+  borderRadius: 12, 
+  alignItems: 'center'
+},
+secondaryButtonText: { 
+  color: 'white', 
+  fontWeight: 'bold', 
+  fontSize: 16 
+},
+aboutSection: { 
+  marginTop: 30
+},
+sectionTitle: { 
+  color: 'white', 
+  fontSize: 20, 
+  fontWeight: 'bold', 
+  marginBottom: 10 
+},
+aboutText: { 
+  color: '#94a3b8', 
+  fontSize: 16, 
+  lineHeight: 24 
+},
+tabsContainer: { 
+  flexDirection: 'row', 
+  backgroundColor: '#1a1d29', 
+  margin: 20, 
+  padding: 5, 
+  borderRadius: 12 
+},
+tab: { 
+  flex: 1, 
+  paddingVertical: 10, 
+  alignItems: 'center', 
+  borderRadius: 8 
+},
+activeTab: { 
+  backgroundColor: '#2d2d3f'
+},
+tabText: { 
+  color: '#64748b', 
+  fontWeight: 'bold'
+},
+activeTabText: { 
+  color: 'white'
+},
+tabContent: { 
+  paddingHorizontal: 20
+},
+reviewCard: { 
+  backgroundColor: '#1a1d29',
+    padding: 15,
     borderRadius: 16, 
-    backgroundColor: '#2563eb', 
-    justifyContent: 'center', 
-    alignItems: 'center'
+    borderLeftWidth: 1, 
+    borderColor: '#2d2d3f'
 },
-  avatarText: { 
-    color: 'white', 
-    fontSize: 12, 
-    fontWeight: 'bold'
+reviewHeader: { 
+  flexDirection: 'row', 
+  alignItems: 'center' 
 },
-  reviewerName: { 
-    color: 'white', 
-    fontWeight: 'bold'
+reviewerAvatar: { 
+  width: 32, 
+  height: 32, 
+  borderRadius: 16, 
+  backgroundColor: '#2563eb', 
+  justifyContent: 'center', 
+  alignItems: 'center'
 },
-  reviewDate: { 
-    color: '#64748b',
-    fontSize: 12
+avatarText: { 
+  color: 'white', 
+  fontSize: 12, 
+  fontWeight: 'bold'
 },
-  starsSmall: { 
-    flexDirection: 'row'
+reviewerName: { 
+  color: 'white', 
+  fontWeight: 'bold'
 },
-  reviewTitle: { 
-    color: 'white', 
-    fontSize: 16, 
-    fontWeight: 'bold', 
-    marginTop: 15
+reviewDate: { 
+  color: '#64748b',
+  fontSize: 12
 },
-  reviewBody: { 
-    color: '#94a3b8', 
-    marginTop: 8, 
-    lineHeight: 22 
+starsSmall: { 
+  flexDirection: 'row'
 },
-  reviewFooter: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    marginTop: 15 
+reviewTitle: { 
+  color: 'white', 
+  fontSize: 16, 
+  fontWeight: 'bold', 
+  marginTop: 15
 },
-  footerText: { 
-    color: '#94a3b8', 
-    marginLeft: 5, 
-    fontSize: 14 }
+reviewBody: { 
+  color: '#94a3b8', 
+  marginTop: 8, 
+  lineHeight: 22 
+},
+reviewFooter: { 
+  flexDirection: 'row', 
+  alignItems: 'center', 
+  marginTop: 15 
+},
+footerText: { 
+  color: '#94a3b8', 
+  marginLeft: 5, 
+  fontSize: 14 }
 });
 
 export default AlbumDetails;

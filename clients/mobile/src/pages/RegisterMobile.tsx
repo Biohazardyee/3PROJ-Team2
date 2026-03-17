@@ -28,7 +28,7 @@ const RegisterMobile: React.FC = () => {
     if (text.length > 2) {
       searchTimeout.current = setTimeout(async () => {
         try {
-          const response = await fetch(`http://192.168.1.74:3000/api/search?query=${text}`);
+          const response = await fetch(`http://192.168.0.24:3000/api/search?query=${text}`);
           const data = await response.json();
 
           const albums = data.searchResults?.results?.albummatches?.album || [];
@@ -69,7 +69,7 @@ const RegisterMobile: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://192.168.1.74:3000/users/signin', {
+      const response = await fetch('http://192.168.0.24:3000/users/signin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
