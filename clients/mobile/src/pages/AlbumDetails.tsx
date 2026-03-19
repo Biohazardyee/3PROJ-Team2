@@ -184,7 +184,11 @@ const AlbumDetails = () => {
               </View>
             )}
 
-            <TouchableOpacity style={styles.secondaryButton}>
+            <TouchableOpacity style={styles.secondaryButton}
+              onPress={() => router.push({
+                  pathname: '/writereview', 
+                  params: { id: album.id, title: album.title, artist: album.artist, cover: album.cover }
+                })}>
               <Text style={styles.secondaryButtonText}>Donner votre avis</Text>
             </TouchableOpacity>
           </View>
