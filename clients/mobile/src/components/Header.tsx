@@ -2,9 +2,15 @@ import React from 'react';
 import { View, Text,TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import {useRouter, usePathname} from "expo-router";
-import { useFonts, Audiowide_400Regular } from '@expo-google-fonts/audiowide';
+import { useFonts } from 'expo-font';
+import { Syncopate_400Regular } from '@expo-google-fonts/syncopate';
+import { Pacifico_400Regular } from '@expo-google-fonts/pacifico';
 
 const Header: React.FC = () => {
+    let [fontsLoaded] = useFonts({
+    Syncopate_400Regular,
+    Pacifico_400Regular
+  });
     const router = useRouter();
     const pathname = usePathname();
     return (
@@ -17,7 +23,7 @@ const Header: React.FC = () => {
                 />
 
                 {/* Nom de l'app */}
-                <Text style={styles.name}>MELODIA</Text>
+                <Text style={styles.name}>Melodia</Text>
             </View>
 
             <View style={styles.buttons}>
@@ -29,11 +35,11 @@ const Header: React.FC = () => {
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => router.push('/restriction')} >
+                <TouchableOpacity onPress={() => router.push('/message')} >
                     <Ionicons
                         name="paper-plane-outline"
                         size={26}
-                        color={pathname === '/messages' ? 'black' : 'white'}
+                        color="white"
                     />
                 </TouchableOpacity>
             </View>
@@ -65,7 +71,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ad46ff',
         letterSpacing: 0.5,
-        fontFamily: 'Audiowide_400Regular', // Ne fonctionne pas sur Android, à revoir
+        fontFamily: 'Pacifico_400Regular', 
     },
     buttons: {
         flexDirection: 'row',

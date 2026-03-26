@@ -27,7 +27,7 @@ import tagRouter from './routes/api/tags.js';
 import trackRouter from './routes/api/tracks.js';
 
 
-import oauthRouter from './routes/oauth/oauth'
+import oauthRouter from './routes/oauth/oauth.js'
 
 import { ApiError, InternalError } from './utils/errors.js';
 
