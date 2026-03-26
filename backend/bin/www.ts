@@ -23,7 +23,9 @@ const server = http.createServer(app);
  * Connect to database then start server
  */
 connectDB().then((): void => {
-    server.listen(port);
+    server.listen(port, '0.0.0.0', () => {
+        console.log(`🚀 Serveur accessible sur le réseau à l'adresse : http://192.168.1.26:${port}`);
+    });
     console.log(`🚀 Serveur lancé sur http://localhost:${port}`);
     server.on('error', onError);
     server.on('listening', onListening);

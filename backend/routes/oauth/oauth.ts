@@ -1,7 +1,7 @@
 import { Router, NextFunction, Request, Response } from 'express';
-import {authGuard} from "../../middlewares/auth";
-import reportController from "../../modules/db/reports/report.controller";
-import oauthController from "../../modules/oauth/oauth.controller";
+import {authGuard} from "../../middlewares/auth.js";
+import reportController from "../../modules/db/reports/report.controller.js";
+import oauthController from "../../modules/oauth/oauth.controller.js";
 
 const router: Router = Router();
 
