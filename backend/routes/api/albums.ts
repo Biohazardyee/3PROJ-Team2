@@ -7,10 +7,6 @@ router.get('/info', function (req, res, next: NextFunction): void {
     albumController.getAlbumInfo(req, res, next);
 });
 
-router.get('/info/:mbid', function (req, res, next: NextFunction): void {
-    albumController.getAlbumInfoById(req, res, next);
-});
-
 router.get('/info/tags/:mbid', function (req, res, next: NextFunction): void {
     albumController.albumGetTags(req, res, next);
 });

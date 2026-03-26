@@ -36,3 +36,15 @@ export interface ReviewUpdateDto{
     rating?: number;
     content?: string;
 }
+
+export interface ReviewWithMediaDto {
+    id: string;
+    user_id: string;
+    media_id: string;
+    rating: number;
+    content: string;
+    created_at: Date;
+    media: {
+        content: unknown;
+    } | null;
+}

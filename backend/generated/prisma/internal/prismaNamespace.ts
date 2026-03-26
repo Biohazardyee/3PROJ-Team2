@@ -386,7 +386,6 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   Users: 'Users',
   Medias: 'Medias',
-  Caches: 'Caches',
   Reviews: 'Reviews',
   ReviewComments: 'ReviewComments',
   ReviewLikes: 'ReviewLikes',
@@ -415,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "users" | "medias" | "caches" | "reviews" | "reviewComments" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
+    modelProps: "users" | "medias" | "reviews" | "reviewComments" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -564,80 +563,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.MediasCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.MediasCountAggregateOutputType> | number
-        }
-      }
-    }
-    Caches: {
-      payload: Prisma.$CachesPayload<ExtArgs>
-      fields: Prisma.CachesFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.CachesFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.CachesFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
-        }
-        findFirst: {
-          args: Prisma.CachesFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.CachesFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
-        }
-        findMany: {
-          args: Prisma.CachesFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>[]
-        }
-        create: {
-          args: Prisma.CachesCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
-        }
-        createMany: {
-          args: Prisma.CachesCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.CachesCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>[]
-        }
-        delete: {
-          args: Prisma.CachesDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
-        }
-        update: {
-          args: Prisma.CachesUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
-        }
-        deleteMany: {
-          args: Prisma.CachesDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.CachesUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.CachesUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>[]
-        }
-        upsert: {
-          args: Prisma.CachesUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CachesPayload>
-        }
-        aggregate: {
-          args: Prisma.CachesAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateCaches>
-        }
-        groupBy: {
-          args: Prisma.CachesGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CachesGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.CachesCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CachesCountAggregateOutputType> | number
         }
       }
     }
@@ -1665,21 +1590,13 @@ export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof Us
 export const MediasScalarFieldEnum = {
   id: 'id',
   api_id: 'api_id',
-  rating: 'rating',
-  created_at: 'created_at'
-} as const
-
-export type MediasScalarFieldEnum = (typeof MediasScalarFieldEnum)[keyof typeof MediasScalarFieldEnum]
-
-
-export const CachesScalarFieldEnum = {
-  id: 'id',
-  api_id: 'api_id',
   content: 'content',
+  rating: 'rating',
+  created_at: 'created_at',
   expires_at: 'expires_at'
 } as const
 
-export type CachesScalarFieldEnum = (typeof CachesScalarFieldEnum)[keyof typeof CachesScalarFieldEnum]
+export type MediasScalarFieldEnum = (typeof MediasScalarFieldEnum)[keyof typeof MediasScalarFieldEnum]
 
 
 export const ReviewsScalarFieldEnum = {
@@ -1958,20 +1875,6 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'Float'
- */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
-
-
-/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -1982,6 +1885,20 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -2151,7 +2068,6 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   users?: Prisma.UsersOmit
   medias?: Prisma.MediasOmit
-  caches?: Prisma.CachesOmit
   reviews?: Prisma.ReviewsOmit
   reviewComments?: Prisma.ReviewCommentsOmit
   reviewLikes?: Prisma.ReviewLikesOmit

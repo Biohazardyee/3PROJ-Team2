@@ -11,64 +11,67 @@ const CACHE_TTL_MINUTES = 60;
 
 export class AlbumService {
 
-    async getAlbumInfo(data: { artist: string; album: string }): Promise<any> {
-        const {artist, album} = data;
+    async getAlbumInfo(data: {
+        mbid: string;
+        artist: string;
+        album: string;
+    }): Promise<any> {
+        const { mbid, artist, album } = data;
 
-        if (isEmptyString(artist)) throw new BadRequest('Artist cannot be empty');
-        if (isEmptyString(album)) throw new BadRequest('Album cannot be empty');
+        let api_id: string;
+        let url: string;
 
-        const synthesize_URL: string =
-            `${URL}?method=album.getinfo` +
-            `&api_key=${API_KEY}` +
-            `&artist=${encodeURIComponent(artist)}` +
-            `&album=${encodeURIComponent(album)}` +
-            `&format=json`;
+        // Cas 1 : MBID
+        if (!isEmptyString(mbid)) {
+            api_id = `album:mbid:${mbid}`;
 
-        const response: Response = await fetch(synthesize_URL);
-        const albumInfo: any = await response.json();
-
-        if (albumInfo.error) {
-            throw new NotFound(albumInfo.message || 'Album not found');
+            url =
+                `${URL}?method=album.getinfo` +
+                `&api_key=${API_KEY}` +
+                `&mbid=${encodeURIComponent(mbid)}` +
+                `&format=json`;
         }
 
-        return albumInfo;
-    }
+        // Cas 2 : artist + album
+        else if (
+            !isEmptyString(artist) &&
+            !isEmptyString(album)
+        ) {
+            api_id = `album:name:${artist}:${album}`;
 
-    async getAlbumInfoById(data: { mbid: string }): Promise<any> {
-        const {mbid} = data;
+            url =
+                `${URL}?method=album.getinfo` +
+                `&api_key=${API_KEY}` +
+                `&artist=${encodeURIComponent(artist)}` +
+                `&album=${encodeURIComponent(album)}` +
+                `&format=json`;
+        }
 
-        if (isEmptyString(mbid)) throw new BadRequest('MBID cannot be empty');
-
-        const api_id = `album:${mbid}`;
+        // Aucun des deux
+        else {
+            throw new BadRequest('You must provide either mbid OR artist + album');
+        }
 
         // Vérifier le cache
-        const cached = await PrismaDb.caches.findFirst({
-            where: {
-                api_id,
-                expires_at: { gt: new Date() },
-            },
+        const cached = await PrismaDb.medias.findUnique({
+            where: { api_id },
         });
 
-        if (cached) {
-            console.log("Information retrieves with caches");
+        if (cached && cached.expires_at > new Date()) {
+            console.log("Cache utilisé");
             return cached.content;
         }
 
-        const synthesize_URL: string =
-            `${URL}?method=album.getinfo` +
-            `&api_key=${API_KEY}` +
-            `&mbid=${encodeURIComponent(mbid)}` +
-            `&format=json`;
-
-        const response: Response = await fetch(synthesize_URL);
+        // Appel API
+        const response: Response = await fetch(url);
         const albumInfo: any = await response.json();
 
         if (albumInfo.error) {
             throw new NotFound(albumInfo.message || 'Album not found');
         }
 
-        // Mettre en cache
-        await PrismaDb.caches.upsert({
+        // Mise en cache
+        await PrismaDb.medias.upsert({
             where: { api_id },
             update: {
                 content: albumInfo,
@@ -81,7 +84,7 @@ export class AlbumService {
             },
         });
 
-        console.log("No caches uses");
+        console.log("Pas de cache");
 
         return albumInfo;
     }
@@ -94,7 +97,7 @@ export class AlbumService {
         const api_id = `album:tags:${mbid}`;
 
         // Vérifier le cache
-        const cached = await PrismaDb.caches.findFirst({
+        const cached = await PrismaDb.medias.findFirst({
             where: {
                 api_id,
                 expires_at: { gt: new Date() },
@@ -120,7 +123,7 @@ export class AlbumService {
         }
 
         // Mettre en cache
-        await PrismaDb.caches.upsert({
+        await PrismaDb.medias.upsert({
             where: { api_id },
             update: {
                 content: tagsInfo,

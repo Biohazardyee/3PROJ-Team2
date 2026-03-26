@@ -49,7 +49,7 @@ export class SearchService {
                     mbid: album.mbid,
                 };
 
-                return PrismaDb.caches.upsert({
+                return PrismaDb.medias.upsert({
                     where: { api_id },
                     update: {
                         content,
