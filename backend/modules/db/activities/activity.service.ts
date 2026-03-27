@@ -14,7 +14,8 @@ import {artistService} from "../../external_api/artists/artist.service.js";
 import {albumService} from "../../external_api/albums/album.service.js";
 import {ReviewWithMediaDto} from "../../../types/reviews/review.dto.js";
 import {reviewMapper} from "../../../mappers/reviews/review.mapper.js";
-import Albums from "../../../routes/api/albums";
+import Albums from "../../../routes/api/albums.js";
+import { getImageUrl } from './activity.helper.js';
 
 
 export class ActivityService {
@@ -206,6 +207,7 @@ export class ActivityService {
                     type: 'new_album',
                     artist: user.favorite_band!,
                     album: album.name,
+                    cover: getImageUrl(album.image),
                     created_at: new Date(0),
                 }));
                 favoriteBandRecommendations.push(...albums);
@@ -223,6 +225,7 @@ export class ActivityService {
                                     type: 'recommendation',
                                     artist: similarArtist.name,
                                     album: album.name,
+                                    cover: getImageUrl(album.image),
                                     created_at: new Date(0),
                                 }));
                             } catch {
@@ -248,6 +251,7 @@ export class ActivityService {
                         type: 'new_album',
                         artist: album.artist?.name ?? artist,
                         album: album.name,
+                        cover: getImageUrl(album.image),
                         created_at: new Date(0),
                     }));
                 } catch {

@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
-import {BadRequest, NotFound} from "../../../utils/errors.js";
-import {isEmptyString} from '../../../utils/helpers.js';
-import {PrismaDb} from '../../../config/database.js';
+import { BadRequest, NotFound } from "../../../utils/errors.js";
+import { isEmptyString } from '../../../utils/helpers.js';
+import { PrismaDb } from '../../../config/database.js';
 
 dotenv.config();
 
@@ -90,7 +90,7 @@ export class AlbumService {
     }
 
     async albumGetTags(data: { mbid: string }): Promise<any> {
-        const {mbid} = data;
+        const { mbid } = data;
 
         if (isEmptyString(mbid)) throw new BadRequest('MBID cannot be empty');
 
@@ -136,7 +136,65 @@ export class AlbumService {
             },
         });
 
+
+
         return tagsInfo;
+    }
+
+    async getSimilarAlbums(data: { artist: string; album: string }): Promise<any> {
+        const { artist, album } = data;
+        const api_id = `album:discovery:${artist}:${album}`;
+
+        const cached = await PrismaDb.medias.findUnique({ where: { api_id } });
+        if (cached && cached.expires_at > new Date()) return cached.content;
+
+        try {
+
+            const artistRes = await fetch(`${URL}?method=artist.getsimilar&artist=${encodeURIComponent(artist)}&api_key=${API_KEY}&limit=6&format=json`);
+            const artistData: any = await artistRes.json();
+            const similarArtists = artistData.similarartists?.artist || [];
+
+
+            const albumPromises = similarArtists.map(async (similarArtist: any) => {
+                const topRes = await fetch(`${URL}?method=artist.gettopalbums&artist=${encodeURIComponent(similarArtist.name)}&api_key=${API_KEY}&limit=1&format=json`);
+                const topData: any = await topRes.json();
+                const basicAlbum = topData.topalbums?.album?.[0];
+
+                if (!basicAlbum) return null;
+
+                const hasImage = basicAlbum.image?.some((img: any) => img["#text"] && img["#text"] !== "");
+
+                if (!hasImage) {
+                    // On fetch les infos complètes de l'album pour récupérer la cover
+                    const fullInfoRes = await fetch(`${URL}?method=album.getinfo&api_key=${API_KEY}&artist=${encodeURIComponent(similarArtist.name)}&album=${encodeURIComponent(basicAlbum.name)}&format=json`);
+                    const fullInfoData: any = await fullInfoRes.json();
+                    return fullInfoData.album || basicAlbum;
+                }
+
+                return basicAlbum;
+            });
+
+            const discoveryAlbums = (await Promise.all(albumPromises)).filter(a => a !== null);
+
+
+            await PrismaDb.medias.upsert({
+                where: { api_id },
+                update: {
+                    content: discoveryAlbums,
+                    expires_at: new Date(Date.now() + CACHE_TTL_MINUTES * 60 * 1000)
+                },
+                create: {
+                    api_id,
+                    content: discoveryAlbums,
+                    expires_at: new Date(Date.now() + CACHE_TTL_MINUTES * 60 * 1000)
+                },
+            });
+
+            return discoveryAlbums;
+        } catch (error) {
+            console.error("Discovery error:", error);
+            return [];
+        }
     }
 }
 

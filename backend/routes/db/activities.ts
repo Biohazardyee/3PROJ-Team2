@@ -21,7 +21,7 @@ router.get('/:id', authGuard, checkResourceOwnerOrAdmin('activities'), function(
 
 // router.get('/feed/:user_id', activityController.getFeed);
 
-router.get('/feed/:user_id', authGuard, checkAdminOrSelf, function(req: Request, res: Response, next: NextFunction): void {
+router.get('/feed/:id', authGuard, checkAdminOrSelf, function(req: Request, res: Response, next: NextFunction): void {
     activityController.getFeed(req, res, next);
 });
 

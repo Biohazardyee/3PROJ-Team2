@@ -27,6 +27,7 @@ export interface FeedItem {
     media_id?: string;
     artist?: string;
     album?: string;
+    cover?: string
     created_at: Date;
     content?: string;
 }

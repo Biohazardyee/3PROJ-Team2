@@ -34,15 +34,12 @@ const RegisterMobile: React.FC = () => {
 
   const handleOAuth = async (provider: "google" | "discord") => {
     try {
-      // 1. On génère l'URI de redirection (sera exp:// en dev et projetsupcontentmobile:// en prod)
+     
       const redirectUri = AuthSession.makeRedirectUri({
         scheme: "projetsupcontentmobile",
       });
 
-      console.log("🔗 L'app attend ce retour :", redirectUri);
 
-      // 2. On envoie cette URI au backend dans l'URL
-      // On ajoute &redirect_uri=... à la fin
       const authUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/oauth/auth/${provider}?platform=mobile&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
       const result = await WebBrowser.openAuthSessionAsync(
@@ -51,7 +48,7 @@ const RegisterMobile: React.FC = () => {
       );
 
       if (result.type === "success" && result.url) {
-        // Ton code actuel pour extraire le token est très bien
+       
         const url = new URL(result.url.replace("#", "?"));
         const token = url.searchParams.get("token");
 

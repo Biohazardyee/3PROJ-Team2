@@ -26,18 +26,13 @@ const LoginMobile: React.FC = () => {
 
   const handleOAuthLogin = async (provider: "google" | "discord") => {
     try {
-      // 1. On génère l'URL de redirection correcte (exp:// en dev, scheme:// en prod)
       const redirectUri = AuthSession.makeRedirectUri({
         scheme: "projetsupcontentmobile",
         preferLocalhost: false,
       });
 
-      console.log(`🔗 Login [${provider}] attend :`, redirectUri);
-
-      // 2. On construit l'URL avec redirect_uri pour ton backend
       const authUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/oauth/auth/${provider}?platform=mobile&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
-      // 3. On ouvre la session
       const result = await WebBrowser.openAuthSessionAsync(
         authUrl,
         redirectUri,
@@ -52,9 +47,6 @@ const LoginMobile: React.FC = () => {
           // 4. Stockage du token
           await SecureStore.setItemAsync("userToken", token);
 
-          console.log("✅ Connexion réussie, token stocké");
-
-          // Redirection vers l'accueil (ou dashboard)
           router.replace("/");
         }
       }

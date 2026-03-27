@@ -5,7 +5,7 @@ import {
 } from "../../types/conversations/conversations.dto.js";
 import {Conversations, Prisma} from "../../generated/prisma/client.js";
 
-// Il faut dire qu'on veut utiliser la relation ici, Prisma ne le fait pas automatiquement
+
 type ConversationWithMessages = Prisma.ConversationsGetPayload<{
     include: { messages: true }
 }>;

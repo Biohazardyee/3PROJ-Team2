@@ -15,4 +15,9 @@ apiClient.interceptors.request.use(async (config) => {
   return config;
 });
 
+export const getUserFeed = async (userId: string) => {
+  const response = await apiClient.get(`/activities/feed/${userId}`);
+  return response.data.feed;
+};
+
 export default apiClient;

@@ -1,14 +1,14 @@
-import type {Request, Response, NextFunction} from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import {Controller} from '../../controller.js';
-import {Unauthorized, BadRequest} from '../../../utils/errors.js';
-import {UserService, userService} from './user.service.js';
-import {userMapper} from '../../../mappers/users/user.mapper.js';
+import { Controller } from '../../controller.js';
+import { Unauthorized, BadRequest } from '../../../utils/errors.js';
+import { UserService, userService } from './user.service.js';
+import { userMapper } from '../../../mappers/users/user.mapper.js';
 
-import type {SelectableUserField, PartialUserResponseDto} from '../../../types/users/user.dto.js';
+import type { SelectableUserField, PartialUserResponseDto } from '../../../types/users/user.dto.js';
 
 import {
     LoginDto,
@@ -17,7 +17,7 @@ import {
     UserResponseLoginDto,
     UserUpdateDto
 } from '../../../types/users/user.dto.js';
-import {Users} from "../../../generated/prisma/client.js";
+import { Users } from "../../../generated/prisma/client.js";
 
 dotenv.config();
 
@@ -88,7 +88,7 @@ class UserController extends Controller {
                 },
                 process.env.JWT_SECRET!,
                 {
-                    expiresIn: '1h'
+                    expiresIn: '24h'
                 }
             );
 

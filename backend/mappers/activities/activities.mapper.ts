@@ -26,7 +26,7 @@ class ActivityMapper extends BaseMapper<Activities, ActivityResponseDto> {
         };
     }
 
-    toDeleteDto(activity: Activities): ActivityDeleteResponseDto { // ✅ majuscule corrigée
+    toDeleteDto(activity: Activities): ActivityDeleteResponseDto { 
         return {
             id: activity.id,
             user_id: activity.user_id

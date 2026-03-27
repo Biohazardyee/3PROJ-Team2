@@ -113,7 +113,7 @@ class ActivityController extends Controller {
 
     async getFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const user_id: string = req.params.user_id;
+            const user_id: string = req.params.id;
             const limit: number = parseInt(req.query.limit as string) || 20;
             const offset: number = parseInt(req.query.offset as string) || 0;
 
