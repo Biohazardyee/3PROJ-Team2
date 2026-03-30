@@ -1,8 +1,8 @@
-import type {Request, Response, NextFunction} from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
-import {Controller} from '../../controller.js';
-import {BadRequest} from '../../../utils/errors.js'
-import {ReviewService} from './review.service.js';
+import { Controller } from '../../controller.js';
+import { BadRequest } from '../../../utils/errors.js'
+import { ReviewService } from './review.service.js';
 import {
     ReviewAddDto,
     ReviewResponseAddDto,
@@ -23,6 +23,7 @@ class ReviewController extends Controller {
                 user_id: req.body.user_id,
                 media_id: req.body.media_id,
                 rating: req.body.rating,
+                title: req.body.title,
                 content: req.body.content,
             };
 
@@ -47,10 +48,14 @@ class ReviewController extends Controller {
     }
 
 
-    async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
+    async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const reviews: ReviewResponseDto[] = await this.service.getAll();
-            res.status(201).json({
+
+            const userId = (req as any).user?.id;
+
+            const reviews = await this.service.getAll(userId);
+
+            res.status(200).json({
                 message: 'Reviews retrieved successfully',
                 reviews,
             });
@@ -64,8 +69,12 @@ class ReviewController extends Controller {
             if (!req.params.id) {
                 throw new BadRequest('Id is required');
             }
-            const review: ReviewResponseDto = await this.service.getById(req.params.id);
-            res.status(201).json({
+
+            const userId = (req as any).user?.id;
+
+            const review: ReviewResponseDto = await this.service.getById(req.params.id, userId);
+
+            res.status(200).json({
                 message: 'Review retrieved successfully',
                 review
             });

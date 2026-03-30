@@ -1,5 +1,5 @@
 import createError from 'http-errors';
-import express, {Request, Response, NextFunction, Express} from 'express';
+import express, { Request, Response, NextFunction, Express } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
@@ -18,6 +18,7 @@ import activitiesRouter from './routes/db/activities.js';
 import followRouter from './routes/db/follows.js';
 import messageRouter from './routes/db/messages.js';
 import conversationRouter from './routes/db/conversations.js';
+import reviewCommentRouter from './routes/db/reviews.comment.js';
 
 // API Endpoints
 import albumsRouter from './routes/api/albums.js';
@@ -61,20 +62,22 @@ app.use('/medias', mediaRouter);
 app.use('/playlists', playlistRouter);
 app.use('/users', userRouter);
 app.use('/reviews', reviewRouter);
+app.use('/review-comments', reviewCommentRouter);
 
 // API routes
 app.use('/api/tracks', trackRouter);
 app.use('/api/tags', tagRouter);
-app.use('/api/artists', artistsRouter); 
+app.use('/api/artists', artistsRouter);
 app.use('/api/albums', albumsRouter);
 app.use('/api/search', searchRouter);
+
 
 
 app.use('/api/oauth', oauthRouter);
 
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next: NextFunction): void  {
+app.use(function (req, res, next: NextFunction): void {
     next(createError(404));
 });
 

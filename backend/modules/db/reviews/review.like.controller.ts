@@ -1,8 +1,9 @@
-import type {Request, Response, NextFunction} from 'express';
-import {Controller} from '../../controller.js';
-import {BadRequest} from '../../../utils/errors.js';
-import {ReviewLikeService, reviewLikeService} from './review.like.service.js';
-import {ReviewLikeAddDto, ReviewLikeResponseDto} from "../../../types/reviews/review.like.dto.js";
+import type { Request, Response, NextFunction } from 'express';
+import { PrismaDb } from '../../../config/database.js';
+import { Controller } from '../../controller.js';
+import { BadRequest } from '../../../utils/errors.js';
+import { ReviewLikeService, reviewLikeService } from './review.like.service.js';
+import { ReviewLikeAddDto, ReviewLikeResponseDto } from "../../../types/reviews/review.like.dto.js";
 
 class ReviewLikeController extends Controller {
 
@@ -44,20 +45,19 @@ class ReviewLikeController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getById(req: Request, res: Response, next: NextFunction) {
         try {
+            const { id } = req.params;
+            const userId = (req as any).user?.id;
 
-            if (!req.params.user_id || !req.params.review_id) {
-                throw new BadRequest('User_id & review_id are required');
-            }
+            const review = await this.service.getById(id, userId);
 
-            const reviewsLike: ReviewLikeResponseDto = await this.service.getById(req.params.user_id, req.params.review_id);
-            res.status(201).json({
-                message: `Like retrieved successfully`,
-                reviewsLike,
+            res.status(200).json({
+                message: 'Review retrieved successfully',
+                review,
             });
-        } catch (err) {
-            next(err);
+        } catch (error) {
+            next(error);
         }
     }
 
@@ -79,6 +79,37 @@ class ReviewLikeController extends Controller {
             });
         } catch (err) {
             next(err);
+        }
+    }
+
+    async toggleLike(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { review_id } = req.body;
+            const user_id = (req as any).user?.id;
+
+            if (!user_id) {
+                throw new BadRequest('User authentication required');
+            }
+
+            if (!review_id) {
+                throw new BadRequest('Review_id is required');
+            }
+
+            const existingLike = await PrismaDb.reviewLikes.findUnique({
+                where: { user_id_review_id: { user_id, review_id } }
+            });
+
+            if (existingLike) {
+                await this.service.delete(review_id, user_id);
+                const likesCount = await PrismaDb.reviewLikes.count({ where: { review_id } });
+                res.status(200).json({ message: 'Like removed', isLiked: false, likes_count: likesCount });
+            } else {
+                await this.service.create({ user_id, review_id });
+                const likesCount = await PrismaDb.reviewLikes.count({ where: { review_id } });
+                res.status(201).json({ message: 'Like added', isLiked: true, likes_count: likesCount });
+            }
+        } catch (error) {
+            next(error);
         }
     }
 }

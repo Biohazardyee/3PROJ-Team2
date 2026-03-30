@@ -55,6 +55,7 @@ export const ModelName = {
   Medias: 'Medias',
   Reviews: 'Reviews',
   ReviewComments: 'ReviewComments',
+  CommentLikes: 'CommentLikes',
   ReviewLikes: 'ReviewLikes',
   Playlists: 'Playlists',
   PlaylistItems: 'PlaylistItems',
@@ -121,6 +122,7 @@ export const ReviewsScalarFieldEnum = {
   user_id: 'user_id',
   media_id: 'media_id',
   rating: 'rating',
+  title: 'title',
   content: 'content',
   created_at: 'created_at',
   updated_at: 'updated_at'
@@ -131,13 +133,23 @@ export type ReviewsScalarFieldEnum = (typeof ReviewsScalarFieldEnum)[keyof typeo
 
 export const ReviewCommentsScalarFieldEnum = {
   id: 'id',
+  content: 'content',
+  created_at: 'created_at',
   review_id: 'review_id',
   user_id: 'user_id',
-  content: 'content',
-  created_at: 'created_at'
+  parent_id: 'parent_id'
 } as const
 
 export type ReviewCommentsScalarFieldEnum = (typeof ReviewCommentsScalarFieldEnum)[keyof typeof ReviewCommentsScalarFieldEnum]
+
+
+export const CommentLikesScalarFieldEnum = {
+  user_id: 'user_id',
+  comment_id: 'comment_id',
+  created_at: 'created_at'
+} as const
+
+export type CommentLikesScalarFieldEnum = (typeof CommentLikesScalarFieldEnum)[keyof typeof CommentLikesScalarFieldEnum]
 
 
 export const ReviewLikesScalarFieldEnum = {

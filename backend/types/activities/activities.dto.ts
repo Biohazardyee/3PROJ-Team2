@@ -21,15 +21,25 @@ export interface ActivityAddDto {
 }
 
 export interface FeedItem {
+
     type: 'review' | 'like' | 'comment' | 'new_album' | 'recommendation';
+
+
     user_id?: string;
+    user_name?: string;
     review_id?: string;
     media_id?: string;
+
+
     artist?: string;
     album?: string;
-    cover?: string
+    cover?: string;
+
+
     created_at: Date;
+    title?: string;
     content?: string;
+    rating?: number;
 }
 
 export interface ActivityDeleteResponseDto {
@@ -40,17 +50,26 @@ export interface ActivityDeleteResponseDto {
 export interface ActivityWithRelationsDto {
     id: string;
     user_id: string;
+    user_name?: string;
+    album?: string;
+    artist?: string;
+    cover?: string;
+    title?: string;
+    content?: string | null;
+    rating?: number | null;
     target_user_id: string | null;
     review_id: string | null;
     media_id: string | null;
     rating_from_user: number | null;
     action: ActivityActions;
     created_at: Date;
-    review: {
+    review?: {
+        title?: string;
         content: string;
+        rating?: number;
     } | null;
-    media: {
-        content: unknown;
+    media?: {
+        content: any;
     } | null;
 }
 

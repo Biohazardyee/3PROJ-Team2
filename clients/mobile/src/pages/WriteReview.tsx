@@ -1,37 +1,104 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import Header from "@/src/components/Header";
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import apiClient from "../api/client";
 
 const WriteReview = () => {
   const router = useRouter();
-  // Récupération des données 
+
   const { id, title, artist, cover } = useLocalSearchParams();
 
   const [rating, setRating] = useState(0);
-  const [reviewTitle, setReviewTitle] = useState('');
-  const [review, setReview] = useState('');
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [review, setReview] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handlePublish = () => {
-    if (rating === 0 || reviewTitle.trim() === '' || review.trim() === '') {
-      Alert.alert("Oups !", "Merci de remplir tous les champs et de donner une note.");
+  const handlePublish = async () => {
+    if (rating === 0 || reviewTitle.trim() === "" || review.trim() === "") {
+      Alert.alert(
+        "Oups !",
+        "Merci de remplir tous les champs et de donner une note.",
+      );
       return;
     }
 
-    Alert.alert("Succès", "Votre avis a été publié avec succès !");
-    router.back();
+    console.log("Media ID récupéré de Expo Router:", id); // DEBUG : Vérifie la console
+
+    if (!id) {
+      Alert.alert(
+        "Erreur",
+        "Impossible de récupérer l'identifiant de l'album.",
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const userId = await SecureStore.getItemAsync("userId");
+
+      const payload = {
+        user_id: userId,
+        media_id: id as string, // <--- C'est ce champ qui manque dans ton log d'erreur
+        rating: rating,
+        title: reviewTitle.trim(),
+        content: review.trim(),
+      };
+
+      console.log("Envoi du payload au backend:", payload);
+
+      if (!userId) {
+        Alert.alert("Erreur", "Session expirée. Veuillez vous reconnecter.");
+        setLoading(false);
+        return;
+      }
+
+      await apiClient.post("/reviews", payload);
+
+    
+      Alert.alert("Succès", "Votre avis a été publié avec succès !", [
+        { text: "OK", onPress: () => router.back() },
+      ]);
+    } catch (error: any) {
+      console.error("Erreur publication review:", error);
+
+      const errorMessage =
+        error.response?.data?.message || "Une erreur est survenue.";
+      Alert.alert("Erreur", errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  /**
+   * Rendu des étoiles de notation
+   */
   const renderStars = () => {
     return (
       <View style={styles.starsContainer}>
         {[1, 2, 3, 4, 5].map((index) => (
-          <TouchableOpacity key={index} onPress={() => setRating(index)}>
-            <Ionicons 
-              name={index <= rating ? "star" : "star-outline"} 
-              size={32} 
-              color={index <= rating ? "#e24ada" : "#444"} 
+          <TouchableOpacity
+            key={index}
+            onPress={() => setRating(index)}
+            disabled={loading}
+          >
+            <Ionicons
+              name={index <= rating ? "star" : "star-outline"}
+              size={32}
+              color={index <= rating ? "#e24ada" : "#444"}
               style={{ marginRight: 8 }}
             />
           </TouchableOpacity>
@@ -42,29 +109,31 @@ const WriteReview = () => {
 
   return (
     <View style={styles.safeArea}>
-      <Header /> 
-      
+      <Header />
+
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Titre */}
+        {/* Titre de la page */}
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.title}>Ecrire votre avis</Text>
+            <Text style={styles.title}>Écrire votre avis</Text>
             <Text style={styles.subtitle}>Partage ton avis sur cet album</Text>
           </View>
         </View>
 
-        {/* Carte de l'Album */}
+        {/* Carte de l'Album sélectionné */}
         <View style={styles.albumCard}>
-          <Image 
-            source={{ uri: (cover as string) || 'https://via.placeholder.com/80' }} 
-            style={styles.albumArt} 
+          <Image
+            source={{
+              uri: (cover as string) || "https://via.placeholder.com/80",
+            }}
+            style={styles.albumArt}
           />
           <View style={{ flex: 1 }}>
             <Text style={styles.albumName} numberOfLines={1}>
-                {title || "Album Inconnu"}
+              {title || "Album Inconnu"}
             </Text>
             <Text style={styles.artistName} numberOfLines={1}>
-                {artist || "Artiste Inconnu"}
+              {artist || "Artiste Inconnu"}
             </Text>
           </View>
         </View>
@@ -82,8 +151,11 @@ const WriteReview = () => {
             value={reviewTitle}
             onChangeText={setReviewTitle}
             maxLength={100}
+            editable={!loading}
           />
-          <Text style={styles.charCount}>{reviewTitle.length} / 100 caractères</Text>
+          <Text style={styles.charCount}>
+            {reviewTitle.length} / 100 caractères
+          </Text>
 
           <Text style={styles.label}>Ton avis *</Text>
           <TextInput
@@ -94,24 +166,38 @@ const WriteReview = () => {
             numberOfLines={6}
             value={review}
             onChangeText={setReview}
+            editable={!loading}
           />
         </View>
 
         {/* Boutons d'Action */}
         <View style={styles.buttonRow}>
-          <TouchableOpacity 
-            style={styles.cancelButton} 
+          <TouchableOpacity
+            style={styles.cancelButton}
             onPress={() => router.back()}
+            disabled={loading}
           >
             <Text style={styles.cancelText}>Annuler</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.publishButton}
+
+          <TouchableOpacity
+            style={[styles.publishButton, loading && { opacity: 0.7 }]}
             onPress={handlePublish}
+            disabled={loading}
           >
-            <Ionicons name="save-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
-            <Text style={styles.publishText}>Publier l'avis</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons
+                  name="save-outline"
+                  size={20}
+                  color="#fff"
+                  style={{ marginRight: 8 }}
+                />
+                <Text style={styles.publishText}>Publier l'avis</Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -122,41 +208,36 @@ const WriteReview = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0f111a', 
+    backgroundColor: "#0f111a",
   },
   container: {
     padding: 20,
   },
   headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 25,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     letterSpacing: 0.5,
   },
   subtitle: {
-    color: '#8e8e93',
+    color: "#8e8e93",
     fontSize: 14,
     marginTop: 4,
   },
-  closeButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 20,
-    padding: 5,
-  },
   albumCard: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    flexDirection: "row",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
     marginBottom: 25,
   },
   albumArt: {
@@ -166,50 +247,50 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   albumName: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   artistName: {
-    color: '#4A90E2', 
+    color: "#4A90E2",
     fontSize: 14,
   },
   formContainer: {
     marginBottom: 30,
   },
   label: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
     marginTop: 20,
   },
   starsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 10,
   },
   input: {
-    backgroundColor: 'rgba(255, 255, 255, 0.07)',
+    backgroundColor: "rgba(255, 255, 255, 0.07)",
     borderRadius: 8,
     padding: 15,
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   textArea: {
     height: 120,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   charCount: {
-    color: '#666',
+    color: "#666",
     fontSize: 12,
     marginTop: 5,
-    textAlign: 'left',
+    textAlign: "left",
   },
   buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     paddingBottom: 40,
   },
   cancelButton: {
@@ -217,24 +298,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     marginRight: 15,
     borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
   cancelText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
   publishButton: {
-    flexDirection: 'row',
-    backgroundColor: '#3b82f6', 
+    flexDirection: "row",
+    backgroundColor: "#3b82f6",
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
+    minWidth: 150,
+    justifyContent: "center",
   },
   publishText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
 });

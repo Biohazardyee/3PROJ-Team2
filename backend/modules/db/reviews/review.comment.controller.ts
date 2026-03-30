@@ -1,12 +1,13 @@
-import type {Request, Response, NextFunction} from 'express';
-import {Controller} from '../../controller.js';
-import {BadRequest} from '../../../utils/errors.js';
-import {ReviewCommentService, reviewCommentService} from './review.comment.service.js';
+import type { Request, Response, NextFunction } from 'express';
+import { Controller } from '../../controller.js';
+import { BadRequest } from '../../../utils/errors.js';
+import { ReviewCommentService, reviewCommentService } from './review.comment.service.js';
 import {
     ReviewCommentAddDto,
     ReviewCommentResponseDto,
     ReviewCommentUpdateDto
 } from "../../../types/reviews/review.comment.dto.js";
+import { getThreadByReview, toggleLike } from './review.comment.helper.js';
 
 class ReviewCommentController extends Controller {
 
@@ -17,16 +18,18 @@ class ReviewCommentController extends Controller {
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const createData: ReviewCommentAddDto = {
-                user_id: req.body.user_id,
+                // ON RÉCUPÈRE L'ID DEPUIS LE TOKEN (req.user), PAS DEPUIS LE BODY
+                user_id: (req as any).user?.id || req.body.user_id,
                 review_id: req.body.review_id,
-                content: req.body.content
+                content: req.body.content,
+                parent_id: req.body.parent_id
             };
 
             if (!createData.user_id || !createData.review_id || !createData.content) {
                 throw new BadRequest('Review_id, user_id and content are required');
             }
 
-            const reviewComment: ReviewCommentAddDto = await this.service.create(createData);
+            const reviewComment: ReviewCommentResponseDto = await this.service.create(createData);
 
             res.status(201).json({
                 message: 'Comment created successfully',
@@ -61,6 +64,22 @@ class ReviewCommentController extends Controller {
             res.status(201).json({
                 message: `Comment retrieved successfully`,
                 reviewComment,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getByReviewId(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const reviewId = req.params.review_id;
+            const userId = (req as any).user?.id; 
+
+            const comments = await getThreadByReview(reviewId, userId);
+
+            res.status(200).json({
+                message: 'Comments retrieved successfully',
+                comments,
             });
         } catch (err) {
             next(err);
@@ -108,6 +127,24 @@ class ReviewCommentController extends Controller {
             res.status(201).json({
                 message: 'Comment deleted successfully',
                 reviewComment,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async toggleLike(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const commentId = req.params.id;
+            const userId = (req as any).user?.id;
+
+            if (!commentId) throw new BadRequest("Comment ID is required");
+
+            const result = await toggleLike(commentId, userId);
+
+            res.status(200).json({
+                message: result.isLiked ? "Comment liked" : "Comment unliked",
+                ...result
             });
         } catch (err) {
             next(err);

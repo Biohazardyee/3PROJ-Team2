@@ -474,6 +474,23 @@ export class UserService {
 
         return userMapper.toDto(user);
     }
+
+    async getProfile(id: string): Promise<UserResponseDto> {
+        if (isEmptyString(id)) {
+            throw new BadRequest('User id is missing from token');
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({
+            where: { id },
+        });
+
+        if (!user) {
+            throw new NotFound('Profile not found');
+        }
+
+
+        return userMapper.toDto(user);
+    }
 }
 
 export const userService = new UserService();

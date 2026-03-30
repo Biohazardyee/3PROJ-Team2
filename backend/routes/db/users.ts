@@ -1,10 +1,15 @@
-import express, {Request, Response, NextFunction, Router} from 'express';
+import express, { Request, Response, NextFunction, Router } from 'express';
 import userController from '../../modules/db/users/user.controller.js';
-import {authGuard} from "../../middlewares/auth.js";
-import {checkAdmin} from "../../middlewares/checkAdmin.js";
-import {checkResourceOwnerOrAdmin} from "../../middlewares/checkResourceOwnerOrAdmin.js";
+import { authGuard } from "../../middlewares/auth.js";
+import { checkAdmin } from "../../middlewares/checkAdmin.js";
+import { checkResourceOwnerOrAdmin } from "../../middlewares/checkResourceOwnerOrAdmin.js";
 
 var router: Router = express.Router();
+
+router.get('/profile', authGuard, function (req: Request, res: Response, next: NextFunction): void {
+    userController.getProfile(req, res, next);
+   
+});
 
 router.post('/signin', function (req: Request, res: Response, next: NextFunction): void {
     userController.add(req, res, next);

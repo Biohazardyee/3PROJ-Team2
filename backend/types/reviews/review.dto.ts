@@ -4,16 +4,27 @@ export interface ReviewResponseDto {
     user_id: string;
     media_id: string;
     rating: number;
-    content: string
+    title: string;
+    content: string;
     created_at: Date;
-    updated_at: Date
+    updated_at: Date;
+    likes_count: number;
+    comments_count: number;
+    isLiked: boolean;
+    user?: {
+        username: string;
+    };
+    media?: {
+        id: string;
+        content: any;
+    };
 }
-
 export interface ReviewResponseAddDto {
     id: string;
     user_id: string;
     media_id: string;
     rating: number;
+    title: string;
     content: string
     created_at: Date;
 }
@@ -29,11 +40,13 @@ export interface ReviewAddDto {
     user_id: string;
     media_id: string;
     rating: number;
+    title: string;
     content: string;
 }
 
-export interface ReviewUpdateDto{
+export interface ReviewUpdateDto {
     rating?: number;
+    title?: string;
     content?: string;
 }
 
@@ -42,9 +55,17 @@ export interface ReviewWithMediaDto {
     user_id: string;
     media_id: string;
     rating: number;
+    title: string;
     content: string;
     created_at: Date;
-    media: {
-        content: unknown;
+    user: {
+        username: string;
     } | null;
+    media: {
+        content: any;
+    } | null;
+    likes?: any[];
+    _count?: {
+        comments: number;
+    };
 }

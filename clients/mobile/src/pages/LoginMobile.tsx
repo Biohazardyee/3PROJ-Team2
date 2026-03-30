@@ -3,6 +3,7 @@ import * as WebBrowser from "expo-web-browser"; // À installer : npx expo insta
 import * as Linking from "expo-linking";
 import * as SecureStore from "expo-secure-store";
 import React, { useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import {
   ScrollView,
   StyleSheet,
@@ -39,13 +40,13 @@ const LoginMobile: React.FC = () => {
       );
 
       if (result.type === "success" && result.url) {
-        // Extraction robuste du token
         const urlParts = result.url.split("token=");
         if (urlParts.length > 1) {
           const token = urlParts[1].split("&")[0];
 
-          // 4. Stockage du token
           await SecureStore.setItemAsync("userToken", token);
+
+          await fetchAndSaveUserProfile(token);
 
           router.replace("/");
         }
@@ -53,6 +54,23 @@ const LoginMobile: React.FC = () => {
     } catch (error) {
       console.error("Erreur OAuth Login:", error);
       Alert.alert("Erreur", "La connexion a échoué.");
+    }
+  };
+
+  const fetchAndSaveUserProfile = async (explicitToken?: string) => {
+    try {
+      const config = explicitToken
+        ? { headers: { Authorization: `Bearer ${explicitToken}` } }
+        : {};
+
+      const profileResponse = await apiClient.get("/users/profile", config);
+
+      const userId = profileResponse.data.id;
+      if (userId) {
+        await SecureStore.setItemAsync("userId", userId);
+      }
+    } catch (error) {
+      console.error("Erreur profil:", error);
     }
   };
 
@@ -70,7 +88,21 @@ const LoginMobile: React.FC = () => {
         password,
       });
 
-      await SecureStore.setItemAsync("userToken", response.data.token);
+      const token = response.data.token;
+      await SecureStore.setItemAsync("userToken", token);
+
+      try {
+        const decoded: any = jwtDecode(token);
+        // Selon ton backend, l'id est souvent dans 'sub' ou 'id'
+        const userId = decoded.id || decoded.sub;
+
+        if (userId) {
+          await SecureStore.setItemAsync("userId", String(userId));
+          console.log("ID utilisateur stocké via token :", userId);
+        }
+      } catch (decodeError) {
+        console.error("Erreur décodage token:", decodeError);
+      }
       Alert.alert("Succès", "Connexion réussie !");
       router.replace("/");
     } catch (error: any) {

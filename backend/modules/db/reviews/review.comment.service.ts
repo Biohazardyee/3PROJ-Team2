@@ -1,14 +1,14 @@
-import {PrismaDb} from '../../../config/database.js';
-import {NotFound, BadRequest} from '../../../utils/errors.js';
-import {isValidStringLength, isEmptyString} from "../../../utils/helpers.js";
+import { PrismaDb } from '../../../config/database.js';
+import { NotFound, BadRequest } from '../../../utils/errors.js';
+import { isValidStringLength, isEmptyString } from "../../../utils/helpers.js";
 import {
     ReviewCommentAddDto,
     ReviewCommentResponseDto,
     ReviewCommentUpdateDto
 } from "../../../types/reviews/review.comment.dto.js";
-import {Users, Reviews, ReviewComments} from "../../../generated/prisma/browser.js";
-import {reviewCommentMapper} from "../../../mappers/reviews/review.comment.mapper.js";
-import {Prisma} from '../../../generated/prisma/client.js';
+import { Users, Reviews, ReviewComments } from "../../../generated/prisma/browser.js";
+import { reviewCommentMapper } from "../../../mappers/reviews/review.comment.mapper.js";
+import { Prisma } from '../../../generated/prisma/client.js';
 
 export class ReviewCommentService {
 
@@ -28,6 +28,11 @@ export class ReviewCommentService {
 
         if (!isValidStringLength(data.content, 1000)) {
             throw new BadRequest("Content length cannot exceed 1000 characters");
+        }
+
+        if (data.parent_id) {
+            const parent = await PrismaDb.reviewComments.findUnique({ where: { id: data.parent_id } });
+            if (!parent) throw new BadRequest("Parent comment does not exist");
         }
 
         const user: Users | null = await PrismaDb.users.findUnique({
@@ -50,8 +55,16 @@ export class ReviewCommentService {
             throw new BadRequest('The review doesn\'t exist');
         }
 
-        const reviewComment: ReviewComments = await PrismaDb.reviewComments.create({
-            data,
+        const reviewComment = await PrismaDb.reviewComments.create({
+            data: {
+                user_id: data.user_id,
+                review_id: data.review_id,
+                content: data.content,
+                parent_id: data.parent_id
+            },
+            include: {
+                user: true,
+            }
         });
 
         return reviewCommentMapper.toDto(reviewComment);

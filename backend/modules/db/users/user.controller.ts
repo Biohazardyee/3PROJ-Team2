@@ -271,6 +271,24 @@ class UserController extends Controller {
             next(err);
         }
     }
+
+
+    async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+
+            const userId = (req as any).user?.id;
+
+            if (!userId) {
+                throw new Unauthorized('User not authenticated');
+            }
+
+            const user: UserResponseDto = await this.service.getProfile(userId);
+
+            res.status(200).json(user);
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 export default new UserController();

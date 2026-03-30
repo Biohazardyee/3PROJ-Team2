@@ -39,6 +39,7 @@ export type ReviewsMinAggregateOutputType = {
   user_id: string | null
   media_id: string | null
   rating: number | null
+  title: string | null
   content: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -49,6 +50,7 @@ export type ReviewsMaxAggregateOutputType = {
   user_id: string | null
   media_id: string | null
   rating: number | null
+  title: string | null
   content: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -59,6 +61,7 @@ export type ReviewsCountAggregateOutputType = {
   user_id: number
   media_id: number
   rating: number
+  title: number
   content: number
   created_at: number
   updated_at: number
@@ -79,6 +82,7 @@ export type ReviewsMinAggregateInputType = {
   user_id?: true
   media_id?: true
   rating?: true
+  title?: true
   content?: true
   created_at?: true
   updated_at?: true
@@ -89,6 +93,7 @@ export type ReviewsMaxAggregateInputType = {
   user_id?: true
   media_id?: true
   rating?: true
+  title?: true
   content?: true
   created_at?: true
   updated_at?: true
@@ -99,6 +104,7 @@ export type ReviewsCountAggregateInputType = {
   user_id?: true
   media_id?: true
   rating?: true
+  title?: true
   content?: true
   created_at?: true
   updated_at?: true
@@ -196,6 +202,7 @@ export type ReviewsGroupByOutputType = {
   user_id: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at: Date
   updated_at: Date
@@ -229,6 +236,7 @@ export type ReviewsWhereInput = {
   user_id?: Prisma.StringFilter<"Reviews"> | string
   media_id?: Prisma.StringFilter<"Reviews"> | string
   rating?: Prisma.IntFilter<"Reviews"> | number
+  title?: Prisma.StringFilter<"Reviews"> | string
   content?: Prisma.StringFilter<"Reviews"> | string
   created_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
@@ -246,6 +254,7 @@ export type ReviewsOrderByWithRelationInput = {
   user_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -267,6 +276,7 @@ export type ReviewsWhereUniqueInput = Prisma.AtLeast<{
   user_id?: Prisma.StringFilter<"Reviews"> | string
   media_id?: Prisma.StringFilter<"Reviews"> | string
   rating?: Prisma.IntFilter<"Reviews"> | number
+  title?: Prisma.StringFilter<"Reviews"> | string
   content?: Prisma.StringFilter<"Reviews"> | string
   created_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
@@ -284,6 +294,7 @@ export type ReviewsOrderByWithAggregationInput = {
   user_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -302,6 +313,7 @@ export type ReviewsScalarWhereWithAggregatesInput = {
   user_id?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
   media_id?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
   rating?: Prisma.IntWithAggregatesFilter<"Reviews"> | number
+  title?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
   content?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Reviews"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Reviews"> | Date | string
@@ -310,6 +322,7 @@ export type ReviewsScalarWhereWithAggregatesInput = {
 export type ReviewsCreateInput = {
   id?: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -327,6 +340,7 @@ export type ReviewsUncheckedCreateInput = {
   user_id: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -340,6 +354,7 @@ export type ReviewsUncheckedCreateInput = {
 export type ReviewsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -357,6 +372,7 @@ export type ReviewsUncheckedUpdateInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -372,6 +388,7 @@ export type ReviewsCreateManyInput = {
   user_id: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -380,6 +397,7 @@ export type ReviewsCreateManyInput = {
 export type ReviewsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -390,6 +408,7 @@ export type ReviewsUncheckedUpdateManyInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -415,6 +434,7 @@ export type ReviewsCountOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -429,6 +449,7 @@ export type ReviewsMaxOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -439,6 +460,7 @@ export type ReviewsMinOrderByAggregateInput = {
   user_id?: Prisma.SortOrder
   media_id?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -629,6 +651,7 @@ export type ReviewsUpdateOneWithoutNotificationsNestedInput = {
 export type ReviewsCreateWithoutUserInput = {
   id?: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -644,6 +667,7 @@ export type ReviewsUncheckedCreateWithoutUserInput = {
   id?: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -688,6 +712,7 @@ export type ReviewsScalarWhereInput = {
   user_id?: Prisma.StringFilter<"Reviews"> | string
   media_id?: Prisma.StringFilter<"Reviews"> | string
   rating?: Prisma.IntFilter<"Reviews"> | number
+  title?: Prisma.StringFilter<"Reviews"> | string
   content?: Prisma.StringFilter<"Reviews"> | string
   created_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Reviews"> | Date | string
@@ -696,6 +721,7 @@ export type ReviewsScalarWhereInput = {
 export type ReviewsCreateWithoutMediaInput = {
   id?: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -711,6 +737,7 @@ export type ReviewsUncheckedCreateWithoutMediaInput = {
   id?: string
   user_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -750,6 +777,7 @@ export type ReviewsUpdateManyWithWhereWithoutMediaInput = {
 export type ReviewsCreateWithoutCommentsInput = {
   id?: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -766,6 +794,7 @@ export type ReviewsUncheckedCreateWithoutCommentsInput = {
   user_id: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -794,6 +823,7 @@ export type ReviewsUpdateToOneWithWhereWithoutCommentsInput = {
 export type ReviewsUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -810,6 +840,7 @@ export type ReviewsUncheckedUpdateWithoutCommentsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -822,6 +853,7 @@ export type ReviewsUncheckedUpdateWithoutCommentsInput = {
 export type ReviewsCreateWithoutLikesInput = {
   id?: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -838,6 +870,7 @@ export type ReviewsUncheckedCreateWithoutLikesInput = {
   user_id: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -866,6 +899,7 @@ export type ReviewsUpdateToOneWithWhereWithoutLikesInput = {
 export type ReviewsUpdateWithoutLikesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -882,6 +916,7 @@ export type ReviewsUncheckedUpdateWithoutLikesInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -894,6 +929,7 @@ export type ReviewsUncheckedUpdateWithoutLikesInput = {
 export type ReviewsCreateWithoutActivitiesInput = {
   id?: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -910,6 +946,7 @@ export type ReviewsUncheckedCreateWithoutActivitiesInput = {
   user_id: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -938,6 +975,7 @@ export type ReviewsUpdateToOneWithWhereWithoutActivitiesInput = {
 export type ReviewsUpdateWithoutActivitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -954,6 +992,7 @@ export type ReviewsUncheckedUpdateWithoutActivitiesInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -966,6 +1005,7 @@ export type ReviewsUncheckedUpdateWithoutActivitiesInput = {
 export type ReviewsCreateWithoutReportsInput = {
   id?: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -982,6 +1022,7 @@ export type ReviewsUncheckedCreateWithoutReportsInput = {
   user_id: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -1010,6 +1051,7 @@ export type ReviewsUpdateToOneWithWhereWithoutReportsInput = {
 export type ReviewsUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1026,6 +1068,7 @@ export type ReviewsUncheckedUpdateWithoutReportsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1038,6 +1081,7 @@ export type ReviewsUncheckedUpdateWithoutReportsInput = {
 export type ReviewsCreateWithoutNotificationsInput = {
   id?: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -1054,6 +1098,7 @@ export type ReviewsUncheckedCreateWithoutNotificationsInput = {
   user_id: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -1082,6 +1127,7 @@ export type ReviewsUpdateToOneWithWhereWithoutNotificationsInput = {
 export type ReviewsUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1098,6 +1144,7 @@ export type ReviewsUncheckedUpdateWithoutNotificationsInput = {
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1111,6 +1158,7 @@ export type ReviewsCreateManyUserInput = {
   id?: string
   media_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -1119,6 +1167,7 @@ export type ReviewsCreateManyUserInput = {
 export type ReviewsUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1134,6 +1183,7 @@ export type ReviewsUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1148,6 +1198,7 @@ export type ReviewsUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   media_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1157,6 +1208,7 @@ export type ReviewsCreateManyMediaInput = {
   id?: string
   user_id: string
   rating: number
+  title: string
   content: string
   created_at?: Date | string
   updated_at?: Date | string
@@ -1165,6 +1217,7 @@ export type ReviewsCreateManyMediaInput = {
 export type ReviewsUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1180,6 +1233,7 @@ export type ReviewsUncheckedUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1194,6 +1248,7 @@ export type ReviewsUncheckedUpdateManyWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1271,6 +1326,7 @@ export type ReviewsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   user_id?: boolean
   media_id?: boolean
   rating?: boolean
+  title?: boolean
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -1289,6 +1345,7 @@ export type ReviewsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   user_id?: boolean
   media_id?: boolean
   rating?: boolean
+  title?: boolean
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -1301,6 +1358,7 @@ export type ReviewsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   user_id?: boolean
   media_id?: boolean
   rating?: boolean
+  title?: boolean
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -1313,12 +1371,13 @@ export type ReviewsSelectScalar = {
   user_id?: boolean
   media_id?: boolean
   rating?: boolean
+  title?: boolean
   content?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type ReviewsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "media_id" | "rating" | "content" | "created_at" | "updated_at", ExtArgs["result"]["reviews"]>
+export type ReviewsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "media_id" | "rating" | "title" | "content" | "created_at" | "updated_at", ExtArgs["result"]["reviews"]>
 export type ReviewsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   media?: boolean | Prisma.MediasDefaultArgs<ExtArgs>
@@ -1354,6 +1413,7 @@ export type $ReviewsPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     user_id: string
     media_id: string
     rating: number
+    title: string
     content: string
     created_at: Date
     updated_at: Date
@@ -1791,6 +1851,7 @@ export interface ReviewsFieldRefs {
   readonly user_id: Prisma.FieldRef<"Reviews", 'String'>
   readonly media_id: Prisma.FieldRef<"Reviews", 'String'>
   readonly rating: Prisma.FieldRef<"Reviews", 'Int'>
+  readonly title: Prisma.FieldRef<"Reviews", 'String'>
   readonly content: Prisma.FieldRef<"Reviews", 'String'>
   readonly created_at: Prisma.FieldRef<"Reviews", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Reviews", 'DateTime'>

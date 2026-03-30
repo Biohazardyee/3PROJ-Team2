@@ -48,6 +48,7 @@ model Users {
   conversations_user1 Conversations[] @relation("conversation_user1")
   conversations_user2 Conversations[] @relation("conversation_user2")
   messages            Messages[]
+  commentLikes        CommentLikes[]
 
   @@unique([provider, provider_id])
 }
@@ -86,6 +87,7 @@ model Reviews {
   media      Medias   @relation(fields: [media_id], references: [id])
   media_id   String
   rating     Int
+  title      String   @db.VarChar(100)
   content    String   @db.VarChar(1000)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -102,14 +104,32 @@ model Reviews {
 }
 
 model ReviewComments {
-  id         String    @id @default(uuid())
-  review     Reviews   @relation(fields: [review_id], references: [id])
-  review_id  String
-  user       Users     @relation(fields: [user_id], references: [id])
+  id         String   @id @default(uuid())
+  content    String   @db.VarChar(1000)
+  created_at DateTime @default(now())
+
+  review    Reviews @relation(fields: [review_id], references: [id])
+  review_id String
+
+  user    Users  @relation(fields: [user_id], references: [id])
+  user_id String
+
+  parent_id String?
+  parent    ReviewComments?  @relation("Thread", fields: [parent_id], references: [id], onDelete: Cascade)
+  replies   ReviewComments[] @relation("Thread")
+
+  reports      Reports[]
+  commentLikes CommentLikes[]
+}
+
+model CommentLikes {
+  user       Users          @relation(fields: [user_id], references: [id])
   user_id    String
-  content    String    @db.VarChar(1000)
-  created_at DateTime  @default(now())
-  reports    Reports[]
+  comment    ReviewComments @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  comment_id String
+  created_at DateTime       @default(now())
+
+  @@id([user_id, comment_id]) 
 }
 
 model ReviewLikes {

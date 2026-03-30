@@ -388,6 +388,7 @@ export const ModelName = {
   Medias: 'Medias',
   Reviews: 'Reviews',
   ReviewComments: 'ReviewComments',
+  CommentLikes: 'CommentLikes',
   ReviewLikes: 'ReviewLikes',
   Playlists: 'Playlists',
   PlaylistItems: 'PlaylistItems',
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "users" | "medias" | "reviews" | "reviewComments" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
+    modelProps: "users" | "medias" | "reviews" | "reviewComments" | "commentLikes" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -711,6 +712,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ReviewCommentsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ReviewCommentsCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommentLikes: {
+      payload: Prisma.$CommentLikesPayload<ExtArgs>
+      fields: Prisma.CommentLikesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommentLikesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommentLikesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>
+        }
+        findFirst: {
+          args: Prisma.CommentLikesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommentLikesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>
+        }
+        findMany: {
+          args: Prisma.CommentLikesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>[]
+        }
+        create: {
+          args: Prisma.CommentLikesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>
+        }
+        createMany: {
+          args: Prisma.CommentLikesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommentLikesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>[]
+        }
+        delete: {
+          args: Prisma.CommentLikesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>
+        }
+        update: {
+          args: Prisma.CommentLikesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommentLikesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommentLikesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommentLikesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommentLikesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommentLikesPayload>
+        }
+        aggregate: {
+          args: Prisma.CommentLikesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommentLikes>
+        }
+        groupBy: {
+          args: Prisma.CommentLikesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommentLikesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommentLikesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommentLikesCountAggregateOutputType> | number
         }
       }
     }
@@ -1604,6 +1679,7 @@ export const ReviewsScalarFieldEnum = {
   user_id: 'user_id',
   media_id: 'media_id',
   rating: 'rating',
+  title: 'title',
   content: 'content',
   created_at: 'created_at',
   updated_at: 'updated_at'
@@ -1614,13 +1690,23 @@ export type ReviewsScalarFieldEnum = (typeof ReviewsScalarFieldEnum)[keyof typeo
 
 export const ReviewCommentsScalarFieldEnum = {
   id: 'id',
+  content: 'content',
+  created_at: 'created_at',
   review_id: 'review_id',
   user_id: 'user_id',
-  content: 'content',
-  created_at: 'created_at'
+  parent_id: 'parent_id'
 } as const
 
 export type ReviewCommentsScalarFieldEnum = (typeof ReviewCommentsScalarFieldEnum)[keyof typeof ReviewCommentsScalarFieldEnum]
+
+
+export const CommentLikesScalarFieldEnum = {
+  user_id: 'user_id',
+  comment_id: 'comment_id',
+  created_at: 'created_at'
+} as const
+
+export type CommentLikesScalarFieldEnum = (typeof CommentLikesScalarFieldEnum)[keyof typeof CommentLikesScalarFieldEnum]
 
 
 export const ReviewLikesScalarFieldEnum = {
@@ -2070,6 +2156,7 @@ export type GlobalOmitConfig = {
   medias?: Prisma.MediasOmit
   reviews?: Prisma.ReviewsOmit
   reviewComments?: Prisma.ReviewCommentsOmit
+  commentLikes?: Prisma.CommentLikesOmit
   reviewLikes?: Prisma.ReviewLikesOmit
   playlists?: Prisma.PlaylistsOmit
   playlistItems?: Prisma.PlaylistItemsOmit

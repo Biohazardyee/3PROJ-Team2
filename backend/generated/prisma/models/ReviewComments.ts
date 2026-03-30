@@ -26,52 +26,58 @@ export type AggregateReviewComments = {
 
 export type ReviewCommentsMinAggregateOutputType = {
   id: string | null
-  review_id: string | null
-  user_id: string | null
   content: string | null
   created_at: Date | null
+  review_id: string | null
+  user_id: string | null
+  parent_id: string | null
 }
 
 export type ReviewCommentsMaxAggregateOutputType = {
   id: string | null
-  review_id: string | null
-  user_id: string | null
   content: string | null
   created_at: Date | null
+  review_id: string | null
+  user_id: string | null
+  parent_id: string | null
 }
 
 export type ReviewCommentsCountAggregateOutputType = {
   id: number
-  review_id: number
-  user_id: number
   content: number
   created_at: number
+  review_id: number
+  user_id: number
+  parent_id: number
   _all: number
 }
 
 
 export type ReviewCommentsMinAggregateInputType = {
   id?: true
-  review_id?: true
-  user_id?: true
   content?: true
   created_at?: true
+  review_id?: true
+  user_id?: true
+  parent_id?: true
 }
 
 export type ReviewCommentsMaxAggregateInputType = {
   id?: true
-  review_id?: true
-  user_id?: true
   content?: true
   created_at?: true
+  review_id?: true
+  user_id?: true
+  parent_id?: true
 }
 
 export type ReviewCommentsCountAggregateInputType = {
   id?: true
-  review_id?: true
-  user_id?: true
   content?: true
   created_at?: true
+  review_id?: true
+  user_id?: true
+  parent_id?: true
   _all?: true
 }
 
@@ -149,10 +155,11 @@ export type ReviewCommentsGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 
 export type ReviewCommentsGroupByOutputType = {
   id: string
-  review_id: string
-  user_id: string
   content: string
   created_at: Date
+  review_id: string
+  user_id: string
+  parent_id: string | null
   _count: ReviewCommentsCountAggregateOutputType | null
   _min: ReviewCommentsMinAggregateOutputType | null
   _max: ReviewCommentsMaxAggregateOutputType | null
@@ -178,24 +185,32 @@ export type ReviewCommentsWhereInput = {
   OR?: Prisma.ReviewCommentsWhereInput[]
   NOT?: Prisma.ReviewCommentsWhereInput | Prisma.ReviewCommentsWhereInput[]
   id?: Prisma.StringFilter<"ReviewComments"> | string
-  review_id?: Prisma.StringFilter<"ReviewComments"> | string
-  user_id?: Prisma.StringFilter<"ReviewComments"> | string
   content?: Prisma.StringFilter<"ReviewComments"> | string
   created_at?: Prisma.DateTimeFilter<"ReviewComments"> | Date | string
+  review_id?: Prisma.StringFilter<"ReviewComments"> | string
+  user_id?: Prisma.StringFilter<"ReviewComments"> | string
+  parent_id?: Prisma.StringNullableFilter<"ReviewComments"> | string | null
   review?: Prisma.XOR<Prisma.ReviewsScalarRelationFilter, Prisma.ReviewsWhereInput>
   user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
+  parent?: Prisma.XOR<Prisma.ReviewCommentsNullableScalarRelationFilter, Prisma.ReviewCommentsWhereInput> | null
+  replies?: Prisma.ReviewCommentsListRelationFilter
   reports?: Prisma.ReportsListRelationFilter
+  commentLikes?: Prisma.CommentLikesListRelationFilter
 }
 
 export type ReviewCommentsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  review_id?: Prisma.SortOrder
-  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  review_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
+  parent_id?: Prisma.SortOrderInput | Prisma.SortOrder
   review?: Prisma.ReviewsOrderByWithRelationInput
   user?: Prisma.UsersOrderByWithRelationInput
+  parent?: Prisma.ReviewCommentsOrderByWithRelationInput
+  replies?: Prisma.ReviewCommentsOrderByRelationAggregateInput
   reports?: Prisma.ReportsOrderByRelationAggregateInput
+  commentLikes?: Prisma.CommentLikesOrderByRelationAggregateInput
 }
 
 export type ReviewCommentsWhereUniqueInput = Prisma.AtLeast<{
@@ -203,21 +218,26 @@ export type ReviewCommentsWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ReviewCommentsWhereInput | Prisma.ReviewCommentsWhereInput[]
   OR?: Prisma.ReviewCommentsWhereInput[]
   NOT?: Prisma.ReviewCommentsWhereInput | Prisma.ReviewCommentsWhereInput[]
-  review_id?: Prisma.StringFilter<"ReviewComments"> | string
-  user_id?: Prisma.StringFilter<"ReviewComments"> | string
   content?: Prisma.StringFilter<"ReviewComments"> | string
   created_at?: Prisma.DateTimeFilter<"ReviewComments"> | Date | string
+  review_id?: Prisma.StringFilter<"ReviewComments"> | string
+  user_id?: Prisma.StringFilter<"ReviewComments"> | string
+  parent_id?: Prisma.StringNullableFilter<"ReviewComments"> | string | null
   review?: Prisma.XOR<Prisma.ReviewsScalarRelationFilter, Prisma.ReviewsWhereInput>
   user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
+  parent?: Prisma.XOR<Prisma.ReviewCommentsNullableScalarRelationFilter, Prisma.ReviewCommentsWhereInput> | null
+  replies?: Prisma.ReviewCommentsListRelationFilter
   reports?: Prisma.ReportsListRelationFilter
+  commentLikes?: Prisma.CommentLikesListRelationFilter
 }, "id">
 
 export type ReviewCommentsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  review_id?: Prisma.SortOrder
-  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  review_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
+  parent_id?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ReviewCommentsCountOrderByAggregateInput
   _max?: Prisma.ReviewCommentsMaxOrderByAggregateInput
   _min?: Prisma.ReviewCommentsMinOrderByAggregateInput
@@ -228,10 +248,11 @@ export type ReviewCommentsScalarWhereWithAggregatesInput = {
   OR?: Prisma.ReviewCommentsScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ReviewCommentsScalarWhereWithAggregatesInput | Prisma.ReviewCommentsScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ReviewComments"> | string
-  review_id?: Prisma.StringWithAggregatesFilter<"ReviewComments"> | string
-  user_id?: Prisma.StringWithAggregatesFilter<"ReviewComments"> | string
   content?: Prisma.StringWithAggregatesFilter<"ReviewComments"> | string
   created_at?: Prisma.DateTimeWithAggregatesFilter<"ReviewComments"> | Date | string
+  review_id?: Prisma.StringWithAggregatesFilter<"ReviewComments"> | string
+  user_id?: Prisma.StringWithAggregatesFilter<"ReviewComments"> | string
+  parent_id?: Prisma.StringNullableWithAggregatesFilter<"ReviewComments"> | string | null
 }
 
 export type ReviewCommentsCreateInput = {
@@ -240,16 +261,22 @@ export type ReviewCommentsCreateInput = {
   created_at?: Date | string
   review: Prisma.ReviewsCreateNestedOneWithoutCommentsInput
   user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
+  parent?: Prisma.ReviewCommentsCreateNestedOneWithoutRepliesInput
+  replies?: Prisma.ReviewCommentsCreateNestedManyWithoutParentInput
   reports?: Prisma.ReportsCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutCommentInput
 }
 
 export type ReviewCommentsUncheckedCreateInput = {
   id?: string
-  review_id: string
-  user_id: string
   content: string
   created_at?: Date | string
+  review_id: string
+  user_id: string
+  parent_id?: string | null
+  replies?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutParentInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutCommentInput
 }
 
 export type ReviewCommentsUpdateInput = {
@@ -258,24 +285,31 @@ export type ReviewCommentsUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   review?: Prisma.ReviewsUpdateOneRequiredWithoutCommentsNestedInput
   user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
+  parent?: Prisma.ReviewCommentsUpdateOneWithoutRepliesNestedInput
+  replies?: Prisma.ReviewCommentsUpdateManyWithoutParentNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUpdateManyWithoutCommentNestedInput
 }
 
 export type ReviewCommentsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  review_id?: Prisma.StringFieldUpdateOperationsInput | string
-  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replies?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutParentNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutCommentNestedInput
 }
 
 export type ReviewCommentsCreateManyInput = {
   id?: string
-  review_id: string
-  user_id: string
   content: string
   created_at?: Date | string
+  review_id: string
+  user_id: string
+  parent_id?: string | null
 }
 
 export type ReviewCommentsUpdateManyMutationInput = {
@@ -286,10 +320,11 @@ export type ReviewCommentsUpdateManyMutationInput = {
 
 export type ReviewCommentsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  review_id?: Prisma.StringFieldUpdateOperationsInput | string
-  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReviewCommentsListRelationFilter = {
@@ -302,33 +337,41 @@ export type ReviewCommentsOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type ReviewCommentsNullableScalarRelationFilter = {
+  is?: Prisma.ReviewCommentsWhereInput | null
+  isNot?: Prisma.ReviewCommentsWhereInput | null
+}
+
 export type ReviewCommentsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  review_id?: Prisma.SortOrder
-  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  review_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
+  parent_id?: Prisma.SortOrder
 }
 
 export type ReviewCommentsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  review_id?: Prisma.SortOrder
-  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  review_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
+  parent_id?: Prisma.SortOrder
 }
 
 export type ReviewCommentsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  review_id?: Prisma.SortOrder
-  user_id?: Prisma.SortOrder
   content?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  review_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
+  parent_id?: Prisma.SortOrder
 }
 
-export type ReviewCommentsNullableScalarRelationFilter = {
-  is?: Prisma.ReviewCommentsWhereInput | null
-  isNot?: Prisma.ReviewCommentsWhereInput | null
+export type ReviewCommentsScalarRelationFilter = {
+  is?: Prisma.ReviewCommentsWhereInput
+  isNot?: Prisma.ReviewCommentsWhereInput
 }
 
 export type ReviewCommentsCreateNestedManyWithoutUserInput = {
@@ -415,6 +458,78 @@ export type ReviewCommentsUncheckedUpdateManyWithoutReviewNestedInput = {
   deleteMany?: Prisma.ReviewCommentsScalarWhereInput | Prisma.ReviewCommentsScalarWhereInput[]
 }
 
+export type ReviewCommentsCreateNestedOneWithoutRepliesInput = {
+  create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutRepliesInput, Prisma.ReviewCommentsUncheckedCreateWithoutRepliesInput>
+  connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutRepliesInput
+  connect?: Prisma.ReviewCommentsWhereUniqueInput
+}
+
+export type ReviewCommentsCreateNestedManyWithoutParentInput = {
+  create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutParentInput, Prisma.ReviewCommentsUncheckedCreateWithoutParentInput> | Prisma.ReviewCommentsCreateWithoutParentInput[] | Prisma.ReviewCommentsUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutParentInput | Prisma.ReviewCommentsCreateOrConnectWithoutParentInput[]
+  createMany?: Prisma.ReviewCommentsCreateManyParentInputEnvelope
+  connect?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+}
+
+export type ReviewCommentsUncheckedCreateNestedManyWithoutParentInput = {
+  create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutParentInput, Prisma.ReviewCommentsUncheckedCreateWithoutParentInput> | Prisma.ReviewCommentsCreateWithoutParentInput[] | Prisma.ReviewCommentsUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutParentInput | Prisma.ReviewCommentsCreateOrConnectWithoutParentInput[]
+  createMany?: Prisma.ReviewCommentsCreateManyParentInputEnvelope
+  connect?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+}
+
+export type ReviewCommentsUpdateOneWithoutRepliesNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutRepliesInput, Prisma.ReviewCommentsUncheckedCreateWithoutRepliesInput>
+  connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutRepliesInput
+  upsert?: Prisma.ReviewCommentsUpsertWithoutRepliesInput
+  disconnect?: Prisma.ReviewCommentsWhereInput | boolean
+  delete?: Prisma.ReviewCommentsWhereInput | boolean
+  connect?: Prisma.ReviewCommentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ReviewCommentsUpdateToOneWithWhereWithoutRepliesInput, Prisma.ReviewCommentsUpdateWithoutRepliesInput>, Prisma.ReviewCommentsUncheckedUpdateWithoutRepliesInput>
+}
+
+export type ReviewCommentsUpdateManyWithoutParentNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutParentInput, Prisma.ReviewCommentsUncheckedCreateWithoutParentInput> | Prisma.ReviewCommentsCreateWithoutParentInput[] | Prisma.ReviewCommentsUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutParentInput | Prisma.ReviewCommentsCreateOrConnectWithoutParentInput[]
+  upsert?: Prisma.ReviewCommentsUpsertWithWhereUniqueWithoutParentInput | Prisma.ReviewCommentsUpsertWithWhereUniqueWithoutParentInput[]
+  createMany?: Prisma.ReviewCommentsCreateManyParentInputEnvelope
+  set?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+  disconnect?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+  delete?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+  connect?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+  update?: Prisma.ReviewCommentsUpdateWithWhereUniqueWithoutParentInput | Prisma.ReviewCommentsUpdateWithWhereUniqueWithoutParentInput[]
+  updateMany?: Prisma.ReviewCommentsUpdateManyWithWhereWithoutParentInput | Prisma.ReviewCommentsUpdateManyWithWhereWithoutParentInput[]
+  deleteMany?: Prisma.ReviewCommentsScalarWhereInput | Prisma.ReviewCommentsScalarWhereInput[]
+}
+
+export type ReviewCommentsUncheckedUpdateManyWithoutParentNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutParentInput, Prisma.ReviewCommentsUncheckedCreateWithoutParentInput> | Prisma.ReviewCommentsCreateWithoutParentInput[] | Prisma.ReviewCommentsUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutParentInput | Prisma.ReviewCommentsCreateOrConnectWithoutParentInput[]
+  upsert?: Prisma.ReviewCommentsUpsertWithWhereUniqueWithoutParentInput | Prisma.ReviewCommentsUpsertWithWhereUniqueWithoutParentInput[]
+  createMany?: Prisma.ReviewCommentsCreateManyParentInputEnvelope
+  set?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+  disconnect?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+  delete?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+  connect?: Prisma.ReviewCommentsWhereUniqueInput | Prisma.ReviewCommentsWhereUniqueInput[]
+  update?: Prisma.ReviewCommentsUpdateWithWhereUniqueWithoutParentInput | Prisma.ReviewCommentsUpdateWithWhereUniqueWithoutParentInput[]
+  updateMany?: Prisma.ReviewCommentsUpdateManyWithWhereWithoutParentInput | Prisma.ReviewCommentsUpdateManyWithWhereWithoutParentInput[]
+  deleteMany?: Prisma.ReviewCommentsScalarWhereInput | Prisma.ReviewCommentsScalarWhereInput[]
+}
+
+export type ReviewCommentsCreateNestedOneWithoutCommentLikesInput = {
+  create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutCommentLikesInput, Prisma.ReviewCommentsUncheckedCreateWithoutCommentLikesInput>
+  connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutCommentLikesInput
+  connect?: Prisma.ReviewCommentsWhereUniqueInput
+}
+
+export type ReviewCommentsUpdateOneRequiredWithoutCommentLikesNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutCommentLikesInput, Prisma.ReviewCommentsUncheckedCreateWithoutCommentLikesInput>
+  connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutCommentLikesInput
+  upsert?: Prisma.ReviewCommentsUpsertWithoutCommentLikesInput
+  connect?: Prisma.ReviewCommentsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ReviewCommentsUpdateToOneWithWhereWithoutCommentLikesInput, Prisma.ReviewCommentsUpdateWithoutCommentLikesInput>, Prisma.ReviewCommentsUncheckedUpdateWithoutCommentLikesInput>
+}
+
 export type ReviewCommentsCreateNestedOneWithoutReportsInput = {
   create?: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutReportsInput, Prisma.ReviewCommentsUncheckedCreateWithoutReportsInput>
   connectOrCreate?: Prisma.ReviewCommentsCreateOrConnectWithoutReportsInput
@@ -436,15 +551,21 @@ export type ReviewCommentsCreateWithoutUserInput = {
   content: string
   created_at?: Date | string
   review: Prisma.ReviewsCreateNestedOneWithoutCommentsInput
+  parent?: Prisma.ReviewCommentsCreateNestedOneWithoutRepliesInput
+  replies?: Prisma.ReviewCommentsCreateNestedManyWithoutParentInput
   reports?: Prisma.ReportsCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutCommentInput
 }
 
 export type ReviewCommentsUncheckedCreateWithoutUserInput = {
   id?: string
-  review_id: string
   content: string
   created_at?: Date | string
+  review_id: string
+  parent_id?: string | null
+  replies?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutParentInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutCommentInput
 }
 
 export type ReviewCommentsCreateOrConnectWithoutUserInput = {
@@ -478,10 +599,11 @@ export type ReviewCommentsScalarWhereInput = {
   OR?: Prisma.ReviewCommentsScalarWhereInput[]
   NOT?: Prisma.ReviewCommentsScalarWhereInput | Prisma.ReviewCommentsScalarWhereInput[]
   id?: Prisma.StringFilter<"ReviewComments"> | string
-  review_id?: Prisma.StringFilter<"ReviewComments"> | string
-  user_id?: Prisma.StringFilter<"ReviewComments"> | string
   content?: Prisma.StringFilter<"ReviewComments"> | string
   created_at?: Prisma.DateTimeFilter<"ReviewComments"> | Date | string
+  review_id?: Prisma.StringFilter<"ReviewComments"> | string
+  user_id?: Prisma.StringFilter<"ReviewComments"> | string
+  parent_id?: Prisma.StringNullableFilter<"ReviewComments"> | string | null
 }
 
 export type ReviewCommentsCreateWithoutReviewInput = {
@@ -489,15 +611,21 @@ export type ReviewCommentsCreateWithoutReviewInput = {
   content: string
   created_at?: Date | string
   user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
+  parent?: Prisma.ReviewCommentsCreateNestedOneWithoutRepliesInput
+  replies?: Prisma.ReviewCommentsCreateNestedManyWithoutParentInput
   reports?: Prisma.ReportsCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutCommentInput
 }
 
 export type ReviewCommentsUncheckedCreateWithoutReviewInput = {
   id?: string
-  user_id: string
   content: string
   created_at?: Date | string
+  user_id: string
+  parent_id?: string | null
+  replies?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutParentInput
   reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutCommentInput
 }
 
 export type ReviewCommentsCreateOrConnectWithoutReviewInput = {
@@ -526,20 +654,194 @@ export type ReviewCommentsUpdateManyWithWhereWithoutReviewInput = {
   data: Prisma.XOR<Prisma.ReviewCommentsUpdateManyMutationInput, Prisma.ReviewCommentsUncheckedUpdateManyWithoutReviewInput>
 }
 
+export type ReviewCommentsCreateWithoutRepliesInput = {
+  id?: string
+  content: string
+  created_at?: Date | string
+  review: Prisma.ReviewsCreateNestedOneWithoutCommentsInput
+  user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
+  parent?: Prisma.ReviewCommentsCreateNestedOneWithoutRepliesInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutCommentInput
+}
+
+export type ReviewCommentsUncheckedCreateWithoutRepliesInput = {
+  id?: string
+  content: string
+  created_at?: Date | string
+  review_id: string
+  user_id: string
+  parent_id?: string | null
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutCommentInput
+}
+
+export type ReviewCommentsCreateOrConnectWithoutRepliesInput = {
+  where: Prisma.ReviewCommentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutRepliesInput, Prisma.ReviewCommentsUncheckedCreateWithoutRepliesInput>
+}
+
+export type ReviewCommentsCreateWithoutParentInput = {
+  id?: string
+  content: string
+  created_at?: Date | string
+  review: Prisma.ReviewsCreateNestedOneWithoutCommentsInput
+  user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
+  replies?: Prisma.ReviewCommentsCreateNestedManyWithoutParentInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutCommentInput
+}
+
+export type ReviewCommentsUncheckedCreateWithoutParentInput = {
+  id?: string
+  content: string
+  created_at?: Date | string
+  review_id: string
+  user_id: string
+  replies?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutParentInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutCommentInput
+  commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutCommentInput
+}
+
+export type ReviewCommentsCreateOrConnectWithoutParentInput = {
+  where: Prisma.ReviewCommentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutParentInput, Prisma.ReviewCommentsUncheckedCreateWithoutParentInput>
+}
+
+export type ReviewCommentsCreateManyParentInputEnvelope = {
+  data: Prisma.ReviewCommentsCreateManyParentInput | Prisma.ReviewCommentsCreateManyParentInput[]
+  skipDuplicates?: boolean
+}
+
+export type ReviewCommentsUpsertWithoutRepliesInput = {
+  update: Prisma.XOR<Prisma.ReviewCommentsUpdateWithoutRepliesInput, Prisma.ReviewCommentsUncheckedUpdateWithoutRepliesInput>
+  create: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutRepliesInput, Prisma.ReviewCommentsUncheckedCreateWithoutRepliesInput>
+  where?: Prisma.ReviewCommentsWhereInput
+}
+
+export type ReviewCommentsUpdateToOneWithWhereWithoutRepliesInput = {
+  where?: Prisma.ReviewCommentsWhereInput
+  data: Prisma.XOR<Prisma.ReviewCommentsUpdateWithoutRepliesInput, Prisma.ReviewCommentsUncheckedUpdateWithoutRepliesInput>
+}
+
+export type ReviewCommentsUpdateWithoutRepliesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review?: Prisma.ReviewsUpdateOneRequiredWithoutCommentsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
+  parent?: Prisma.ReviewCommentsUpdateOneWithoutRepliesNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUpdateManyWithoutCommentNestedInput
+}
+
+export type ReviewCommentsUncheckedUpdateWithoutRepliesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutCommentNestedInput
+}
+
+export type ReviewCommentsUpsertWithWhereUniqueWithoutParentInput = {
+  where: Prisma.ReviewCommentsWhereUniqueInput
+  update: Prisma.XOR<Prisma.ReviewCommentsUpdateWithoutParentInput, Prisma.ReviewCommentsUncheckedUpdateWithoutParentInput>
+  create: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutParentInput, Prisma.ReviewCommentsUncheckedCreateWithoutParentInput>
+}
+
+export type ReviewCommentsUpdateWithWhereUniqueWithoutParentInput = {
+  where: Prisma.ReviewCommentsWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReviewCommentsUpdateWithoutParentInput, Prisma.ReviewCommentsUncheckedUpdateWithoutParentInput>
+}
+
+export type ReviewCommentsUpdateManyWithWhereWithoutParentInput = {
+  where: Prisma.ReviewCommentsScalarWhereInput
+  data: Prisma.XOR<Prisma.ReviewCommentsUpdateManyMutationInput, Prisma.ReviewCommentsUncheckedUpdateManyWithoutParentInput>
+}
+
+export type ReviewCommentsCreateWithoutCommentLikesInput = {
+  id?: string
+  content: string
+  created_at?: Date | string
+  review: Prisma.ReviewsCreateNestedOneWithoutCommentsInput
+  user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
+  parent?: Prisma.ReviewCommentsCreateNestedOneWithoutRepliesInput
+  replies?: Prisma.ReviewCommentsCreateNestedManyWithoutParentInput
+  reports?: Prisma.ReportsCreateNestedManyWithoutCommentInput
+}
+
+export type ReviewCommentsUncheckedCreateWithoutCommentLikesInput = {
+  id?: string
+  content: string
+  created_at?: Date | string
+  review_id: string
+  user_id: string
+  parent_id?: string | null
+  replies?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutParentInput
+  reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutCommentInput
+}
+
+export type ReviewCommentsCreateOrConnectWithoutCommentLikesInput = {
+  where: Prisma.ReviewCommentsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutCommentLikesInput, Prisma.ReviewCommentsUncheckedCreateWithoutCommentLikesInput>
+}
+
+export type ReviewCommentsUpsertWithoutCommentLikesInput = {
+  update: Prisma.XOR<Prisma.ReviewCommentsUpdateWithoutCommentLikesInput, Prisma.ReviewCommentsUncheckedUpdateWithoutCommentLikesInput>
+  create: Prisma.XOR<Prisma.ReviewCommentsCreateWithoutCommentLikesInput, Prisma.ReviewCommentsUncheckedCreateWithoutCommentLikesInput>
+  where?: Prisma.ReviewCommentsWhereInput
+}
+
+export type ReviewCommentsUpdateToOneWithWhereWithoutCommentLikesInput = {
+  where?: Prisma.ReviewCommentsWhereInput
+  data: Prisma.XOR<Prisma.ReviewCommentsUpdateWithoutCommentLikesInput, Prisma.ReviewCommentsUncheckedUpdateWithoutCommentLikesInput>
+}
+
+export type ReviewCommentsUpdateWithoutCommentLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review?: Prisma.ReviewsUpdateOneRequiredWithoutCommentsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
+  parent?: Prisma.ReviewCommentsUpdateOneWithoutRepliesNestedInput
+  replies?: Prisma.ReviewCommentsUpdateManyWithoutParentNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutCommentNestedInput
+}
+
+export type ReviewCommentsUncheckedUpdateWithoutCommentLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replies?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutParentNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutCommentNestedInput
+}
+
 export type ReviewCommentsCreateWithoutReportsInput = {
   id?: string
   content: string
   created_at?: Date | string
   review: Prisma.ReviewsCreateNestedOneWithoutCommentsInput
   user: Prisma.UsersCreateNestedOneWithoutReview_commentsInput
+  parent?: Prisma.ReviewCommentsCreateNestedOneWithoutRepliesInput
+  replies?: Prisma.ReviewCommentsCreateNestedManyWithoutParentInput
+  commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutCommentInput
 }
 
 export type ReviewCommentsUncheckedCreateWithoutReportsInput = {
   id?: string
-  review_id: string
-  user_id: string
   content: string
   created_at?: Date | string
+  review_id: string
+  user_id: string
+  parent_id?: string | null
+  replies?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutParentInput
+  commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutCommentInput
 }
 
 export type ReviewCommentsCreateOrConnectWithoutReportsInput = {
@@ -564,21 +866,28 @@ export type ReviewCommentsUpdateWithoutReportsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   review?: Prisma.ReviewsUpdateOneRequiredWithoutCommentsNestedInput
   user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
+  parent?: Prisma.ReviewCommentsUpdateOneWithoutRepliesNestedInput
+  replies?: Prisma.ReviewCommentsUpdateManyWithoutParentNestedInput
+  commentLikes?: Prisma.CommentLikesUpdateManyWithoutCommentNestedInput
 }
 
 export type ReviewCommentsUncheckedUpdateWithoutReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  review_id?: Prisma.StringFieldUpdateOperationsInput | string
-  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replies?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutParentNestedInput
+  commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutCommentNestedInput
 }
 
 export type ReviewCommentsCreateManyUserInput = {
   id?: string
-  review_id: string
   content: string
   created_at?: Date | string
+  review_id: string
+  parent_id?: string | null
 }
 
 export type ReviewCommentsUpdateWithoutUserInput = {
@@ -586,29 +895,37 @@ export type ReviewCommentsUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   review?: Prisma.ReviewsUpdateOneRequiredWithoutCommentsNestedInput
+  parent?: Prisma.ReviewCommentsUpdateOneWithoutRepliesNestedInput
+  replies?: Prisma.ReviewCommentsUpdateManyWithoutParentNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUpdateManyWithoutCommentNestedInput
 }
 
 export type ReviewCommentsUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  review_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replies?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutParentNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutCommentNestedInput
 }
 
 export type ReviewCommentsUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  review_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReviewCommentsCreateManyReviewInput = {
   id?: string
-  user_id: string
   content: string
   created_at?: Date | string
+  user_id: string
+  parent_id?: string | null
 }
 
 export type ReviewCommentsUpdateWithoutReviewInput = {
@@ -616,22 +933,67 @@ export type ReviewCommentsUpdateWithoutReviewInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
+  parent?: Prisma.ReviewCommentsUpdateOneWithoutRepliesNestedInput
+  replies?: Prisma.ReviewCommentsUpdateManyWithoutParentNestedInput
   reports?: Prisma.ReportsUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUpdateManyWithoutCommentNestedInput
 }
 
 export type ReviewCommentsUncheckedUpdateWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  replies?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutParentNestedInput
   reports?: Prisma.ReportsUncheckedUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutCommentNestedInput
 }
 
 export type ReviewCommentsUncheckedUpdateManyWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  user_id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  parent_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ReviewCommentsCreateManyParentInput = {
+  id?: string
+  content: string
+  created_at?: Date | string
+  review_id: string
+  user_id: string
+}
+
+export type ReviewCommentsUpdateWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review?: Prisma.ReviewsUpdateOneRequiredWithoutCommentsNestedInput
+  user?: Prisma.UsersUpdateOneRequiredWithoutReview_commentsNestedInput
+  replies?: Prisma.ReviewCommentsUpdateManyWithoutParentNestedInput
+  reports?: Prisma.ReportsUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUpdateManyWithoutCommentNestedInput
+}
+
+export type ReviewCommentsUncheckedUpdateWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  replies?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutParentNestedInput
+  reports?: Prisma.ReportsUncheckedUpdateManyWithoutCommentNestedInput
+  commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutCommentNestedInput
+}
+
+export type ReviewCommentsUncheckedUpdateManyWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  review_id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -640,11 +1002,15 @@ export type ReviewCommentsUncheckedUpdateManyWithoutReviewInput = {
  */
 
 export type ReviewCommentsCountOutputType = {
+  replies: number
   reports: number
+  commentLikes: number
 }
 
 export type ReviewCommentsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  replies?: boolean | ReviewCommentsCountOutputTypeCountRepliesArgs
   reports?: boolean | ReviewCommentsCountOutputTypeCountReportsArgs
+  commentLikes?: boolean | ReviewCommentsCountOutputTypeCountCommentLikesArgs
 }
 
 /**
@@ -660,65 +1026,93 @@ export type ReviewCommentsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Typ
 /**
  * ReviewCommentsCountOutputType without action
  */
+export type ReviewCommentsCountOutputTypeCountRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewCommentsWhereInput
+}
+
+/**
+ * ReviewCommentsCountOutputType without action
+ */
 export type ReviewCommentsCountOutputTypeCountReportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ReportsWhereInput
+}
+
+/**
+ * ReviewCommentsCountOutputType without action
+ */
+export type ReviewCommentsCountOutputTypeCountCommentLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommentLikesWhereInput
 }
 
 
 export type ReviewCommentsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  review_id?: boolean
-  user_id?: boolean
   content?: boolean
   created_at?: boolean
+  review_id?: boolean
+  user_id?: boolean
+  parent_id?: boolean
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  parent?: boolean | Prisma.ReviewComments$parentArgs<ExtArgs>
+  replies?: boolean | Prisma.ReviewComments$repliesArgs<ExtArgs>
   reports?: boolean | Prisma.ReviewComments$reportsArgs<ExtArgs>
+  commentLikes?: boolean | Prisma.ReviewComments$commentLikesArgs<ExtArgs>
   _count?: boolean | Prisma.ReviewCommentsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviewComments"]>
 
 export type ReviewCommentsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  review_id?: boolean
-  user_id?: boolean
   content?: boolean
   created_at?: boolean
+  review_id?: boolean
+  user_id?: boolean
+  parent_id?: boolean
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  parent?: boolean | Prisma.ReviewComments$parentArgs<ExtArgs>
 }, ExtArgs["result"]["reviewComments"]>
 
 export type ReviewCommentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  review_id?: boolean
-  user_id?: boolean
   content?: boolean
   created_at?: boolean
+  review_id?: boolean
+  user_id?: boolean
+  parent_id?: boolean
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  parent?: boolean | Prisma.ReviewComments$parentArgs<ExtArgs>
 }, ExtArgs["result"]["reviewComments"]>
 
 export type ReviewCommentsSelectScalar = {
   id?: boolean
-  review_id?: boolean
-  user_id?: boolean
   content?: boolean
   created_at?: boolean
+  review_id?: boolean
+  user_id?: boolean
+  parent_id?: boolean
 }
 
-export type ReviewCommentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "review_id" | "user_id" | "content" | "created_at", ExtArgs["result"]["reviewComments"]>
+export type ReviewCommentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "created_at" | "review_id" | "user_id" | "parent_id", ExtArgs["result"]["reviewComments"]>
 export type ReviewCommentsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  parent?: boolean | Prisma.ReviewComments$parentArgs<ExtArgs>
+  replies?: boolean | Prisma.ReviewComments$repliesArgs<ExtArgs>
   reports?: boolean | Prisma.ReviewComments$reportsArgs<ExtArgs>
+  commentLikes?: boolean | Prisma.ReviewComments$commentLikesArgs<ExtArgs>
   _count?: boolean | Prisma.ReviewCommentsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReviewCommentsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  parent?: boolean | Prisma.ReviewComments$parentArgs<ExtArgs>
 }
 export type ReviewCommentsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   review?: boolean | Prisma.ReviewsDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
+  parent?: boolean | Prisma.ReviewComments$parentArgs<ExtArgs>
 }
 
 export type $ReviewCommentsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -726,14 +1120,18 @@ export type $ReviewCommentsPayload<ExtArgs extends runtime.Types.Extensions.Inte
   objects: {
     review: Prisma.$ReviewsPayload<ExtArgs>
     user: Prisma.$UsersPayload<ExtArgs>
+    parent: Prisma.$ReviewCommentsPayload<ExtArgs> | null
+    replies: Prisma.$ReviewCommentsPayload<ExtArgs>[]
     reports: Prisma.$ReportsPayload<ExtArgs>[]
+    commentLikes: Prisma.$CommentLikesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    review_id: string
-    user_id: string
     content: string
     created_at: Date
+    review_id: string
+    user_id: string
+    parent_id: string | null
   }, ExtArgs["result"]["reviewComments"]>
   composites: {}
 }
@@ -1130,7 +1528,10 @@ export interface Prisma__ReviewCommentsClient<T, Null = never, ExtArgs extends r
   readonly [Symbol.toStringTag]: "PrismaPromise"
   review<T extends Prisma.ReviewsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReviewsDefaultArgs<ExtArgs>>): Prisma.Prisma__ReviewsClient<runtime.Types.Result.GetResult<Prisma.$ReviewsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  parent<T extends Prisma.ReviewComments$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReviewComments$parentArgs<ExtArgs>>): Prisma.Prisma__ReviewCommentsClient<runtime.Types.Result.GetResult<Prisma.$ReviewCommentsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  replies<T extends Prisma.ReviewComments$repliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReviewComments$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewCommentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.ReviewComments$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReviewComments$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  commentLikes<T extends Prisma.ReviewComments$commentLikesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReviewComments$commentLikesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentLikesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1161,10 +1562,11 @@ export interface Prisma__ReviewCommentsClient<T, Null = never, ExtArgs extends r
  */
 export interface ReviewCommentsFieldRefs {
   readonly id: Prisma.FieldRef<"ReviewComments", 'String'>
-  readonly review_id: Prisma.FieldRef<"ReviewComments", 'String'>
-  readonly user_id: Prisma.FieldRef<"ReviewComments", 'String'>
   readonly content: Prisma.FieldRef<"ReviewComments", 'String'>
   readonly created_at: Prisma.FieldRef<"ReviewComments", 'DateTime'>
+  readonly review_id: Prisma.FieldRef<"ReviewComments", 'String'>
+  readonly user_id: Prisma.FieldRef<"ReviewComments", 'String'>
+  readonly parent_id: Prisma.FieldRef<"ReviewComments", 'String'>
 }
     
 
@@ -1561,6 +1963,49 @@ export type ReviewCommentsDeleteManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+ * ReviewComments.parent
+ */
+export type ReviewComments$parentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReviewComments
+   */
+  select?: Prisma.ReviewCommentsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReviewComments
+   */
+  omit?: Prisma.ReviewCommentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewCommentsInclude<ExtArgs> | null
+  where?: Prisma.ReviewCommentsWhereInput
+}
+
+/**
+ * ReviewComments.replies
+ */
+export type ReviewComments$repliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReviewComments
+   */
+  select?: Prisma.ReviewCommentsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReviewComments
+   */
+  omit?: Prisma.ReviewCommentsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewCommentsInclude<ExtArgs> | null
+  where?: Prisma.ReviewCommentsWhereInput
+  orderBy?: Prisma.ReviewCommentsOrderByWithRelationInput | Prisma.ReviewCommentsOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewCommentsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewCommentsScalarFieldEnum | Prisma.ReviewCommentsScalarFieldEnum[]
+}
+
+/**
  * ReviewComments.reports
  */
 export type ReviewComments$reportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1582,6 +2027,30 @@ export type ReviewComments$reportsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.ReportsScalarFieldEnum | Prisma.ReportsScalarFieldEnum[]
+}
+
+/**
+ * ReviewComments.commentLikes
+ */
+export type ReviewComments$commentLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommentLikes
+   */
+  select?: Prisma.CommentLikesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommentLikes
+   */
+  omit?: Prisma.CommentLikesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommentLikesInclude<ExtArgs> | null
+  where?: Prisma.CommentLikesWhereInput
+  orderBy?: Prisma.CommentLikesOrderByWithRelationInput | Prisma.CommentLikesOrderByWithRelationInput[]
+  cursor?: Prisma.CommentLikesWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommentLikesScalarFieldEnum | Prisma.CommentLikesScalarFieldEnum[]
 }
 
 /**

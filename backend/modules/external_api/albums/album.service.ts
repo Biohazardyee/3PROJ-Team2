@@ -12,81 +12,58 @@ const CACHE_TTL_MINUTES = 60;
 export class AlbumService {
 
     async getAlbumInfo(data: {
-        mbid: string;
-        artist: string;
-        album: string;
+        mbid: string; artist: string; album: string;
     }): Promise<any> {
         const { mbid, artist, album } = data;
-
         let api_id: string;
         let url: string;
 
-        // Cas 1 : MBID
         if (!isEmptyString(mbid)) {
             api_id = `album:mbid:${mbid}`;
-
-            url =
-                `${URL}?method=album.getinfo` +
-                `&api_key=${API_KEY}` +
-                `&mbid=${encodeURIComponent(mbid)}` +
-                `&format=json`;
-        }
-
-        // Cas 2 : artist + album
-        else if (
-            !isEmptyString(artist) &&
-            !isEmptyString(album)
-        ) {
+            url = `${URL}?method=album.getinfo&api_key=${API_KEY}&mbid=${encodeURIComponent(mbid)}&format=json`;
+        } else if (!isEmptyString(artist) && !isEmptyString(album)) {
             api_id = `album:name:${artist}:${album}`;
-
-            url =
-                `${URL}?method=album.getinfo` +
-                `&api_key=${API_KEY}` +
-                `&artist=${encodeURIComponent(artist)}` +
-                `&album=${encodeURIComponent(album)}` +
-                `&format=json`;
-        }
-
-        // Aucun des deux
-        else {
+            url = `${URL}?method=album.getinfo&api_key=${API_KEY}&artist=${encodeURIComponent(artist)}&album=${encodeURIComponent(album)}&format=json`;
+        } else {
             throw new BadRequest('You must provide either mbid OR artist + album');
         }
 
-        // Vérifier le cache
-        const cached = await PrismaDb.medias.findUnique({
+
+        let mediaRecord = await PrismaDb.medias.findUnique({
             where: { api_id },
         });
 
-        if (cached && cached.expires_at > new Date()) {
+
+        if (!mediaRecord || mediaRecord.expires_at <= new Date()) {
+            console.log("Appel API LastFM (Cache expiré ou inexistant)");
+            const response = await fetch(url);
+            const albumInfo: any = await response.json();
+
+            if (albumInfo.error) {
+                throw new NotFound(albumInfo.message || 'Album not found');
+            }
+
+            // L'upsert renvoie l'enregistrement complet (avec l'ID)
+            mediaRecord = await PrismaDb.medias.upsert({
+                where: { api_id },
+                update: {
+                    content: albumInfo,
+                    expires_at: new Date(Date.now() + CACHE_TTL_MINUTES * 60 * 1000),
+                },
+                create: {
+                    api_id,
+                    content: albumInfo,
+                    expires_at: new Date(Date.now() + CACHE_TTL_MINUTES * 60 * 1000),
+                },
+            });
+        } else {
             console.log("Cache utilisé");
-            return cached.content;
         }
 
-        // Appel API
-        const response: Response = await fetch(url);
-        const albumInfo: any = await response.json();
-
-        if (albumInfo.error) {
-            throw new NotFound(albumInfo.message || 'Album not found');
-        }
-
-        // Mise en cache
-        await PrismaDb.medias.upsert({
-            where: { api_id },
-            update: {
-                content: albumInfo,
-                expires_at: new Date(Date.now() + CACHE_TTL_MINUTES * 60 * 1000),
-            },
-            create: {
-                api_id,
-                content: albumInfo,
-                expires_at: new Date(Date.now() + CACHE_TTL_MINUTES * 60 * 1000),
-            },
-        });
-
-        console.log("Pas de cache");
-
-        return albumInfo;
+        return {
+            id: mediaRecord.id, 
+            ...(mediaRecord.content as Object) 
+        };
     }
 
     async albumGetTags(data: { mbid: string }): Promise<any> {
