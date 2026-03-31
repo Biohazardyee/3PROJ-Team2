@@ -1,20 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+  Alert,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import Header from "@/src/components/Header";
-import PlaylistCard from "@/src/components/PlaylistCard"; 
-import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import PlaylistCard from "@/src/components/PlaylistCard";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthGuardWrapper } from "../components/AuthGuardMapper";
 
 type Playlist = {
   id: string;
   title: string;
   count: number;
   image: string;
-  isCreate?: boolean; 
-}
+  isCreate?: boolean;
+};
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const Library: React.FC = () => {
   const router = useRouter();
@@ -22,7 +31,7 @@ const Library: React.FC = () => {
 
   const loadPlaylists = async () => {
     try {
-      const savedData = await AsyncStorage.getItem('user_playlists');
+      const savedData = await AsyncStorage.getItem("user_playlists");
       if (savedData) {
         setPlaylists(JSON.parse(savedData));
       }
@@ -33,14 +42,14 @@ const Library: React.FC = () => {
 
   useEffect(() => {
     loadPlaylists();
-    const interval = setInterval(loadPlaylists, 1000); 
+    const interval = setInterval(loadPlaylists, 1000);
     return () => clearInterval(interval);
   }, []);
 
   const deletePlaylist = async (id: string) => {
     try {
-      const newList = playlists.filter(p => p.id !== id);
-      await AsyncStorage.setItem('user_playlists', JSON.stringify(newList));
+      const newList = playlists.filter((p) => p.id !== id);
+      await AsyncStorage.setItem("user_playlists", JSON.stringify(newList));
       setPlaylists(newList);
     } catch (error) {
       console.error("Erreur suppression:", error);
@@ -48,42 +57,45 @@ const Library: React.FC = () => {
   };
 
   const showOptions = (item: Playlist) => {
-    Alert.alert(
-      item.title,
-      "Options de la playlist",
-      [
-        {
-          text: "Modifier",
-          onPress: () => router.push({
-            pathname: '/createplaylist',
-            params: { id: item.id, title: item.title, image: item.image, isEditing: 'true' }
-          })
-        },
-        {
-          text: "Supprimer",
-          style: "destructive",
-          onPress: () => Alert.alert("Supprimer", "Confirmer la suppression ?", [
+    Alert.alert(item.title, "Options de la playlist", [
+      {
+        text: "Modifier",
+        onPress: () =>
+          router.push({
+            pathname: "/createplaylist",
+            params: {
+              id: item.id,
+              title: item.title,
+              image: item.image,
+              isEditing: "true",
+            },
+          }),
+      },
+      {
+        text: "Supprimer",
+        style: "destructive",
+        onPress: () =>
+          Alert.alert("Supprimer", "Confirmer la suppression ?", [
             { text: "Annuler", style: "cancel" },
-            { text: "Supprimer", onPress: () => deletePlaylist(item.id) }
-          ])
-        },
-        { text: "Annuler", style: "cancel" }
-      ]
-    );
+            { text: "Supprimer", onPress: () => deletePlaylist(item.id) },
+          ]),
+      },
+      { text: "Annuler", style: "cancel" },
+    ]);
   };
 
   const dataWithCreate = [
-    ...playlists, 
-    { id: 'create-button-id', isCreate: true } as Playlist
+    ...playlists,
+    { id: "create-button-id", isCreate: true } as Playlist,
   ];
 
   const renderItem = ({ item }: { item: Playlist }) => {
     if (item.isCreate) {
       return (
         <View style={styles.card}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.createCard}
-            onPress={() => router.push('/createplaylist')}
+            onPress={() => router.push("/createplaylist")}
           >
             <Ionicons name="add" size={40} color="#ffffff" />
             <Text style={styles.createLabelInner}>Créer une playlist</Text>
@@ -95,14 +107,16 @@ const Library: React.FC = () => {
     }
 
     return (
-      <PlaylistCard 
-        title={item.title} 
-        count={item.count} 
+      <PlaylistCard
+        title={item.title}
+        count={item.count}
         image={item.image}
-        onPress={() => router.push({
-          pathname: '/playlistdetails',
-          params: { id: item.id, title: item.title}
-        })}
+        onPress={() =>
+          router.push({
+            pathname: "/playlistdetails",
+            params: { id: item.id, title: item.title },
+          })
+        }
         onEdit={() => showOptions(item)}
         onDelete={() => deletePlaylist(item.id)}
       />
@@ -110,76 +124,80 @@ const Library: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Header />
-      <FlatList
-        data={dataWithCreate}
-        keyExtractor={(item) => item.id}
-        numColumns={2} 
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        renderItem={renderItem}
-        ListHeaderComponent={
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.title}>Mes playlists</Text>
-            <Text style={styles.subtitle}>Créez vos propres listes personnalisées</Text>
-          </View>
-        }
-      />
-    </View>
+    <AuthGuardWrapper>
+      <View style={styles.container}>
+        <Header />
+        <FlatList
+          data={dataWithCreate}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+          renderItem={renderItem}
+          ListHeaderComponent={
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.title}>Mes playlists</Text>
+              <Text style={styles.subtitle}>
+                Créez vos propres listes personnalisées
+              </Text>
+            </View>
+          }
+        />
+      </View>
+    </AuthGuardWrapper>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#1C1C28' 
+  container: {
+    flex: 1,
+    backgroundColor: "#1C1C28",
   },
-  headerTextContainer: { 
-    paddingHorizontal: 10, 
-    marginTop: 20, 
-    marginBottom: 25 
+  headerTextContainer: {
+    paddingHorizontal: 10,
+    marginTop: 20,
+    marginBottom: 25,
   },
-  title: { 
-    color: 'white', 
-    fontSize: 32, 
-    fontWeight: 'bold' 
+  title: {
+    color: "white",
+    fontSize: 32,
+    fontWeight: "bold",
   },
-  subtitle: { 
-    color: '#888', 
-    fontSize: 16, 
-    marginTop: 5 
+  subtitle: {
+    color: "#888",
+    fontSize: 16,
+    marginTop: 5,
   },
-  listContainer: { 
-    paddingHorizontal: 8, 
-    paddingBottom: 100 
+  listContainer: {
+    paddingHorizontal: 8,
+    paddingBottom: 100,
   },
-  card: { 
-    flex: 1, 
-    margin: 8, 
-    marginBottom: 20, 
-    maxWidth: (width / 2) - 24 
+  card: {
+    flex: 1,
+    margin: 8,
+    marginBottom: 20,
+    maxWidth: width / 2 - 24,
   },
   createCard: {
-    backgroundColor: '#2A2A38',
-    width: '100%',
-    aspectRatio: 1, 
+    backgroundColor: "#2A2A38",
+    width: "100%",
+    aspectRatio: 1,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: "rgba(255,255,255,0.05)",
   },
-  createLabelInner: { 
-    color: '#ffffff', 
-    fontSize: 12, 
-    fontWeight: '500', 
-    marginTop: 5, 
-    textAlign: 'center' 
+  createLabelInner: {
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: "500",
+    marginTop: 5,
+    textAlign: "center",
   },
-  ghostText: { 
-    fontSize: 14 
-  } 
+  ghostText: {
+    fontSize: 14,
+  },
 });
 
 export default Library;

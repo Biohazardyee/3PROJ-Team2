@@ -1,53 +1,86 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
-  Switch, 
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Switch,
   Alert,
   StatusBar,
-  Platform
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import BackButton from '../components/BackButton'; 
+  Platform,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import BackButton from "../components/BackButton";
+import { useTheme } from "../context/ThemeContext";
+import * as SecureStore from "expo-secure-store";
 
-
+// --- SOUS-COMPOSANT ---
+// On lui passe le `theme` en propriété pour qu'il s'adapte aussi
 type SettingRowProps = {
   icon: keyof typeof Ionicons.glyphMap;
   title: string;
   subtitle?: string;
-  type?: 'link' | 'switch' | 'action';
+  type?: "link" | "switch" | "action";
   value?: boolean;
   onValueChange?: (val: boolean) => void;
   onPress?: () => void;
-  danger?: boolean; 
+  danger?: boolean;
+  theme: any;
 };
 
-const SettingRow = ({ icon, title, subtitle, type = 'link', value, onValueChange, onPress, danger }: SettingRowProps) => (
-  <TouchableOpacity 
-    style={styles.row} 
-    onPress={onPress} 
-    disabled={type === 'switch'} 
+const SettingRow = ({
+  icon,
+  title,
+  subtitle,
+  type = "link",
+  value,
+  onValueChange,
+  onPress,
+  danger,
+  theme,
+}: SettingRowProps) => (
+  <TouchableOpacity
+    style={[styles.row, { borderBottomColor: theme.border }]}
+    onPress={onPress}
+    disabled={type === "switch"}
     activeOpacity={0.7}
   >
-    <View style={[styles.iconContainer, danger && { backgroundColor: 'rgba(255, 77, 77, 0.1)' }]}>
-      <Ionicons name={icon} size={22} color={danger ? '#FF4D4D' : '#6C5CE7'} />
+    <View
+      style={[
+        styles.iconContainer,
+        danger && { backgroundColor: "rgba(255, 77, 77, 0.1)" },
+      ]}
+    >
+      <Ionicons
+        name={icon}
+        size={22}
+        color={danger ? "#FF4D4D" : theme.accent}
+      />
     </View>
-    
     <View style={styles.rowTextContainer}>
-      <Text style={[styles.rowTitle, danger && { color: '#FF4D4D' }]}>{title}</Text>
-      {subtitle && <Text style={styles.rowSubtitle}>{subtitle}</Text>}
+      <Text
+        style={[styles.rowTitle, { color: danger ? "#FF4D4D" : theme.text }]}
+      >
+        {title}
+      </Text>
+      {subtitle && (
+        <Text style={[styles.rowSubtitle, { color: theme.subText }]}>
+          {subtitle}
+        </Text>
+      )}
     </View>
-
-    {type === 'link' && <Ionicons name="chevron-forward" size={20} color="#555" />}
-    {type === 'switch' && (
+    {type === "link" && (
+      <Ionicons name="chevron-forward" size={20} color={theme.subText} />
+    )}
+    {type === "switch" && (
       <Switch
-        trackColor={{ false: '#3e3e3e', true: '#6C5CE7' }}
-        thumbColor={value ? '#fff' : '#f4f3f4'}
+        trackColor={{ false: "#3e3e3e", true: theme.accent }}
+        thumbColor={value ? "#fff" : "#f4f3f4"}
         onValueChange={onValueChange}
         value={value}
       />
@@ -55,205 +88,222 @@ const SettingRow = ({ icon, title, subtitle, type = 'link', value, onValueChange
   </TouchableOpacity>
 );
 
-
+// --- COMPOSANT PRINCIPAL ---
 const Settings = () => {
   const router = useRouter();
-  
-  
-  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  // 1. On récupère le thème et les fonctions depuis notre Context Global !
+  const { isDarkMode, toggleTheme, theme } = useTheme();
+
+  // 2. État local juste pour les notifications
   const [notifications, setNotifications] = useState(true);
 
- 
-  const handleExportData = () => {
-    Alert.alert(
-      "Exporter les données",
-      "Vos playlists et préférences vont être compilées. Un fichier vous sera envoyé par email.",
-      [{ text: "OK", style: "default" }]
-    );
+  useEffect(() => {
+    const loadNotifs = async () => {
+      try {
+        const savedNotifs = await AsyncStorage.getItem("pref_notifications");
+        if (savedNotifs !== null) setNotifications(JSON.parse(savedNotifs));
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadNotifs();
+  }, []);
+
+  const toggleNotifications = async (value: boolean) => {
+    setNotifications(value);
+    await AsyncStorage.setItem("pref_notifications", JSON.stringify(value));
   };
 
+  // 3. VRAIE fonction d'Exportation
+  const handleExportData = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const stores = await AsyncStorage.multiGet(keys);
+      const exportData = Object.fromEntries(stores);
+      const jsonString = JSON.stringify(exportData, null, 2);
+
+      const fileUri =
+        FileSystem.documentDirectory + "mes_donnees_playlist.json";
+      await FileSystem.writeAsStringAsync(fileUri, jsonString);
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri);
+      } else {
+        Alert.alert("Erreur", "Le partage n'est pas disponible.");
+      }
+    } catch (e) {
+      Alert.alert("Erreur", "Impossible d'exporter les données.");
+      console.error(e);
+    }
+  };
+
+  // 4. VRAIE fonction de déconnexion
   const handleLogout = () => {
-    Alert.alert(
-      "Déconnexion",
-      "Êtes-vous sûr de vouloir vous déconnecter de votre compte ?",
-      [
-        { text: "Annuler", style: "cancel" },
-        { 
-          text: "Se déconnecter", 
-          style: "destructive", 
-          onPress: async () => {
-            
-            Alert.alert("Succès", "Vous avez été déconnecté avec succès.");
-            // router.replace('/login'); // Redirection vers la page de connexion
-          } 
-        }
-      ]
-    );
-  };
-
-  const notImplemented = (feature: string) => {
-    Alert.alert("En cours", `La page ${feature} sera bientôt disponible !`);
+    Alert.alert("Déconnexion", "Êtes-vous sûr de vouloir vous déconnecter ?", [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Se déconnecter",
+        style: "destructive",
+        onPress: async () => {
+          await SecureStore.deleteItemAsync("userToken");
+          router.replace("/");
+        },
+      },
+    ]);
   };
 
   return (
-    <View style={styles.container}>
+    // On remplace le backgroundColor fixe par theme.background
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
-      
-      {/* HEADER */}
-      <View style={styles.header}>
+
+      <View style={[styles.header, { backgroundColor: theme.background }]}>
         <BackButton />
-        <Text style={styles.headerTitle}>Paramètres</Text>
-        <View style={{ width: 45 }} /> 
+        <Text style={[styles.headerTitle, { color: theme.text }]}>
+          Paramètres
+        </Text>
+        <View style={{ width: 45 }} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        
-        {/* SECTION : PROFIL */}
         <Text style={styles.sectionTitle}>Mon Compte</Text>
-        <View style={styles.section}>
-          <SettingRow 
-            icon="person-outline" 
-            title="Modifier le profil" 
+        <View style={[styles.section, { backgroundColor: theme.card }]}>
+          <SettingRow
+            theme={theme}
+            icon="person-outline"
+            title="Modifier le profil"
             subtitle="Nom, Email, Mot de passe"
-            onPress={() => notImplemented("Profil")} 
+            onPress={() => router.push("/profilvue")}
           />
         </View>
 
-        {/* SECTION : PRÉFÉRENCES */}
         <Text style={styles.sectionTitle}>Préférences</Text>
-        <View style={styles.section}>
-          <SettingRow 
-            icon="moon-outline" 
-            title="Mode Sombre" 
-            type="switch" 
-            value={isDarkMode} 
-            onValueChange={setIsDarkMode} 
+        <View style={[styles.section, { backgroundColor: theme.card }]}>
+          {/* L'interrupteur est maintenant branché au cerveau (toggleTheme) */}
+          <SettingRow
+            theme={theme}
+            icon="moon-outline"
+            title="Mode Sombre"
+            type="switch"
+            value={isDarkMode}
+            onValueChange={toggleTheme}
           />
-          <SettingRow 
-            icon="notifications-outline" 
-            title="Notifications" 
+          <SettingRow
+            theme={theme}
+            icon="notifications-outline"
+            title="Notifications"
             subtitle="Nouveautés et alertes"
-            type="switch" 
-            value={notifications} 
-            onValueChange={setNotifications} 
+            type="switch"
+            value={notifications}
+            onValueChange={toggleNotifications}
           />
-          <SettingRow 
-            icon="language-outline" 
-            title="Langue" 
+          <SettingRow
+            theme={theme}
+            icon="language-outline"
+            title="Langue"
             subtitle="Français"
-            onPress={() => notImplemented("Langues")} 
+            onPress={() => router.push("/languages")}
           />
         </View>
 
-        {/* SECTION : DONNÉES & SÉCURITÉ */}
-        <Text style={styles.sectionTitle}>Données & Confidentialité</Text>
-        <View style={styles.section}>
-          <SettingRow 
-            icon="shield-checkmark-outline" 
-            title="Confidentialité" 
-            onPress={() => notImplemented("Confidentialité")} 
+        <Text style={styles.sectionTitle}>Données & Sécurité</Text>
+        <View style={[styles.section, { backgroundColor: theme.card }]}>
+          <SettingRow
+            theme={theme}
+            icon="shield-checkmark-outline"
+            title="Confidentialité"
+            onPress={() => router.push("/privacy")}
           />
-          <SettingRow 
-            icon="download-outline" 
-            title="Exporter mes données" 
+          <SettingRow
+            theme={theme}
+            icon="download-outline"
+            title="Exporter mes données"
             type="action"
-            onPress={handleExportData} 
+            onPress={handleExportData}
           />
         </View>
 
-        {/* SECTION : DANGER */}
-        <View style={[styles.section, { marginTop: 20 }]}>
-          <SettingRow 
-            icon="log-out-outline" 
-            title="Se déconnecter" 
+        <View
+          style={[
+            styles.section,
+            { backgroundColor: theme.card, marginTop: 20 },
+          ]}
+        >
+          <SettingRow
+            theme={theme}
+            icon="log-out-outline"
+            title="Se déconnecter"
             type="action"
             danger={true}
-            onPress={handleLogout} 
+            onPress={handleLogout}
           />
         </View>
 
         <Text style={styles.versionText}>Version 1.0.0</Text>
-        
       </ScrollView>
     </View>
   );
 };
 
+// Les styles restent, MAIS on a retiré les couleurs en dur qui ont été gérées dans le JSX plus haut
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#1C1C28' 
-  },
-  header: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'space-between',
+  container: { flex: 1 },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 15,
-    paddingTop: Platform.OS === 'ios' ? 25 : StatusBar.currentHeight ? StatusBar.currentHeight + 10 : 20,
+    paddingTop:
+      Platform.OS === "ios"
+        ? 50
+        : StatusBar.currentHeight
+          ? StatusBar.currentHeight + 10
+          : 20,
     paddingBottom: 15,
-    backgroundColor: '#1C1C28',
   },
-  headerTitle: { 
-    color: 'white', 
-    fontSize: 22, 
-    fontWeight: 'bold', 
-    flex: 1, 
-    textAlign: 'center' 
-  },
-  content: {
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
     flex: 1,
-    paddingHorizontal: 20,
+    textAlign: "center",
   },
+  content: { flex: 1, paddingHorizontal: 20 },
   sectionTitle: {
-    color: '#888',
+    color: "#888",
     fontSize: 14,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
+    fontWeight: "bold",
+    textTransform: "uppercase",
     marginTop: 25,
     marginBottom: 10,
     marginLeft: 5,
   },
-  section: {
-    backgroundColor: '#2A2A38',
-    borderRadius: 15,
-    overflow: 'hidden',
-  },
+  section: { borderRadius: 15, overflow: "hidden" },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.05)',
   },
   iconContainer: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(108, 92, 231, 0.1)', 
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(108, 92, 231, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 15,
   },
-  rowTextContainer: {
-    flex: 1,
-  },
-  rowTitle: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  rowSubtitle: {
-    color: '#AAA',
-    fontSize: 13,
-    marginTop: 2,
-  },
+  rowTextContainer: { flex: 1 },
+  rowTitle: { fontSize: 16, fontWeight: "500" },
+  rowSubtitle: { fontSize: 13, marginTop: 2 },
   versionText: {
-    color: '#555',
-    textAlign: 'center',
+    color: "#555",
+    textAlign: "center",
     marginTop: 40,
     marginBottom: 40,
     fontSize: 14,
-  }
+  },
 });
 
 export default Settings;

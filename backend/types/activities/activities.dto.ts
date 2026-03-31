@@ -28,6 +28,7 @@ export interface FeedItem {
 
 
     user_id?: string;
+    user_image?: string;
     user_name?: string;
     review_id?: string;
     media_id?: string;

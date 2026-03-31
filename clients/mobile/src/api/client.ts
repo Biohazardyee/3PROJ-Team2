@@ -11,7 +11,6 @@ apiClient.interceptors.request.use(
     const token = await SecureStore.getItemAsync("userToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("Token envoyé :", token);
     }
     return config;
   },
@@ -25,7 +24,6 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      console.log("Token invalide ou expiré, nettoyage...");
       await SecureStore.deleteItemAsync("userToken");
       // Optionnel : rediriger vers le login ici
     }

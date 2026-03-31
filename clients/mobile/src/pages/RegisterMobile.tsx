@@ -1,14 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-  Alert,
-} from "react-native";
+import {ScrollView,StyleSheet,Text,TouchableOpacity,View,Image,Alert,} from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 import { ButtonMobile } from "../components/ButtonMobile";
