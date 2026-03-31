@@ -15,7 +15,8 @@ import { albumService } from "../../external_api/albums/album.service.js";
 import { ReviewWithMediaDto } from "../../../types/reviews/review.dto.js";
 import { reviewMapper } from "../../../mappers/reviews/review.mapper.js";
 import Albums from "../../../routes/api/albums.js";
-import { getAverageRating, getImageUrl } from './activity.helper.js';
+import { getAverageRating, getImageUrl, mapToFeedItem } from './activity.helper.js';
+
 
 
 export class ActivityService {
@@ -154,238 +155,112 @@ export class ActivityService {
         return activityMapper.toDto(activity);
     }
 
-    async getUserFeed(user_id: string, limit = 20, offset = 0): Promise<FeedItem[]> {
-        if (isEmptyString(user_id)) {
-            throw new BadRequest('User_id cannot be empty');
-        }
+    async getFriendsFeed(user_id: string, limit = 10, offset = 0): Promise<FeedItem[]> {
+        const following = await PrismaDb.follows.findMany({
+            where: { user_id },
+            select: { follow_user_id: true }
+        });
 
+        // Correction de l'erreur "implicitly has any type" en typant l'argument f
+        const friendIds: string[] = following.map((f: { follow_user_id: string }) => f.follow_user_id);
 
-        const [user, following] = await Promise.all([
-            PrismaDb.users.findUnique({
-                where: { id: user_id },
-                select: { favorite_band: true },
-            }),
-            PrismaDb.follows.findMany({
-                where: { user_id },
-                select: { follow_user_id: true },
-            }),
-        ]);
-
-        if (!user) throw new NotFound('User not found');
-        const friendIds: string[] = following.map(f => f.follow_user_id);
-
-
-        const rawActivities = await PrismaDb.activities.findMany({
-            where: { user_id: { in: [user_id, ...friendIds] } },
+        const activities = await PrismaDb.activities.findMany({
+            where: { user_id: { in: friendIds } },
             include: {
                 user: true,
                 media: true,
                 review: {
                     include: {
-                        _count: {
-                            select: { comments: true, likes: true }
-                        },
-                        likes: {
-                            where: { user_id: user_id }
-                        }
+                        _count: { select: { comments: true, likes: true } },
+                        likes: { where: { user_id } }
                     }
                 }
             },
-            orderBy: { created_at: 'desc' },
             take: limit,
             skip: offset,
+            orderBy: { created_at: 'desc' }
         });
 
-        const activities: ActivityWithRelationsDto[] = activityMapper.toActivityWithRelationsDtoList(rawActivities);
+        return activityMapper.toActivityWithRelationsDtoList(activities as any).map(act => mapToFeedItem(act, 'friends'));
+    }
 
-        const activityFeedItems: FeedItem[] = activities.map((activity, index) => {
-
-            const raw = rawActivities[index];
-
-            return {
-                type: activity.action === 'review_created' ? 'review'
-                    : activity.action === 'rating_added' ? 'like'
-                        : 'comment',
-
-
-                id: activity.review_id ?? activity.id,
-                review_id: activity.review_id ?? undefined,
-                media_id: activity.media_id ?? undefined,
-
-                artist: activity.artist,
-                album: activity.album,
-                cover: activity.cover,
-
-                user_id: activity.user_id,
-                user_name: activity.user_name,
-
-                likes_count: raw.review?._count?.likes ?? 0,
-                comments_count: raw.review?._count?.comments ?? 0,
-                isLiked: (raw.review?.likes?.length ?? 0) > 0,
-
-                // Contenu social
-                created_at: activity.created_at,
-                title: raw.review?.title || activity.title || undefined,
-                content: activity.content ?? undefined,
-                rating: activity.rating ?? undefined,
-            };
+    async getGlobalFeed(limit = 10, offset = 0, current_user_id?: string): Promise<FeedItem[]> {
+        const activities = await PrismaDb.activities.findMany({
+            where: { action: 'review_created' },
+            include: {
+                user: true,
+                media: true,
+                review: {
+                    include: {
+                        _count: { select: { comments: true, likes: true } },
+                        likes: current_user_id ? { where: { user_id: current_user_id } } : false
+                    }
+                }
+            },
+            take: limit,
+            skip: offset,
+            orderBy: { created_at: 'desc' }
         });
 
+        return activityMapper.toActivityWithRelationsDtoList(activities as any).map(act => mapToFeedItem(act, 'global'));
+    }
+
+
+    async getDiscoveryFeed(user_id: string, limit = 10): Promise<FeedItem[]> {
+        const user = await PrismaDb.users.findUnique({
+            where: { id: user_id },
+            select: { favorite_band: true }
+        });
+
+        if (!user) throw new NotFound('User not found');
 
         const rawReviews = await PrismaDb.reviews.findMany({
             where: { user_id, rating: { gte: 4 } },
             include: { media: true },
         });
-        const likedReviews: ReviewWithMediaDto[] = reviewMapper.toReviewWithMediaDtoList(rawReviews);
-
+        const likedReviews = reviewMapper.toReviewWithMediaDtoList(rawReviews);
 
         const favoriteBandRecommendations: FeedItem[] = [];
+
         if (user.favorite_band) {
             try {
                 const topAlbums = await artistService.getTopAlbums({ artist: user.favorite_band });
                 const albums = (topAlbums.topalbums?.album || []).slice(0, 5).map((album: any): FeedItem => ({
+                    id: `reco-fav-${album.name}-${Date.now()}`, 
                     type: 'new_album',
                     artist: user.favorite_band!,
                     album: album.name,
                     cover: getImageUrl(album.image),
-                    created_at: new Date(0),
+                    created_at: new Date(),
                 }));
                 favoriteBandRecommendations.push(...albums);
-
-
-                const artistInfo = await artistService.getArtistInfo({ artist: user.favorite_band });
-                const mbid = artistInfo?.artist?.mbid;
-                if (mbid) {
-                    const similar = await artistService.getSimilarArtists({ mbid });
-                    const similarAlbums = await Promise.all(
-                        (similar.similarartists?.artist || []).slice(0, 5).map(async (similarArtist: any) => {
-                            try {
-                                const albums = await artistService.getTopAlbums({ artist: similarArtist.name });
-                                return (albums.topalbums?.album || []).slice(0, 2).map((album: any): FeedItem => ({
-                                    type: 'recommendation',
-                                    artist: similarArtist.name,
-                                    album: album.name,
-                                    cover: getImageUrl(album.image),
-                                    created_at: new Date(0),
-                                }));
-                            } catch {
-                                return [];
-                            }
-                        })
-                    );
-                    favoriteBandRecommendations.push(...similarAlbums.flat());
-                }
-            } catch {
-                // Si l'API externe fail, on continue sans recos
-            }
+            } catch (e) { console.error("Discovery error:", e); }
         }
 
+        const recommendedAlbumsPromises = likedReviews.map(async (review) => {
+            const artist = (review.media?.content as any)?.album?.artist;
+            if (!artist) return [];
+            try {
+                const top = await artistService.getTopAlbums({ artist });
+                return (top.topalbums?.album || []).slice(0, 2).map((album: any): FeedItem => ({
+                    id: `reco-like-${album.name}-${Math.random()}`, // ID unique
+                    type: 'recommendation',
+                    artist: artist,
+                    album: album.name,
+                    cover: getImageUrl(album.image),
+                    created_at: new Date(),
+                }));
+            } catch { return []; }
+        });
 
-        const recommendedAlbums = await Promise.all(
-            likedReviews.map(async (review: ReviewWithMediaDto) => {
-                const artist = (review.media?.content as any)?.album?.artist;
-                if (!artist) return [];
-                try {
-                    const topAlbums = await artistService.getTopAlbums({ artist });
-                    return (topAlbums.topalbums?.album || []).slice(0, 3).map((album: any): FeedItem => ({
-                        type: 'new_album',
-                        artist: album.artist?.name ?? artist,
-                        album: album.name,
-                        cover: getImageUrl(album.image),
-                        created_at: new Date(0),
-                    }));
-                } catch {
-                    return [];
-                }
-            })
-        );
+        const recommendedAlbums = await Promise.all(recommendedAlbumsPromises);
 
-
-        const similarArtists = await Promise.all(
-            likedReviews.map(async (review: ReviewWithMediaDto) => {
-                const mbid = (review.media?.content as any)?.album?.artist_mbid
-                    ?? (review.media?.content as any)?.album?.mbid;
-                if (!mbid) return [];
-                try {
-                    const similar = await artistService.getSimilarArtists({ mbid });
-                    return similar.similarartists?.artist || [];
-                } catch {
-                    return [];
-                }
-            })
-        );
-
-
-        const similarArtistsAlbumRecommendations = await Promise.all(
-            similarArtists.flat().map(async (artist: any) => {
-                if (!artist?.name) return [];
-                try {
-                    const topAlbums = await artistService.getTopAlbums({ artist: artist.name });
-                    return (topAlbums.topalbums?.album || []).slice(0, 3).map((album: any): FeedItem => ({
-                        type: 'recommendation',
-                        artist: artist.name,
-                        album: album.name,
-                        created_at: new Date(0),
-                    }));
-                } catch {
-                    return [];
-                }
-            })
-        );
-
-
-        const feedItems: FeedItem[] = [
-            ...activityFeedItems,
+        const feedItems = [
             ...favoriteBandRecommendations,
-            ...recommendedAlbums.flat(),
-            ...similarArtistsAlbumRecommendations.flat(),
+            ...recommendedAlbums.flat()
         ];
 
-        const feedWithRatings = await Promise.all(
-            feedItems.map(async (item) => {
-                let currentMediaId = item.media_id;
-
-                if (!currentMediaId) {
-                    const mediaInDb = await PrismaDb.medias.findFirst({
-                        where: {
-                            content: {
-                                path: ['album', 'name'],
-                                equals: item.album,
-                            },
-
-                            AND: [
-                                {
-                                    content: {
-                                        path: ['album', 'artist'],
-                                        equals: item.artist,
-                                    }
-                                }
-                            ]
-                        },
-                        select: { id: true }
-                    });
-
-                    if (mediaInDb) {
-                        currentMediaId = mediaInDb.id;
-                    }
-                }
-
-                if (currentMediaId) {
-                    const avg = await getAverageRating(currentMediaId);
-                    return {
-                        ...item,
-                        media_id: currentMediaId, // On attache l'ID trouvé
-                        average_rating: avg
-                    };
-                }
-
-                return { ...item, average_rating: 0 };
-            })
-        );
-
-        feedWithRatings.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
-
-        return feedWithRatings;
+        return feedItems.sort(() => 0.5 - Math.random()).slice(0, limit);
     }
 }
 

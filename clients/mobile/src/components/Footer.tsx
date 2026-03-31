@@ -46,7 +46,7 @@ const Footer: React.FC = () => {
             </TouchableOpacity>
 
             {/* Profil */}
-            <TouchableOpacity onPress={() => router.push('/restriction')} style={styles.icon}>
+            <TouchableOpacity onPress={() => router.push('/profilvue')} style={styles.icon}>
                 <Ionicons
                     name="person-outline"
                     size={26}

@@ -1,7 +1,7 @@
-import type {Request, Response, NextFunction} from 'express';
-import {Controller} from '../../controller.js';
-import {BadRequest} from '../../../utils/errors.js';
-import {ActivityService, activityService} from './activity.service.js';
+import type { Request, Response, NextFunction } from 'express';
+import { Controller } from '../../controller.js';
+import { BadRequest } from '../../../utils/errors.js';
+import { ActivityService, activityService } from './activity.service.js';
 import {
     ActivityAddDto,
     ActivityDeleteResponseDto,
@@ -111,18 +111,45 @@ class ActivityController extends Controller {
         next();
     }
 
-    async getFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getFriendsFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const user_id: string = req.params.id;
-            const limit: number = parseInt(req.query.limit as string) || 20;
-            const offset: number = parseInt(req.query.offset as string) || 0;
+            const user_id = req.params.id;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const offset = parseInt(req.query.offset as string) || 0;
 
-            const feed: FeedItem[] = await this.service.getUserFeed(user_id, limit, offset);
-
-            res.status(200).json({ message: 'Feed retrieved', feed });
+            const feed = await this.service.getFriendsFeed(user_id, limit, offset);
+            res.status(200).json({
+                message: 'Friends feed retrieved', feed
+            });
         } catch (err) {
             next(err);
         }
+    }
+
+    async getGlobalFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const limit = parseInt(req.query.limit as string) || 10;
+            const offset = parseInt(req.query.offset as string) || 0;
+            const current_user_id = req.query.current_user_id as string;
+
+            const feed = await this.service.getGlobalFeed(limit, offset, current_user_id);
+            res.status(200).json({
+                message: 'Global feed retrieved', feed
+            });
+        } catch (err) { next(err); }
+    }
+
+    async getDiscoveryFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const user_id = req.params.id;
+
+            const limit = parseInt(req.query.limit as string) || 10;
+
+            const feed = await this.service.getDiscoveryFeed(user_id, limit);
+            res.status(200).json({
+                message: 'Discovery feed retrieved', feed
+            });
+        } catch (err) { next(err); }
     }
 }
 

@@ -22,6 +22,8 @@ export interface ActivityAddDto {
 
 export interface FeedItem {
 
+    id: string;
+
     type: 'review' | 'like' | 'comment' | 'new_album' | 'recommendation';
 
 
@@ -40,6 +42,10 @@ export interface FeedItem {
     title?: string;
     content?: string;
     rating?: number;
+
+    likes_count?: number;
+    comments_count?: number;
+    isLiked?: boolean;
 }
 
 export interface ActivityDeleteResponseDto {
