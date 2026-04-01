@@ -14,6 +14,9 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../../../src/api/client";
+import { AuthGuardWrapper } from "@/src/components/AuthGuardMapper";
+import { jwtDecode } from "jwt-decode";
+import * as SecureStore from "expo-secure-store";
 
 interface Comment {
   id: string;
@@ -46,6 +49,8 @@ export default function CommentsScreen() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
 
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
   // Gestion de l'affichage de l'input
   const [isInputVisible, setIsInputVisible] = useState(false);
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
@@ -70,8 +75,28 @@ export default function CommentsScreen() {
   };
 
   useEffect(() => {
-    if (id) fetchData();
-  }, [id]);
+
+      const getUserIdFromToken = async () => {
+        try {
+          const token = await SecureStore.getItemAsync("userToken");
+          if (token) {
+            // On décode le token
+            const decoded: any = jwtDecode(token);
+
+            // Note : selon ton backend, l'ID peut être dans decoded.id,
+            // decoded.sub ou decoded.userId. Vérifie ton payload JWT.
+            const userId = decoded.id || decoded.sub;
+            setCurrentUserId(userId);
+          }
+        } catch (err) {
+          console.error("Erreur décodage token:", err);
+        }
+      };
+
+      getUserIdFromToken();
+      if (id) fetchData();
+    }, [id]);
+    
 
   const orderedComments = useMemo(() => {
     const parents = comments.filter((c) => !c.parent_id);
@@ -83,8 +108,6 @@ export default function CommentsScreen() {
     });
     return result;
   }, [comments]);
-
-  // --- ACTIONS ---
 
   const handleReplyToReview = () => {
     setReplyTo(null);
@@ -152,7 +175,6 @@ export default function CommentsScreen() {
         review_id: review.id,
       });
 
-    
       const { isLiked, likes_count } = response.data;
       setReview((prev) => (prev ? { ...prev, isLiked, likes_count } : null));
     } catch (error) {
@@ -195,8 +217,6 @@ export default function CommentsScreen() {
       },
     ]);
   };
-
-  // --- RENDU ---
 
   const renderHeader = () => {
     if (!review) return null;
@@ -247,6 +267,8 @@ export default function CommentsScreen() {
 
   const renderComment = ({ item }: { item: Comment }) => {
     const isReply = item.parent_id !== null;
+    const isMyComment = currentUserId === item.user?.id;
+
     return (
       <View style={[styles.commentCard, isReply && styles.replyCard]}>
         {isReply && <View style={styles.threadLine} />}
@@ -293,19 +315,23 @@ export default function CommentsScreen() {
               </TouchableOpacity>
             )}
 
-            <TouchableOpacity
-              onPress={() => startEditing(item)}
-              style={styles.actionBtn}
-            >
-              <Text style={styles.actionLabel}>Modifier</Text>
-            </TouchableOpacity>
+            {isMyComment && (
+              <>
+                <TouchableOpacity
+                  onPress={() => startEditing(item)}
+                  style={styles.actionBtn}
+                >
+                  <Text style={styles.actionLabel}>Modifier</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => handleDeleteComment(item.id)}
-              style={styles.actionBtn}
-            >
-              <Ionicons name="trash-outline" size={14} color="#ef4444" />
-            </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleDeleteComment(item.id)}
+                  style={styles.actionBtn}
+                >
+                  <Ionicons name="trash-outline" size={14} color="#ef4444" />
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         </View>
       </View>
@@ -321,81 +347,83 @@ export default function CommentsScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Discussion</Text>
-        <View style={{ width: 24 }} />
+    <AuthGuardWrapper>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Discussion</Text>
+          <View style={{ width: 24 }} />
+        </View>
+
+        <FlatList
+          data={orderedComments}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={renderHeader}
+          contentContainerStyle={styles.listContent}
+          renderItem={renderComment}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>Soyez le premier à répondre !</Text>
+          }
+        />
+
+        {isInputVisible && (
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+            style={styles.absoluteInputWrapper}
+          >
+            <View style={styles.replyHint}>
+              <Text style={{ color: "#94a3b8", fontSize: 12 }}>
+                {editingComment
+                  ? "Modification de votre message"
+                  : replyTo
+                    ? `Réponse à @${replyTo.user.username}`
+                    : "Réponse au message de base"}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsInputVisible(false);
+                  setReplyTo(null);
+                  setEditingComment(null);
+                  setNewComment("");
+                }}
+              >
+                <Ionicons name="close-circle" size={22} color="#ec4899" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                ref={inputRef}
+                style={styles.input}
+                placeholder="Écrivez votre message..."
+                placeholderTextColor="#64748b"
+                value={newComment}
+                onChangeText={setNewComment}
+                multiline
+              />
+              <TouchableOpacity
+                style={[styles.sendBtn, !newComment.trim() && { opacity: 0.5 }]}
+                onPress={handlePostComment}
+                disabled={sending || !newComment.trim()}
+              >
+                {sending ? (
+                  <ActivityIndicator color="white" size="small" />
+                ) : (
+                  <Ionicons
+                    name={editingComment ? "checkmark" : "send"}
+                    size={20}
+                    color="white"
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        )}
       </View>
-
-      <FlatList
-        data={orderedComments}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={renderHeader}
-        contentContainerStyle={styles.listContent}
-        renderItem={renderComment}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>Soyez le premier à répondre !</Text>
-        }
-      />
-
-      {isInputVisible && (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-          style={styles.absoluteInputWrapper}
-        >
-          <View style={styles.replyHint}>
-            <Text style={{ color: "#94a3b8", fontSize: 12 }}>
-              {editingComment
-                ? "Modification de votre message"
-                : replyTo
-                  ? `Réponse à @${replyTo.user.username}`
-                  : "Réponse au message de base"}
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                setIsInputVisible(false);
-                setReplyTo(null);
-                setEditingComment(null);
-                setNewComment("");
-              }}
-            >
-              <Ionicons name="close-circle" size={22} color="#ec4899" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              ref={inputRef}
-              style={styles.input}
-              placeholder="Écrivez votre message..."
-              placeholderTextColor="#64748b"
-              value={newComment}
-              onChangeText={setNewComment}
-              multiline
-            />
-            <TouchableOpacity
-              style={[styles.sendBtn, !newComment.trim() && { opacity: 0.5 }]}
-              onPress={handlePostComment}
-              disabled={sending || !newComment.trim()}
-            >
-              {sending ? (
-                <ActivityIndicator color="white" size="small" />
-              ) : (
-                <Ionicons
-                  name={editingComment ? "checkmark" : "send"}
-                  size={20}
-                  color="white"
-                />
-              )}
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-      )}
-    </View>
+    </AuthGuardWrapper>
   );
 }
 

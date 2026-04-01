@@ -83,6 +83,7 @@ const Feed = () => {
       setIsRefreshing(false);
     }
   };
+  console.log("Premier item du feed:", feedItems[0]?.cover);
 
   useEffect(() => {
     fetchFeed(true);
@@ -111,18 +112,16 @@ const Feed = () => {
     }
 
     const item = feedItems[itemIndex];
-    // On ne like que les reviews
+
     if (item.type !== "review") {
       isInteracting.current = false;
       return;
     }
 
-    // --- MISE À JOUR OPTIMISTE ---
     const currentlyLiked = isItemLiked(item);
     const updatedFeed = [...feedItems];
     const targetItem = { ...updatedFeed[itemIndex] };
 
-    // Inversion locale de l'état
     targetItem.isLiked = !currentlyLiked;
     targetItem.likes_count = currentlyLiked
       ? Math.max(0, (targetItem.likes_count || 1) - 1)
@@ -246,7 +245,11 @@ const Feed = () => {
 
           <View style={styles.postsList}>
             {filteredItems.map((item, index) => {
-              const liked = isItemLiked(item);
+              const liked = !!item.isLiked;
+              // LOGIQUE DE NOTE : Priorité à la note utilisateur (userReviewRating), sinon note globale (globalRating ou rating)
+              const displayRating =
+                item.userReviewRating ?? item.globalRating ?? item.rating ?? 0;
+
               return (
                 <View key={item.id || `feed-${index}`} style={styles.card}>
                   <TouchableOpacity
@@ -255,9 +258,10 @@ const Feed = () => {
                       router.push({
                         pathname: "/albumdetails",
                         params: {
-                          id: item.media_id,
+                          id: item.media_id ?? "",
                           artist: item.artist,
                           album: item.album,
+                          cover: item.cover,
                         },
                       })
                     }
@@ -326,11 +330,14 @@ const Feed = () => {
                               key={i}
                               name="star"
                               size={14}
-                              color={
-                                i < (item.rating || 0) ? "#ec4899" : "#374151"
-                              }
+                              color={i < displayRating ? "#ec4899" : "#374151"}
                             />
                           ))}
+                          {item.hasReviewed && (
+                            <Text style={styles.userRatingBadge}>
+                              VOTRE NOTE
+                            </Text>
+                          )}
                         </View>
                       </View>
                     </View>
@@ -387,7 +394,11 @@ const Feed = () => {
                       </>
                     ) : (
                       <TouchableOpacity
-                        style={[styles.actionButton, styles.writeReviewBtn]}
+                        style={[
+                          styles.actionButton,
+                          styles.writeReviewBtn,
+                          item.hasReviewed && styles.alreadyReviewedBtn,
+                        ]}
                         onPress={() =>
                           router.push({
                             pathname: "/albumdetails",
@@ -400,14 +411,21 @@ const Feed = () => {
                         }
                       >
                         <Ionicons
-                          name="create-outline"
+                          name={
+                            item.hasReviewed
+                              ? "checkmark-circle"
+                              : "create-outline"
+                          }
                           size={18}
-                          color="#ec4899"
+                          color={item.hasReviewed ? "#10b981" : "#ec4899"}
                         />
                         <Text
-                          style={[styles.actionCount, { color: "#ec4899" }]}
+                          style={[
+                            styles.actionCount,
+                            { color: item.hasReviewed ? "#10b981" : "#ec4899" },
+                          ]}
                         >
-                          Écrire une review
+                          {item.hasReviewed ? "Déjà noté" : "Écrire une review"}
                         </Text>
                       </TouchableOpacity>
                     )}
@@ -481,6 +499,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
     gap: 6,
+  },
+  alreadyReviewedBtn: {
+    backgroundColor: "#10b98110",
+    borderColor: "#10b98130",
   },
   filterBtnActive: { backgroundColor: "#2a2e3f" },
   filterBtnText: { color: "#6b7280", fontSize: 12, fontWeight: "600" },
@@ -557,7 +579,17 @@ const styles = StyleSheet.create({
     borderColor: "#ec489930",
     borderWidth: 1,
   },
-  actionCount: { color: "#9ca3af", fontSize: 13, fontWeight: "600" },
+  actionCount: {
+    color: "#9ca3af",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  userRatingBadge: {
+    color: "#ec4899",
+    fontSize: 8,
+    fontWeight: "bold",
+    marginLeft: 4,
+  },
 });
 
 export default Feed;

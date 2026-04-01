@@ -1,0 +1,92 @@
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from 'expo-router';
+
+interface AuthReviewButtonProps {
+  onPress: () => void;
+  isLoggedIn: boolean;
+}
+
+export const AuthReviewButton: React.FC<AuthReviewButtonProps> = ({ onPress, isLoggedIn }) => {
+  const router = useRouter();
+
+  if (!isLoggedIn) {
+    return (
+      <TouchableOpacity 
+        style={styles.guestButton} 
+        onPress={() => router.push('/login')}
+        activeOpacity={0.8}
+      >
+        <LinearGradient
+          colors={['#6366f1', '#ec4899']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradientBorder}
+        >
+          <View style={styles.innerContainer}>
+            <Ionicons name="lock-closed" size={18} color="#ec4899" style={{ marginRight: 10 }} />
+            <Text style={styles.guestText}>Connectez-vous pour donner votre avis</Text>
+          </View>
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  }
+
+  return (
+    <TouchableOpacity style={styles.authButton} onPress={onPress}>
+      <Ionicons name="create-outline" size={20} color="white" style={{ marginRight: 10 }} />
+      <Text style={styles.authText}>Poster un avis sur cet album</Text>
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  // Style "Verrouillé" (Inspiré de ton AuthGuard)
+  guestButton: {
+    height: 55,
+    borderRadius: 15,
+    overflow: 'hidden',
+    marginVertical: 15,
+  },
+  gradientBorder: {
+    flex: 1,
+    padding: 1.5, 
+    borderRadius: 15,
+  },
+  innerContainer: {
+    flex: 1,
+    backgroundColor: '#1C1C28', 
+    borderRadius: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  guestText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  authButton: {
+    backgroundColor: '#4f46e5',
+    height: 55,
+    borderRadius: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 15,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  authText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});

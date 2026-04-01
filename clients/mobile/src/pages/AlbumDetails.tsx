@@ -19,6 +19,7 @@ import apiClient from "../api/client";
 import { ReviewWithMediaDto } from "../../../../backend/types/reviews/review.dto.js";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
+import { AuthReviewButton } from "../components/AuthReviewButton";
 
 const { width } = Dimensions.get("window");
 
@@ -101,23 +102,31 @@ const AlbumDetails = () => {
       let finalAlbumData = null;
 
       if (id) {
-        const res = await apiClient.get(`/medias/${id}`);
-
-        if (res.data.media?.content) {
-          finalAlbumData = res.data.media.content;
+        try {
+          const res = await apiClient.get(`/medias/${id}`);
+          if (res.data.media?.content) {
+            finalAlbumData = res.data.media.content;
+          }
+        } catch (err: any) {
+          if (err.response?.status !== 404) {
+            console.error("Erreur DB Media:", err);
+          }
         }
       }
 
       if (!finalAlbumData && artist && album) {
+        console.log("🔍 Media non trouvé en DB, récupération via Last.fm...");
         const res = await apiClient.get("/api/albums/info", {
           params: { artist, album, mbid },
         });
+
         finalAlbumData = res.data.albumInfo;
       }
 
       setAlbumData(finalAlbumData);
     } catch (error) {
-      console.error("Détails fetch error:", error);
+      console.error("Détails fetch error global:", error);
+      Alert.alert("Erreur", "Impossible de charger les détails de l'album.");
     } finally {
       setLoading(false);
     }
@@ -193,6 +202,28 @@ const AlbumDetails = () => {
       );
     }
     return "https://via.placeholder.com/300";
+  };
+
+  const handleWriteReview = () => {
+    const mediaId = id || albumData?.id || albumData?.mediaId;
+
+    if (!mediaId) {
+      Alert.alert(
+        "Action impossible",
+        "Cet album n'est pas encore synchronisé. Reviens dans un instant.",
+      );
+      return;
+    }
+
+    router.push({
+      pathname: "/writereview",
+      params: {
+        id: mediaId,
+        title: albumData.album?.name || albumData.name,
+        artist: albumData.album?.artist || albumData.artist,
+        cover: getCoverImage(albumData),
+      },
+    });
   };
 
   const averageRating =
@@ -348,11 +379,37 @@ const AlbumDetails = () => {
         <View style={styles.tabContent}>
           {activeTab === "Reviews" ? (
             <View style={{ paddingBottom: 20 }}>
+              <View style={{ alignItems: "center", marginTop: 20 }}>
+                <AuthReviewButton
+                  isLoggedIn={!!currentUserId}
+                  onPress={() => {
+                    const mediaId = id || albumData?.id || albumData?.mediaId;
+                    if (!mediaId) {
+                      Alert.alert(
+                        "Action impossible",
+                        "Cet album n'est pas encore synchronisé.",
+                      );
+                      return;
+                    }
+                    router.push({
+                      pathname: "/writereview",
+                      params: {
+                        id: mediaId,
+                        title: albumData.album?.name || albumData.name,
+                        artist: albumData.album?.artist || albumData.artist,
+                        cover: getCoverImage(albumData),
+                      },
+                    });
+                  }}
+                />
+              </View>
+              
               {loadingReviews ? (
                 <ActivityIndicator color="#ec4899" />
               ) : reviews.length > 0 ? (
                 reviews.map((rev) => (
                   <View key={rev.id} style={styles.reviewCard}>
+                    {/* ... reste du contenu de la carte inchangé ... */}
                     <View style={styles.reviewHeader}>
                       <View style={styles.userInfo}>
                         <Ionicons
@@ -433,34 +490,6 @@ const AlbumDetails = () => {
                   </Text>
                 </View>
               )}
-              <TouchableOpacity
-                style={styles.reviewMiniBtn}
-                onPress={() => {
-                  // 1. On cherche l'ID soit dans les params, soit dans les données chargées
-                  const mediaId = id || albumData?.id || albumData?.mediaId;
-
-                  if (!mediaId) {
-                    Alert.alert(
-                      "Action impossible",
-                      "Cet album n'est pas encore synchronisé. Reviens dans un instant.",
-                    );
-                    return;
-                  }
-
-                  router.push({
-                    pathname: "/writereview",
-                    params: {
-                      id: mediaId,
-
-                      title: albumData.album?.name || albumData.name,
-                      artist: albumData.album?.artist || albumData.artist,
-                      cover: getCoverImage(albumData),
-                    },
-                  });
-                }}
-              >
-                <Text style={styles.reviewMiniBtnText}>Écrire un avis</Text>
-              </TouchableOpacity>
             </View>
           ) : (
             <ScrollView

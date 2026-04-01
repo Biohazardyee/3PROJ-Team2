@@ -29,11 +29,12 @@ router.delete('/likes/:review_id/:user_id', authGuard, checkResourceOwnerOrAdmin
 });
 
 
-router.get('/', authGuard, (req, res, next) => {
+router.get('/', (req, res, next) => {
     ReviewController.getAll(req, res, next);
 });
 
-router.get('/:id', authGuard, (req, res, next) => {
+
+router.get('/:id', (req, res, next) => {
     ReviewController.getById(req, res, next);
 });
 

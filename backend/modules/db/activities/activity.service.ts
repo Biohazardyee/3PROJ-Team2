@@ -3,7 +3,6 @@ import { BadRequest, NotFound } from "../../../utils/errors.js";
 import { isEmptyString } from "../../../utils/helpers.js";
 import {
   Activities,
-  Follows,
   Medias,
   Prisma,
   Reviews,
@@ -13,21 +12,11 @@ import {
   ActivityAddDto,
   ActivityDeleteResponseDto,
   ActivityResponseDto,
-  ActivityWithRelationsDto,
   FeedItem,
-  FollowIdDto,
 } from "../../../types/activities/activities.dto.js";
 import { activityMapper } from "../../../mappers/activities/activities.mapper.js";
 import { artistService } from "../../external_api/artists/artist.service.js";
-import { albumService } from "../../external_api/albums/album.service.js";
-import { ReviewWithMediaDto } from "../../../types/reviews/review.dto.js";
-import { reviewMapper } from "../../../mappers/reviews/review.mapper.js";
-import Albums from "../../../routes/api/albums.js";
-import {
-  getAverageRating,
-  getImageUrl,
-  mapToFeedItem,
-} from "./activity.helper.js";
+import { getImageUrl, mapToFeedItem } from "./activity.helper.js";
 
 export class ActivityService {
   async create(data: ActivityAddDto): Promise<ActivityResponseDto> {
@@ -175,12 +164,12 @@ export class ActivityService {
     const activities = await PrismaDb.activities.findMany({
       where: { user_id: { in: friendIds } },
       include: {
-        user: true, 
+        user: true,
         media: true,
         review: {
           include: {
             media: true,
-            user: true, 
+            user: true,
             _count: { select: { comments: true, likes: true } },
             likes: { where: { user_id } },
           },
@@ -224,7 +213,6 @@ export class ActivityService {
   }
 
   async getDiscoveryFeed(user_id: string, limit = 50): Promise<FeedItem[]> {
-    // Augmenté ici
     const user = await PrismaDb.users.findUnique({
       where: { id: user_id },
       select: { favorite_band: true },
@@ -232,65 +220,132 @@ export class ActivityService {
 
     if (!user) throw new NotFound("User not found");
 
+    const userReviews = await PrismaDb.reviews.findMany({
+      where: { user_id: user_id },
+      select: {
+        rating: true,
+        media: {
+          select: {
+            rating: true,
+            content: true,
+          },
+        },
+      },
+    });
+
+    const getReviewInfo = (albumName: string, artistName: string) => {
+      const review = userReviews.find((r) => {
+        const content = r.media.content as any;
+        return (
+          content?.name?.toLowerCase() === albumName.toLowerCase() &&
+          content?.artist?.toLowerCase() === artistName.toLowerCase()
+        );
+      });
+
+      return {
+        exists: !!review,
+        userRating: review ? review.rating : null,
+        globalRating: review ? review.media.rating : null,
+      };
+    };
+
+    const getMediaStats = async (albumName: string, artistName: string) => {
+      // 1. On cherche d'abord si l'utilisateur a une review (pour sa note perso)
+      const userReview = userReviews.find((r) => {
+        const content = r.media.content as any;
+        return (
+          content?.name?.toLowerCase() === albumName.toLowerCase() &&
+          content?.artist?.toLowerCase() === artistName.toLowerCase()
+        );
+      });
+
+      const mediaInDb = await PrismaDb.medias.findFirst({
+        where: {
+          content: {
+            path: ["name"],
+            equals: albumName,
+          },
+        },
+      });
+
+      return {
+        exists: !!userReview,
+        userRating: userReview ? userReview.rating : null,
+        globalRating: mediaInDb ? mediaInDb.rating : 0,
+        media_id: mediaInDb ? mediaInDb.id : undefined,
+      };
+    };
+
     const favoriteBandRecommendations: FeedItem[] = [];
     const similarArtistsRecommendations: FeedItem[] = [];
 
     if (user.favorite_band) {
       try {
-        // On récupère largement plus pour avoir du choix
         const topAlbumsRes = await artistService.getTopAlbums({
           artist: user.favorite_band,
         } as any);
 
-        // On prend jusqu'à 20 albums du groupe favori
-        const favAlbums = (topAlbumsRes.topalbums?.album || [])
-          .slice(0, 20)
-          .map(
-            (album: any): FeedItem => ({
-              id: `reco-fav-${album.name}-${Date.now()}-${Math.random()}`,
-              type: "new_album",
-              artist: user.favorite_band!,
-              album: album.name,
-              cover: getImageUrl(album.image),
-              created_at: new Date(),
-            }),
-          );
-        favoriteBandRecommendations.push(...favAlbums);
+        const favAlbumsRaw = (topAlbumsRes.topalbums?.album || []).slice(0, 20);
 
-        // On demande explicitement plus d'artistes similaires à l'API
+        for (const album of favAlbumsRaw) {
+          const stats = await getMediaStats(album.name, user.favorite_band!);
+
+          favoriteBandRecommendations.push({
+            id: `reco-fav-${album.name}-${Date.now()}`,
+            type: "new_album",
+            artist: user.favorite_band!,
+            album: album.name,
+            cover: getImageUrl(album.image),
+            created_at: new Date(),
+            hasReviewed: stats.exists,
+            userReviewRating: stats.userRating,
+            globalRating: stats.globalRating,
+            media_id: stats.media_id,
+          });
+        }
+
         const similarRes = await artistService.getSimilarArtists({
           artist: user.favorite_band,
         });
 
-        // On en prend 20 au lieu de 15
         const similarArtists = (similarRes.similarartists?.artist || []).slice(
           0,
           20,
         );
 
-        const similarPromises = similarArtists.map(async (simArtist: any) => {
-          try {
-            const topSim = await artistService.getTopAlbums({
-              artist: simArtist.name,
-            });
-
-            // On prend 3 albums par artiste similaire au lieu de 2
-            return (topSim.topalbums?.album || []).slice(0, 3).map(
-              (album: any): FeedItem => ({
-                id: `reco-sim-${album.name}-${Math.random()}`,
-                type: "recommendation",
+        const similarResults = await Promise.all(
+          similarArtists.map(async (simArtist: any) => {
+            try {
+              const topSim = await artistService.getTopAlbums({
                 artist: simArtist.name,
-                album: album.name,
-                cover: getImageUrl(album.image),
-                created_at: new Date(),
-              }),
-            );
-          } catch {
-            return [];
-          }
-        });
+              });
 
-        const similarResults = await Promise.all(similarPromises);
+              const albums = (topSim.topalbums?.album || []).slice(0, 3);
+
+              // ON UTILISE getMediaStats ICI AUSSI
+              return await Promise.all(
+                albums.map(async (album: any): Promise<FeedItem> => {
+                  const stats = await getMediaStats(album.name, simArtist.name);
+
+                  return {
+                    id: `reco-sim-${album.name}-${Math.random()}`,
+                    type: "recommendation",
+                    artist: simArtist.name,
+                    album: album.name,
+                    cover: getImageUrl(album.image),
+                    created_at: new Date(),
+                    hasReviewed: stats.exists,
+                    userReviewRating: stats.userRating,
+                    globalRating: stats.globalRating || 0,
+                    media_id: stats.media_id,
+                  };
+                }),
+              );
+            } catch {
+              return [];
+            }
+          }),
+        );
         similarArtistsRecommendations.push(...similarResults.flat());
       } catch (e) {
         console.error("Discovery error:", e);
@@ -301,10 +356,6 @@ export class ActivityService {
       ...favoriteBandRecommendations,
       ...similarArtistsRecommendations,
     ];
-
-    console.log(`Total items trouvés avant limit: ${feedItems.length}`); // Debug pour voir le volume réel
-
-    // On trie et on applique la limite demandée
     return feedItems.sort(() => Math.random() - 0.5).slice(0, limit);
   }
 }

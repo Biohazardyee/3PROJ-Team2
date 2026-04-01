@@ -13,6 +13,7 @@ export class MediaMapper extends BaseMapper<Medias, MediaResponseDto> {
             id: media.id,
             api_id: media.api_id,
             created_at: media.created_at,
+            rating: media.rating ?? 0,
         };
     }
 }
