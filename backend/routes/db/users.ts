@@ -11,6 +11,10 @@ router.get('/profile', authGuard, function (req: Request, res: Response, next: N
    
 });
 
+router.patch('/profile', authGuard, function (req: Request, res: Response, next: NextFunction): void {
+    userController.updateProfile(req, res, next);
+});
+
 router.post('/signin', function (req: Request, res: Response, next: NextFunction): void {
     userController.add(req, res, next);
 });

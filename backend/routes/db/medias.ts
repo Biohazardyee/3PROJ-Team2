@@ -24,6 +24,14 @@ router.get(
 );
 
 router.get(
+  "/status/user/:user_id",
+  authGuard,
+  function (req: Request, res: Response, next: NextFunction): void {
+    MediaStatusController.getByUser(req, res, next);
+  },
+);
+
+router.get(
   "/status/:user_id/:media_id",
   authGuard,
   function (req: Request, res: Response, next: NextFunction): void {

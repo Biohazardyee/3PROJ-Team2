@@ -1,21 +1,68 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Header from "@/src/components/Header";
-import StatCard from "@/src/components/StatCard";
 import { AuthGuardWrapper } from "../components/AuthGuardMapper";
+import StatCardStats from "../components/StatCardStats";
+import apiClient from "../api/client";
+import { jwtDecode } from "jwt-decode"; // Assure-toi d'avoir installé jwt-decode
+import * as SecureStore from "expo-secure-store";
 
 const Stats = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    listened: 0,
+    later: 0,
+    favorite: 0,
+    disliked: 0,
+  });
+
+  useEffect(() => {
+    loadUserStats();
+  }, []);
+
+  const loadUserStats = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("userToken");
+      if (!token) return;
+
+      const decoded: any = jwtDecode(token);
+      const userId = decoded.id; // Vérifie si ton token contient 'id' ou 'sub'
+
+      const response = await apiClient.get(`/medias/status/user/${userId}`);
+      const data = response.data.mediasStatus;
+
+      // Calcul des totaux selon les enums du backend
+      const counts = {
+        listened: data.filter((m: any) => m.status === "listened").length,
+        later: data.filter((m: any) => m.status === "later").length,
+        favorite: data.filter((m: any) => m.status === "favorite").length,
+        disliked: data.filter((m: any) => m.status === "disliked").length,
+      };
+
+      setStats(counts);
+    } catch (error) {
+      console.error("Erreur lors du chargement des stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const pieData = [
-    { value: 87, color: "#00ffa3" },
-    { value: 12, color: "#3b82f6" },
-    { value: 34, color: "#fbbf24" },
-    { value: 5, color: "#f43f5e" },
+    { value: stats.listened, color: "#00ffa3" },
+    { value: stats.later, color: "#3b82f6" },
+    { value: stats.favorite, color: "#fbbf24" },
+    { value: stats.disliked, color: "#f43f5e" },
   ];
 
   const Legend = ({ item, color }: { item: string; color: string }) => (
@@ -24,6 +71,14 @@ const Stats = () => {
       <Text style={styles.legendLabel}>{item}</Text>
     </View>
   );
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color="#3b82f6" />
+      </View>
+    );
+  }
 
   return (
     <AuthGuardWrapper>
@@ -38,36 +93,53 @@ const Stats = () => {
           </View>
 
           <View style={styles.grid}>
-            <StatCard
+            <StatCardStats
               title="Écoutés"
-              count="12"
+              count={stats.listened.toString()}
               icon="check-circle-outline"
               color="#00ffa3"
-              onPress={() => router.push("/listeningstat")}
+              onPress={() =>
+                router.push({
+                  pathname: "/statDetails",
+                  params: { type: "listened" },
+                })
+              }
             />
-
-            <StatCard
+            <StatCardStats
               title="À écouter plus tard"
-              count="34"
+              count={stats.later.toString()}
               icon="playlist-music"
-              color="#4747ff"
-              onPress={() => router.push("/listeninglaterstat")}
+              color="#3b82f6"
+              onPress={() =>
+                router.push({
+                  pathname: "/statDetails",
+                  params: { type: "later" },
+                })
+              }
             />
-
-            <StatCard
+            <StatCardStats
               title="Favoris"
-              count="34"
+              count={stats.favorite.toString()}
               icon="star"
               color="#fbbf24"
-              onPress={() => router.push("/favoritestat")}
+              onPress={() =>
+                router.push({
+                  pathname: "/statDetails",
+                  params: { type: "favorite" },
+                })
+              }
             />
-
-            <StatCard
+            <StatCardStats
               title="Je n'aime pas"
-              count="5"
+              count={stats.disliked.toString()}
               icon="close-circle-outline"
               color="#f43f5e"
-              onPress={() => router.push("/dontlikestat")}
+              onPress={() =>
+                router.push({
+                  pathname: "/statDetails",
+                  params: { type: "disliked" },
+                })
+              }
             />
           </View>
 
@@ -79,22 +151,29 @@ const Stats = () => {
               </Text>
             </View>
             <View style={styles.pieWrapper}>
-              <PieChart
-                donut
-                radius={80}
-                innerRadius={60}
-                data={pieData}
-                innerCircleColor={"#2A2A38"}
-                centerLabelComponent={() => (
-                  <Icon name="music" size={50} color="#ad46ff" />
-                )}
-              />
+              {stats.listened + stats.later + stats.favorite + stats.disliked >
+              0 ? (
+                <PieChart
+                  donut
+                  radius={80}
+                  innerRadius={60}
+                  data={pieData}
+                  innerCircleColor={"#2A2A38"}
+                  centerLabelComponent={() => (
+                    <Icon name="music" size={50} color="#ad46ff" />
+                  )}
+                />
+              ) : (
+                <Text style={{ color: "#888", paddingVertical: 20 }}>
+                  Aucune donnée
+                </Text>
+              )}
             </View>
             <View style={styles.legendGrid}>
               <Legend item="Écoutés" color="#00ffa3" />
-              <Legend item="À écouter plus tard" color="#3b82f6" />
+              <Legend item="À écouter" color="#3b82f6" />
               <Legend item="Favoris" color="#fbbf24" />
-              <Legend item="Je n'aime pas" color="#f43f5e" />
+              <Legend item="Détestés" color="#f43f5e" />
             </View>
           </View>
         </ScrollView>

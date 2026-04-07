@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,26 +9,30 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
+  Modal,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Header from "@/src/components/Header";
-import StatCard from "@/src/components/StatCard";
 import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
-import { useCallback } from "react";
-import apiClient from "../api/client";
-import { ReviewWithMediaDto } from "../../../../backend/types/reviews/review.dto.js";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
+
+// Composants & Helpers
+import Header from "@/src/components/Header";
+import StatCard from "@/src/components/StatCard";
 import { AuthReviewButton } from "../components/AuthReviewButton";
+import apiClient from "../api/client";
+import { getValidSource } from "@/helpers/helpers";
 
 const { width } = Dimensions.get("window");
 
 type TabType = "Reviews" | "Similar";
 
 const AlbumDetails = () => {
-  const { id, mbid, artist, album } = useLocalSearchParams();
+  const { id, mbid, artist, album, cover } = useLocalSearchParams();
   const router = useRouter();
 
+  // États
   const [loading, setLoading] = useState(true);
   const [albumData, setAlbumData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<TabType>("Reviews");
@@ -38,37 +42,222 @@ const AlbumDetails = () => {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userStatus, setUserStatus] = useState<string | null>(null);
+  const [userPlaylists, setUserPlaylists] = useState<any[]>([]);
+  const [loadingPlaylists, setLoadingPlaylists] = useState(false);
+  const [selectedPlaylists, setSelectedPlaylists] = useState<string[]>([]);
 
-  // Récupérer l'ID utilisateur au montage
+  // Valeur calculée pour l'ID unique du média
+  const mediaId = id || albumData?.id || albumData?.mediaId;
+
+  // 1. Initialisation : User & Album
   useEffect(() => {
-    const getUserId = async () => {
-      const token = await SecureStore.getItemAsync("userToken");
-      if (token) {
-        const decoded: any = jwtDecode(token);
-        setCurrentUserId(decoded.id);
+    const initUser = async () => {
+      try {
+        const token = await SecureStore.getItemAsync("userToken");
+        if (token) {
+          const decoded: any = jwtDecode(token);
+          setCurrentUserId(decoded.id);
+        }
+      } catch (err) {
+        console.error("Erreur décodage token:", err);
       }
     };
-    getUserId();
+    initUser();
     fetchAlbumDetails();
-  }, [id, mbid, artist, album]);
+  }, [id, mbid]);
+
+  // 2. Récupération du statut utilisateur (Ecouté, Favori...)
+  // Dans votre useEffect de statut
+  useEffect(() => {
+    const fetchCurrentStatus = async () => {
+      // On utilise EXCLUSIVEMENT l'ID de la DB ici
+      if (currentUserId && albumData?.db_id) {
+        try {
+          const res = await apiClient.get(
+            `/medias/status/${currentUserId}/${albumData.db_id}`,
+          );
+          if (res.data.mediaStatus) {
+            setUserStatus(res.data.mediaStatus.status);
+          }
+        } catch (err) {
+          setUserStatus(null);
+        }
+      }
+    };
+    fetchCurrentStatus();
+  }, [currentUserId, albumData?.db_id]);
 
   useFocusEffect(
     useCallback(() => {
-      if (albumData || (artist && album)) {
-        fetchReviews();
-        if (activeTab === "Similar" && similarAlbums.length === 0) {
-          fetchSimilar();
+      fetchReviews();
+      if (activeTab === "Similar" && similarAlbums.length === 0) {
+        fetchSimilar();
+      }
+    }, [activeTab, artist, album, mediaId]),
+  );
+
+  const fetchUserPlaylists = async () => {
+    if (!currentUserId || !mediaId) {
+      console.log("❌ Manque d'infos pour fetch :", { currentUserId, mediaId });
+      return;
+    }
+
+    try {
+      setLoadingPlaylists(true);
+      const res = await apiClient.get(`/playlists/user/${currentUserId}`);
+      const playlists = res.data.playlists || [];
+      setUserPlaylists(playlists);
+
+      // LOG DE DEBUG : Vérifie si le mediaId que tu as en main est bien celui de ta DB
+      console.log("🔍 Comparaison avec MediaId local :", mediaId);
+
+      const alreadyIn = playlists
+        .filter((pl: any) => {
+          // On vérifie si UN des items de la playlist a le même media_id
+          return pl.items?.some((item: any) => {
+            const match = String(item.media_id) === String(mediaId);
+            if (match) console.log(`✅ Match trouvé dans playlist: ${pl.name}`);
+            return match;
+          });
+        })
+        .map((pl: any) => pl.id);
+
+      setSelectedPlaylists(alreadyIn);
+    } catch (err) {
+      console.error("Erreur chargement playlists:", err);
+    } finally {
+      setLoadingPlaylists(false);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUserId && mediaId) {
+      fetchUserPlaylists();
+    }
+  }, [currentUserId, mediaId]); // Se relance si l'ID de l'album change
+
+  useEffect(() => {
+    if (showPlaylistSelector) fetchUserPlaylists();
+  }, [showPlaylistSelector]);
+
+  const handleAddToPlaylists = async () => {
+    if (!mediaId) return;
+
+    try {
+      // 1. On récupère l'état actuel en base de données pour comparer
+      // (Les playlists où l'album était déjà présent avant modification)
+      const res = await apiClient.get(`/playlists/user/${currentUserId}`);
+      const initialPlaylists = res.data.playlists || [];
+      const initiallySelected = initialPlaylists
+        .filter((pl: any) =>
+          pl.items?.some(
+            (item: any) => String(item.media_id) === String(mediaId),
+          ),
+        )
+        .map((pl: any) => pl.id);
+
+      // 2. Déterminer les playlists à ajouter et celles à supprimer
+      const toAdd = selectedPlaylists.filter(
+        (id: any) => !initiallySelected.includes(id),
+      );
+      const toRemove = initiallySelected.filter(
+        (id: any) => !selectedPlaylists.includes(id),
+      );
+
+      const promises = [
+        ...toAdd.map((id: any) =>
+          apiClient.post("/playlist-items", {
+            playlist_id: id,
+            media_id: mediaId,
+          }),
+        ),
+        ...toRemove.map((id: any) =>
+          apiClient.delete(`/playlist-items/remove`, {
+            data: { playlist_id: id, media_id: mediaId },
+          }),
+        ),
+      ];
+
+      await Promise.all(promises);
+
+      Alert.alert("Succès", "Vos playlists ont été mises à jour.");
+      setShowPlaylistSelector(false);
+      fetchUserPlaylists(); // Rafraîchir l'état local
+    } catch (err: any) {
+      Alert.alert("Erreur", "Impossible de mettre à jour les playlists.");
+    }
+  };
+
+  // 1. Modifie fetchAlbumDetails pour récupérer l'ID correct après sync
+  const fetchAlbumDetails = async () => {
+    try {
+      setLoading(true);
+      let finalData = null;
+
+      // Si on a un ID qui ressemble à un UUID (venant de la DB)
+      if (id && id.includes("-")) {
+        try {
+          const res = await apiClient.get(`/medias/${id}`);
+          if (res.data.media) {
+            finalData = res.data.media.content;
+            // TRÈS IMPORTANT : On s'assure que l'ID de l'albumData est l'ID DB
+            finalData.db_id = res.data.media.id;
+          }
+        } catch (err) {
+          console.log("Média non trouvé en DB, tentative API...");
         }
       }
-    }, [activeTab, albumData, artist, album]),
-  );
+
+      // Si pas trouvé en DB ou si on arrive via une recherche LastFM directe
+      if (!finalData && artist && album) {
+        const res = await apiClient.get("/api/albums/info", {
+          params: { artist, album, mbid },
+        });
+        finalData = res.data.albumInfo;
+
+        // On harmonise l'ID de recherche pour la synchro
+        // On enlève les espaces et on met en minuscule pour être sûr
+        const cleanArtist = String(artist).trim();
+        const cleanAlbum = String(album).trim();
+        const fallbackId = `album:${cleanArtist}:${cleanAlbum}`;
+
+        try {
+          const syncRes = await apiClient.post("/medias/sync-search", {
+            albums: [
+              {
+                api_id: mbid || fallbackId, 
+                name: cleanAlbum,
+                artist: cleanArtist,
+                cover: cover,
+                mbid: mbid || null,
+              },
+            ],
+          });
+
+          if (syncRes.data.medias?.length > 0) {
+            finalData.db_id = syncRes.data.medias[0].id;
+          }
+        } catch (syncErr) {
+          console.warn("Échec sync en détails", syncErr);
+       
+        }
+      }
+      setAlbumData(finalData);
+    } catch (error) {
+      Alert.alert("Erreur", "Impossible de charger les détails.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const mediaIdInDB = albumData?.db_id || (id?.includes("-") ? id : null);
 
   const fetchReviews = async () => {
     try {
       setLoadingReviews(true);
       const res = await apiClient.get("/reviews");
       const allReviews = res.data.reviews || [];
-
       const targetArtist = String(artist || "")
         .toLowerCase()
         .trim();
@@ -87,48 +276,11 @@ const AlbumDetails = () => {
           .trim();
         return revArtist === targetArtist && revAlbum === targetAlbum;
       });
-
       setReviews(filtered);
     } catch (err) {
       console.error("Erreur avis:", err);
     } finally {
       setLoadingReviews(false);
-    }
-  };
-
-  const fetchAlbumDetails = async () => {
-    try {
-      setLoading(true);
-      let finalAlbumData = null;
-
-      if (id) {
-        try {
-          const res = await apiClient.get(`/medias/${id}`);
-          if (res.data.media?.content) {
-            finalAlbumData = res.data.media.content;
-          }
-        } catch (err: any) {
-          if (err.response?.status !== 404) {
-            console.error("Erreur DB Media:", err);
-          }
-        }
-      }
-
-      if (!finalAlbumData && artist && album) {
-        console.log("🔍 Media non trouvé en DB, récupération via Last.fm...");
-        const res = await apiClient.get("/api/albums/info", {
-          params: { artist, album, mbid },
-        });
-
-        finalAlbumData = res.data.albumInfo;
-      }
-
-      setAlbumData(finalAlbumData);
-    } catch (error) {
-      console.error("Détails fetch error global:", error);
-      Alert.alert("Erreur", "Impossible de charger les détails de l'album.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -143,38 +295,67 @@ const AlbumDetails = () => {
       });
       setSimilarAlbums(res.data.similarAlbums || []);
     } catch (err) {
-      console.error("Erreur similar albums:", err);
+      console.error("Erreur similaires:", err);
     } finally {
       setLoadingSimilar(false);
     }
   };
 
+  const handleStatusChange = async (newStatus: string) => {
+    if (!currentUserId) return Alert.alert("Connexion requise", "...");
+
+    // Utilise la nouvelle variable sécurisée
+    if (!mediaIdInDB) {
+      return Alert.alert(
+        "Patience",
+        "Le média est en cours de synchronisation avec la base de données.",
+      );
+    }
+
+    const previousStatus = userStatus;
+    const isDeselecting = userStatus === newStatus;
+
+    try {
+      setUserStatus(isDeselecting ? null : newStatus);
+      if (isDeselecting) {
+        await apiClient.delete(
+          `/medias/status/${currentUserId}/${mediaIdInDB}`,
+        );
+      } else {
+        await apiClient.post(`/medias/status`, {
+          user_id: currentUserId,
+          media_id: mediaIdInDB, 
+          status: newStatus,
+        });
+      }
+    } catch (error) {
+      setUserStatus(previousStatus);
+      console.error("Erreur status:", error.response?.data);
+      Alert.alert("Erreur", "La mise à jour a échoué.");
+    }
+  };
+
   const handleToggleLike = async (reviewId: string) => {
-    if (!currentUserId) {
-      Alert.alert(
+    if (!currentUserId)
+      return Alert.alert(
         "Connexion requise",
-        "Tu dois être connecté pour liker un avis.",
+        "L'action est réservée aux membres.",
       );
-      return;
-    }
 
-    const reviewIndex = reviews.findIndex((r) => r.id === reviewId);
-    if (reviewIndex === -1) return;
-
-    const review = reviews[reviewIndex];
-    const isLiked = review.likes?.some((l: any) => l.user_id === currentUserId);
-
-    const updatedReviews = [...reviews];
-    if (isLiked) {
-      updatedReviews[reviewIndex].likes = review.likes.filter(
-        (l: any) => l.user_id !== currentUserId,
-      );
-    } else {
-      updatedReviews[reviewIndex].likes = [
-        ...(review.likes || []),
-        { user_id: currentUserId },
-      ];
-    }
+    const updatedReviews = reviews.map((rev) => {
+      if (rev.id === reviewId) {
+        const isLiked = rev.likes?.some(
+          (l: any) => l.user_id === currentUserId,
+        );
+        return {
+          ...rev,
+          likes: isLiked
+            ? rev.likes.filter((l: any) => l.user_id !== currentUserId)
+            : [...(rev.likes || []), { user_id: currentUserId }],
+        };
+      }
+      return rev;
+    });
     setReviews(updatedReviews);
 
     try {
@@ -183,47 +364,8 @@ const AlbumDetails = () => {
         user_id: currentUserId,
       });
     } catch (error) {
-      console.error("Erreur toggle like:", error);
       fetchReviews();
-      Alert.alert("Erreur", "L'action n'a pas pu être enregistrée.");
     }
-  };
-
-  const getCoverImage = (item: any) => {
-    if (!item) return "https://via.placeholder.com/300";
-
-    const target = item.album ? item.album : item;
-
-    if (Array.isArray(target.image)) {
-      const extralarge = target.image.find((i: any) => i.size === "extralarge");
-      return (
-        extralarge?.["#text"] ||
-        target.image[target.image.length - 1]?.["#text"]
-      );
-    }
-    return "https://via.placeholder.com/300";
-  };
-
-  const handleWriteReview = () => {
-    const mediaId = id || albumData?.id || albumData?.mediaId;
-
-    if (!mediaId) {
-      Alert.alert(
-        "Action impossible",
-        "Cet album n'est pas encore synchronisé. Reviens dans un instant.",
-      );
-      return;
-    }
-
-    router.push({
-      pathname: "/writereview",
-      params: {
-        id: mediaId,
-        title: albumData.album?.name || albumData.name,
-        artist: albumData.album?.artist || albumData.artist,
-        cover: getCoverImage(albumData),
-      },
-    });
   };
 
   const averageRating =
@@ -231,16 +373,10 @@ const AlbumDetails = () => {
       ? reviews.reduce((acc, rev) => acc + rev.rating, 0) / reviews.length
       : 0;
 
-  if (loading)
+  if (loading || !albumData)
     return (
       <View style={[styles.container, styles.center]}>
         <ActivityIndicator size="large" color="#ec4899" />
-      </View>
-    );
-  if (!albumData)
-    return (
-      <View style={[styles.container, styles.center]}>
-        <Text style={{ color: "white" }}>Album introuvable.</Text>
       </View>
     );
 
@@ -251,19 +387,17 @@ const AlbumDetails = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        {/* Cover Section */}
         <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: getCoverImage(albumData) }}
-            style={styles.coverImage}
-          />
+          <Image source={getValidSource(cover)} style={styles.coverImage} />
         </View>
 
         <View style={styles.paddingContent}>
+          {/* Tags */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.badgeRow}
-            contentContainerStyle={styles.badgeScrollContent}
           >
             {albumData.album?.tags?.tag?.map((t: any, i: number) => (
               <View
@@ -278,9 +412,14 @@ const AlbumDetails = () => {
             ))}
           </ScrollView>
 
-          <Text style={styles.albumTitle}>{albumData.album?.name}</Text>
-          <Text style={styles.artistName}>{albumData.album?.artist}</Text>
+          <Text style={styles.albumTitle}>
+            {albumData.album?.name || albumData.name}
+          </Text>
+          <Text style={styles.artistName}>
+            {albumData.album?.artist || albumData.artist}
+          </Text>
 
+          {/* Rating */}
           <View style={styles.ratingRow}>
             <View style={styles.starsRow}>
               {[1, 2, 3, 4, 5].map((s) => (
@@ -298,43 +437,50 @@ const AlbumDetails = () => {
             <Text style={styles.ratingCount}>({reviews.length} avis)</Text>
           </View>
 
+          {/* Actions Grid */}
           <View style={styles.actionButtons}>
             <View style={styles.grid}>
               <StatCard
                 title="Écouté"
                 icon="check-circle-outline"
                 color="#00ffa3"
-                showCheckbox
+                checked={userStatus === "listened"}
+                onPress={() => handleStatusChange("listened")}
               />
               <StatCard
                 title="Plus tard"
                 icon="playlist-music"
                 color="#4747ff"
-                showCheckbox
+                checked={userStatus === "later"}
+                onPress={() => handleStatusChange("later")}
               />
               <StatCard
                 title="Favori"
                 icon="star"
                 color="#fbbf24"
-                showCheckbox
+                checked={userStatus === "favorite"}
+                onPress={() => handleStatusChange("favorite")}
               />
               <StatCard
                 title="Dislike"
                 icon="close-circle-outline"
                 color="#f43f5e"
-                showCheckbox
+                checked={userStatus === "disliked"}
+                onPress={() => handleStatusChange("disliked")}
               />
             </View>
+
             <TouchableOpacity
               style={styles.primaryButton}
-              onPress={() => setShowPlaylistSelector(!showPlaylistSelector)}
+              onPress={() => setShowPlaylistSelector(true)}
             >
               <Text style={styles.primaryButtonText}>
-                {showPlaylistSelector ? "Annuler" : "Ajouter à une playlist"}
+                Ajouter à une playlist
               </Text>
             </TouchableOpacity>
           </View>
 
+          {/* Bio Section */}
           <View style={styles.aboutSection}>
             <Text style={styles.sectionTitle}>À propos</Text>
             <Text style={styles.aboutText}>
@@ -347,69 +493,57 @@ const AlbumDetails = () => {
           </View>
         </View>
 
+        {/* Tabs Menu */}
         <View style={styles.tabsContainer}>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === "Reviews" && styles.activeTab]}
-            onPress={() => setActiveTab("Reviews")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "Reviews" && styles.activeTabText,
-              ]}
+          {(["Reviews", "Similar"] as TabType[]).map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, activeTab === tab && styles.activeTab]}
+              onPress={() => setActiveTab(tab)}
             >
-              Avis
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === "Similar" && styles.activeTab]}
-            onPress={() => setActiveTab("Similar")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "Similar" && styles.activeTabText,
-              ]}
-            >
-              Similaires
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === tab && styles.activeTabText,
+                ]}
+              >
+                {tab === "Reviews" ? "Avis" : "Similaires"}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
+        {/* Tab Content */}
         <View style={styles.tabContent}>
           {activeTab === "Reviews" ? (
             <View style={{ paddingBottom: 20 }}>
-              <View style={{ alignItems: "center", marginTop: 20 }}>
+              <View style={{ alignItems: "center", marginVertical: 15 }}>
                 <AuthReviewButton
                   isLoggedIn={!!currentUserId}
                   onPress={() => {
-                    const mediaId = id || albumData?.id || albumData?.mediaId;
-                    if (!mediaId) {
-                      Alert.alert(
-                        "Action impossible",
-                        "Cet album n'est pas encore synchronisé.",
+                    if (!mediaId)
+                      return Alert.alert(
+                        "Patience",
+                        "L'album se synchronise...",
                       );
-                      return;
-                    }
                     router.push({
                       pathname: "/writereview",
                       params: {
                         id: mediaId,
                         title: albumData.album?.name || albumData.name,
                         artist: albumData.album?.artist || albumData.artist,
-                        cover: getCoverImage(albumData),
+                        cover: cover,
                       },
                     });
                   }}
                 />
               </View>
-              
+
               {loadingReviews ? (
                 <ActivityIndicator color="#ec4899" />
               ) : reviews.length > 0 ? (
                 reviews.map((rev) => (
                   <View key={rev.id} style={styles.reviewCard}>
-                    {/* ... reste du contenu de la carte inchangé ... */}
                     <View style={styles.reviewHeader}>
                       <View style={styles.userInfo}>
                         <Ionicons
@@ -473,7 +607,7 @@ const AlbumDetails = () => {
                             color="#94a3b8"
                           />
                           <Text style={styles.actionCountText}>
-                            {rev._count?.comments ?? rev.comments_count ?? 0}
+                            {rev._count?.comments ?? 0}
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -484,11 +618,9 @@ const AlbumDetails = () => {
                   </View>
                 ))
               ) : (
-                <View style={styles.emptyState}>
-                  <Text style={styles.emptyText}>
-                    Aucun avis. Soyez le premier !
-                  </Text>
-                </View>
+                <Text style={styles.emptyText}>
+                  Soyez le premier à donner votre avis !
+                </Text>
               )}
             </View>
           ) : (
@@ -510,12 +642,15 @@ const AlbumDetails = () => {
                         params: {
                           artist: item.artist.name || item.artist,
                           album: item.name,
+                          cover: item.image?.[3]?.["#text"] || item.cover,
                         },
                       })
                     }
                   >
                     <Image
-                      source={{ uri: getCoverImage(item) }}
+                      source={getValidSource(
+                        item.image?.[2]?.["#text"] || item.cover,
+                      )}
                       style={styles.similarCover}
                     />
                     <Text numberOfLines={1} style={styles.similarTitle}>
@@ -528,60 +663,124 @@ const AlbumDetails = () => {
           )}
         </View>
       </ScrollView>
+
+      {/* MODAL PLAYLIST */}
+      <Modal
+        visible={showPlaylistSelector}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowPlaylistSelector(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setShowPlaylistSelector(false)}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Ajouter à une playlist</Text>
+              <TouchableOpacity onPress={() => setShowPlaylistSelector(false)}>
+                <Ionicons name="close" size={24} color="#94a3b8" />
+              </TouchableOpacity>
+            </View>
+
+            {loadingPlaylists ? (
+              <ActivityIndicator color="#ec4899" style={{ margin: 20 }} />
+            ) : (
+              <ScrollView style={styles.modalScroll}>
+                {userPlaylists.map((pl) => {
+                  const isSelected = selectedPlaylists.includes(pl.id);
+                  return (
+                    <TouchableOpacity
+                      key={pl.id}
+                      style={[
+                        styles.playlistItem,
+                        isSelected && styles.playlistItemActive,
+                      ]}
+                      onPress={() =>
+                        setSelectedPlaylists((prev) =>
+                          isSelected
+                            ? prev.filter((id) => id !== pl.id)
+                            : [...prev, pl.id],
+                        )
+                      }
+                    >
+                      <View
+                        style={[
+                          styles.checkbox,
+                          isSelected && styles.checkboxActive,
+                        ]}
+                      >
+                        {isSelected && (
+                          <Ionicons name="checkmark" size={16} color="white" />
+                        )}
+                      </View>
+                      <Text
+                        style={[
+                          styles.playlistItemText,
+                          isSelected && styles.whiteText,
+                        ]}
+                      >
+                        {pl.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+                <TouchableOpacity
+                  style={styles.createPlaylistBtn}
+                  onPress={() => {
+                    setShowPlaylistSelector(false);
+                    router.push("/createPlaylist");
+                  }}
+                >
+                  <Ionicons
+                    name="add-circle-outline"
+                    size={22}
+                    color="#00ffa3"
+                  />
+                  <Text style={styles.createPlaylistText}>
+                    Créer une playlist
+                  </Text>
+                </TouchableOpacity>
+              </ScrollView>
+            )}
+
+            {selectedPlaylists.length > 0 && (
+              <TouchableOpacity
+                style={styles.confirmBtn}
+                onPress={handleAddToPlaylists}
+              >
+                <Text style={styles.confirmBtnText}>
+                  Confirmer ({selectedPlaylists.length})
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0f111a",
-  },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
-  imageContainer: {
-    padding: 20,
-    alignItems: "center",
-  },
-  coverImage: {
-    width: width - 40,
-    height: width - 40,
-    borderRadius: 20,
-  },
-  paddingContent: {
-    paddingHorizontal: 20,
-  },
-  badgeRow: {
-    marginTop: 15,
-    flexDirection: "row", // Indispensable pour horizontal
-    // On retire le "gap" ici car ScrollView horizontale gère mal le gap sur certains Android
-  },
-  badgeScrollContent: {
-    paddingRight: 20, // Pour que le dernier tag ne colle pas au bord
-    gap: 10, // Espacement entre les tags
-  },
+  container: { flex: 1, backgroundColor: "#0f111a" },
+  center: { justifyContent: "center", alignItems: "center" },
+  scrollContent: { paddingBottom: 60 },
+  imageContainer: { padding: 20, alignItems: "center" },
+  coverImage: { width: width - 40, height: width - 40, borderRadius: 20 },
+  paddingContent: { paddingHorizontal: 20 },
+  badgeRow: { marginTop: 15, flexDirection: "row" },
   badge: {
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#2d2d3f",
+    marginRight: 8,
   },
-  badgeText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 11,
-    letterSpacing: 0.5,
-  },
+  badgeText: { color: "white", fontWeight: "bold", fontSize: 11 },
   albumTitle: {
     color: "white",
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: "bold",
     marginTop: 15,
   },
@@ -592,69 +791,32 @@ const styles = StyleSheet.create({
     marginTop: 15,
     gap: 8,
   },
-  ratingValue: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  ratingCount: {
-    color: "#64748b",
-    fontSize: 14,
-  },
-  actionButtons: {
-    marginTop: 25,
-    gap: 12,
-  },
+  starsRow: { flexDirection: "row", gap: 2 },
+  ratingValue: { color: "white", fontSize: 22, fontWeight: "bold" },
+  ratingCount: { color: "#64748b", fontSize: 14 },
+  actionButtons: { marginTop: 25, gap: 12 },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-  },
-  primaryButton: {
-    backgroundColor: "#c61ebd",
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  primaryButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  playlistSelector: {
-    backgroundColor: "#1a1d29",
-    borderRadius: 16,
-    padding: 15,
-    marginTop: 5,
-    borderWidth: 1,
-    borderColor: "#2d2d3f",
-  },
-  playlistItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#2d2d3f",
     gap: 10,
   },
-  playlistItemText: {
-    color: "white",
-    fontSize: 16,
+  primaryButton: {
+    backgroundColor: "#ec4899",
+    padding: 16,
+    borderRadius: 14,
+    alignItems: "center",
+    marginTop: 10,
   },
-  aboutSection: {
-    marginTop: 30,
-  },
+  primaryButtonText: { color: "white", fontWeight: "bold", fontSize: 16 },
+  aboutSection: { marginTop: 30 },
   sectionTitle: {
     color: "white",
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
   },
-  aboutText: {
-    color: "#94a3b8",
-    fontSize: 16,
-    lineHeight: 24,
-  },
+  aboutText: { color: "#94a3b8", fontSize: 15, lineHeight: 22 },
   tabsContainer: {
     flexDirection: "row",
     backgroundColor: "#1a1d29",
@@ -662,114 +824,34 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 12,
   },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 8,
-  },
-  activeTab: {
-    backgroundColor: "#2d2d3f",
-  },
-  tabText: {
-    color: "#64748b",
-    fontWeight: "bold",
-  },
-  activeTabText: {
-    color: "white",
-  },
-  tabContent: {
-    paddingHorizontal: 20,
-  },
-  emptyState: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 40,
-  },
-  emptyText: {
-    color: "#64748b",
-    marginTop: 10,
-    textAlign: "center",
-    fontSize: 14,
-  },
-  reviewMiniBtn: {
-    marginTop: 20,
-    backgroundColor: "#1e1e2d",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: "#ec4899",
-  },
-  reviewMiniBtnText: {
-    color: "#ec4899",
-    fontWeight: "bold",
-    fontSize: 14,
-  },
-  footerText: { color: "#94a3b8", marginLeft: 5, fontSize: 14 },
-
-  similarGrid: {
-    paddingVertical: 10,
-  },
-  similarCard: {
-    width: 140,
-    marginRight: 15,
-  },
-  similarCover: {
-    width: 140,
-    height: 140,
-    borderRadius: 12,
-    backgroundColor: "#1e1e2d",
-  },
-  similarTitle: {
-    color: "white",
-    fontWeight: "bold",
-    marginTop: 8,
-    fontSize: 14,
-  },
-  similarArtist: {
-    color: "#94a3b8",
-    fontSize: 12,
-  },
+  tab: { flex: 1, paddingVertical: 10, alignItems: "center", borderRadius: 8 },
+  activeTab: { backgroundColor: "#2d2d3f" },
+  tabText: { color: "#64748b", fontWeight: "bold" },
+  activeTabText: { color: "white" },
+  tabContent: { paddingHorizontal: 20 },
+  emptyText: { color: "#64748b", textAlign: "center", marginTop: 20 },
   reviewCard: {
     backgroundColor: "#1a1d29",
     padding: 16,
     borderRadius: 16,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: "#2d2d3f",
-    marginBottom: 10,
   },
   reviewHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 10,
   },
-  userInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  reviewerName: {
-    color: "#ec4899",
-    fontWeight: "bold",
-    fontSize: 14,
-  },
-  starsRow: {
-    flexDirection: "row",
-    gap: 2,
-  },
+  userInfo: { flexDirection: "row", alignItems: "center", gap: 8 },
+  reviewerName: { color: "#ec4899", fontWeight: "bold" },
   reviewTitleText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
-    marginBottom: 6,
+    marginBottom: 4,
   },
-  reviewContentText: {
-    color: "#94a3b8",
-    fontSize: 14,
-    lineHeight: 20,
-  },
+  reviewContentText: { color: "#94a3b8", fontSize: 14 },
   reviewFooter: {
     marginTop: 12,
     paddingTop: 12,
@@ -777,26 +859,92 @@ const styles = StyleSheet.create({
     borderTopColor: "#2d2d3f",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
   },
-  reviewActionsLeft: {
-    flexDirection: "row",
-    gap: 15,
+  reviewActionsLeft: { flexDirection: "row", gap: 20 },
+  actionIconBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
+  actionCountText: { color: "#94a3b8" },
+  reviewDate: { color: "#475569", fontSize: 11 },
+  similarGrid: { paddingVertical: 10 },
+  similarCard: { width: 130, marginRight: 15 },
+  similarCover: {
+    width: 130,
+    height: 130,
+    borderRadius: 12,
+    backgroundColor: "#1e1e2d",
   },
-  actionIconBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-  },
-  actionCountText: {
-    color: "#94a3b8",
+  similarTitle: {
+    color: "white",
+    fontWeight: "bold",
+    marginTop: 8,
     fontSize: 13,
-    fontWeight: "600",
   },
-  reviewDate: {
-    color: "#475569",
-    fontSize: 11,
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    justifyContent: "flex-end",
   },
+  modalContent: {
+    backgroundColor: "#1a1d29",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 20,
+    maxHeight: "80%",
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  modalTitle: { color: "white", fontSize: 18, fontWeight: "bold" },
+  modalScroll: { marginBottom: 10 },
+  playlistItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: "#242838",
+    borderRadius: 12,
+    marginBottom: 10,
+    gap: 12,
+  },
+  playlistItemActive: {
+    backgroundColor: "rgba(236, 72, 153, 0.1)",
+    borderColor: "#ec4899",
+    borderWidth: 1,
+  },
+  playlistItemText: { color: "#94a3b8", fontSize: 15 },
+  whiteText: { color: "white", fontWeight: "600" },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: "#475569",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxActive: { backgroundColor: "#ec4899", borderColor: "#ec4899" },
+  confirmBtn: {
+    backgroundColor: "#ec4899",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  confirmBtnText: { color: "white", fontWeight: "bold" },
+  createPlaylistBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    gap: 10,
+    marginTop: 5,
+    borderStyle: "dashed",
+    borderWidth: 1,
+    borderColor: "#475569",
+    borderRadius: 12,
+    justifyContent: "center",
+  },
+  createPlaylistText: { color: "#00ffa3", fontWeight: "600" },
 });
 
 export default AlbumDetails;

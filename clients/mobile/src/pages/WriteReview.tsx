@@ -35,7 +35,6 @@ const WriteReview = () => {
       return;
     }
 
-    console.log("Media ID récupéré de Expo Router:", id); // DEBUG : Vérifie la console
 
     if (!id) {
       Alert.alert(
@@ -52,13 +51,12 @@ const WriteReview = () => {
 
       const payload = {
         user_id: userId,
-        media_id: id as string, // <--- C'est ce champ qui manque dans ton log d'erreur
+        media_id: id as string, 
         rating: rating,
         title: reviewTitle.trim(),
         content: review.trim(),
       };
 
-      console.log("Envoi du payload au backend:", payload);
 
       if (!userId) {
         Alert.alert("Erreur", "Session expirée. Veuillez vous reconnecter.");

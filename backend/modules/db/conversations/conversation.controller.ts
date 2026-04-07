@@ -74,6 +74,25 @@ class ConversationController extends Controller {
         }
     }
 
+    async getUserConversation(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { userId } = req.params;
+
+            if (!userId) {
+                throw new BadRequest('User ID is required');
+            }
+            
+            const conversations = await this.service.getUserConversations(userId);
+
+            res.status(200).json({
+                message: 'User conversations retrieved successfully',
+                conversations,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async update(_req: Request, _res: Response, _next: NextFunction): Promise<null> {
         // This function don't have to be used for this table
         return null

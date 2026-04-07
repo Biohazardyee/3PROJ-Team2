@@ -94,6 +94,41 @@ export class ConversationService {
         return conversationMapper.toDto(conversation);
     }
 
+    async getUserConversations(userId: string): Promise<any[]> {
+        const conversations = await PrismaDb.conversations.findMany({
+            where: {
+                OR: [
+                    { user1_id: userId },
+                    { user2_id: userId },
+                ],
+            },
+            include: {
+                user1: { select: { id: true, username: true, role: true } },
+                user2: { select: { id: true, username: true, role: true } },
+                messages: {
+                    orderBy: { created_at: 'desc' },
+                    take: 1,
+                },
+                _count: {
+                    select: {
+                        messages: {
+                            where: {
+                                is_read: false,
+                                sender_id: { not: userId }
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                // Optionnel : tu pourrais vouloir trier par date du dernier message ici
+                created_at: 'desc'
+            }
+        });
+
+        return conversations;
+    }
+
     async update(): Promise<null> {
         // Conversations are not updatable
         return null

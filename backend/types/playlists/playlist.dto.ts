@@ -1,40 +1,46 @@
 // Responses interfaces
 export interface PlaylistResponseDto {
-    id: string;
-    user_id: string;
-    name: string;
-    created_at: Date;
-    updated_at: Date;
+  id: string;
+  user_id: string;
+  name: string;
+  image_url?: string;
+  items?: { media_id: string }[];
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface PlaylistResponseAddDto {
-    id: string;
-    user_id: string;
-    name: string;
-    created_at: Date;
+  id: string;
+  user_id: string;
+  name: string;
+  image_url?: string;
+  created_at: Date;
 }
 
 export interface PlaylistResponseUpdateDto {
-    id: string;
-    name: string;
-    is_public: boolean;
-    updated_at: Date;
+  id: string;
+  name: string;
+  is_public: boolean;
+  image_url?: string;
+  updated_at: Date;
 }
 
 export interface PlaylistResponseDeleteDto {
-    id: string;
-    user_id: string;
-    name: string;
+  id: string;
+  user_id: string;
+  name: string;
 }
 
 // Post interfaces
 export interface PlaylistAddDto {
-    user_id: string;
-    name: string;
-    is_public: boolean;
+  user_id: string;
+  name: string;
+  is_public: boolean;
+  image_url?: string;
 }
 
 export interface PlaylistUpdateDto {
-    name?: string;
-    is_public?: boolean;
+  name?: string;
+  is_public?: boolean;
+  image_url?: string;
 }

@@ -1,5 +1,5 @@
-import CreatePlaylist from '../src/pages/CreatePlaylist';
+import CreatePlaylist from "@/src/pages/CreatePlaylist";
 
-export default function Page() {
-  return <CreatePlaylist />;
+export default function Page(){
+    return <CreatePlaylist />;
 }

@@ -162,7 +162,7 @@ const ProfileScreen = () => {
 
           {/* Contenu */}
           <View style={styles.albumSection}>
-            {activeTab === "Favorite Albums" ? (
+            {activeTab === "Favorite Band" ? (
               <View style={styles.albumGrid}></View>
             ) : (
               <View style={styles.emptyContainer}>
@@ -361,11 +361,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 12,
   },
-  emptyText: {
-    color: "#555",
-    marginTop: 40,
-    fontStyle: "italic",
-  },
+  // emptyText: {
+  //   color: "#555",
+  //   marginTop: 40,
+  //   fontStyle: "italic",
+  // },
   scrollContainer: {
     paddingBottom: 120,
   },

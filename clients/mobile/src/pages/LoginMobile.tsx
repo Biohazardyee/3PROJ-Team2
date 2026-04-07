@@ -98,7 +98,6 @@ const LoginMobile: React.FC = () => {
 
         if (userId) {
           await SecureStore.setItemAsync("userId", String(userId));
-          console.log("ID utilisateur stocké via token :", userId);
         }
       } catch (decodeError) {
         console.error("Erreur décodage token:", decodeError);

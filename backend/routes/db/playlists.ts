@@ -10,7 +10,7 @@ router.post('/', authGuard, function (req: Request, res: Response, next: NextFun
     playlistController.add(req, res, next);
 });
 
-router.get('/user/:id', authGuard, checkResourceOwnerOrAdmin('playlists'), function (req: Request, res: Response, next: NextFunction): void {
+router.get('/user/:id', authGuard, function (req: Request, res: Response, next: NextFunction): void {
     playlistController.getPlaylistsByUserId(req, res, next);
 });
 

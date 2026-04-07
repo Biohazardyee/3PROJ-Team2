@@ -31,16 +31,18 @@ const Home: React.FC = () => {
   const [searchMode, setSearchMode] = useState<"artist" | "album">("artist");
 
   const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+    const query = searchQuery.trim();
+
+    if (!query.trim()) return;
     setLoading(true);
     Keyboard.dismiss();
 
     try {
       let url = "";
       if (searchMode === "artist") {
-        url = `/api/artists/info/top-albums?artist=${encodeURIComponent(searchQuery)}`;
+        url = `/api/artists/info/top-albums?artist=${encodeURIComponent(query)}`;
       } else {
-        url = `/api/search?query=${encodeURIComponent(searchQuery)}`;
+        url = `/api/search?query=${encodeURIComponent(query)}`;
       }
 
       const response = await apiClient.get(url);
@@ -65,10 +67,13 @@ const Home: React.FC = () => {
             id: apiId,
             album: a.name,
             artist: artistName,
+
             cover:
               a.image?.find((img: any) => img.size === "extralarge")?.[
                 "#text"
-              ] || a.image?.[2]?.["#text"],
+              ] ||
+              a.image?.[2]?.["#text"] ||
+              "",
             rating: 0,
             mbid: a.mbid || null,
           };
@@ -89,7 +94,13 @@ const Home: React.FC = () => {
 
           if (syncedAlbums.length > 0) {
             const mappedAlbums = syncedAlbums.map((syncedAlbum: any) => ({
-              id: syncedAlbum.api_id || syncedAlbum.id,
+              // FORCE l'utilisation de l'ID de la base de données
+              // Si syncedAlbum.id est null, on est mal, car le status/playlist en a besoin
+              id: syncedAlbum.id,
+
+              // On stocke l'api_id séparément au cas où
+              apiId: syncedAlbum.api_id,
+
               album: syncedAlbum.name || syncedAlbum.album,
               artist: syncedAlbum.artist,
               cover: syncedAlbum.cover,
@@ -97,16 +108,15 @@ const Home: React.FC = () => {
               mbid: syncedAlbum.mbid || null,
             }));
 
+            // On utilise l'ID de la DB comme clé pour l'unicité
             const uniqueAlbumsMap = new Map<string, any>();
-
             mappedAlbums.forEach((album: any) => {
-              if (!uniqueAlbumsMap.has(album.id)) {
+              if (album.id && !uniqueAlbumsMap.has(album.id)) {
                 uniqueAlbumsMap.set(album.id, album);
               }
             });
 
             const finalAlbums = Array.from(uniqueAlbumsMap.values());
-
             setAlbums(finalAlbums);
             applySort(finalAlbums, selectedSort.value);
           } else {
@@ -200,7 +210,7 @@ const Home: React.FC = () => {
             <TextInput
               placeholder={
                 searchMode === "artist"
-                  ? "Ex: Linkin Park, Jul..."
+                  ? "Ex: Linkin Park, Daft Punk..."
                   : "Ex: Meteora, Discovery..."
               }
               placeholderTextColor="#888"
@@ -272,14 +282,15 @@ const Home: React.FC = () => {
 
         <View style={styles.grid}>
           {albums.map((item) => (
-            <AlbumCard
-              key={item.id}
-              id={item.id}
-              title={item.album}
-              artist={item.artist}
-              cover={item.cover}
-              rating={String(item.rating || 0)}
-            />
+            <View key={item.id} style={styles.albumColumn}>
+              <AlbumCard
+                id={item.id}
+                title={item.album}
+                artist={item.artist}
+                cover={item.cover}
+                rating={String(item.rating || 0)}
+              />
+            </View>
           ))}
         </View>
       </ScrollView>
@@ -376,6 +387,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+  },
+  albumColumn: {
+    width: "48%",
   },
 });
 

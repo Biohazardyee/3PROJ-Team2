@@ -28,10 +28,11 @@ export type Roles = (typeof Roles)[keyof typeof Roles]
 
 
 export const MediaStatus = {
-  planned: 'planned',
-  listening: 'listening',
-  completed: 'completed',
-  abandoned: 'abandoned'
+  listened: 'listened',
+  later: 'later',
+  favorite: 'favorite',
+  disliked: 'disliked',
+  none: 'none'
 } as const
 
 export type MediaStatus = (typeof MediaStatus)[keyof typeof MediaStatus]

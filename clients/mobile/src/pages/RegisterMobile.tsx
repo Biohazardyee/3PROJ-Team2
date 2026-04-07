@@ -1,12 +1,21 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import {ScrollView,StyleSheet,Text,TouchableOpacity,View,Image,Alert,} from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  Alert,
+} from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 import { ButtonMobile } from "../components/ButtonMobile";
 import { InputMobile } from "../components/InputMobile";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
+import * as SecureStore from "expo-secure-store";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -26,11 +35,9 @@ const RegisterMobile: React.FC = () => {
 
   const handleOAuth = async (provider: "google" | "discord") => {
     try {
-     
       const redirectUri = AuthSession.makeRedirectUri({
         scheme: "projetsupcontentmobile",
       });
-
 
       const authUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/oauth/auth/${provider}?platform=mobile&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
@@ -40,62 +47,26 @@ const RegisterMobile: React.FC = () => {
       );
 
       if (result.type === "success" && result.url) {
-       
         const url = new URL(result.url.replace("#", "?"));
         const token = url.searchParams.get("token");
 
         if (token) {
-          console.log("✅ Token récupéré !");
+          await SecureStore.setItemAsync("userToken", token);
           router.replace("/onboarding");
+        }
+
+        const error = url.searchParams.get("error");
+        if (error) {
+          Alert.alert(
+            "Compte existant",
+            "Cet email est déjà lié à un autre compte.",
+          );
+          return;
         }
       }
     } catch (error) {
       console.error("Erreur OAuth:", error);
       Alert.alert("Erreur", "La connexion a échoué.");
-    }
-  };
-
-  const searchArtists = async (text: string) => {
-    setfavorite_band(text);
-
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-
-    if (text.length > 2) {
-      searchTimeout.current = setTimeout(async () => {
-        try {
-          const response = await apiClient.get(`/api/search?query=${text}`);
-          const data = response.data;
-
-          const albums = data.searchResults?.results?.albummatches?.album || [];
-
-          const artistNames: string[] = albums.map((item: any) => item.artist);
-          const uniqueArtists = [...new Set(artistNames)];
-
-          const sortedArtists = uniqueArtists
-            .map((name) => ({ name }))
-            .sort((a, b) => {
-              const aStartsWith = a.name
-                .toLowerCase()
-                .startsWith(text.toLowerCase());
-              const bStartsWith = b.name
-                .toLowerCase()
-                .startsWith(text.toLowerCase());
-
-              if (aStartsWith && !bStartsWith) return -1;
-              if (!aStartsWith && bStartsWith) return 1;
-              return a.name.localeCompare(b.name);
-            })
-            .slice(0, 8);
-
-          setSuggestions(sortedArtists);
-          setShowSuggestions(true);
-        } catch (error) {
-          console.error("Erreur recherche:", error);
-        }
-      }, 300);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
     }
   };
 
@@ -107,14 +78,18 @@ const RegisterMobile: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await apiClient.post("/users/signin", {
+      const response = await apiClient.post("/users/signin", {
         email,
         username,
         password,
         favorite_band,
       });
 
-      Alert.alert("Succès", "Votre compte a bien été créé !");
+      const { token } = response.data;
+      if (token) {
+        await SecureStore.setItemAsync("userToken", token);
+      }
+
       router.push("/onboarding");
     } catch (error: any) {
       const message =
@@ -165,15 +140,6 @@ const RegisterMobile: React.FC = () => {
           onChangeText={setPassword}
         />
         <View style={{ zIndex: 1000 }}>
-          <InputMobile
-            label="Artiste préféré"
-            placeholder="Ex: Daft Punk, Angèle..."
-            icon="musical-note-outline"
-            value={favorite_band}
-            onChangeText={searchArtists}
-            onFocus={() => favorite_band.length > 2 && setShowSuggestions(true)}
-          />
-
           {showSuggestions && suggestions.length > 0 && (
             <View style={styles.suggestionsContainer}>
               <ScrollView

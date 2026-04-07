@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { getValidSource } from "@/helpers/helpers";
 
 type AlbumCardProps = {
   id: string | number;
@@ -21,7 +22,6 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
 }) => {
   const router = useRouter();
 
-  // Conversion de la note en nombre (car elle vient de ton Float Prisma)
   const numericRating =
     typeof rating === "string" ? parseFloat(rating) : rating;
 
@@ -31,12 +31,12 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
       onPress={() =>
         router.push({
           pathname: "/albumdetails",
-          params: { id, artist, album: title },
+          params: { id, artist, album: title, cover },
         })
       }
     >
       <View>
-        <Image source={{ uri: cover }} style={styles.albumCover} />
+        <Image source={getValidSource(cover)} style={styles.albumCover} />
       </View>
 
       <View style={styles.albumInfo}>
@@ -72,7 +72,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
 
 const styles = StyleSheet.create({
   albumCard: {
-    width: "48%",
+    width: "100%",
     backgroundColor: "#1c1c27",
     borderRadius: 15,
     marginBottom: 20,

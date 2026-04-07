@@ -1,157 +1,194 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert, StatusBar, Platform } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import BackButton from '../components/BackButton';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Alert,
+  StatusBar,
+  ActivityIndicator,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import BackButton from "../components/BackButton";
+import apiClient from "../api/client";
+import AlbumCard from "@/src/components/AlbumCard";
 
-type Album = {
-  id: string;
-  title: string;
-  artist: string;
-  cover: string;
-}
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+const PADDING_HORIZONTAL = 10;
+const GAP = 6;
+const COLUMN_WIDTH = (SCREEN_WIDTH - PADDING_HORIZONTAL * 2 - GAP) / 2;
 
 const PlaylistDetails = () => {
   const { id, title } = useLocalSearchParams();
-  const router = useRouter();
-  const [albums, setAlbums] = useState<Album[]>([]);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const loadPlaylistContent = async () => {
     try {
-      const savedContent = await AsyncStorage.getItem(`playlist_content_${id}`);
-      if (savedContent) {
-        setAlbums(JSON.parse(savedContent));
-      }
-    } catch (e) { 
-      console.error("Erreur de chargement", e); 
+      setLoading(true);
+      const res = await apiClient.get(`/playlist-items/playlist/${id}`);
+      setItems(res.data.playlistItems || []);
+    } catch (e) {
+      Alert.alert("Erreur", "Impossible de charger le contenu.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => { 
-    loadPlaylistContent(); 
+  useEffect(() => {
+    if (id) loadPlaylistContent();
   }, [id]);
 
-  const removeAlbum = (albumId: string) => {
-    Alert.alert("Retirer l'album", "Voulez-vous supprimer cet album de la playlist ?", [
+  const removeItem = (playlistItemId: string, mediaTitle: string) => {
+    Alert.alert("Supprimer", `Retirer "${mediaTitle}" ?`, [
       { text: "Annuler", style: "cancel" },
-      { text: "Supprimer", style: "destructive", onPress: async () => {
-          const newAlbums = albums.filter(a => a.id !== albumId);
-          setAlbums(newAlbums);
-          await AsyncStorage.setItem(`playlist_content_${id}`, JSON.stringify(newAlbums));
-          
-          const saved = await AsyncStorage.getItem('user_playlists');
-          if (saved) {
-            const playlists = JSON.parse(saved);
-            const updated = playlists.map((p: any) => p.id === id ? { ...p, count: newAlbums.length } : p);
-            await AsyncStorage.setItem('user_playlists', JSON.stringify(updated));
+      {
+        text: "Retirer",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await apiClient.delete(`/playlist-items/${playlistItemId}`);
+            setItems((prev) => prev.filter((i) => i.id !== playlistItemId));
+          } catch {
+            Alert.alert("Erreur", "Action impossible.");
           }
-      }}
+        },
+      },
     ]);
   };
 
-  const renderAlbumItem = ({ item }: { item: Album }) => (
-    <View style={styles.albumRow}>
-      <Image source={{ uri: item.cover }} style={styles.albumCover} />
-      <View style={styles.albumInfo}>
-        <Text style={styles.albumTitle} numberOfLines={1}>{item.title}</Text>
-        <Text style={styles.albumArtist}>{item.artist}</Text>
+  const renderAlbumItem = ({ item }: { item: any }) => {
+    const media = item.media;
+    const content = media?.content;
+
+    return (
+      <View style={styles.cardWrapper}>
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onLongPress={() => removeItem(item.id, content?.name || "élément")}
+          activeOpacity={0.8}
+        >
+          <AlbumCard
+            id={media?.id}
+            title={content?.album?.name || content?.name}
+            artist={content?.album?.artist || content?.artist}
+            cover={content?.cover || media?.cover}
+            rating={String(media?.rating || 0)}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => removeItem(item.id, content?.name || "élément")}
+        >
+          <Ionicons name="ellipsis-vertical" size={14} color="white" />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => removeAlbum(item.id)} style={styles.deleteBtn}>
-        <Ionicons name="trash-outline" size={26} color="#FF4D4D" />
-      </TouchableOpacity>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
+
       <View style={styles.header}>
         <BackButton />
         <Text style={styles.headerTitle} numberOfLines={1}>
           {title}
         </Text>
-        <View style={{ width: 45 }} /> 
+        <View style={{ width: 45 }} />
       </View>
-      <FlatList
-        data={albums}
-        keyExtractor={(item) => item.id}
-        renderItem={renderAlbumItem}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={true}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="musical-notes-outline" size={50} color="#333" />
-            <Text style={styles.emptyText}>Cette playlist est vide</Text>
-          </View>
-        }
-      />
+
+      {loading ? (
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color="#4f46e5" />
+        </View>
+      ) : (
+        <FlatList
+          data={items}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderAlbumItem}
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1C1C28' },
-  header: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'space-between',
-    paddingHorizontal: 15,
-    paddingTop: Platform.OS === 'ios' ? 25 : StatusBar.currentHeight ? StatusBar.currentHeight + 10 : 20,
-    paddingBottom: 15,
-    backgroundColor: '#1C1C28',
+  container: {
+    flex: 1,
+    backgroundColor: "#1C1C28",
   },
-  headerTitle: { 
-    color: 'white', 
-    fontSize: 22, 
-    fontWeight: 'bold', 
-    flex: 1, 
-    textAlign: 'center' 
+
+  card: {
+    width: "100%",
+    flex: 1,
   },
-  listContent: { 
-    paddingHorizontal: 20, 
-    paddingBottom: 40 
+
+  coverContainer: {
+    width: "100%",
   },
-  albumRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: '#2A2A38', 
-    borderRadius: 15, 
-    padding: 15, 
-    marginBottom: 15,
+
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  albumCover: { 
-    width: 90, 
-    height: 90, 
-    borderRadius: 10, 
-    backgroundColor: '#333' 
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
-  albumInfo: { 
-    flex: 1, 
-    marginLeft: 15 
+
+  headerTitle: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+    flex: 1,
+    textAlign: "center",
   },
-  albumTitle: { 
-    color: 'white', 
-    fontSize: 18, 
-    fontWeight: 'bold', 
-    marginBottom: 4 
+
+  listContent: {
+    paddingHorizontal: PADDING_HORIZONTAL,
+    paddingBottom: 40,
   },
-  albumArtist: { 
-    color: '#AAA', 
-    fontSize: 15 
+
+  // 🔥 FIX ICI
+  columnWrapper: {
+    gap: GAP,
+    marginBottom: 12,
   },
-  deleteBtn: { 
-    padding: 5 
+
+  // 🔥 FIX ICI
+  cardWrapper: {
+    width: COLUMN_WIDTH,
+    flex: 1,
+    position: "relative",
   },
-  emptyContainer: { 
-    marginTop: 150, 
-    alignItems: 'center' 
+
+  moreButton: {
+    position: "absolute",
+    top: 6,
+    right: 6,
+    zIndex: 99,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 10,
+    width: 22,
+    height: 22,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  emptyText: { 
-    color: '#555', 
-    fontSize: 18, 
-    marginTop: 10 
-  }
 });
 
 export default PlaylistDetails;

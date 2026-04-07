@@ -11,7 +11,9 @@ import { mediaMapper } from "../../../mappers/medias/media.mapper.js";
 import { Prisma } from "../../../generated/prisma/client.js";
 
 export class MediaService {
+
   async create(data: MediaCreateDto) {
+    
     if (isEmptyString(data.api_id)) {
       throw new BadRequest("API ID cannot be empty");
     }

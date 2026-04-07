@@ -2,6 +2,9 @@
 export interface MediaResponseDto {
   id: string;
   api_id: string;
+  name: string;
+  artist: string;
+  cover: string | null; 
   rating?: number;
   created_at: Date;
 }

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 import {
   View,
   Text,
@@ -7,13 +8,16 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Header from "@/src/components/Header";
 import PlaylistCard from "@/src/components/PlaylistCard";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthGuardWrapper } from "../components/AuthGuardMapper";
+import apiClient from "../api/client";
+import * as SecureStore from "expo-secure-store";
+import { jwtDecode } from "jwt-decode";
 
 type Playlist = {
   id: string;
@@ -28,45 +32,75 @@ const { width } = Dimensions.get("window");
 const Library: React.FC = () => {
   const router = useRouter();
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const loadPlaylists = async () => {
+  // 1. Récupération des playlists depuis l'API
+  const fetchUserPlaylists = async () => {
     try {
-      const savedData = await AsyncStorage.getItem("user_playlists");
-      if (savedData) {
-        setPlaylists(JSON.parse(savedData));
+      const token = await SecureStore.getItemAsync("userToken");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      const decoded: any = jwtDecode(token);
+      const userId = decoded.id;
+
+      // Utilisation de l'apiClient pour récupérer les données persistantes
+      const response = await apiClient.get(`/playlists/user/${userId}`);
+
+      if (response.data && response.data.playlists) {
+        const formattedPlaylists: Playlist[] = response.data.playlists.map(
+          (p: any) => ({
+            id: p.id,
+            title: p.name,
+            // On utilise le count renvoyé par le backend
+            count: p._count?.items ?? 0,
+            image: p.image_url
+              ? p.image_url
+              : "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=500",
+          }),
+        );
+        setPlaylists(formattedPlaylists);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Library Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadPlaylists();
-    const interval = setInterval(loadPlaylists, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  // Rafraîchir à chaque fois que l'écran revient au premier plan
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserPlaylists();
+    }, []),
+  );
 
+  // 2. Supprimer une playlist (Côté Serveur)
   const deletePlaylist = async (id: string) => {
     try {
-      const newList = playlists.filter((p) => p.id !== id);
-      await AsyncStorage.setItem("user_playlists", JSON.stringify(newList));
-      setPlaylists(newList);
+      await apiClient.delete(`/playlists/${id}`);
+      // Mise à jour de l'interface sans recharger
+      setPlaylists((current) => current.filter((p) => p.id !== id));
+      Alert.alert("Succès", "Playlist supprimée.");
     } catch (error) {
       console.error("Erreur suppression:", error);
+      Alert.alert("Erreur", "La suppression a échoué.");
     }
   };
 
+  // 3. Menu d'options (Modifier / Supprimer)
   const showOptions = (item: Playlist) => {
     Alert.alert(item.title, "Options de la playlist", [
       {
         text: "Modifier",
         onPress: () =>
           router.push({
-            pathname: "/createplaylist",
+            pathname: "/createPlaylist",
             params: {
               id: item.id,
               title: item.title,
-              image: item.image,
               isEditing: "true",
             },
           }),
@@ -84,6 +118,7 @@ const Library: React.FC = () => {
     ]);
   };
 
+  // Préparation des données pour la grille (Playlists + Bouton Créer)
   const dataWithCreate = [
     ...playlists,
     { id: "create-button-id", isCreate: true } as Playlist,
@@ -95,31 +130,31 @@ const Library: React.FC = () => {
         <View style={styles.card}>
           <TouchableOpacity
             style={styles.createCard}
-            onPress={() => router.push("/createplaylist")}
+            onPress={() => router.push("/createPlaylist")}
           >
             <Ionicons name="add" size={40} color="#ffffff" />
             <Text style={styles.createLabelInner}>Créer une playlist</Text>
           </TouchableOpacity>
-          <Text style={[styles.ghostText, { marginTop: 10 }]}> </Text>
-          <Text style={styles.ghostText}> </Text>
         </View>
       );
     }
 
     return (
-      <PlaylistCard
-        title={item.title}
-        count={item.count}
-        image={item.image}
-        onPress={() =>
-          router.push({
-            pathname: "/playlistdetails",
-            params: { id: item.id, title: item.title },
-          })
-        }
-        onEdit={() => showOptions(item)}
-        onDelete={() => deletePlaylist(item.id)}
-      />
+      <View style={styles.card}>
+        <PlaylistCard
+          title={item.title}
+          count={item.count}
+          image={item.image}
+          onPress={() =>
+            router.push({
+              pathname: "/playlistdetails",
+              params: { id: item.id, title: item.title },
+            })
+          }
+          onEdit={() => showOptions(item)}
+          onDelete={() => deletePlaylist(item.id)}
+        />
+      </View>
     );
   };
 
@@ -127,22 +162,29 @@ const Library: React.FC = () => {
     <AuthGuardWrapper>
       <View style={styles.container}>
         <Header />
-        <FlatList
-          data={dataWithCreate}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-          renderItem={renderItem}
-          ListHeaderComponent={
-            <View style={styles.headerTextContainer}>
-              <Text style={styles.title}>Mes playlists</Text>
-              <Text style={styles.subtitle}>
-                Créez vos propres listes personnalisées
-              </Text>
-            </View>
-          }
-        />
+
+        {loading ? (
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <ActivityIndicator size="large" color="#ec4899" />
+          </View>
+        ) : (
+          <FlatList
+            data={dataWithCreate}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+            renderItem={renderItem}
+            ListHeaderComponent={
+              <View style={styles.headerTextContainer}>
+                <Text style={styles.title}>Mes playlists</Text>
+                <Text style={styles.subtitle}>
+                  Vos listes de lecture personnalisées
+                </Text>
+              </View>
+            }
+          />
+        )}
       </View>
     </AuthGuardWrapper>
   );
@@ -194,9 +236,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginTop: 5,
     textAlign: "center",
-  },
-  ghostText: {
-    fontSize: 14,
   },
 });
 

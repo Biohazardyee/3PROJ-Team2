@@ -147,6 +147,7 @@ model Playlists {
   user       Users    @relation(fields: [user_id], references: [id])
   user_id    String
   name       String   @db.VarChar(30)
+  image_url  Bytes?
   is_public  Boolean
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -179,10 +180,11 @@ model UserMediaStatus {
 }
 
 enum MediaStatus {
-  planned
-  listening
-  completed
-  abandoned
+  listened
+  later
+  favorite
+  disliked
+  none
 }
 
 model Activities {

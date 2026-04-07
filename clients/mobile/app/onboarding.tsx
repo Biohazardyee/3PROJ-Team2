@@ -1,4 +1,4 @@
-import Onboarding  from "../src/pages/TutorialPageMobile";
+import Onboarding  from "../src/pages/Onboarding";
 
 export default function Page() {
     return <Onboarding  />;

@@ -1,5 +1,8 @@
+import {useRouter } from "expo-router";
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+
+const router = useRouter();
 
 const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
@@ -25,7 +28,7 @@ apiClient.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       await SecureStore.deleteItemAsync("userToken");
-      // Optionnel : rediriger vers le login ici
+      router.push('/login');
     }
     return Promise.reject(error);
   }
@@ -46,6 +49,5 @@ export const createReview = async (reviewData: {
   const response = await apiClient.post('/reviews', reviewData);
   return response.data;
 };
-
 
 export default apiClient;

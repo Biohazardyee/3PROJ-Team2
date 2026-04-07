@@ -1,39 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 
 type StatCardProps = {
   title: string;
   count?: string;
   icon: string;
   color: string;
-  showCheckbox?: boolean; 
-  initialChecked?: boolean;
-  onPress?: (checked: boolean) => void;
+  checked?: boolean; 
+  onPress?: () => void; 
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, count, icon, color, showCheckbox = false, initialChecked = false, onPress }) => {
-  const [checked, setChecked] = useState(initialChecked);
-
-  const handlePress = () => {
-  const newCheckedStatus = !checked;
-    setChecked(newCheckedStatus); 
-    if (onPress) {
-      onPress(newCheckedStatus);
-    }
-  }
+const StatCard: React.FC<StatCardProps> = ({ 
+  title, 
+  count, 
+  icon, 
+  color, 
+  checked = false, 
+  onPress 
+}) => {
 
   return (
     <Pressable 
       style={({ pressed }) => [
         styles.card,
-        checked && showCheckbox ? { borderColor: color, borderWidth: 1 } : { borderColor: '#2a2a35', borderWidth: 1 },
+        checked ? { borderColor: color, borderWidth: 1 } : { borderColor: '#2a2a35', borderWidth: 1 },
         { opacity: pressed ? 0.8 : 1 } 
       ]} 
-      onPress={handlePress}
+      onPress={onPress}
     >
-    {showCheckbox && (
       <View style={styles.checkboxContainer}>
         <Icon 
           name={checked ? "checkbox-marked" : "checkbox-blank-outline"} 
@@ -41,10 +36,10 @@ const StatCard: React.FC<StatCardProps> = ({ title, count, icon, color, showChec
           color={checked ? color : "#8e8e93"} 
         />
       </View>
-    )}
+
       <View style={styles.cardHeader}>
         <Icon name={icon} size={20} color={color} />
-        <Text style={styles.cardCount}>{count}</Text>
+        {count && <Text style={styles.cardCount}>{count}</Text>}
       </View>
       <Text style={styles.cardTitle}>{title}</Text>
     </Pressable>
@@ -57,12 +52,13 @@ const styles = StyleSheet.create({
     width: '48%', 
     borderRadius: 15, 
     padding: 15, 
-    marginBottom: 15
+    marginBottom: 15,
+    minHeight: 90 
   },
   checkboxContainer: {
     position: 'absolute',
-    top: 12,
-    left: 120,
+    top: 8,
+    right: 8,
     zIndex: 1,
   },
   cardHeader: { 
@@ -78,17 +74,8 @@ const styles = StyleSheet.create({
   cardTitle: { 
     color: '#8e8e93', 
     marginTop: 10,
-    fontSize: 13
-  },
-  progressBarBg: { 
-    height: 4, 
-    backgroundColor: '#1C1C28', 
-    borderRadius: 2, 
-    marginTop: 10 
-  },
-  progressBarFill: { 
-    height: 4, 
-    borderRadius: 2 
+    fontSize: 13,
+    fontWeight: '600'
   },
 });
 

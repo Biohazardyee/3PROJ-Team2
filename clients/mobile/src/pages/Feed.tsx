@@ -19,6 +19,7 @@ import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import { AuthGuardWrapper } from "../components/AuthGuardMapper";
+import { getValidSource } from "@/helpers/helpers";
 
 type Filter = "Review" | "Abonnement" | "Tendances";
 
@@ -31,7 +32,18 @@ const Feed = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
+  const isFirstRender = useRef(true);
   const isInteracting = useRef(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+      fetchFeed(false);
+    }, [activeFilter]),
+  );
 
   useEffect(() => {
     const getUserId = async () => {
@@ -83,7 +95,6 @@ const Feed = () => {
       setIsRefreshing(false);
     }
   };
-  console.log("Premier item du feed:", feedItems[0]?.cover);
 
   useEffect(() => {
     fetchFeed(true);
@@ -258,7 +269,7 @@ const Feed = () => {
                       router.push({
                         pathname: "/albumdetails",
                         params: {
-                          id: item.media_id ?? "",
+                          id: item.api_id || item.media_id || "",
                           artist: item.artist,
                           album: item.album,
                           cover: item.cover,
@@ -302,7 +313,7 @@ const Feed = () => {
                     <View style={styles.albumRow}>
                       {item.cover ? (
                         <Image
-                          source={{ uri: item.cover }}
+                          source={getValidSource(item.cover)}
                           style={styles.albumCover}
                         />
                       ) : (
@@ -403,9 +414,13 @@ const Feed = () => {
                           router.push({
                             pathname: "/albumdetails",
                             params: {
-                              id: item.media_id,
+                              id: item.api_id || item.media_id,
                               artist: item.artist,
                               album: item.album,
+                              cover:
+                                typeof item.cover === "string"
+                                  ? item.cover
+                                  : "",
                             },
                           })
                         }

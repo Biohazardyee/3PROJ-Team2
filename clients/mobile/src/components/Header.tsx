@@ -35,7 +35,7 @@ const Header: React.FC = () => {
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => router.push('/message')} >
+                <TouchableOpacity onPress={() => router.push('/conversations')} >
                     <Ionicons
                         name="paper-plane-outline"
                         size={26}
