@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconType } from 'react-icons';
 
-interface InputProps {
+type InputProps = {
   label: string;
   type: string;
   placeholder: string;
@@ -19,5 +19,6 @@ export const Input: React.FC<InputProps> = ({ label, type, placeholder, icon: Ic
         className="w-full bg-[#1c1c27] border border-gray-800 rounded-xl py-4 px-12 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600 text-white" 
       />
     </div>
+    
   </div>
 );
