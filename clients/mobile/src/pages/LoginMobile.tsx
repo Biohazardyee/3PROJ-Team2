@@ -45,8 +45,12 @@ const LoginMobile: React.FC = () => {
           const token = urlParts[1].split("&")[0];
 
           await SecureStore.setItemAsync("userToken", token);
+          const decoded: any = jwtDecode(token);
+          const userId = decoded.id;
 
-          await fetchAndSaveUserProfile(token);
+          if (userId) {
+            await SecureStore.setItemAsync("userId", String(userId));
+          }
 
           router.replace("/");
         }
@@ -59,16 +63,7 @@ const LoginMobile: React.FC = () => {
 
   const fetchAndSaveUserProfile = async (explicitToken?: string) => {
     try {
-      const config = explicitToken
-        ? { headers: { Authorization: `Bearer ${explicitToken}` } }
-        : {};
 
-      const profileResponse = await apiClient.get("/users/profile", config);
-
-      const userId = profileResponse.data.id;
-      if (userId) {
-        await SecureStore.setItemAsync("userId", userId);
-      }
     } catch (error) {
       console.error("Erreur profil:", error);
     }

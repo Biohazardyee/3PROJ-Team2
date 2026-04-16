@@ -1,9 +1,9 @@
-import express, { Request, Response, NextFunction, Router } from 'express';
+import express, {Request, Response, NextFunction, Router} from 'express';
 import ReviewController from '../../modules/db/reviews/review.controller.js';
-import { authGuard } from "../../middlewares/auth.js";
-import { checkAdmin } from "../../middlewares/checkAdmin.js";
+import {authGuard} from "../../middlewares/auth.js";
+import {checkAdmin} from "../../middlewares/checkAdmin.js";
 import ReviewLikeController from "../../modules/db/reviews/review.like.controller.js";
-import { checkResourceOwnerOrAdmin } from "../../middlewares/checkResourceOwnerOrAdmin.js";
+import {checkResourceOwnerOrAdmin} from "../../middlewares/checkResourceOwnerOrAdmin.js";
 
 const router: Router = express.Router();
 
@@ -41,6 +41,14 @@ router.get('/:id', (req, res, next) => {
 router.post('/', authGuard, (req, res, next) => {
     ReviewController.add(req, res, next);
 });
+
+router.get('/user/:userId/top', authGuard, (req, res, next) => {
+    ReviewController.getTopAlbumsByUser(req, res, next)
+})
+
+router.get('/user/:userId/activity', authGuard, (req, res, next) => {
+    ReviewController.getUserRecentActivity(req, res, next)
+})
 
 router.put('/:id', authGuard, checkResourceOwnerOrAdmin('reviews'), (req, res, next) => {
     ReviewController.update(req, res, next);

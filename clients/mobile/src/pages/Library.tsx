@@ -34,7 +34,6 @@ const Library: React.FC = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. Récupération des playlists depuis l'API
   const fetchUserPlaylists = async () => {
     try {
       const token = await SecureStore.getItemAsync("userToken");
@@ -42,24 +41,18 @@ const Library: React.FC = () => {
         setLoading(false);
         return;
       }
-
       const decoded: any = jwtDecode(token);
       const userId = decoded.id;
-
-      // Utilisation de l'apiClient pour récupérer les données persistantes
       const response = await apiClient.get(`/playlists/user/${userId}`);
 
       if (response.data && response.data.playlists) {
         const formattedPlaylists: Playlist[] = response.data.playlists.map(
-          (p: any) => ({
-            id: p.id,
-            title: p.name,
-            // On utilise le count renvoyé par le backend
-            count: p._count?.items ?? 0,
-            image: p.image_url
-              ? p.image_url
-              : "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=500",
-          }),
+            (p: any) => ({
+              id: p.id,
+              title: p.name,
+              count: p.items.length ?? 0,
+              image: p.image_url || "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=500",
+            }),
         );
         setPlaylists(formattedPlaylists);
       }
@@ -70,171 +63,199 @@ const Library: React.FC = () => {
     }
   };
 
-  // Rafraîchir à chaque fois que l'écran revient au premier plan
   useFocusEffect(
-    useCallback(() => {
-      fetchUserPlaylists();
-    }, []),
+      useCallback(() => {
+        fetchUserPlaylists();
+      }, []),
   );
 
-  // 2. Supprimer une playlist (Côté Serveur)
   const deletePlaylist = async (id: string) => {
     try {
       await apiClient.delete(`/playlists/${id}`);
-      // Mise à jour de l'interface sans recharger
       setPlaylists((current) => current.filter((p) => p.id !== id));
       Alert.alert("Succès", "Playlist supprimée.");
     } catch (error) {
-      console.error("Erreur suppression:", error);
       Alert.alert("Erreur", "La suppression a échoué.");
     }
   };
 
-  // 3. Menu d'options (Modifier / Supprimer)
   const showOptions = (item: Playlist) => {
     Alert.alert(item.title, "Options de la playlist", [
       {
         text: "Modifier",
         onPress: () =>
-          router.push({
-            pathname: "/createPlaylist",
-            params: {
-              id: item.id,
-              title: item.title,
-              isEditing: "true",
-            },
-          }),
+            router.push({
+              pathname: "/createPlaylist",
+              params: { id: item.id, title: item.title, isEditing: "true" },
+            }),
       },
       {
         text: "Supprimer",
         style: "destructive",
         onPress: () =>
-          Alert.alert("Supprimer", "Confirmer la suppression ?", [
-            { text: "Annuler", style: "cancel" },
-            { text: "Supprimer", onPress: () => deletePlaylist(item.id) },
-          ]),
+            Alert.alert("Supprimer", "Confirmer la suppression ?", [
+              { text: "Annuler", style: "cancel" },
+              { text: "Supprimer", onPress: () => deletePlaylist(item.id) },
+            ]),
       },
       { text: "Annuler", style: "cancel" },
     ]);
   };
 
-  // Préparation des données pour la grille (Playlists + Bouton Créer)
   const dataWithCreate = [
+    { id: "create-button-id", isCreate: true } as Playlist, // On le met en premier pour l'accessibilité
     ...playlists,
-    { id: "create-button-id", isCreate: true } as Playlist,
   ];
 
   const renderItem = ({ item }: { item: Playlist }) => {
     if (item.isCreate) {
       return (
-        <View style={styles.card}>
-          <TouchableOpacity
-            style={styles.createCard}
-            onPress={() => router.push("/createPlaylist")}
-          >
-            <Ionicons name="add" size={40} color="#ffffff" />
-            <Text style={styles.createLabelInner}>Créer une playlist</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.card}>
+            <TouchableOpacity
+                style={styles.createCard}
+                onPress={() => router.push("/createPlaylist")}
+                activeOpacity={0.7}
+            >
+              <View style={styles.iconCircle}>
+                <Ionicons name="add" size={32} color="#ec4899" />
+              </View>
+              <Text style={styles.createLabelInner}>Nouvelle Playlist</Text>
+            </TouchableOpacity>
+          </View>
       );
     }
 
     return (
-      <View style={styles.card}>
-        <PlaylistCard
-          title={item.title}
-          count={item.count}
-          image={item.image}
-          onPress={() =>
-            router.push({
-              pathname: "/playlistdetails",
-              params: { id: item.id, title: item.title },
-            })
-          }
-          onEdit={() => showOptions(item)}
-          onDelete={() => deletePlaylist(item.id)}
-        />
-      </View>
+        <View style={styles.card}>
+          <PlaylistCard
+              title={item.title}
+              count={item.count}
+              image={item.image}
+              onPress={() =>
+                  router.push({
+                    pathname: "/playlistdetails",
+                    params: { id: item.id, title: item.title },
+                  })
+              }
+              onEdit={() => showOptions(item)}
+              onDelete={() => deletePlaylist(item.id)}
+          />
+        </View>
     );
   };
 
   return (
-    <AuthGuardWrapper>
-      <View style={styles.container}>
-        <Header />
+      <AuthGuardWrapper>
+        <View style={styles.container}>
+          <Header />
 
-        {loading ? (
-          <View style={{ flex: 1, justifyContent: "center" }}>
-            <ActivityIndicator size="large" color="#ec4899" />
-          </View>
-        ) : (
-          <FlatList
-            data={dataWithCreate}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-            contentContainerStyle={styles.listContainer}
-            showsVerticalScrollIndicator={false}
-            renderItem={renderItem}
-            ListHeaderComponent={
-              <View style={styles.headerTextContainer}>
-                <Text style={styles.title}>Mes playlists</Text>
-                <Text style={styles.subtitle}>
-                  Vos listes de lecture personnalisées
-                </Text>
+          {loading ? (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#ec4899" />
+                <Text style={styles.loaderText}>Chargement de votre musique...</Text>
               </View>
-            }
-          />
-        )}
-      </View>
-    </AuthGuardWrapper>
+          ) : (
+              <FlatList
+                  data={dataWithCreate}
+                  keyExtractor={(item) => item.id}
+                  numColumns={2}
+                  contentContainerStyle={styles.listContainer}
+                  showsVerticalScrollIndicator={false}
+                  renderItem={renderItem}
+                  ListHeaderComponent={
+                    <View style={styles.headerTextContainer}>
+                      <Text style={styles.title}>Ma Bibliothèque</Text>
+                      <View style={styles.badge}>
+                        <Text style={styles.subtitle}>
+                          {playlists.length} Playlists créées
+                        </Text>
+                      </View>
+                    </View>
+                  }
+              />
+          )}
+        </View>
+      </AuthGuardWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1C1C28",
+    backgroundColor: "#0f0f1a", // Plus sombre pour plus de profondeur
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loaderText: {
+    color: "#888",
+    marginTop: 15,
+    fontSize: 14,
   },
   headerTextContainer: {
-    paddingHorizontal: 10,
-    marginTop: 20,
-    marginBottom: 25,
+    paddingHorizontal: 16,
+    marginTop: 25,
+    marginBottom: 20,
   },
   title: {
     color: "white",
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: "800",
+    letterSpacing: 0.5,
+  },
+  badge: {
+    backgroundColor: "rgba(236, 72, 153, 0.1)",
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginTop: 8,
   },
   subtitle: {
-    color: "#888",
-    fontSize: 16,
-    marginTop: 5,
+    color: "#ec4899",
+    fontSize: 13,
+    fontWeight: "600",
   },
   listContainer: {
-    paddingHorizontal: 8,
-    paddingBottom: 100,
+    paddingHorizontal: 12,
+    paddingBottom: 40,
   },
   card: {
     flex: 1,
     margin: 8,
-    marginBottom: 20,
-    maxWidth: width / 2 - 24,
+    maxWidth: width / 2 - 20,
   },
   createCard: {
-    backgroundColor: "#2A2A38",
+    backgroundColor: "#1c1c2e",
     width: "100%",
     aspectRatio: 1,
-    borderRadius: 12,
+    borderRadius: 20, // Plus arrondi
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.05)",
+    borderColor: "rgba(255,255,255,0.08)",
+    // Ombre subtile
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  iconCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(236, 72, 153, 0.15)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
   },
   createLabelInner: {
     color: "#ffffff",
-    fontSize: 12,
-    fontWeight: "500",
-    marginTop: 5,
+    fontSize: 14,
+    fontWeight: "700",
     textAlign: "center",
   },
 });

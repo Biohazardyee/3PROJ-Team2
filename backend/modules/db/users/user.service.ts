@@ -21,7 +21,7 @@ import bcrypt from "bcrypt";
 import {
   OAuthUserDto,
   PartialUserResponseDto,
-  SelectableUserField,
+  SelectableUserField, UserPublicDto,
   UserRegistrationDto,
   UserResponseAddDto,
   UserResponseDeleteDto,
@@ -152,7 +152,7 @@ export class UserService {
         },
       });
 
-      console.log("✅ New user created:", newUser.id); // ← log
+      console.log("✅ New user created:", newUser.id);
 
       return userMapper.toDto(newUser);
     } catch (err) {
@@ -217,7 +217,24 @@ export class UserService {
     return users as PartialUserResponseDto[];
   }
 
+  async getProfile(id: string): Promise<UserPublicDto> {
+    if (isEmptyString(id)) {
+      throw new BadRequest("User id is missing from token");
+    }
+
+    const user: Users | null = await PrismaDb.users.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFound("Profile not found");
+    }
+
+    return userMapper.toPublicDto(user);
+  }
+
   async getById(id: string): Promise<UserResponseDto> {
+
     if (isEmptyString(id)) {
       throw new BadRequest("User id cannot be empty");
     }
@@ -482,21 +499,7 @@ export class UserService {
     return userMapper.toDto(user);
   }
 
-  async getProfile(id: string): Promise<UserResponseDto> {
-    if (isEmptyString(id)) {
-      throw new BadRequest("User id is missing from token");
-    }
 
-    const user: Users | null = await PrismaDb.users.findUnique({
-      where: { id },
-    });
-
-    if (!user) {
-      throw new NotFound("Profile not found");
-    }
-
-    return userMapper.toDto(user);
-  }
 
 
   async updateProfile(

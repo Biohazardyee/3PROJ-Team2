@@ -29,8 +29,8 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ title, count, image, onPres
           </Text>
         </View>
 
-        <TouchableOpacity 
-          onPress={onEdit} 
+        <TouchableOpacity
+          onPress={onEdit}
           style={styles.moreButton}
         >
           <Ionicons name="ellipsis-vertical" size={20} color="#666" />
@@ -41,41 +41,40 @@ const PlaylistCard: React.FC<PlaylistCardProps> = ({ title, count, image, onPres
 };
 
 const styles = StyleSheet.create({
-  card: { 
-    flex: 1, 
+  card: {
+    flex: 1,
     margin: 8,
-    marginBottom: 20,
+    marginBottom: 5,
     maxWidth: (width / 2) - 24
   },
-  cardImage: { 
-    width: '100%', 
-    aspectRatio: 1, 
+  cardImage: {
+    width: '100%',
+    aspectRatio: 1,
     borderRadius: 12,
-    backgroundColor: '#2A2A38' 
+    backgroundColor: '#2A2A38'
   },
   footerCard: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginTop: 10,
   },
   textContainer: {
-    flex: 1, 
+    flex: 1,
   },
-  cardTitle: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
+  cardTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 14,
-    marginTop: 10 
+    marginTop: 10
   },
-  cardCount: { 
-    color: '#666', 
+  cardCount: {
+    color: '#666',
     fontSize: 12,
     marginTop: 2
   },
   moreButton: {
     paddingLeft: 10,
-    paddingVertical: 5, 
+    paddingVertical: 5,
   }
 });
 

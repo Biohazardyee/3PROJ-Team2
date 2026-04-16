@@ -1,6 +1,7 @@
 // mappers/user.mapper.ts
 import type {Users} from '../../generated/prisma/browser.js';
 import {
+    UserPublicDto,
     UserResponseAddDto,
     UserResponseDeleteDto,
     UserResponseDto,
@@ -63,7 +64,7 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
     /**
      * Mapper pour profil public (moins d'infos)
      */
-    toPublicDto(user: Users) {
+    toPublicDto(user: Users): UserPublicDto {
         return {
             id: user.id,
             username: user.username,

@@ -1,14 +1,14 @@
-import type { Request, Response, NextFunction } from 'express';
+import type {Request, Response, NextFunction} from 'express';
 
-import { Controller } from '../../controller.js';
-import { BadRequest } from '../../../utils/errors.js'
-import { ReviewService } from './review.service.js';
+import {Controller} from '../../controller.js';
+import {BadRequest} from '../../../utils/errors.js'
+import {ReviewService} from './review.service.js';
 import {
     ReviewAddDto,
     ReviewResponseAddDto,
     ReviewResponseDeleteDto,
     ReviewResponseDto,
-    ReviewUpdateDto
+    ReviewUpdateDto, ReviewWithMediaDto
 } from "../../../types/reviews/review.dto.js";
 
 class ReviewController extends Controller {
@@ -113,6 +113,46 @@ class ReviewController extends Controller {
             });
         } catch (err) {
             next(err);
+        }
+    }
+
+    async getTopAlbumsByUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+
+            const userId: string = req.params.userId;
+
+            if (!userId) {
+                throw new BadRequest('UserId parameter is required');
+            }
+
+            const topAlbums: ReviewWithMediaDto[] = await this.service.getTopAlbumsByUser(userId);
+
+            res.status(200).json({
+                message: 'Top albums retrieved successfully',
+                data: topAlbums
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getUserRecentActivity(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId: string = req.params.userId;
+            const limit: number = parseInt(req.query.limit as string) || 10;
+            const offset: number = parseInt(req.query.offset as string) || 0;
+
+            if (!userId) throw new BadRequest('UserId is required');
+
+            const reviews: ReviewWithMediaDto[] = await this.service.getUserRecentActivity(userId, limit, offset);
+
+            res.status(200).json({
+                message: 'Recent activity retrieved',
+                data: reviews,
+                nextOffset: reviews.length === limit ? offset + limit : null
+            });
+        } catch (error) {
+            next(error);
         }
     }
 

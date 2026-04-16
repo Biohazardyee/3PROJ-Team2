@@ -174,7 +174,7 @@ const Settings = () => {
             icon="person-outline"
             title="Modifier le profil"
             subtitle="Nom, Email, Mot de passe"
-            onPress={() => router.push("/profilvue")}
+            onPress={() => router.push("/profile")}
           />
         </View>
 
@@ -254,13 +254,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 15,
-    paddingTop:
-      Platform.OS === "ios"
-        ? 50
-        : StatusBar.currentHeight
-          ? StatusBar.currentHeight + 10
-          : 20,
-    paddingBottom: 15,
+    paddingTop: 20,
+    paddingBottom: 5,
   },
   headerTitle: {
     fontSize: 22,

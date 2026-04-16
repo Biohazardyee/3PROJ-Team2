@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0f111a" },
   center: {
     flex: 1,
-    backgroundColor: "#0f111a",
+    backgroundColor: "#1C1C28",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 20,
     paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#1e1e2d",

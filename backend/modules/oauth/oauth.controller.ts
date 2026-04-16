@@ -109,7 +109,6 @@ class AuthController {
 
             // En cas de succès
             if (platform === 'mobile' && redirectUri) {
-                // On utilise l'URL dynamique envoyée par Expo (exp://... ou projetsupcontentmobile://)
                 return res.redirect(`${redirectUri}?token=${token}`);
             } else {
                 return res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
@@ -122,7 +121,7 @@ class AuthController {
         return jwt.sign(
             { id: user.id, email: user.email, username: user.username, role: user.role },
             process.env.JWT_SECRET!,
-            { expiresIn: '1h' }
+            { expiresIn: '24h' }
         );
     }
 }

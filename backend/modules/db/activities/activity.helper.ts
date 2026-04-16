@@ -74,6 +74,8 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
   return {
     id: act.id,
     type: isReview ? "review" : "like",
+
+    user_id: act.user?.id || review?.user?.id,
     user_name:
       act.user?.name ||
       act.user?.username ||

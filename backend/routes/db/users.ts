@@ -1,15 +1,10 @@
-import express, { Request, Response, NextFunction, Router } from 'express';
+import express, {Request, Response, NextFunction, Router} from 'express';
 import userController from '../../modules/db/users/user.controller.js';
-import { authGuard } from "../../middlewares/auth.js";
-import { checkAdmin } from "../../middlewares/checkAdmin.js";
-import { checkResourceOwnerOrAdmin } from "../../middlewares/checkResourceOwnerOrAdmin.js";
+import {authGuard} from "../../middlewares/auth.js";
+import {checkAdmin} from "../../middlewares/checkAdmin.js";
+import {checkResourceOwnerOrAdmin} from "../../middlewares/checkResourceOwnerOrAdmin.js";
 
 var router: Router = express.Router();
-
-router.get('/profile', authGuard, function (req: Request, res: Response, next: NextFunction): void {
-    userController.getProfile(req, res, next);
-   
-});
 
 router.patch('/profile', authGuard, function (req: Request, res: Response, next: NextFunction): void {
     userController.updateProfile(req, res, next);
@@ -22,6 +17,11 @@ router.post('/signin', function (req: Request, res: Response, next: NextFunction
 router.post('/login', function (req: Request, res: Response, next: NextFunction): void {
     userController.login(req, res, next);
 });
+
+router.get('/public/:id', authGuard, function (req: Request, res: Response, next: NextFunction): void {
+    userController.getPublicProfile(req, res, next);
+});
+
 
 router.put('/:id', authGuard, checkResourceOwnerOrAdmin('users'), function (req: Request, res: Response, next: NextFunction): void {
     userController.update(req, res, next);

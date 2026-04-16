@@ -35,6 +35,15 @@ export interface UserResponseAddDto {
     created_at: Date;
 }
 
+export interface UserPublicDto {
+    id: string;
+    username: string;
+    biography: string | null;
+    favorite_band: string | null;
+    profile_picture: Uint8Array<ArrayBuffer> | null;
+    created_at: Date;
+}
+
 // Post Interface
 export interface UserRegistrationDto {
     email: string;

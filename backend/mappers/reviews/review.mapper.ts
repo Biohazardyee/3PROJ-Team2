@@ -92,7 +92,8 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
             likes: review.likes || [],
             _count: review._count || { comments: 0 },
             user: review.user ? {
-                username: review.user.username
+                username: review.user.username,
+                id: review.user.id
             } : null,
             media: review.media ? {
                 content: typeof review.media.content === 'string'
