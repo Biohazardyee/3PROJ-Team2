@@ -43,7 +43,7 @@ const FAVORITE_ALBUMS: Album[] = [
 ];
 
 const AlbumCard: React.FC<Album> = ({ title, artist, year, rating, genre, image }) => (
-  <div className="bg-[#1a1d26] border border-slate-800 rounded-xl overflow-hidden group hover:border-slate-700 transition-all">
+  <div className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-xl overflow-hidden group hover:border-slate-700 dark:hover:border-gray-300 transition-all shadow-sm">
     {/* Image & Badge */}
     <div className="relative aspect-square overflow-hidden">
       <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -54,17 +54,17 @@ const AlbumCard: React.FC<Album> = ({ title, artist, year, rating, genre, image 
     
     {/* Info */}
     <div className="p-4">
-      <h3 className="font-bold text-white truncate text-lg leading-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+      <h3 className="font-bold text-white dark:text-gray-900 truncate text-lg leading-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
         {title}
       </h3>
-      <p className="text-slate-400 text-sm mb-3">{artist}</p>
+      <p className="text-slate-400 dark:text-gray-600 text-sm mb-3">{artist}</p>
       
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-1 text-[#e91e63]">
           <Star size={14} fill="currentColor" />
-          <span className="text-sm font-bold text-slate-200">{rating}</span>
+          <span className="text-sm font-bold text-slate-200 dark:text-gray-700">{rating}</span>
         </div>
-        <span className="text-slate-500 text-xs font-medium">{year}</span>
+        <span className="text-slate-500 dark:text-gray-400 text-xs font-medium">{year}</span>
       </div>
     </div>
   </div>
@@ -82,7 +82,7 @@ const Profil: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0f1117] text-slate-200 font-sans">
+    <div className="min-h-screen bg-[#0f1117] dark:bg-slate-50 text-slate-200 dark:text-gray-900 font-sans transition-colors duration-300">
       
       {/* Header */}
       <div className="relative">
@@ -98,23 +98,23 @@ const Profil: React.FC = () => {
             
             <div className="flex flex-col md:flex-row md:items-end gap-6">
               {/* Avatar */}
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-blue-500 border-[6px] border-[#0f1117] flex items-center justify-center text-white text-4xl font-bold shadow-xl z-10">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-blue-500 border-[6px] border-[#0f1117] dark:border-slate-50 flex items-center justify-center text-white text-4xl font-bold shadow-xl z-10 transition-colors">
                 MU
               </div>
               
               {/* Pseudo */}
               <div className="pb-2">
-                <h1 className="text-4xl font-bold text-white tracking-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                <h1 className="text-4xl font-bold text-white dark:text-gray-900 tracking-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                   Music Lover
                 </h1>
-                <p className="text-slate-400 font-medium">@musiclover</p>
+                <p className="text-slate-400 dark:text-gray-600 font-medium">@musiclover</p>
               </div>
             </div>
 
             {/* Bouton modifier avec redirection vers settings */}
             <button 
               onClick={() => navigate('/settings')} 
-              className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-700 text-slate-100 px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-slate-700 self-start md:self-end mb-2"
+              className="flex items-center gap-2 bg-slate-800/80 dark:bg-white hover:bg-slate-700 dark:hover:bg-gray-100 text-slate-100 dark:text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-slate-700 dark:border-gray-200 self-start md:self-end mb-2 shadow-sm"
             >
               <Settings size={16} />
               Modifier le profil
@@ -123,21 +123,21 @@ const Profil: React.FC = () => {
 
           {/* Bio */}
           <div className="max-w-2xl space-y-4">
-            <p className="text-slate-200 leading-relaxed text-lg">
+            <p className="text-slate-200 dark:text-gray-700 leading-relaxed text-lg">
               Passionné de musique électronique et de découverte de nouveaux sons. Toujours à la recherche du prochain album exceptionnel. 🎧 ✨
             </p>
 
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-slate-400 text-sm">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-slate-400 dark:text-gray-500 text-sm">
               <div className="flex items-center gap-1.5">
-                <MapPin size={16} className="text-slate-500" />
+                <MapPin size={16} className="text-slate-500 dark:text-gray-400" />
                 Paris, France
               </div>
               <div className="flex items-center gap-1.5">
-                <LinkIcon size={16} className="text-slate-500" />
-                <a href="#" className="text-blue-400 hover:underline">musiclover.com</a>
+                <LinkIcon size={16} className="text-slate-500 dark:text-gray-400" />
+                <a href="#" className="text-blue-400 dark:text-blue-600 hover:underline">musiclover.com</a>
               </div>
               <div className="flex items-center gap-1.5">
-                <Calendar size={16} className="text-slate-500" />
+                <Calendar size={16} className="text-slate-500 dark:text-gray-400" />
                 Membre depuis Janvier 2023
               </div>
             </div>
@@ -145,16 +145,16 @@ const Profil: React.FC = () => {
             {/* Stats */}
             <div className="flex gap-8 pt-2">
               <div className="flex items-center gap-1.5">
-                <span className="text-white font-bold text-lg">1247</span>
-                <span className="text-slate-500 text-sm">Abonnés</span>
+                <span className="text-white dark:text-gray-900 font-bold text-lg">1247</span>
+                <span className="text-slate-500 dark:text-gray-500 text-sm">Abonnés</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-white font-bold text-lg">342</span>
-                <span className="text-slate-500 text-sm">Abonnés</span>
+                <span className="text-white dark:text-gray-900 font-bold text-lg">342</span>
+                <span className="text-slate-500 dark:text-gray-500 text-sm">Abonnés</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-white font-bold text-lg">138</span>
-                <span className="text-slate-500 text-sm">Albums</span>
+                <span className="text-white dark:text-gray-900 font-bold text-lg">138</span>
+                <span className="text-slate-500 dark:text-gray-500 text-sm">Albums</span>
               </div>
             </div>
           </div>
@@ -163,15 +163,15 @@ const Profil: React.FC = () => {
 
       {/* Tab navigation */}
       <div className="max-w-6xl mx-auto px-6 mt-12">
-        <div className="bg-slate-900/50 border border-slate-800 p-1 rounded-xl flex items-center justify-between shadow-inner">
+        <div className="bg-slate-900/50 dark:bg-white border border-slate-800 dark:border-gray-200 p-1 rounded-xl flex items-center justify-between shadow-inner transition-colors">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all ${
                 activeTab === tab 
-                ? 'bg-slate-800 text-white shadow-md' 
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
+                ? 'bg-slate-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md' 
+                : 'text-slate-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800/40 dark:hover:bg-gray-50'
               }`}
             >
               {tab}

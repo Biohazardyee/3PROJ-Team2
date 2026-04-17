@@ -8,15 +8,15 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#13131a] text-white flex flex-col items-center justify-center p-6 font-sans">
+    <div className="min-h-screen bg-[#13131a] dark:bg-slate-50 text-white dark:text-gray-900 flex flex-col items-center justify-center p-6 font-sans transition-colors duration-300">
       
       {/* Logo, titre et message d'accueil */}
       <div className="mb-10 text-center">
         <div className="w-20 h-20 bg-linear-to-tr from-[#a855f7] to-[#ec4899] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-purple-500/20">
-          <span className="text-4xl">♪</span>
+          <span className="text-4xl text-white">♪</span>
         </div>
-        <h1 className="text-4xl font-bold tracking-tight mb-2 text-white">Bon retour !</h1>
-        <p className="text-gray-400 text-lg">Connectez-vous pour accéder à votre musique</p>
+        <h1 className="text-4xl font-bold tracking-tight mb-2 text-white dark:text-gray-900">Bon retour !</h1>
+        <p className="text-gray-400 dark:text-gray-600 text-lg">Connectez-vous pour accéder à votre musique</p>
       </div>
 
       {/* Formulaire de connexion */}
@@ -39,9 +39,9 @@ const Login: React.FC = () => {
 
         {/* Séparateur pour la connexion via réseaux sociaux */}
         <div className="relative flex items-center py-2">
-          <div className="grow border-t border-gray-800"></div>
+          <div className="grow border-t border-gray-800 dark:border-gray-200"></div>
           <span className="mx-4 text-gray-500 text-sm uppercase tracking-wider">Ou continuer avec</span>
-          <div className="grow border-t border-gray-800"></div>
+          <div className="grow border-t border-gray-800 dark:border-gray-200"></div>
         </div>
 
         {/* Grille de boutons pour l'authentification avec Google ou Discord */}
@@ -51,7 +51,7 @@ const Login: React.FC = () => {
         </div>
 
         {/* Redirection page d'inscription */}
-        <p className="text-center text-gray-400 text-base pt-2">
+        <p className="text-center text-gray-400 dark:text-gray-600 text-base pt-2">
           Pas encore de compte ?{' '}
           <span 
             onClick={() => navigate('/register')} 

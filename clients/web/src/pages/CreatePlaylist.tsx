@@ -3,7 +3,6 @@ import { Camera, X, Trash2 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const CreatePlaylist: React.FC = () => {
-    // Navigation entre les pages
     const navigate = useNavigate();
     const location = useLocation();
     
@@ -75,14 +74,14 @@ const CreatePlaylist: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col font-sans">
+        <div className="min-h-screen bg-slate-950 dark:bg-slate-50 text-slate-50 dark:text-gray-900 flex flex-col font-sans transition-colors duration-300">
             
             {/* Titre + bouton fermer */}
-            <div className="flex justify-between items-center p-6 border-b border-slate-800">
-                <button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-800 rounded-full transition-colors">
-                    <X size={28} className="text-white" />
+            <div className="flex justify-between items-center p-6 border-b border-slate-800 dark:border-gray-200">
+                <button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-800 dark:hover:bg-gray-200 rounded-full transition-colors">
+                    <X size={28} className="text-white dark:text-gray-900" />
                 </button>
-                <h1 className="text-lg font-bold text-white tracking-wide">
+                <h1 className="text-lg font-bold text-white dark:text-gray-900 tracking-wide">
                     {isEditing ? "Modifier la playlist" : "Nouvelle playlist"}
                 </h1>
                 <div className="w-12"></div>
@@ -92,7 +91,7 @@ const CreatePlaylist: React.FC = () => {
                 
                 {/* Ajouter ou modifier la cover de la playlist */}
                 <div 
-                    className="w-56 h-56 bg-slate-900 border-2 border-slate-800 border-dashed rounded-xl overflow-hidden flex flex-col justify-center items-center cursor-pointer hover:border-blue-500 transition-colors mb-12 shadow-lg"
+                    className="w-56 h-56 bg-slate-900 dark:bg-white border-2 border-slate-800 dark:border-gray-300 border-dashed rounded-xl overflow-hidden flex flex-col justify-center items-center cursor-pointer hover:border-blue-500 transition-colors mb-12 shadow-lg"
                     onClick={() => fileInputRef.current?.click()}
                 >
                     {image ? (
@@ -103,7 +102,7 @@ const CreatePlaylist: React.FC = () => {
                                 onClick={handleRemoveImage}
                                 className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                             >
-                                <div className="bg-gray-500 opacity-75 p-4 rounded-full text-white shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                                <div className="bg-gray-500 dark:bg-gray-900 opacity-75 p-4 rounded-full text-white shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
                                     <Trash2 size={32} />
                                 </div>
                             </button>
@@ -111,8 +110,8 @@ const CreatePlaylist: React.FC = () => {
                     ) : (
                         /* Affiche l'icône caméra si aucune image n'est choisie */
                         <div className="flex flex-col items-center">
-                            <Camera size={48} className="text-slate-500 mb-3" />
-                            <span className="text-slate-400 font-medium">Ajouter une cover</span>
+                            <Camera size={48} className="text-slate-500 dark:text-gray-400 mb-3" />
+                            <span className="text-slate-400 dark:text-gray-500 font-medium">Ajouter une cover</span>
                         </div>
                     )}
                 </div>
@@ -133,17 +132,17 @@ const CreatePlaylist: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     autoFocus={!isEditing}
-                    className="w-full max-w-md bg-transparent border-b-2 border-slate-700 focus:border-blue-500 text-white text-3xl text-center py-3 mb-12 outline-none transition-colors placeholder:text-slate-600 font-bold"
+                    className="w-full max-w-md bg-transparent border-b-2 border-slate-700 dark:border-gray-300 focus:border-blue-500 dark:focus:border-blue-600 text-white dark:text-gray-900 text-3xl text-center py-3 mb-12 outline-none transition-colors placeholder:text-slate-600 dark:placeholder:text-gray-300 font-bold"
                 />
 
                 {/* Bouton pour valider la création ou les modifications */}
                 <button 
                     onClick={handleSave}
-                    disabled={!name.trim()} // Désactivé si le nom est vide
+                    disabled={!name.trim()} 
                     className={`px-10 py-4 rounded-full font-bold text-lg transition-all shadow-lg ${
                         name.trim() 
-                        ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/25 hover:scale-105' 
-                        : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                        ? 'bg-blue-600 hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 text-white shadow-blue-500/25 hover:scale-105' 
+                        : 'bg-slate-800 dark:bg-gray-200 text-slate-500 dark:text-gray-400 cursor-not-allowed'
                     }`}
                 >
                     {isEditing ? "ENREGISTRER LES MODIFS" : "CRÉER LA PLAYLIST"}

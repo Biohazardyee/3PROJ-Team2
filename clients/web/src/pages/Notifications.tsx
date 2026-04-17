@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 type Notification = {
   id: number;
@@ -37,17 +37,18 @@ const notificationsData: Notification[] = [
 ];
 
 // Onglets Tout, Non-lues et Mentions
-const TabItem: React.FC<{ label: string; count?: number; active?: boolean }> = ({ label, count, active }) => (
+const TabItem: React.FC<{ label: string; count?: number; active?: boolean; onClick?: () => void }> = ({ label, count, active, onClick }) => (
   <button
+    onClick={onClick}
     className={`px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors ${
       active
-        ? 'bg-slate-700 text-white shadow-md'
-        : 'text-slate-400 hover:text-white hover:bg-slate-800'
+        ? 'bg-slate-700 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md'
+        : 'text-slate-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800 dark:hover:bg-gray-100'
     }`}
   >
     {label}
     {/* Nombre de notifications */}
-    {count !== undefined && <span className={`text-xs opacity-80 ${active ? '' : 'font-medium'}`}>({count})</span>}
+    {count !== undefined && count > 0 && <span className={`text-xs opacity-80 ${active ? '' : 'font-medium'}`}>({count})</span>}
   </button>
 );
 
@@ -74,20 +75,19 @@ const StatusIcon: React.FC<{ type: Notification['type'] }> = ({ type }) => {
 
 // Détails d'une notification
 const NotificationCard: React.FC<{ notification: Notification }> = ({ notification }) => (
-  <div className="bg-slate-900 border border-slate-700 rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm hover:border-slate-600 transition-colors cursor-pointer">
+  <div className="bg-slate-900 dark:bg-white border border-slate-700 dark:border-gray-200 rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm hover:border-slate-600 dark:hover:border-gray-300 transition-colors cursor-pointer">
     
-    {/* Partie gauche : Icône colorée et texte descriptif */}
     <div className="flex items-center gap-5">
-      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center shadow-inner">
+      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-slate-800 dark:bg-gray-50 flex items-center justify-center shadow-inner">
         <StatusIcon type={notification.type} />
       </div>
 
       <div className="flex flex-col">
-        <p className="text-slate-100 text-[15px] leading-relaxed">
-          <span className="font-bold text-white tracking-wide">{notification.user}</span>{' '}
-          <span className="text-slate-300">{notification.actionText}</span>
-        </p>
-        <p className="text-slate-500 text-sm mt-1">{notification.timeAgo}</p>
+        <div className="text-slate-100 dark:text-gray-900 text-[15px] leading-relaxed">
+          <span className="font-bold text-white dark:text-gray-900 tracking-wide">{notification.user}</span>{' '}
+          <span className="text-slate-300 dark:text-gray-600">{notification.actionText}</span>
+        </div>
+        <p className="text-slate-500 dark:text-gray-400 text-sm mt-1">{notification.timeAgo}</p>
       </div>
     </div>
 
@@ -99,35 +99,70 @@ const NotificationCard: React.FC<{ notification: Notification }> = ({ notificati
 );
 
 const Notifications: React.FC = () => {
+  // Etats pour gérer les données et les onglets
+  const [notifications, setNotifications] = useState<Notification[]>(notificationsData);
+  const [activeTab, setActiveTab] = useState<'Tout' | 'Non lues' | 'Mentions'>('Tout');
+
+  // Calcul dynamique du nombre de notifications non lues
+  const unreadCount = notifications.filter(n => n.unread).length;
+
+  // Fonction pour tout marquer comme lu
+  const handleMarkAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
+  };
+
+  // Filtrage des notifications selon l'onglet actif
+  const filteredNotifications = notifications.filter(n => {
+    if (activeTab === 'Non lues') return n.unread;
+    if (activeTab === 'Mentions') return n.type === 'commentaire';
+    return true; 
+  });
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 p-6 md:p-10 lg:p-12 font-sans">
+    <div className="min-h-screen bg-slate-950 dark:bg-slate-50 text-slate-50 dark:text-gray-900 p-6 md:p-10 lg:p-12 font-sans transition-colors duration-300">
       <div className="max-w-6xl mx-auto">
         
         {/* Titre + bouton Tout marquer comme lu */}
         <header className="flex justify-between items-start mb-10">
           <div>
-            <h1 className="text-4xl font-extrabold text-white tracking-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+            <h1 className="text-4xl font-extrabold text-white dark:text-gray-900 tracking-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
               Notifications
             </h1>
-            <p className="text-slate-400 text-lg mt-1.5 font-medium">3 notifications non lues</p>
+            <p className="text-slate-400 dark:text-gray-600 text-lg mt-1.5 font-medium">
+              {unreadCount} notification{unreadCount !== 1 ? 's' : ''} non lue{unreadCount !== 1 ? 's' : ''}
+            </p>
           </div>
-          <button className="bg-slate-800 text-slate-100 px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-700 transition-colors shadow-sm">
+          <button 
+            onClick={handleMarkAllAsRead}
+            disabled={unreadCount === 0}
+            className={`border px-6 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-sm ${
+              unreadCount > 0 
+                ? 'bg-slate-800 dark:bg-white dark:text-gray-900 dark:border-gray-200 text-slate-100 hover:bg-slate-700 dark:hover:bg-gray-100'
+                : 'bg-slate-900 dark:bg-gray-100 dark:text-gray-400 border-slate-800 dark:border-gray-200 text-slate-600 cursor-not-allowed'
+            }`}
+          >
             Tout marquer comme lu
           </button>
         </header>
 
         {/* Navigation entre Tout, Non-lues et Mentions */}
-        <nav className="bg-slate-900 border border-slate-700 rounded-xl p-1.5 flex justify-center gap-1.5 shadow-inner">
-          <TabItem label="Tout" active />
-          <TabItem label="Non lues" count={3} />
-          <TabItem label="Mentions" />
+        <nav className="bg-slate-900 dark:bg-white border border-slate-700 dark:border-gray-200 rounded-xl p-1.5 flex justify-center gap-1.5 shadow-inner">
+          <TabItem label="Tout" active={activeTab === 'Tout'} onClick={() => setActiveTab('Tout')} />
+          <TabItem label="Non lues" count={unreadCount} active={activeTab === 'Non lues'} onClick={() => setActiveTab('Non lues')} />
+          <TabItem label="Mentions" active={activeTab === 'Mentions'} onClick={() => setActiveTab('Mentions')} />
         </nav>
 
         {/* Liste défilante des notifications */}
         <main className="mt-10 space-y-5">
-          {notificationsData.map((notification) => (
-            <NotificationCard key={notification.id} notification={notification} />
-          ))}
+          {filteredNotifications.length > 0 ? (
+            filteredNotifications.map((notification) => (
+              <NotificationCard key={notification.id} notification={notification} />
+            ))
+          ) : (
+            <div className="text-center py-10 text-slate-500 dark:text-gray-400">
+              Aucune notification à afficher ici.
+            </div>
+          )}
         </main>
         
       </div>

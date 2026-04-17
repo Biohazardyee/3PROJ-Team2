@@ -7,7 +7,7 @@ const Layout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex flex-col h-screen bg-[#13131A] text-white overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#13131A] dark:bg-slate-50 text-white dark:text-gray-900 overflow-hidden transition-colors duration-300">
       {/* Ouvrir le menu */}
       <Header onMenuClick={() => setIsSidebarOpen(true)} />
       {/* Fermer la Sidebar */}
