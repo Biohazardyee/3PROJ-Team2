@@ -58,17 +58,16 @@ export interface ReviewWithMediaDto {
     title: string;
     content: string;
     created_at: Date;
-
     user: {
         id: string;
         username: string;
     } | null;
-
     media: {
+        id: string; 
         content: any;
     } | null;
-
     likes?: any[];
+    likes_count?: number; 
     _count?: {
         comments: number;
         likes?: number;

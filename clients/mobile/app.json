@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "projet-supcontent-mobile",
-    "slug": "projet-supcontent-mobile",
+    "slug": "melodia",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -45,6 +45,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a961ba89-48ee-4ea9-b8da-8772ef87999f"
+      }
+    },
+    "owner": "biohazardyes-organization"
   }
 }

@@ -1,23 +1,41 @@
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as SecureStore from 'expo-secure-store';
+import { useSafeAreaInsets, SafeAreaProvider } from 'react-native-safe-area-context';
 import Footer from "@/src/components/Footer";
 import { ThemeProvider, useTheme } from '../src/context/ThemeContext';
+import { usePushNotifications } from '../src/hook/usePushNotifications';
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-        <LayoutContent />
-    </ThemeProvider>
+    <SafeAreaProvider>
+        <ThemeProvider>
+            <LayoutContent />
+        </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
 
 function LayoutContent() {
     const insets = useSafeAreaInsets();
     const { theme } = useTheme();
+    const [userId, setUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const storedId = await SecureStore.getItemAsync("userId");
+            if (storedId) {
+                setUserId(storedId);
+            }
+        };
+        checkUser();
+    }, []);
+
+    usePushNotifications(userId);
+
     return (
         <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: theme.background }]}>
-
             <View style={{ flex: 1 }}>
                 <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="index" />
@@ -27,8 +45,9 @@ function LayoutContent() {
         </View>
     );
 }
-const styles= StyleSheet.create({
+
+const styles = StyleSheet.create({
   container: {
-    flex : 1,
-    }
-})
+    flex: 1,
+  }
+});

@@ -13,6 +13,10 @@ router.post('/', authGuard, function (req: Request, res: Response, next: NextFun
     messageController.add(req, res, next);
 })
 
+router.get('/conversation/:conversationId', authGuard, function (req: Request, res: Response, next: NextFunction): void {
+    messageController.getByConversationId(req, res, next);
+});
+
 router.get('/:id', authGuard, checkResourceOwnerOrAdmin('messages'), function (req: Request, res: Response, next: NextFunction): void {
     messageController.getById(req, res, next);
 })

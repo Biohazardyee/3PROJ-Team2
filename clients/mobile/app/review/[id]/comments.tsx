@@ -17,6 +17,7 @@ import apiClient from "../../../src/api/client";
 import { AuthGuardWrapper } from "@/src/components/AuthGuardMapper";
 import { jwtDecode } from "jwt-decode";
 import * as SecureStore from "expo-secure-store";
+import { Keyboard } from "react-native";
 
 interface Comment {
   id: string;
@@ -55,6 +56,7 @@ export default function CommentsScreen() {
   const [isInputVisible, setIsInputVisible] = useState(false);
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
   const [editingComment, setEditingComment] = useState<Comment | null>(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const fetchData = async () => {
     try {
@@ -96,7 +98,22 @@ export default function CommentsScreen() {
       getUserIdFromToken();
       if (id) fetchData();
     }, [id]);
-    
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardWillShow", (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+
+    const hideSub = Keyboard.addListener("keyboardWillHide", () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+  
 
   const orderedComments = useMemo(() => {
     const parents = comments.filter((c) => !c.parent_id);
@@ -369,11 +386,7 @@ export default function CommentsScreen() {
         />
 
         {isInputVisible && (
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-            style={styles.absoluteInputWrapper}
-          >
+          <View style={[styles.absoluteInputWrapper, { bottom: keyboardHeight - 10 }]}>
             <View style={styles.replyHint}>
               <Text style={{ color: "#94a3b8", fontSize: 12 }}>
                 {editingComment
@@ -420,8 +433,8 @@ export default function CommentsScreen() {
                 )}
               </TouchableOpacity>
             </View>
-          </KeyboardAvoidingView>
-        )}
+          </View>
+          )}
       </View>
     </AuthGuardWrapper>
   );
@@ -512,7 +525,6 @@ const styles = StyleSheet.create({
   actionLabel: { color: "#64748b", fontSize: 12, fontWeight: "600" },
   absoluteInputWrapper: {
     position: "absolute",
-    bottom: 0,
     left: 0,
     right: 0,
     backgroundColor: "#1a1d29",

@@ -16,6 +16,7 @@ import { InputMobile } from "../components/InputMobile";
 import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
+import * as Linking from "expo-linking";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -47,21 +48,24 @@ const RegisterMobile: React.FC = () => {
       );
 
       if (result.type === "success" && result.url) {
-        const url = new URL(result.url.replace("#", "?"));
-        const token = url.searchParams.get("token");
+        const parsedUrl = Linking.parse(result.url);
 
-        if (token) {
-          await SecureStore.setItemAsync("userToken", token);
-          router.replace("/onboarding");
-        }
+        const token = parsedUrl.queryParams?.token as string;
+        const error = parsedUrl.queryParams?.error as string;
 
-        const error = url.searchParams.get("error");
         if (error) {
           Alert.alert(
             "Compte existant",
             "Cet email est déjà lié à un autre compte.",
           );
           return;
+        }
+
+        if (token) {
+          await SecureStore.setItemAsync("userToken", token);
+          router.replace("/onboarding");
+        } else {
+          Alert.alert("Erreur", "Aucun token reçu après l'authentification.");
         }
       }
     } catch (error) {
@@ -86,11 +90,14 @@ const RegisterMobile: React.FC = () => {
       });
 
       const { token } = response.data;
+      
       if (token) {
         await SecureStore.setItemAsync("userToken", token);
+        router.push("/onboarding");
+      } else {
+        Alert.alert("Succès", "Compte créé, veuillez vous connecter.");
+        router.push("/login");
       }
-
-      router.push("/onboarding");
     } catch (error: any) {
       const message =
         error.response?.data?.message ||

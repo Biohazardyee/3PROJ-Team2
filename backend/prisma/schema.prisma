@@ -50,6 +50,8 @@ model Users {
   messages            Messages[]
   commentLikes        CommentLikes[]
 
+  expo_push_token String?
+
   @@unique([provider, provider_id])
 }
 
@@ -129,7 +131,7 @@ model CommentLikes {
   comment_id String
   created_at DateTime       @default(now())
 
-  @@id([user_id, comment_id]) 
+  @@id([user_id, comment_id])
 }
 
 model ReviewLikes {
@@ -287,7 +289,7 @@ model Conversations {
 
 model Messages {
   id              String        @id @default(uuid())
-  conversation    Conversations @relation(fields: [conversation_id], references: [id])
+  conversation    Conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
   conversation_id String
   sender          Users         @relation(fields: [sender_id], references: [id])
   sender_id       String

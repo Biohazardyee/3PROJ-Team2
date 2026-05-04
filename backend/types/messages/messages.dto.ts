@@ -12,6 +12,7 @@ export interface MessageAddResponseDto {
     sender_id: string,
     content: string,
     is_read: boolean,
+    created_at: Date
 }
 
 export interface MessageDeleteResponseDto {

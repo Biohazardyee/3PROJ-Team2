@@ -54,7 +54,6 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                 key={i}
                 name="star"
                 size={12}
-                // Logique : si numericRating est 3.5, les étoiles 0, 1, 2 sont pleines
                 color={
                   i < Math.floor(numericRating || 0) ? "#ec4899" : "#374151"
                 }

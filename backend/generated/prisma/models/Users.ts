@@ -39,6 +39,7 @@ export type UsersMinAggregateOutputType = {
   biography: string | null
   created_at: Date | null
   updated_at: Date | null
+  expo_push_token: string | null
 }
 
 export type UsersMaxAggregateOutputType = {
@@ -56,6 +57,7 @@ export type UsersMaxAggregateOutputType = {
   biography: string | null
   created_at: Date | null
   updated_at: Date | null
+  expo_push_token: string | null
 }
 
 export type UsersCountAggregateOutputType = {
@@ -73,6 +75,7 @@ export type UsersCountAggregateOutputType = {
   biography: number
   created_at: number
   updated_at: number
+  expo_push_token: number
   _all: number
 }
 
@@ -92,6 +95,7 @@ export type UsersMinAggregateInputType = {
   biography?: true
   created_at?: true
   updated_at?: true
+  expo_push_token?: true
 }
 
 export type UsersMaxAggregateInputType = {
@@ -109,6 +113,7 @@ export type UsersMaxAggregateInputType = {
   biography?: true
   created_at?: true
   updated_at?: true
+  expo_push_token?: true
 }
 
 export type UsersCountAggregateInputType = {
@@ -126,6 +131,7 @@ export type UsersCountAggregateInputType = {
   biography?: true
   created_at?: true
   updated_at?: true
+  expo_push_token?: true
   _all?: true
 }
 
@@ -216,6 +222,7 @@ export type UsersGroupByOutputType = {
   biography: string | null
   created_at: Date
   updated_at: Date
+  expo_push_token: string | null
   _count: UsersCountAggregateOutputType | null
   _min: UsersMinAggregateOutputType | null
   _max: UsersMaxAggregateOutputType | null
@@ -254,6 +261,7 @@ export type UsersWhereInput = {
   biography?: Prisma.StringNullableFilter<"Users"> | string | null
   created_at?: Prisma.DateTimeFilter<"Users"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Users"> | Date | string
+  expo_push_token?: Prisma.StringNullableFilter<"Users"> | string | null
   reviews?: Prisma.ReviewsListRelationFilter
   review_comments?: Prisma.ReviewCommentsListRelationFilter
   review_likes?: Prisma.ReviewLikesListRelationFilter
@@ -288,6 +296,7 @@ export type UsersOrderByWithRelationInput = {
   biography?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  expo_push_token?: Prisma.SortOrderInput | Prisma.SortOrder
   reviews?: Prisma.ReviewsOrderByRelationAggregateInput
   review_comments?: Prisma.ReviewCommentsOrderByRelationAggregateInput
   review_likes?: Prisma.ReviewLikesOrderByRelationAggregateInput
@@ -326,6 +335,7 @@ export type UsersWhereUniqueInput = Prisma.AtLeast<{
   biography?: Prisma.StringNullableFilter<"Users"> | string | null
   created_at?: Prisma.DateTimeFilter<"Users"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Users"> | Date | string
+  expo_push_token?: Prisma.StringNullableFilter<"Users"> | string | null
   reviews?: Prisma.ReviewsListRelationFilter
   review_comments?: Prisma.ReviewCommentsListRelationFilter
   review_likes?: Prisma.ReviewLikesListRelationFilter
@@ -360,6 +370,7 @@ export type UsersOrderByWithAggregationInput = {
   biography?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  expo_push_token?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UsersCountOrderByAggregateInput
   _max?: Prisma.UsersMaxOrderByAggregateInput
   _min?: Prisma.UsersMinOrderByAggregateInput
@@ -383,6 +394,7 @@ export type UsersScalarWhereWithAggregatesInput = {
   biography?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Users"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Users"> | Date | string
+  expo_push_token?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
 }
 
 export type UsersCreateInput = {
@@ -400,6 +412,7 @@ export type UsersCreateInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -434,6 +447,7 @@ export type UsersUncheckedCreateInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -468,6 +482,7 @@ export type UsersUpdateInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -502,6 +517,7 @@ export type UsersUncheckedUpdateInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -536,6 +552,7 @@ export type UsersCreateManyInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
 }
 
 export type UsersUpdateManyMutationInput = {
@@ -553,6 +570,7 @@ export type UsersUpdateManyMutationInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UsersUncheckedUpdateManyInput = {
@@ -570,6 +588,7 @@ export type UsersUncheckedUpdateManyInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UsersProviderProvider_idCompoundUniqueInput = {
@@ -592,6 +611,7 @@ export type UsersCountOrderByAggregateInput = {
   biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  expo_push_token?: Prisma.SortOrder
 }
 
 export type UsersMaxOrderByAggregateInput = {
@@ -609,6 +629,7 @@ export type UsersMaxOrderByAggregateInput = {
   biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  expo_push_token?: Prisma.SortOrder
 }
 
 export type UsersMinOrderByAggregateInput = {
@@ -626,6 +647,7 @@ export type UsersMinOrderByAggregateInput = {
   biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  expo_push_token?: Prisma.SortOrder
 }
 
 export type UsersScalarRelationFilter = {
@@ -925,6 +947,7 @@ export type UsersCreateWithoutReviewsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
@@ -958,6 +981,7 @@ export type UsersUncheckedCreateWithoutReviewsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
@@ -1007,6 +1031,7 @@ export type UsersUpdateWithoutReviewsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
@@ -1040,6 +1065,7 @@ export type UsersUncheckedUpdateWithoutReviewsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
@@ -1073,6 +1099,7 @@ export type UsersCreateWithoutReview_commentsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
@@ -1106,6 +1133,7 @@ export type UsersUncheckedCreateWithoutReview_commentsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
@@ -1155,6 +1183,7 @@ export type UsersUpdateWithoutReview_commentsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
@@ -1188,6 +1217,7 @@ export type UsersUncheckedUpdateWithoutReview_commentsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
@@ -1221,6 +1251,7 @@ export type UsersCreateWithoutCommentLikesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -1254,6 +1285,7 @@ export type UsersUncheckedCreateWithoutCommentLikesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -1303,6 +1335,7 @@ export type UsersUpdateWithoutCommentLikesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -1336,6 +1369,7 @@ export type UsersUncheckedUpdateWithoutCommentLikesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -1369,6 +1403,7 @@ export type UsersCreateWithoutReview_likesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
@@ -1402,6 +1437,7 @@ export type UsersUncheckedCreateWithoutReview_likesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
@@ -1451,6 +1487,7 @@ export type UsersUpdateWithoutReview_likesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
@@ -1484,6 +1521,7 @@ export type UsersUncheckedUpdateWithoutReview_likesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
@@ -1517,6 +1555,7 @@ export type UsersCreateWithoutPlaylistsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -1550,6 +1589,7 @@ export type UsersUncheckedCreateWithoutPlaylistsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -1599,6 +1639,7 @@ export type UsersUpdateWithoutPlaylistsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -1632,6 +1673,7 @@ export type UsersUncheckedUpdateWithoutPlaylistsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -1665,6 +1707,7 @@ export type UsersCreateWithoutUser_media_statusInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -1698,6 +1741,7 @@ export type UsersUncheckedCreateWithoutUser_media_statusInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -1747,6 +1791,7 @@ export type UsersUpdateWithoutUser_media_statusInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -1780,6 +1825,7 @@ export type UsersUncheckedUpdateWithoutUser_media_statusInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -1813,6 +1859,7 @@ export type UsersCreateWithoutActivitiesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -1846,6 +1893,7 @@ export type UsersUncheckedCreateWithoutActivitiesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -1884,6 +1932,7 @@ export type UsersCreateWithoutActivities_targetsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -1917,6 +1966,7 @@ export type UsersUncheckedCreateWithoutActivities_targetsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -1966,6 +2016,7 @@ export type UsersUpdateWithoutActivitiesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -1999,6 +2050,7 @@ export type UsersUncheckedUpdateWithoutActivitiesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -2043,6 +2095,7 @@ export type UsersUpdateWithoutActivities_targetsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -2076,6 +2129,7 @@ export type UsersUncheckedUpdateWithoutActivities_targetsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -2109,6 +2163,7 @@ export type UsersCreateWithoutFollowsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -2142,6 +2197,7 @@ export type UsersUncheckedCreateWithoutFollowsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -2180,6 +2236,7 @@ export type UsersCreateWithoutFollowersInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -2213,6 +2270,7 @@ export type UsersUncheckedCreateWithoutFollowersInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -2262,6 +2320,7 @@ export type UsersUpdateWithoutFollowsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -2295,6 +2354,7 @@ export type UsersUncheckedUpdateWithoutFollowsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -2339,6 +2399,7 @@ export type UsersUpdateWithoutFollowersInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -2372,6 +2433,7 @@ export type UsersUncheckedUpdateWithoutFollowersInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -2405,6 +2467,7 @@ export type UsersCreateWithoutReporter_reportsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -2438,6 +2501,7 @@ export type UsersUncheckedCreateWithoutReporter_reportsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -2476,6 +2540,7 @@ export type UsersCreateWithoutProfile_reportsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -2509,6 +2574,7 @@ export type UsersUncheckedCreateWithoutProfile_reportsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -2558,6 +2624,7 @@ export type UsersUpdateWithoutReporter_reportsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -2591,6 +2658,7 @@ export type UsersUncheckedUpdateWithoutReporter_reportsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -2635,6 +2703,7 @@ export type UsersUpdateWithoutProfile_reportsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -2668,6 +2737,7 @@ export type UsersUncheckedUpdateWithoutProfile_reportsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -2701,6 +2771,7 @@ export type UsersCreateWithoutNotificationsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -2734,6 +2805,7 @@ export type UsersUncheckedCreateWithoutNotificationsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -2772,6 +2844,7 @@ export type UsersCreateWithoutNotificationsRelatedInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -2805,6 +2878,7 @@ export type UsersUncheckedCreateWithoutNotificationsRelatedInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -2854,6 +2928,7 @@ export type UsersUpdateWithoutNotificationsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -2887,6 +2962,7 @@ export type UsersUncheckedUpdateWithoutNotificationsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -2931,6 +3007,7 @@ export type UsersUpdateWithoutNotificationsRelatedInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -2964,6 +3041,7 @@ export type UsersUncheckedUpdateWithoutNotificationsRelatedInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -2997,6 +3075,7 @@ export type UsersCreateWithoutConversations_user1Input = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -3030,6 +3109,7 @@ export type UsersUncheckedCreateWithoutConversations_user1Input = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -3068,6 +3148,7 @@ export type UsersCreateWithoutConversations_user2Input = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -3101,6 +3182,7 @@ export type UsersUncheckedCreateWithoutConversations_user2Input = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -3150,6 +3232,7 @@ export type UsersUpdateWithoutConversations_user1Input = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -3183,6 +3266,7 @@ export type UsersUncheckedUpdateWithoutConversations_user1Input = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -3227,6 +3311,7 @@ export type UsersUpdateWithoutConversations_user2Input = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -3260,6 +3345,7 @@ export type UsersUncheckedUpdateWithoutConversations_user2Input = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -3293,6 +3379,7 @@ export type UsersCreateWithoutMessagesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
@@ -3326,6 +3413,7 @@ export type UsersUncheckedCreateWithoutMessagesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
@@ -3375,6 +3463,7 @@ export type UsersUpdateWithoutMessagesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
@@ -3408,6 +3497,7 @@ export type UsersUncheckedUpdateWithoutMessagesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
@@ -3616,6 +3706,7 @@ export type UsersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   biography?: boolean
   created_at?: boolean
   updated_at?: boolean
+  expo_push_token?: boolean
   reviews?: boolean | Prisma.Users$reviewsArgs<ExtArgs>
   review_comments?: boolean | Prisma.Users$review_commentsArgs<ExtArgs>
   review_likes?: boolean | Prisma.Users$review_likesArgs<ExtArgs>
@@ -3651,6 +3742,7 @@ export type UsersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   biography?: boolean
   created_at?: boolean
   updated_at?: boolean
+  expo_push_token?: boolean
 }, ExtArgs["result"]["users"]>
 
 export type UsersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -3668,6 +3760,7 @@ export type UsersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   biography?: boolean
   created_at?: boolean
   updated_at?: boolean
+  expo_push_token?: boolean
 }, ExtArgs["result"]["users"]>
 
 export type UsersSelectScalar = {
@@ -3685,9 +3778,10 @@ export type UsersSelectScalar = {
   biography?: boolean
   created_at?: boolean
   updated_at?: boolean
+  expo_push_token?: boolean
 }
 
-export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "favorite_band" | "profile_picture" | "role" | "provider" | "provider_id" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at", ExtArgs["result"]["users"]>
+export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "favorite_band" | "profile_picture" | "role" | "provider" | "provider_id" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at" | "expo_push_token", ExtArgs["result"]["users"]>
 export type UsersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviews?: boolean | Prisma.Users$reviewsArgs<ExtArgs>
   review_comments?: boolean | Prisma.Users$review_commentsArgs<ExtArgs>
@@ -3747,6 +3841,7 @@ export type $UsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     biography: string | null
     created_at: Date
     updated_at: Date
+    expo_push_token: string | null
   }, ExtArgs["result"]["users"]>
   composites: {}
 }
@@ -4201,6 +4296,7 @@ export interface UsersFieldRefs {
   readonly biography: Prisma.FieldRef<"Users", 'String'>
   readonly created_at: Prisma.FieldRef<"Users", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Users", 'DateTime'>
+  readonly expo_push_token: Prisma.FieldRef<"Users", 'String'>
 }
     
 
