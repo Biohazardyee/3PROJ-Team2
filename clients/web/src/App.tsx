@@ -26,12 +26,12 @@ const App: React.FC = () => {
                 {/* Par défaut, on affiche la page d'accueil */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/LandingPage" element={<LandingPage />} />
+                {/* Route pour la page Register */}
+                <Route path="/register" element={<Register />} />
+                {/* Route pour la page Login */}
+                <Route path="/login" element={<Login />} />
 
                 <Route element={<Layout />}>
-                    {/* Route pour la page Register */}
-                    <Route path="/register" element={<Register />} />
-                    {/* Route pour la page Login */}
-                    <Route path="/login" element={<Login />} />
                     {/* Route pour la page Home */}
                     <Route path="/home" element={<Home />} />
                     {/* Route pour la page Feed */}

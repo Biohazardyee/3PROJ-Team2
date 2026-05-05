@@ -22,7 +22,7 @@ const ListCard: React.FC<any> = ({ id, title, count, image, onClick, onEdit, onD
         <div className="flex justify-between items-start px-1">
             <div className="overflow-hidden cursor-pointer flex-grow" onClick={() => onClick(id)}>
                 <h3 className="text-white dark:text-gray-900 font-bold text-lg truncate">{title}</h3>
-                <p className="text-slate-400 dark:text-slate-500 text-sm truncate">{count || 0} titres</p>
+                <p className="text-slate-400 dark:text-slate-500 text-sm truncate">{count || 0} albums</p>
             </div>
             {/* Boutons visibles uniquement au survol de la carte */}
             <div className="flex items-center opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
@@ -73,7 +73,7 @@ const LibraryPage: React.FC = () => {
                         <div className="flex flex-col gap-4 mt-2">
                             <h1 className="text-4xl md:text-5xl font-bold text-white dark:text-gray-900 tracking-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>{selectedPlaylist.title}</h1>
                             <p className="text-slate-400 dark:text-slate-600 text-lg">{selectedPlaylist.description || "Vos listes de lecture personnalisées."}</p>
-                            <p className="text-slate-500 dark:text-slate-400 font-medium">{currentAlbums.length} titres</p>
+                            <p className="text-slate-500 dark:text-slate-400 font-medium">{currentAlbums.length} albums</p>
                         </div>
                     </div>
 

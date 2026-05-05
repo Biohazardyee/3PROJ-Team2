@@ -6,9 +6,11 @@ const CreatePlaylist: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
-    // Récupère les infos de la playlist si on la modifie
+    // Récupère les infos de la playlist si on la modifie, ou les infos de l'album à ajouter
     const state = location.state as any;
     const isEditing = !!state?.id;
+    const albumToAdd = state?.albumToAdd;
+    const returnTo = state?.returnTo;
     
     // États pour stocker le nom de la playlist et l'image de couverture
     const [name, setName] = useState(state?.title || '');
@@ -52,22 +54,41 @@ const CreatePlaylist: React.FC = () => {
                         : p
                 );
             } else {
-                // Crée un nouvel objet playlist avec un ID unique
+                // On met la cover de l'album comme image de playlist par défaut.
+                let albumWithProperImage = null;
+                if (albumToAdd) {
+                    // On force la propriété "image" pour qu'elle corresponde à "cover"
+                    albumWithProperImage = {
+                        ...albumToAdd,
+                        image: albumToAdd.image || albumToAdd.cover 
+                    };
+                }
+
                 const newPlaylist = {
                     id: Date.now().toString(),
                     title: name,
                     description: '',
                     tags: [],
-                    count: 0,
-                    image: image || undefined,
-                    images: []
+                    count: albumToAdd ? 1 : 0, 
+                    // Si on ne choisit pas d'image on utilise la cover de l'album 
+                    image: image || (albumToAdd ? (albumToAdd.cover || albumToAdd.image) : undefined),
+                    images: [],
+                    albums: albumWithProperImage ? [albumWithProperImage] : [] 
                 };
                 playlists.push(newPlaylist);
             }
             
-            // Sauvegarde la liste mise à jour et retourne à la bibliothèque
+            // Sauvegarde la liste mise à jour
             localStorage.setItem('user_playlists', JSON.stringify(playlists));
-            navigate('/library');
+            
+            // Redirection vers la page /library
+            if (returnTo) {
+                // Si on vient d'un album, on y retourne
+                navigate(returnTo);
+            } else {
+                // Sinon on retourne à la bibliothèque
+                navigate('/library');
+            }
         } catch (e) {
             console.error("Erreur lors de la sauvegarde :", e);
         }
@@ -134,6 +155,13 @@ const CreatePlaylist: React.FC = () => {
                     autoFocus={!isEditing}
                     className="w-full max-w-md bg-transparent border-b-2 border-slate-700 dark:border-gray-300 focus:border-blue-500 dark:focus:border-blue-600 text-white dark:text-gray-900 text-3xl text-center py-3 mb-12 outline-none transition-colors placeholder:text-slate-600 dark:placeholder:text-gray-300 font-bold"
                 />
+
+                {/* Indication visuelle si un album est en attente d'ajout */}
+                {albumToAdd && (
+                    <div className="mb-6 text-sm text-blue-400 dark:text-blue-600 bg-blue-900/20 dark:bg-blue-100 px-4 py-2 rounded-lg">
+                        L'album <b>{albumToAdd.title}</b> sera ajouté à cette playlist.
+                    </div>
+                )}
 
                 {/* Bouton pour valider la création ou les modifications */}
                 <button 

@@ -9,11 +9,10 @@ type TrendingCardProps = {
   cover: string;
   rating: number;
   year: number;
-  genre: string;
 }
 
 export const AlbumCard : React.FC<TrendingCardProps> = ({ 
-  id, title, artist, cover, rating, year, genre 
+  id, title, artist, cover, rating, year
 }) => {
   const navigate = useNavigate();
 
@@ -29,10 +28,6 @@ export const AlbumCard : React.FC<TrendingCardProps> = ({
           alt={title} 
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
         />
-        {/* Genre */}
-        <div className="absolute top-3 right-3 bg-[#FF1E56] text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg uppercase tracking-wider z-10">
-          {genre}
-        </div>
       </div>
 
       {/* Contenu */}
