@@ -18,6 +18,7 @@ import {
 } from "../../../generated/prisma/browser.js";
 import { notificationsMapper } from "../../../mappers/notifications/notifications.mapper.js";
 import { sendPushNotification } from "./notification.push.js";
+import { generateNotificationContent } from "./notification.helper.js";
 
 export class NotificationService {
   async create(
@@ -78,35 +79,39 @@ export class NotificationService {
       }
     }
 
-    const createData: Prisma.NotificationsUncheckedCreateInput = {
-      user_id: data.user_id,
-      action: data.action,
-      related_user_id: data.related_user_id,
-      review_id: data.review_id,
-      media_id: data.media_id,
-    };
-
-    const notification: Notifications = await PrismaDb.notifications.create({
-      data: createData,
+    const notification = await PrismaDb.notifications.create({
+      data: {
+        user_id: data.user_id,
+        action: data.action,
+        related_user_id: data.related_user_id,
+        review_id: data.review_id,
+        media_id: data.media_id,
+      },
+      include: {
+        related_user: { select: { username: true } },
+      },
     });
 
-    await sendPushNotification(
-      data.user_id,
-      "Nouvelle activité",
-      "Vous avez une nouvelle notification !",
-    );
+    const { title, body } = generateNotificationContent(notification);
+
+    if (user.expo_push_token) {
+      sendPushNotification(user.expo_push_token, title, body, {
+        action: data.action,
+        id: notification.id,
+      }).catch((err) => console.error("Push failed", err));
+    }
 
     return notificationsMapper.toAddDto(notification);
   }
 
-  async getByUserId(user_id: string): Promise<NotificationsResponseDto[]> {
-    if (isEmptyString(user_id)) {
+  async getByUserId(id: string): Promise<NotificationsResponseDto[]> {
+    if (isEmptyString(id)) {
       throw new BadRequest("user_id cannot be empty");
     }
 
     const user: Users | null = await PrismaDb.users.findUnique({
       where: {
-        id: user_id,
+        id: id,
       },
     });
 
@@ -114,15 +119,22 @@ export class NotificationService {
       throw new NotFound("User not found");
     }
 
-    const userNotifications: Notifications[] =
-      await PrismaDb.notifications.findMany({
-        where: {
-          user_id,
+    const userNotifications = await PrismaDb.notifications.findMany({
+      where: {
+        user_id: id,
+      },
+      include: {
+
+        related_user: {
+          select: {
+            username: true,
+          },
         },
-        orderBy: {
-          created_at: "desc",
-        },
-      });
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
 
     return notificationsMapper.toDtoList(userNotifications);
   }

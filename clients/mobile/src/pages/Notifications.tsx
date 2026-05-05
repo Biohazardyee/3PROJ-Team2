@@ -1,218 +1,304 @@
-// import React from 'react';
-// import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-// import { Ionicons } from "@expo/vector-icons";
-// import Header from "@/src/components/Header";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
+import * as SecureStore from "expo-secure-store";
+import Header from "@/src/components/Header";
+import apiClient from "../api/client";
+import { useRouter } from "expo-router";
 
+export interface AppNotification {
+  id: string;
+  is_read: boolean;
+  action: string;
+  type?: string;
+  content?: string;
+  related_user_id?: string;
+  created_at: string;
+  sender?: {
+    username: string;
+    initial?: string;
+  };
+  related_user?: {
+    username: string;
+  };
+}
 
+export default function Notifications() {
+  const [filter, setFilter] = useState("Tout");
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const router = useRouter();
 
-// export default function Notifications() {
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const storedId = await SecureStore.getItemAsync("userId");
+      if (storedId) setUserId(storedId);
+    };
+    fetchUserId();
+  }, []);
 
-//     const [filter, setFilter] = React.useState('Tout'); 
+  const fetchNotifications = async () => {
+    if (!userId) return;
 
-//     const filteredNotifications = Listnotifications.filter(item => {
-//         if (filter === 'Tout') return true;
-//         if (filter === 'Non lue') return parseInt(item.id) <= 3;
-//         if (filter === 'Mentions') return item.action.includes('commented'); 
-//         return true;
-//     });
+    try {
+      const response = await apiClient.get(`/notifications/user/${userId}`);
+      setNotifications(response.data.notifications || []);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des notifications:", error);
+    } finally {
+      setIsLoading(false);
+      setRefreshing(false);
+    }
+  };
 
-//     return (
-//         <View style={styles.container}>
-//             <Header />
-//             <ScrollView contentContainerStyle={styles.Content}>
+  useEffect(() => {
+    if (userId) {
+      fetchNotifications();
+    }
+  }, [userId]);
 
-//                 {/* Haut de la page */}
-//                 <View style={styles.TopPage}>
-//                     <Text style={styles.Title}>Notifications</Text>
-//                 </View>
-//                 <TouchableOpacity>
-//                     <Text style={styles.markRead}>Marquer tout comme lu</Text>
-//                 </TouchableOpacity>
-//                 <Text style={styles.unreadText}>3 notifications non lue</Text>
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchNotifications();
+  };
 
-//                 {/* Filtres */}
-//                 <View style={styles.tabs}>
-//                     <TouchableOpacity
-//                         style={[styles.tab, filter === 'Tout' && styles.activeTab]}
-//                         onPress={() => setFilter('Tout')}
-//                     >
-//                         <Text style={filter === 'Tout' ? styles.activeTabText : styles.tabText}>Tout</Text>
-//                     </TouchableOpacity>
+  const markAllAsRead = async () => {
+    const unreadNotifs = notifications.filter((n) => !n.is_read);
+    if (unreadNotifs.length === 0) return;
 
-//                     <TouchableOpacity
-//                         style={[styles.tab, filter === 'Non lue' && styles.activeTab]}
-//                         onPress={() => setFilter('Non lue')}
-//                     >
-//                         <Text style={filter === 'Non lue' ? styles.activeTabText : styles.tabText}>Non lue</Text>
-//                     </TouchableOpacity>
+    try {
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, is_read: true })),
+      );
 
-//                     <TouchableOpacity
-//                         style={[styles.tab, filter === 'Mentions' && styles.activeTab]}
-//                         onPress={() => setFilter('Mentions')}
-//                     >
-//                         <Text style={filter === 'Mentions' ? styles.activeTabText : styles.tabText}>Mentions</Text>
-//                     </TouchableOpacity>
-//                 </View>
+      await Promise.all(
+        unreadNotifs.map((notif) =>
+          apiClient.put(`/notifications/${notif.id}`, { is_read: true }),
+        ),
+      );
+    } catch (error) {
+      console.error("Erreur mark as read:", error);
+      fetchNotifications();
+    }
+  };
 
-//                 {/* Les Notifications */}
-//                 {filteredNotifications.map((item) => (
-//                     <View key={item.id} style={styles.notificationCard}>
-//                         <View style={styles.iconPlace}>
-//                             <View style={[styles.Icon, { backgroundColor: '#1e1e2d' }]}>
-//                                 <Ionicons name={item.type as any} size={16} color={item.color} />
-//                             </View>
-//                             <View style={styles.avatar}>
-//                                 <Text style={styles.avatarText}>
-//                                     {item.initial}
-//                                 </Text>
-//                             </View>
-//                         </View>
+  const filteredNotifications = notifications.filter((item) => {
+    if (filter === "Tout") return true;
+    if (filter === "Non lue") return !item.is_read;
+    if (filter === "Mentions") return item.action === "mention";
+    return true;
+  });
 
-//                         <View style={styles.Body}>
-//                             <Text style={styles.message}>
-//                                 <Text style={styles.userName}>
-//                                     {item.user}
-//                                 </Text>
-//                                 {item.action}
-//                             </Text>
-//                             <Text style={styles.time}>{item.time}</Text>
-//                         </View>
+  const handleNotificationPress = async (notification: AppNotification) => {
+    if (!notification.is_read) {
+      try {
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.id === notification.id ? { ...n, is_read: true } : n,
+          ),
+        );
+        await apiClient.put(`/notifications/${notification.id}`, {
+          is_read: true,
+        });
+      } catch (error) {
+        console.error("Erreur lors du marquage comme lu:", error);
+      }
+    }
 
-//                         {/* Notification non lue */}
-//                         {parseInt(item.id) <= 3 && <View style={styles.unreadDot} />}
-//                     </View>
-//                 ))}
-//             </ScrollView>
-//         </View>
-//     );
-// }
+    if (notification.related_user_id) {
+      router.push({
+        pathname: "/profile",
+        params: { id: notification.related_user_id },
+      });
+    }
+  };
 
-// const styles = StyleSheet.create({
-//     container: { flex: 1,
-//         backgroundColor: '#1C1C28'
-//     },
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-//     Content: { padding: 20
-//     },
+  const getIconData = (action: string) => {
+    switch (action) {
+      case "NEW_MESSAGE":
+      case "message":
+        return { name: "chatbubble", color: "#3b82f6" };
+      case "MENTION":
+      case "mention":
+        return { name: "at", color: "#10b981" };
+      default:
+        return { name: "notifications", color: "#94a3b8" };
+    }
+  };
 
-//     TopPage: {
-//         flexDirection: 'row',
-//         justifyContent: 'space-between',
-//         alignItems: 'center',
-//         marginTop: 10
-//     },
+  return (
+    <View style={styles.container}>
+      <Header />
+      <ScrollView
+        contentContainerStyle={styles.Content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#3b82f6"
+          />
+        }
+      >
+        <View style={styles.TopPage}>
+          <Text style={styles.Title}>Notifications</Text>
+        </View>
 
-//     Title: {
-//         color: 'white',
-//         fontSize: 32,
-//         fontWeight: 'bold'
-//     },
+        {unreadCount > 0 && (
+          <TouchableOpacity onPress={markAllAsRead}>
+            <Text style={styles.markRead}>Marquer tout comme lu</Text>
+          </TouchableOpacity>
+        )}
 
-//     markRead: {
-//         color: '#94a3b8',
-//         fontSize: 14
-//     },
+        <Text style={styles.unreadText}>
+          {unreadCount} notification{unreadCount > 1 ? "s" : ""} non lue
+          {unreadCount > 1 ? "s" : ""}
+        </Text>
 
-//     unreadText: {
-//         color: '#94a3b8',
-//         fontSize: 16,
-//         marginTop: 5
-//     },
+        <View style={styles.tabs}>
+          {["Tout", "Non lue", "Mentions"].map((tabName) => (
+            <TouchableOpacity
+              key={tabName}
+              style={[styles.tab, filter === tabName && styles.activeTab]}
+              onPress={() => setFilter(tabName)}
+            >
+              <Text
+                style={
+                  filter === tabName ? styles.activeTabText : styles.tabText
+                }
+              >
+                {tabName}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-//     tabs: {
-//         flexDirection: 'row',
-//         backgroundColor: '#1e1e2d',
-//         borderRadius: 12,
-//         padding: 4,
-//         marginVertical: 25
-//     },
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            color="#3b82f6"
+            style={{ marginTop: 50 }}
+          />
+        ) : filteredNotifications.length === 0 ? (
+          <Text
+            style={{ color: "#64748b", textAlign: "center", marginTop: 50 }}
+          >
+            Aucune notification.
+          </Text>
+        ) : (
+          filteredNotifications.map((item) => {
+            const iconData = getIconData(item.action);
+            const displayUser =
+              item.related_user?.username || item.sender?.username || "Système";
+            const userInitial = displayUser.charAt(0).toUpperCase();
 
-//     tab: {
-//         flex: 1,
-//         paddingVertical: 10,
-//         alignItems: 'center',
-//         borderRadius: 10
-//     },
+            return (
+              <TouchableOpacity
+                key={item.id}
+                onPress={() => handleNotificationPress(item)} // Utilisation de notre nouvelle fonction
+                activeOpacity={0.7}
+                style={[
+                  styles.notificationCard,
+                  !item.is_read && styles.unreadCardBorder,
+                ]}
+              >
+                <View style={styles.iconPlace}>
+                  <View style={styles.avatar}>
+                    <Text style={styles.avatarText}>{userInitial}</Text>
+                  </View>
+                </View>
 
-//     activeTab: {
-//         backgroundColor: '#2d2d3f'
-//     },
+                <View style={styles.Body}>
+                  <Text style={styles.message}>
+                    <Text style={styles.userName}>{displayUser} </Text>
+                    {item.content || item.action}
+                  </Text>
+                  <Text style={styles.time}>
+                    {new Date(item.created_at).toLocaleDateString()}
+                  </Text>
+                </View>
 
-//     tabText: {
-//         color: '#94a3b8',
-//         fontWeight: '600'
-//     },
+                {!item.is_read && <View style={styles.unreadDot} />}
+              </TouchableOpacity>
+            );
+          })
+        )}
+      </ScrollView>
+    </View>
+  );
+}
 
-//     activeTabText: {
-//         color: 'white',
-//         fontWeight: 'bold'
-//     },
-
-//     notificationCard: {
-//         flexDirection: 'row',
-//         backgroundColor: '#1c1c24',
-//         padding: 15,
-//         borderRadius: 16,
-//         marginBottom: 12,
-//         alignItems: 'center',
-//         borderWidth: 1,
-//         borderColor: '#2d2d3f'
-//     },
-//     iconPlace: {
-//         flexDirection: 'row',
-//         alignItems: 'center'
-//     },
-
-//     Icon: {
-//         width: 32,
-//         height: 32,
-//         borderRadius: 16,
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         marginRight: 10
-//     },
-
-//     avatar: {
-//         width: 40,
-//         height: 40,
-//         borderRadius: 20,
-//         backgroundColor: '#2d2d3f',
-//         justifyContent: 'center',
-//         alignItems: 'center'
-//     },
-
-//     avatarText: {
-//         color: '#3b82f6',
-//         fontWeight: 'bold'
-//     },
-
-//     Body: { flex: 1,
-//         marginLeft: 15
-//     },
-
-//     message: {
-//         color: '#d1d5db',
-//         fontSize: 15,
-//         lineHeight: 20
-//     },
-
-//     userName: {
-//         color: 'white',
-//         fontWeight: 'bold'
-//     },
-
-//     time: {
-//         color: '#64748b',
-//         fontSize: 13,
-//         marginTop: 4
-//     },
-
-//     unreadDot: {
-//         width: 8,
-//         height: 8,
-//         borderRadius: 4,
-//         backgroundColor: '#3b82f6',
-//         marginLeft: 10
-//     }
-
-// });
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#1C1C28" },
+  Content: { padding: 20 },
+  TopPage: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  Title: { color: "white", fontSize: 32, fontWeight: "bold" },
+  markRead: { color: "#3b82f6", fontSize: 14, marginTop: 10 },
+  unreadText: { color: "#94a3b8", fontSize: 16, marginTop: 5 },
+  tabs: {
+    flexDirection: "row",
+    backgroundColor: "#1e1e2d",
+    borderRadius: 12,
+    padding: 4,
+    marginVertical: 25,
+  },
+  tab: { flex: 1, paddingVertical: 10, alignItems: "center", borderRadius: 10 },
+  activeTab: { backgroundColor: "#2d2d3f" },
+  tabText: { color: "#94a3b8", fontWeight: "600" },
+  activeTabText: { color: "white", fontWeight: "bold" },
+  notificationCard: {
+    flexDirection: "row",
+    backgroundColor: "#1c1c24",
+    padding: 15,
+    borderRadius: 16,
+    marginBottom: 12,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#2d2d3f",
+  },
+  unreadCardBorder: { borderColor: "#3b82f640" },
+  iconPlace: { flexDirection: "row", alignItems: "center" },
+  Icon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#2d2d3f",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarText: { color: "#3b82f6", fontWeight: "bold" },
+  Body: { flex: 1, marginLeft: 15 },
+  message: { color: "#d1d5db", fontSize: 15, lineHeight: 20 },
+  userName: { color: "white", fontWeight: "bold" },
+  time: { color: "#64748b", fontSize: 13, marginTop: 4 },
+  unreadDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#3b82f6",
+    marginLeft: 10,
+  },
+});

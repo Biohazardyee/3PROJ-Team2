@@ -32,7 +32,6 @@ const DetailsConversations = () => {
   const flatListRef = useRef<FlatList>(null);
   const socketRef = useRef<Socket | null>(null);
 
-  // ... (Logique useEffect et fetch inchangée, gardée pour la structure)
   useEffect(() => {
     const getUserId = async () => {
       try {
@@ -68,24 +67,61 @@ const DetailsConversations = () => {
 
   useEffect(() => {
     if (!conversationId || !currentUserId) return;
+
     const setupSocket = async () => {
       const token = await SecureStore.getItemAsync("userToken");
-      socketRef.current = io(SOCKET_URL!, { auth: { token } });
+
+      console.log("Tentative de connexion socket sur:", SOCKET_URL);
+
+      socketRef.current = io(SOCKET_URL!, {
+        auth: { token },
+        transports: ["websocket"],
+        reconnectionAttempts: 5,
+        timeout: 10000,
+      });
+
+      socketRef.current.on("connect", () => {
+        console.log("✅ Socket Connected successfully");
+      });
+
+      socketRef.current.on("connect_error", (err) => {
+        console.error("❌ Socket Connection Error (Détails):", err.message);
+      });
+
+      socketRef.current.on("disconnect", (reason) => {
+        console.log("⚠️ Socket Disconnected:", reason);
+      });
+
       socketRef.current.on("connect", () => {
         socketRef.current?.emit("join_conversation", { conversationId });
       });
+
       socketRef.current.on("receive_message", (message: any) => {
-        setMessages((prev) => [message, ...prev]);
+        if (message.conversation_id === conversationId) {
+          setMessages((prev) => {
+            const exists = prev.find((m) => m.id === message.id);
+            if (exists) return prev;
+            return [message, ...prev];
+          });
+
+          socketRef.current?.emit("join_conversation", { conversationId });
+        }
       });
     };
+
     setupSocket();
+
     return () => {
       socketRef.current?.disconnect();
     };
   }, [conversationId, currentUserId]);
 
   const sendMessage = async () => {
-    if (newMessage.trim() === "" || !socketRef.current) return;
+    if (!socketRef.current || !socketRef.current.connected) {
+      console.warn("Socket not connected, cannot send message");
+      return;
+    }
+
     socketRef.current.emit("send_message", {
       conversation_id: conversationId,
       content: newMessage.trim(),
@@ -204,7 +240,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    elevation: 10, 
+    elevation: 10,
   },
   headerCenter: {
     flex: 1,

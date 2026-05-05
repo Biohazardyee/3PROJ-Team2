@@ -11,6 +11,9 @@ import {
   ensureConversation,
   deleteByParticipants,
 } from "../conversations/conversation.helpers.js";
+import { notificationService } from "../notifications/notification.service.js";
+import { NotificationActions } from "../../../generated/prisma/enums.js";
+import { canSendNotification } from "../notifications/notification.helper.js";
 
 export class FollowService {
   async create(data: FollowCreateDto): Promise<FollowResponseDto> {
@@ -53,6 +56,25 @@ export class FollowService {
       });
 
       await ensureConversation(data.user_id, data.follow_user_id, tx);
+
+      const isAllowed = await canSendNotification(
+        data.follow_user_id,
+        data.user_id,
+        "new_follow",
+        10, // Cooldown plus long pour un follow
+      );
+
+      if (isAllowed) {
+        notificationService
+          .create({
+            user_id: data.follow_user_id,
+            action: NotificationActions.new_follow,
+            related_user_id: data.user_id,
+          })
+          .catch((err) =>
+            console.error("Failed to process follow notification:", err),
+          );
+      }
 
       return followsMapper.toDto(followCreation);
     });

@@ -324,7 +324,6 @@ class UserController extends Controller {
     }
   }
 
-
   async updateProfile(
     req: Request,
     res: Response,
@@ -343,7 +342,6 @@ class UserController extends Controller {
         profile_picture: req.body.profile_picture,
       };
 
- 
       const user = await this.service.updateProfile(userId, updateData);
 
       res.status(200).json({
@@ -352,6 +350,17 @@ class UserController extends Controller {
       });
     } catch (err) {
       next(err);
+    }
+  }
+
+  async updatePushToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_id, token } = req.body;
+      // Optionnel : vérifier que l'id du token correspond à req.user.id pour la sécurité
+      await userService.updatePushToken(user_id, token);
+      res.status(200).json({ message: "Push token updated successfully" });
+    } catch (error) {
+      next(error);
     }
   }
 }

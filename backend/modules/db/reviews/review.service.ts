@@ -16,6 +16,11 @@ import {
 import { Prisma } from "../../../generated/prisma/client.js";
 import { Medias, Users, Reviews } from "../../../generated/prisma/browser.js";
 import { reviewMapper } from "../../../mappers/reviews/review.mapper.js";
+import { broadcastPushNotifications } from "../notifications/notification.push.js";
+import {
+  getFollowerTokens,
+  canSendNotification,
+} from "../notifications/notification.helper.js";
 
 export class ReviewService {
   async create(data: ReviewAddDto): Promise<ReviewResponseAddDto> {
@@ -78,7 +83,6 @@ export class ReviewService {
       throw new BadRequest("User has already reviewed this media");
     }
 
-    // 5. Lancer la transaction avec realMediaId
     const review = await PrismaDb.$transaction(async (tx) => {
       const newReview = await tx.reviews.create({
         data: {
@@ -104,6 +108,25 @@ export class ReviewService {
       return newReview;
     });
 
+    const tokens = await getFollowerTokens(data.user_id);
+
+    const isAllowed = await canSendNotification(
+      review.user_id,
+      data.user_id,
+      "review_added",
+      5,
+    );
+
+    if (isAllowed && tokens.length > 0) {
+      const authorName = user.username || "Quelqu'un";
+      broadcastPushNotifications(
+        tokens,
+        "Nouvelle critique !",
+        `${authorName} a publié une nouvelle critique.`,
+        { action: "new_review", review_id: review.id },
+      ).catch((err) => console.error("Broadcast failed:", err));
+    }
+
     return reviewMapper.toAddDto(review);
   }
 
@@ -112,7 +135,7 @@ export class ReviewService {
       include: {
         media: true,
         user: true,
-        likes: true, // Important pour le .some() plus bas
+        likes: true,
         _count: {
           select: { comments: true, likes: true },
         },
@@ -122,7 +145,6 @@ export class ReviewService {
       },
     });
 
-    // Correction de la boucle map
     return reviews.map((review) => {
       const dto = reviewMapper.toReviewWithMediaDto(review);
       return {
@@ -140,14 +162,14 @@ export class ReviewService {
       throw new BadRequest("Review id cannot be empty");
     }
 
-    const review: Reviews = await PrismaDb.reviews.findUnique({
+    const review = await PrismaDb.reviews.findUnique({
       where: { id },
       include: {
         user: true,
         media: true,
         likes: true,
         _count: {
-          select: { likes: true },
+          select: { likes: true, comments: true },
         },
       },
     });
@@ -160,21 +182,13 @@ export class ReviewService {
     if (userId) {
       const like = await PrismaDb.reviewLikes.findUnique({
         where: {
-          user_id_review_id: {
-            user_id: userId,
-            review_id: id,
-          },
+          user_id_review_id: { user_id: userId, review_id: id },
         },
       });
       isLiked = !!like;
     }
 
-    const dto = reviewMapper.toDto(review);
-    return {
-      ...dto,
-      isLiked: isLiked,
-      likes_count: review._count.likes,
-    };
+    return reviewMapper.toDto(review, isLiked);
   }
 
   async getTopAlbumsByUser(userId: string): Promise<ReviewWithMediaDto[]> {
@@ -285,6 +299,11 @@ export class ReviewService {
       const updated = await tx.reviews.update({
         where: { id },
         data: updateData,
+        include: {
+          user: true,
+          media: true,
+          _count: { select: { likes: true, comments: true } },
+        },
       });
 
       if (data.rating !== undefined) {

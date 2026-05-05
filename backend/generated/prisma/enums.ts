@@ -58,6 +58,8 @@ export type ReportTypes = (typeof ReportTypes)[keyof typeof ReportTypes]
 
 
 export const NotificationActions = {
+  review_added: 'review_added',
+  new_message: 'new_message',
   like_added: 'like_added',
   comment_added: 'comment_added',
   new_follow: 'new_follow',

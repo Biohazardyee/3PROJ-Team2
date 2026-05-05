@@ -5,42 +5,85 @@ import { messageService } from "../db/messages/message.service.js";
 import { Conversations, Users } from "../../generated/prisma/client.js";
 import { MessageAddResponseDto } from "../../types/messages/messages.dto";
 import jwt from "jsonwebtoken";
-import { Unauthorized } from "../../utils/errors.js";
 import { SocketUser } from "../../types/users/user.dto.js";
+import {
+  canSendNotification,
+  truncateContent,
+} from "../db/notifications/notification.helper.js";
+import { sendPushNotification } from "../db/notifications/notification.push.js";
 
 export const initSocket = (server: http.Server) => {
   const io = new Server(server, {
     cors: { origin: "*" },
+    pingTimeout: 60000,
+    pingInterval: 25000,
   });
 
   io.use(async (socket, next): Promise<void> => {
     try {
-      const token: any = socket.handshake.auth.token;
-      if (!token) return next(new Unauthorized("Token missing"));
+      
+      const rawToken = socket.handshake.auth.token;
+      const token = rawToken?.replace(/#$/, "");
+
+      if (!token) {
+        return next(new Error("Token missing"));
+      }
+      console.log("TOKEN REÇU CÔTÉ SERVEUR:", token);
+      if (!token) {
+        console.error(
+          `[Socket Auth] Rejected: No token provided from ${socket.handshake.address}`,
+        );
+        return next(new Error("Token missing"));
+      }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as SocketUser;
 
       const userExists: Users | null = await PrismaDb.users.findUnique({
         where: { id: decoded.id },
       });
-      if (!userExists) return next(new Unauthorized("User not found"));
+
+      if (!userExists) {
+        console.error(
+          `[Socket Auth] Rejected: User ${decoded.id} not found in DB`,
+        );
+        return next(new Error("User not found"));
+      }
 
       socket.data.user = decoded;
+      console.log(
+        `[Socket Auth] Success: User ${decoded.id} connected via socket ${socket.id}`,
+      );
       next();
     } catch (err) {
-      return next(new Unauthorized("Invalid token"));
+      console.error("[Socket Auth] Error:", err);
+      return next(new Error("Invalid token"));
     }
   });
 
+  // --- GESTION DES CONNEXIONS ---
   io.on("connection", (socket): void => {
     const user = socket.data.user as SocketUser;
 
+    // Joint la room spécifique à l'utilisateur
     socket.join(`user_${user.id}`);
+    console.log(
+      `[Socket Connection] User ${user.id} joined room: user_${user.id}`,
+    );
 
+    // Log des erreurs socket locales
+    socket.on("error", (err) => {
+      console.error(`[Socket Internal Error] User ${user.id}:`, err);
+    });
+
+    // --- REJOINDRE CONVERSATION ---
     socket.on(
       "join_conversation",
       async ({ conversationId }: { conversationId: string }): Promise<void> => {
         try {
+          console.log(
+            `[Join Request] User ${user.id} attempting to join conv: ${conversationId}`,
+          );
+
           const conversation: Conversations | null =
             await PrismaDb.conversations.findUnique({
               where: { id: conversationId },
@@ -51,23 +94,30 @@ export const initSocket = (server: http.Server) => {
             (conversation.user1_id !== user.id &&
               conversation.user2_id !== user.id)
           ) {
+            console.warn(
+              `[Join Denied] User ${user.id} unauthorized for conv: ${conversationId}`,
+            );
             return;
           }
 
           socket.join(conversationId);
+          console.log(
+            `[Join Success] User ${user.id} joined room: ${conversationId}`,
+          );
 
           const updatedMessages = await PrismaDb.messages.updateMany({
             where: {
               conversation_id: conversationId,
-              sender_id: { not: user.id }, 
+              sender_id: { not: user.id },
               is_read: false,
             },
-            data: {
-              is_read: true,
-            },
+            data: { is_read: true },
           });
 
           if (updatedMessages.count > 0) {
+            console.log(
+              `[Read Receipts] ${updatedMessages.count} messages marked as read by ${user.id}`,
+            );
             io.to(`user_${conversation.user1_id}`).emit(
               "conversation_marked_read",
               { conversationId },
@@ -77,14 +127,13 @@ export const initSocket = (server: http.Server) => {
               { conversationId },
             );
           }
-        
         } catch (err) {
-          console.error(err);
+          console.error(`[Join Error] for user ${user.id}:`, err);
         }
       },
     );
 
-    // Envoyer un message
+    // --- ENVOYER MESSAGE ---
     socket.on(
       "send_message",
       async (data: {
@@ -92,21 +141,25 @@ export const initSocket = (server: http.Server) => {
         content: string;
       }): Promise<void> => {
         try {
+          console.log(
+            `[Message Sent] User ${user.id} in ${data.conversation_id}: "${data.content.substring(0, 20)}..."`,
+          );
+
           if (!data.conversation_id || !data.content) return;
 
           const conversation: Conversations | null =
             await PrismaDb.conversations.findUnique({
-              where: {
-                id: data.conversation_id,
-              },
+              where: { id: data.conversation_id },
             });
 
-          if (!conversation) return;
-
           if (
-            conversation.user1_id !== user.id &&
-            conversation.user2_id !== user.id
+            !conversation ||
+            (conversation.user1_id !== user.id &&
+              conversation.user2_id !== user.id)
           ) {
+            console.error(
+              `[Message Rejected] Unauthorized or invalid conversation: ${data.conversation_id}`,
+            );
             return;
           }
 
@@ -121,6 +174,11 @@ export const initSocket = (server: http.Server) => {
             created_at: message.created_at || new Date().toISOString(),
           };
 
+          // Émission
+          console.log(
+            `[Emitting] Sending message to rooms: user_${conversation.user1_id} & user_${conversation.user2_id}`,
+          );
+
           io.to(`user_${conversation.user1_id}`).emit(
             "update_conversation_list",
             messageToEmit,
@@ -129,16 +187,54 @@ export const initSocket = (server: http.Server) => {
             "update_conversation_list",
             messageToEmit,
           );
+          io.to(`user_${conversation.user1_id}`).emit(
+            "receive_message",
+            messageToEmit,
+          );
+          io.to(`user_${conversation.user2_id}`).emit(
+            "receive_message",
+            messageToEmit,
+          );
 
-          io.to(data.conversation_id).emit("receive_message", messageToEmit);
+          // Notification Push
+          const recipientId =
+            conversation.user1_id === user.id
+              ? conversation.user2_id
+              : conversation.user1_id;
+          const recipient = await PrismaDb.users.findUnique({
+            where: { id: recipientId },
+            select: { expo_push_token: true },
+          });
+
+          if (recipient?.expo_push_token) {
+            const isAllowed = await canSendNotification(
+              recipientId,
+              user.id,
+              "new_message",
+              0.5,
+            );
+            if (isAllowed) {
+              await sendPushNotification(
+                recipient.expo_push_token,
+                "Nouveau message",
+                `${user.username || "Quelqu'un"} : ${truncateContent(data.content, 50)}`,
+                {
+                  action: "new_message",
+                  conversation_id: data.conversation_id,
+                },
+              );
+            }
+          }
         } catch (err) {
-          console.error(err);
+          console.error(`[Message Error] User ${user.id}:`, err);
         }
       },
     );
 
-    socket.on("disconnect", (): void => {
-      console.log(`❌ User disconnected: ${user.id} (socket ${socket.id})`);
+    socket.on("disconnect", (reason): void => {
+      console.log(
+        `❌ User disconnected: ${user.id} (Socket: ${socket.id}) | Reason: ${reason}`,
+      );
     });
   });
 

@@ -21,7 +21,8 @@ import bcrypt from "bcrypt";
 import {
   OAuthUserDto,
   PartialUserResponseDto,
-  SelectableUserField, UserPublicDto,
+  SelectableUserField,
+  UserPublicDto,
   UserRegistrationDto,
   UserResponseAddDto,
   UserResponseDeleteDto,
@@ -234,7 +235,6 @@ export class UserService {
   }
 
   async getById(id: string): Promise<UserResponseDto> {
-
     if (isEmptyString(id)) {
       throw new BadRequest("User id cannot be empty");
     }
@@ -499,9 +499,6 @@ export class UserService {
     return userMapper.toDto(user);
   }
 
-
-
-
   async updateProfile(
     id: string,
     data: Partial<UserUpdateDto>,
@@ -520,7 +517,6 @@ export class UserService {
     }
 
     const updateData: Prisma.UsersUpdateInput = {};
-
 
     if (data.username !== undefined) {
       if (isEmptyString(data.username)) {
@@ -541,7 +537,6 @@ export class UserService {
       updateData.username = data.username.trim();
     }
 
-
     if (data.favorite_band !== undefined) {
       if (isEmptyString(data.favorite_band)) {
         throw new BadRequest("Favorite band cannot be empty");
@@ -559,6 +554,20 @@ export class UserService {
     });
 
     return userMapper.toDto(updatedUser);
+  }
+
+  // backend/modules/db/users/user.service.ts
+
+  async updatePushToken(id: string, token: string): Promise<void> {
+    
+    if (isEmptyString(id) || isEmptyString(token)) {
+      throw new BadRequest("User ID and token are required");
+    }
+
+    await PrismaDb.users.update({
+      where: { id },
+      data: { expo_push_token: token },
+    });
   }
 }
 

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import playlistItemController from "../../modules/db/playlists/playlist.item.controller.js";
 import { authGuard } from "../../middlewares/auth.js";
 import { checkAdmin } from "../../middlewares/checkAdmin.js";
+import { checkPlaylistOwner } from "../../middlewares/checkPlaylistOwner.js";
 
 const router: Router = Router();
 
@@ -26,7 +27,7 @@ router.get("/playlist/:playlist_id", authGuard, (req, res, next) => {
 });
 
 
-router.delete("/:id", authGuard, (req, res, next) => {
+router.delete("/:id", authGuard, checkPlaylistOwner, (req, res, next) => {
   playlistItemController.delete(req, res, next);
 });
 

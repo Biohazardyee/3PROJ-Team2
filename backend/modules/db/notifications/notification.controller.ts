@@ -44,11 +44,11 @@ class NotificationController extends Controller {
     async getByUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
-            if (!req.params.user_id) {
+            if (!req.params.id) {
                 throw new BadRequest('user_id is required');
             }
 
-            const notifications: NotificationsResponseDto[] = await this.service.getByUserId(req.params.user_id);
+            const notifications: NotificationsResponseDto[] = await this.service.getByUserId(req.params.id);
 
             res.status(200).json({
                 message: 'Notifications retrieved successfully',

@@ -92,7 +92,30 @@ const Conversations = () => {
 
     const setupSocket = async () => {
       const token = await SecureStore.getItemAsync("userToken");
-      socketRef.current = io(SOCKET_URL, { auth: { token } });
+
+      if (!token) {
+        console.error("Aucun token trouvé, annulation de la connexion");
+        return;
+      }
+
+      console.log("Tentative de connexion socket sur:", SOCKET_URL);
+      
+      socketRef.current = io(process.env.EXPO_PUBLIC_API_URL!, {
+        auth: { token }, // On passe le token brut, sans "Bearer"
+        transports: ["websocket"],
+      });
+
+      socketRef.current.on("connect", () => {
+        console.log("✅ Socket Connected successfully");
+      });
+
+      socketRef.current.on("connect_error", (err) => {
+        console.error("❌ Socket Connection Error (Détails):", err.message);
+      });
+
+      socketRef.current.on("disconnect", (reason) => {
+        console.log("⚠️ Socket Disconnected:", reason);
+      });
 
       socketRef.current.on(
         "update_conversation_list",

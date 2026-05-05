@@ -269,6 +269,8 @@ model BannedUsers {
 }
 
 enum NotificationActions {
+  review_added
+  new_message
   like_added
   comment_added
   new_follow

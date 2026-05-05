@@ -8,8 +8,12 @@ import {
 } from "../../types/reviews/review.dto.js";
 import { Prisma } from "../../generated/prisma/client.js";
 
-type ReviewWithMedia = Prisma.ReviewsGetPayload<{
-  include: { media: true };
+export type ReviewFullPayload = Prisma.ReviewsGetPayload<{
+  include: {
+    user: true;
+    media: true;
+    _count: { select: { likes: true; comments: true } };
+  };
 }>;
 
 type ReviewFull = Prisma.ReviewsGetPayload<{
@@ -18,19 +22,19 @@ type ReviewFull = Prisma.ReviewsGetPayload<{
     media: true;
     _count: {
       select: {
-        likes: true; // Assure-toi que le nom de la relation est 'likes' dans ton schema.prisma
+        likes: true;
         comments: true;
       };
     };
   };
 }>;
 class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
-  private parseMediaContent(media: any) {
+  
+  private parseMediaContent(media: any): { id: string; content: any } | null {
     if (!media) return null;
 
     let raw = media.content;
 
-   
     if (typeof raw === "string") {
       try {
         raw = JSON.parse(raw);
@@ -46,7 +50,6 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
     };
 
     if (raw.album) {
-      
       normalizedContent.name = raw.album.name;
       normalizedContent.artist = raw.album.artist;
 
@@ -57,7 +60,6 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
         normalizedContent.cover = imageObj?.["#text"] || "";
       }
     } else {
-    
       normalizedContent.name = raw.name || "";
       normalizedContent.artist = raw.artist || "";
       normalizedContent.cover = raw.cover || "";
@@ -65,7 +67,7 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
 
     return {
       id: media.id,
-      content: normalizedContent, 
+      content: normalizedContent,
     };
   }
 
@@ -85,6 +87,24 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
       isLiked: false,
       user: r.user ? { username: r.user.username } : undefined,
       media: this.parseMediaContent(r.media) as any,
+    };
+  }
+
+  toDto(r: ReviewFullPayload, isLiked: boolean = false): ReviewResponseDto {
+    return {
+      id: r.id,
+      user_id: r.user_id,
+      media_id: r.media_id,
+      rating: r.rating,
+      title: r.title,
+      content: r.content,
+      created_at: r.created_at,
+      updated_at: r.updated_at,
+      likes_count: r._count.likes,
+      comments_count: r._count.comments,
+      isLiked: isLiked,
+      user: r.user ? { username: r.user.username } : undefined,
+      media: this.parseMediaContent(r.media),
     };
   }
 
@@ -109,7 +129,6 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
   }
 
   toReviewWithMediaDto(review: any): ReviewWithMediaDto {
- 
     return {
       id: review.id,
       rating: review.rating,

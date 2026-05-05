@@ -1,53 +1,76 @@
-import { useEffect, useState } from 'react';
-import { Stack } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
-import { useSafeAreaInsets, SafeAreaProvider } from 'react-native-safe-area-context';
+import { useEffect, useState } from "react";
+import { Stack } from "expo-router";
+import { StyleSheet, View } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import {
+  useSafeAreaInsets,
+  SafeAreaProvider,
+} from "react-native-safe-area-context";
 import Footer from "@/src/components/Footer";
-import { ThemeProvider, useTheme } from '../src/context/ThemeContext';
-import { usePushNotifications } from '../src/hook/usePushNotifications';
+import { ThemeProvider, useTheme } from "../src/context/ThemeContext";
+import { usePushNotifications } from "../src/hook/usePushNotifications";
+import * as Notifications from "expo-notifications";
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-        <ThemeProvider>
-            <LayoutContent />
-        </ThemeProvider>
+      <ThemeProvider>
+        <LayoutContent />
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
 function LayoutContent() {
-    const insets = useSafeAreaInsets();
-    const { theme } = useTheme();
-    const [userId, setUserId] = useState<string | null>(null);
+  const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const [userId, setUserId] = useState<string | null>(null);
 
-    useEffect(() => {
-        const checkUser = async () => {
-            const storedId = await SecureStore.getItemAsync("userId");
-            if (storedId) {
-                setUserId(storedId);
-            }
-        };
-        checkUser();
-    }, []);
+  useEffect(() => {
+    const checkUser = async () => {
+      const storedId = await SecureStore.getItemAsync("userId");
+      if (storedId) {
+        setUserId(storedId);
+      }
+    };
+    checkUser();
+  }, []);
 
-    usePushNotifications(userId);
+  usePushNotifications(userId);
 
-    return (
-        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: theme.background }]}>
-            <View style={{ flex: 1 }}>
-                <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="index" />
-                </Stack>
-            </View>
-            <Footer />
-        </View>
-    );
+  return (
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          backgroundColor: theme.background,
+        },
+      ]}
+    >
+      <View style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+        </Stack>
+      </View>
+      <Footer />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 });
