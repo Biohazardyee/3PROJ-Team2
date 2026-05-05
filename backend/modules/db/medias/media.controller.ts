@@ -16,17 +16,29 @@ class MediaController extends Controller {
 
   async add(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const createData: MediaCreateDto = {
-        api_id: req.body.api_id,
-      };
+      const { api_id, content } = req.body;
 
-      if (!createData.api_id) {
+      if (!api_id) {
         throw new BadRequest("API ID is required");
       }
 
-      if (!isValidApiId(req.body.api_id)) {
-        throw new BadRequest("api_id is required and must be a valid string");
+      if (!isValidApiId(api_id)) {
+        throw new BadRequest("api_id must be a valid string");
       }
+
+      if (!content || !content.name || !content.artist) {
+        throw new BadRequest("Content (with name and artist) is required");
+      }
+
+      const createData: MediaCreateDto = {
+        api_id,
+        content: {
+          name: content.name,
+          artist: content.artist,
+          cover: content.cover || null,
+          mbid: content.mbid || null,
+        },
+      };
 
       const media: MediaResponseDto = await this.service.create(createData);
 

@@ -20,6 +20,7 @@ class MessagesMapper extends BaseMapper<Messages, MessageResponseDto> {
             sender_id: message.sender_id,
             content: message.content,
             is_read: message.is_read,
+            created_at: message.created_at
         }
     }
 

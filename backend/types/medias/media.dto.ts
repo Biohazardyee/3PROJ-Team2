@@ -9,9 +9,15 @@ export interface MediaResponseDto {
   created_at: Date;
 }
 
-// Post Interface
+
 export interface MediaCreateDto {
   api_id: string;
+  content: {
+    name: string;
+    artist: string;
+    cover?: string | null;
+    mbid?: string | null;
+  };
 }
 
 export interface MediaUpdateDto {

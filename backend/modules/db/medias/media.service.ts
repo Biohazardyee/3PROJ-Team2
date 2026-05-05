@@ -12,24 +12,31 @@ import { Prisma } from "../../../generated/prisma/client.js";
 
 export class MediaService {
 
+
   async create(data: MediaCreateDto) {
-    
     if (isEmptyString(data.api_id)) {
       throw new BadRequest("API ID cannot be empty");
     }
 
-    const exists: Medias | null = await PrismaDb.medias.findFirst({
-      where: {
-        api_id: data.api_id,
-      },
+    const exists = await PrismaDb.medias.findFirst({
+      where: { api_id: data.api_id },
     });
 
     if (exists) {
       throw new BadRequest("Media with this API ID already exists");
     }
 
+   
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 30);
+
+   
     const media: Medias = await PrismaDb.medias.create({
-      data,
+      data: {
+        api_id: data.api_id,
+        content: data.content, 
+        expires_at: expiresAt,
+      },
     });
 
     return mediaMapper.toDto(media);
@@ -167,8 +174,7 @@ export class MediaService {
       albums.map(async (album: any) => {
         const { api_id, name, artist, cover, mbid } = album;
 
-        // Harmonisation de l'api_id de secours
-        // On utilise le format : "album:Artiste:Nom" (le même que ton frontend)
+       
         const fallbackId = `album:${artist}:${name}`;
         const targetId = api_id || fallbackId;
 

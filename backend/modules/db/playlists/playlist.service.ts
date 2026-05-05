@@ -36,14 +36,19 @@ export class PlaylistService {
     if (!isValidBoolean(data.is_public)) {
       throw new BadRequest("Is_public must be a boolean value");
     }
-    let imageData: Buffer | null = null;
+
+    let imageData: any = null;
 
     if (data.image_url && data.image_url.trim() !== "") {
       const base64Data = data.image_url.includes("base64,")
         ? data.image_url.split("base64,")[1]
         : data.image_url;
 
-      imageData = Buffer.from(base64Data, "base64");
+      // Création du buffer classique
+      const buffer = Buffer.from(base64Data, "base64");
+
+      // On affecte le buffer tel quel
+      imageData = buffer;
     }
 
     const user: Users | null = await PrismaDb.users.findUnique({
@@ -71,14 +76,6 @@ export class PlaylistService {
       );
     }
 
-    console.log("Image Data Size:", imageData ? imageData.length : "No image");
-
-    console.log("Données reçues dans le service :", {
-      name: data.name,
-      hasImage: !!data.image_url,
-      imageStart: data.image_url ? data.image_url.substring(0, 50) : "RIEN",
-    });
-
     const playlist: Playlists = await PrismaDb.playlists.create({
       data: {
         name: data.name,
@@ -87,7 +84,6 @@ export class PlaylistService {
         image_url: imageData,
       },
     });
-
     return playlistMapper.toAddDto(playlist);
   }
 
