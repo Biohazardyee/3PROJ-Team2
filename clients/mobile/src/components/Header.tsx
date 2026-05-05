@@ -1,25 +1,25 @@
 import React from 'react';
-import { View, Text,TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Ionicons } from "@expo/vector-icons";
-import {useRouter, usePathname} from "expo-router";
-import { useFonts } from 'expo-font';
-import { Syncopate_400Regular } from '@expo-google-fonts/syncopate';
-import { Pacifico_400Regular } from '@expo-google-fonts/pacifico';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {Ionicons} from "@expo/vector-icons";
+import {useRouter, usePathname, Router} from "expo-router";
+import {useFonts} from 'expo-font';
+import {Syncopate_400Regular} from '@expo-google-fonts/syncopate';
+import {Pacifico_400Regular} from '@expo-google-fonts/pacifico';
 
 const Header: React.FC = () => {
     let [fontsLoaded] = useFonts({
-    Syncopate_400Regular,
-    Pacifico_400Regular
-  });
-    const router = useRouter();
-    const pathname = usePathname();
+        Syncopate_400Regular,
+        Pacifico_400Regular
+    });
+    const router: Router = useRouter();
+    const pathname: string = usePathname();
     return (
         <View style={styles.header}>
             <View style={styles.content}>
                 {/* Logo */}
-                <Image 
-                    source={require('@/assets/images/logo.png')} 
-                    style={styles.logoImage} 
+                <Image
+                    source={require('@/assets/images/logo.png')}
+                    style={styles.logoImage}
                 />
 
                 {/* Nom de l'app */}
@@ -27,7 +27,7 @@ const Header: React.FC = () => {
             </View>
 
             <View style={styles.buttons}>
-                <TouchableOpacity onPress={() => router.push('/notifications')}>
+                <TouchableOpacity onPress={(): void => router.push('/notifications')}>
                     <Ionicons
                         name="notifications-outline"
                         size={26}
@@ -35,7 +35,7 @@ const Header: React.FC = () => {
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => router.push('/conversations')} >
+                <TouchableOpacity onPress={(): void => router.push('/conversations')}>
                     <Ionicons
                         name="paper-plane-outline"
                         size={26}
@@ -57,9 +57,9 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 15,
     },
-    logoImage : {
+    logoImage: {
         width: 50,
-        height: 50,   
+        height: 50,
     },
     content: {
         flexDirection: 'row',
@@ -71,11 +71,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#ad46ff',
         letterSpacing: 0.5,
-        fontFamily: 'Pacifico_400Regular', 
+        fontFamily: 'Pacifico_400Regular',
     },
     buttons: {
         flexDirection: 'row',
-        gap: 15, 
+        gap: 15,
         alignItems: 'center',
     }
 });

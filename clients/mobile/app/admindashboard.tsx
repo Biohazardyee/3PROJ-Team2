@@ -1,5 +1,5 @@
-import Admin  from "../src/pages/Admin";
+import Admin from "../src/pages/Admin";
 
 export default function Page() {
-    return <Admin  />;
+    return <Admin/>;
 }

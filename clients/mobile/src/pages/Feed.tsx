@@ -13,7 +13,7 @@ import {
     Alert,
 } from "react-native";
 import {Ionicons} from "@expo/vector-icons";
-import {useRouter, useFocusEffect} from "expo-router";
+import {useRouter, useFocusEffect, Router} from "expo-router";
 import Header from "@/src/components/Header";
 import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
@@ -24,7 +24,7 @@ import {getValidSource} from "@/helpers/helpers";
 type Filter = "Review" | "Abonnement" | "Tendances";
 
 const Feed = () => {
-    const router = useRouter();
+    const router: Router = useRouter();
     const [activeFilter, setActiveFilter] = useState<Filter>("Review");
     const [searchQuery, setSearchQuery] = useState("");
     const [feedItems, setFeedItems] = useState<any[]>([]);
@@ -39,7 +39,7 @@ const Feed = () => {
     useEffect(() => {
         const getUserId = async () => {
             try {
-                const token = await SecureStore.getItemAsync("userToken");
+                const token: string | null = await SecureStore.getItemAsync("userToken");
                 if (token) {
                     const decoded: any = jwtDecode(token);
                     setCurrentUserId(decoded.id);
@@ -57,13 +57,13 @@ const Feed = () => {
         try {
             if (showLoader && feedItems.length === 0) setIsLoading(true);
 
-            const token = await SecureStore.getItemAsync("userToken");
+            const token: string | null = await SecureStore.getItemAsync("userToken");
             if (!token) return;
 
             const decoded: any = jwtDecode(token);
-            const userId = decoded.id;
+            const userId: any = decoded.id;
 
-            let endpoint = "";
+            let endpoint: string = "";
             switch (activeFilter) {
                 case "Review":
                     endpoint = `/activities/feed/global?current_user_id=${userId}`;
@@ -77,7 +77,7 @@ const Feed = () => {
             }
 
             const response = await apiClient.get(endpoint);
-            const items = response.data?.feed || response.data || [];
+            const items: any = response.data?.feed || response.data || [];
             setFeedItems(items);
         } catch (error) {
             console.error("Erreur récupération feed:", error);
@@ -112,7 +112,7 @@ const Feed = () => {
         if (isInteracting.current) return;
         isInteracting.current = true;
 
-        const itemIndex = feedItems.findIndex((f) => f.id === id);
+        const itemIndex: number = feedItems.findIndex((f) => f.id === id);
         if (itemIndex === -1) {
             isInteracting.current = false;
             return;
@@ -124,7 +124,7 @@ const Feed = () => {
             return;
         }
 
-        const currentlyLiked = !!item.isLiked;
+        const currentlyLiked: boolean = !!item.isLiked;
         const updatedFeed = [...feedItems];
         const targetItem = {...updatedFeed[itemIndex]};
 
@@ -162,7 +162,7 @@ const Feed = () => {
 
     const filteredItems = feedItems.filter((item) => {
         if (!item) return false;
-        const searchLower = (searchQuery || "").toLowerCase().trim();
+        const searchLower: string = (searchQuery || "").toLowerCase().trim();
         if (searchLower === "") return true;
         return (
             item.album?.toLowerCase().includes(searchLower) ||
@@ -216,26 +216,26 @@ const Feed = () => {
                             label="Reviews"
                             active={activeFilter === "Review"}
                             icon="grid-outline"
-                            onPress={() => setActiveFilter("Review")}
+                            onPress={(): void => setActiveFilter("Review")}
                         />
                         <FilterButton
                             label="Amis"
                             active={activeFilter === "Abonnement"}
                             icon="people-outline"
-                            onPress={() => setActiveFilter("Abonnement")}
+                            onPress={(): void => setActiveFilter("Abonnement")}
                         />
                         <FilterButton
                             label="Découverte"
                             active={activeFilter === "Tendances"}
                             icon="sparkles-outline"
-                            onPress={() => setActiveFilter("Tendances")}
+                            onPress={(): void => setActiveFilter("Tendances")}
                         />
                     </View>
 
                     <View style={styles.postsList}>
-                        {filteredItems.map((item, index) => {
-                            const liked = !!item.isLiked;
-                            const displayRating = item.userReviewRating ?? item.globalRating ?? item.rating ?? 0;
+                        {filteredItems.map((item: any, index: number) => {
+                            const liked: boolean = !!item.isLiked;
+                            const displayRating: number = item.userReviewRating ?? item.globalRating ?? item.rating ?? 0;
 
                             return (
                                 <View key={item.id || `feed-${index}`} style={styles.card}>
@@ -243,7 +243,7 @@ const Feed = () => {
                                         {/* AVATAR ET NOM CLIQUABLES POUR ALLER SUR LE PROFIL */}
                                         <TouchableOpacity
                                             style={styles.userInfoClickable}
-                                            onPress={() =>
+                                            onPress={(): void =>
                                                 router.push({
                                                     pathname: "/profile",
                                                     params: {id: item.user_id},
@@ -276,7 +276,7 @@ const Feed = () => {
 
                                     <TouchableOpacity
                                         activeOpacity={0.8}
-                                        onPress={() =>
+                                        onPress={(): void =>
                                             router.push({
                                                 pathname: "/albumdetails",
                                                 params: {
@@ -300,7 +300,7 @@ const Feed = () => {
                                                 <Text style={styles.albumTitle} numberOfLines={1}>{item.album}</Text>
                                                 <Text style={styles.artistName}>{item.artist}</Text>
                                                 <View style={styles.starsRow}>
-                                                    {[...Array(5)].map((_, i) => (
+                                                    {[...Array(5)].map((_, i: number) => (
                                                         <Ionicons
                                                             key={i}
                                                             name="star"
@@ -326,7 +326,7 @@ const Feed = () => {
                                         {item.type === "review" ? (
                                             <>
                                                 <TouchableOpacity style={styles.actionButton}
-                                                                  onPress={() => handleLike(item.id)}>
+                                                                  onPress={(): Promise<void> => handleLike(item.id)}>
                                                     <Ionicons
                                                         name={liked ? "heart" : "heart-outline"}
                                                         size={20}
@@ -339,7 +339,7 @@ const Feed = () => {
 
                                                 <TouchableOpacity
                                                     style={styles.actionButton}
-                                                    onPress={() => router.push(`/review/${item.review_id}/comments`)}
+                                                    onPress={(): void => router.push(`/review/${item.review_id}/comments`)}
                                                 >
                                                     <Ionicons name="chatbubble-outline" size={18} color="#9ca3af"/>
                                                     <Text style={styles.actionCount}>{item.comments_count || 0}</Text>
@@ -348,7 +348,7 @@ const Feed = () => {
                                         ) : (
                                             <TouchableOpacity
                                                 style={[styles.actionButton, styles.writeReviewBtn, item.hasReviewed && styles.alreadyReviewedBtn]}
-                                                onPress={() =>
+                                                onPress={(): void =>
                                                     router.push({
                                                         pathname: "/albumdetails",
                                                         params: {

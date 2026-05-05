@@ -1,27 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from 'expo-router';
-import { ButtonMobile } from '@/src/components/ButtonMobile';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
+import {Ionicons} from "@expo/vector-icons";
+import {Router, useRouter} from 'expo-router';
+import {ButtonMobile} from '@/src/components/ButtonMobile';
 import Header from "@/src/components/Header";
 
 
 export default function AutGuard() {
-    const router = useRouter();
+    const router: Router = useRouter();
 
     return (
         <View style={styles.container}>
-            <Header />
+            <Header/>
             <View style={styles.content}>
                 {/* Logo */}
                 <LinearGradient
                     colors={['#6366f1', '#ec4899']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}
                     style={styles.icon}
                 >
-                    <Ionicons name="lock-closed" size={40} color="white" />
+                    <Ionicons name="lock-closed" size={40} color="white"/>
                 </LinearGradient>
 
                 {/* Texte  */}
@@ -34,19 +34,19 @@ export default function AutGuard() {
                 <View style={styles.buttons}>
                     <ButtonMobile
                         title="Se connecter"
-                        onPress={() => router.push('/login')}
+                        onPress={(): void => router.push('/login')}
                     />
 
-                    <View style={styles.spacer} />
+                    <View style={styles.spacer}/>
 
                     <TouchableOpacity
                         style={styles.registerButton}
-                        onPress={() => router.push('/register')}
+                        onPress={(): void => router.push('/register')}
                     >
                         <LinearGradient
                             colors={['#6366f1', '#ec4899']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
+                            start={{x: 0, y: 0}}
+                            end={{x: 1, y: 1}}
                             style={styles.outlineGradient}
                         >
                             <View style={styles.innerButton}>
@@ -57,7 +57,7 @@ export default function AutGuard() {
                 </View>
 
                 {/* Lien retour */}
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <TouchableOpacity onPress={(): void => router.back()} style={styles.backButton}>
                     <Text style={styles.backText}>Plus tard</Text>
                 </TouchableOpacity>
 
