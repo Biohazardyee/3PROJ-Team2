@@ -12,7 +12,6 @@ const Home: React.FC = () => {
         cover: "https://lh3.googleusercontent.com/WoVLp__R9eynW29Ptfy8RO_H8ZSEegNeuGSPO4m4wmjkdVMou7u_3Fn52rNOfAEbjI4EO74tFnqPwwH81g=w544-h544-l90-rj", 
         rating: 4.9, 
         year: 2025, 
-        genre: "Rap",
         description: "Le nouvel album de l'OVNI marseillais."
       },
       { 
@@ -22,7 +21,6 @@ const Home: React.FC = () => {
         cover: "https://lh3.googleusercontent.com/d839QAhSoC58LRIEOZXApz5FIlNKtExVa_AHfQ8wGRI24OU3jmDhBBJIi2sFE-hSLJHRLp0h25di4hXg=w544-h544-l90-rj", 
         rating: 4.6, 
         year: 2019, 
-        genre: "Rap",
         description: "L'album classique qui a confirmé le statut de N.I."
       },
       { 
@@ -32,7 +30,6 @@ const Home: React.FC = () => {
         cover: "https://yt3.googleusercontent.com/wWRHoBaUQ4cLSIOgtfNLcQFGMHzN_ahh7Bu0vqN6zF3YRrdzUoHhIaBFaRAiQ4uYJ9sHq0IyUj6oKUvAdQ=w544-h544-l90-rj", 
         rating: 4.3, 
         year: 2024, 
-        genre: "Rap",
         description: "Le projet attendu de la mélo de Tiakola."
       },
       { 
@@ -42,7 +39,6 @@ const Home: React.FC = () => {
         cover: "https://yt3.googleusercontent.com/2-_pSt_yjP16a7YPYGAHO4g9HLcNYdnXCfH-wXxNxXTGG7XWdJ93xLaHK92JrXGuVtjA86nbogM3Kx9l=w544-h544-l90-rj", 
         rating: 4.1, 
         year: 2020, 
-        genre: "Pop",
         description: "Un mélange parfait de R&B et de Pop."
       },
     ];
@@ -67,16 +63,6 @@ const Home: React.FC = () => {
               <Search size={18} className="text-gray-400" />
               <input type="text" placeholder="Rechercher des albums ou des artistes..." className="bg-transparent text-white dark:text-gray-900 outline-none w-full text-sm placeholder-gray-500 ml-3" />
             </div>
-          </div>
-
-          {/* Menu déroulant pour filtrer par genre musical */}
-          <div className="w-full lg:w-1/4">
-            <label className="block text-sm font-semibold mb-2 text-gray-300 dark:text-gray-600">Genre</label>
-            <select className="w-full bg-[#2A2A38] dark:bg-gray-100 text-white dark:text-gray-900 border border-gray-700 dark:border-gray-200 rounded-lg px-4 py-3 outline-none appearance-none text-sm cursor-pointer focus:border-indigo-500 transition-colors">
-              <option className="bg-[#2A2A38] dark:bg-white">Tous les genres</option>
-              <option className="bg-[#2A2A38] dark:bg-white">Techno</option>
-              <option className="bg-[#2A2A38] dark:bg-white">House</option>
-            </select>
           </div>
 
           {/* Menu déroulant pour changer l'ordre d'affichage */}
@@ -110,7 +96,6 @@ const Home: React.FC = () => {
             cover={album.cover}
             rating={album.rating}
             year={album.year}
-            genre={album.genre}
           />
         ))}
       </div>

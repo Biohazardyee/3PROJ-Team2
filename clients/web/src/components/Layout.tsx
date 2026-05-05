@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import { Footer } from './Footer';
 
 const Layout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,8 +15,8 @@ const Layout: React.FC = () => {
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <main id="zone-de-scroll" className="flex-1 overflow-y-auto">
         <Outlet />
+        <Footer /> 
       </main>
-
     </div>
   );
 };

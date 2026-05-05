@@ -25,14 +25,14 @@ export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-gray-900 dark:bg-[#13131a] dark:text-white font-sans selection:bg-purple-500/30 transition-colors duration-300">
+    <div className="min-h-screen bg-[#13131a] text-white font-sans selection:bg-purple-500/30">
       
       {/* Logo + titre */}
       <section className="h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
         {/* Effets de lumière en arrière-plan */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute w-125 h-125 bg-purple-600/5 dark:bg-purple-600/10 rounded-full blur-[120px] -top-48 -left-48 animate-pulse" />
-          <div className="absolute w-125 h-125 bg-pink-600/5 dark:bg-pink-600/10 rounded-full blur-[120px] -bottom-48 -right-48 animate-pulse" />
+          <div className="absolute w-125 h-125 bg-purple-600/10 rounded-full blur-[120px] -top-48 -left-48 animate-pulse" />
+          <div className="absolute w-125 h-125 bg-pink-600/10 rounded-full blur-[120px] -bottom-48 -right-48 animate-pulse" />
         </div>
 
         <div className="relative z-10 max-w-10xl mx-auto px-6 text-center">
@@ -49,7 +49,7 @@ export const LandingPage: React.FC = () => {
             MELODIA
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl mx-auto">
             Le réseau social ultime pour les passionnés de musique
           </p>
 
@@ -63,14 +63,14 @@ export const LandingPage: React.FC = () => {
             </button>
             <button 
               onClick={() => navigate("/home")} 
-              className="bg-white border border-gray-200 text-gray-900 dark:bg-[#1e1e26] dark:border-gray-800 dark:text-white px-8 py-4 rounded-xl text-lg flex items-center transition-all hover:border-gray-400 dark:hover:border-gray-600"
+              className="bg-[#1e1e26] border border-gray-800 hover:border-gray-600 text-white px-8 py-4 rounded-xl text-lg flex items-center transition-all"
             >
               Découvrir <FaSearch className="ml-2 w-5 h-5" />
             </button>
           </div>
 
           {/* Bouton Se connecter */}
-          <p className="mt-8 text-gray-500 dark:text-gray-500">
+          <p className="mt-8 text-gray-500">
             Déjà un compte ?{" "}
             <span 
               onClick={() => navigate("/login")} 
@@ -97,22 +97,22 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Fonctionnalités */}
-      <section className="max-w-7xl mx-auto px-6 py-24 bg-gray-200/50 dark:bg-white/[0.02] rounded-[40px] border border-gray-200 dark:border-white/[0.05]">
+      <section className="max-w-7xl mx-auto px-6 py-24 bg-white/[0.02] rounded-[40px] border border-white/[0.05]">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">Tout ce dont vous avez besoin</h2>
-          <p className="text-gray-600 dark:text-gray-400">Tous les outils pour améliorer votre expérience musicale</p>
+          <p className="text-gray-400">Tous les outils pour améliorer votre expérience musicale</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {FEATURES.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <div key={index} className="bg-white dark:bg-[#1e1e26] rounded-2xl border border-gray-200 dark:border-gray-800 p-8 hover:border-[#a855f7]/50 transition-all group shadow-sm dark:shadow-none">
+              <div key={index} className="bg-[#1e1e26] rounded-2xl border border-gray-800 p-8 hover:border-[#a855f7]/50 transition-all group">
                 <div className="w-14 h-14 rounded-xl bg-[#a855f7]/10 flex items-center justify-center mb-6 group-hover:bg-[#a855f7]/20 transition-colors">
                   <Icon className="w-7 h-7 text-[#a855f7]" />
                 </div>
-                <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">{feature.titre}</h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{feature.description}</p>
+                <h3 className="font-bold text-xl mb-3 text-white">{feature.titre}</h3>
+                <p className="text-gray-400 leading-relaxed">{feature.description}</p>
               </div>
             );
           })}
@@ -121,9 +121,9 @@ export const LandingPage: React.FC = () => {
 
       {/* Créer un compte en bas de la page */}
       <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="bg-white dark:bg-gradient-to-b dark:from-[#1e1e2e] dark:to-[#13131a] rounded-[40px] border border-gray-200 dark:border-gray-800 p-12 md:p-20 text-center relative overflow-hidden shadow-xl dark:shadow-2xl">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 italic uppercase tracking-tighter text-gray-900 dark:text-white">Prêt à commencer l'aventure ?</h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+        <div className="bg-gradient-to-b from-[#1e1e2e] to-[#13131a] rounded-[40px] border border-gray-800 p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 italic uppercase tracking-tighter">Prêt à commencer l'aventure ?</h2>
+          <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
             Rejoignez des milliers de fans et commencez dès aujourd'hui à suivre vos albums préférés.
           </p>
           <button 
@@ -134,8 +134,6 @@ export const LandingPage: React.FC = () => {
           </button>
         </div>
       </section>
-
-      {/* Footer du site */}
       <Footer />
     </div>
   );

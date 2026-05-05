@@ -16,6 +16,8 @@ import Settings from './pages/Settings';
 import AdminDashboard from './pages/AdminDashboard';
 import CreatePlaylist from './pages/CreatePlaylist';
 import ScrollToTop from './components/ScrollToTop';
+import AuthGuard from './components/AuthGuard'
+
 
 // On définit le composant avec le type React.FC (Functional Component)
 const App: React.FC = () => {
@@ -54,6 +56,7 @@ const App: React.FC = () => {
                     <Route path="/admindashboard" element={<AdminDashboard />} />
                     {/* Route pour la page CreatePlaylist */}
                     <Route path="/create-playlist" element={<CreatePlaylist />} />
+                    <Route path="/authguard" element={<AuthGuard/>} />
                 </Route>
             </Routes>
         </Router>
