@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Users, TrendingUp, Star, Heart, MessageCircle, Search, Send, CornerDownRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Reply = {
   id: number;
@@ -28,6 +29,7 @@ type FeedItem = {
 };
 
 const Feed: React.FC = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -35,7 +37,7 @@ const Feed: React.FC = () => {
     {
       id: 1,
       user: { handle: "@alexdj", initials: "AL", color: "bg-indigo-900/50 text-indigo-400 dark:bg-indigo-100 dark:text-indigo-600" },
-      action: "a écrit un avis",
+      action: "action_wrote_review", // Stocké comme clé
       timeAgo: "Il y a 2 heures",
       album: {
         title: "Midnight Pulse",
@@ -59,7 +61,7 @@ const Feed: React.FC = () => {
     {
       id: 2,
       user: { handle: "@beatmaster", initials: "BE", color: "bg-blue-900/50 text-blue-400 dark:bg-blue-100 dark:text-blue-600" },
-      action: "a écrit un avis",
+      action: "action_wrote_review",
       timeAgo: "Il y a 1 jour",
       album: {
         title: "Vinyl Dreams",
@@ -209,8 +211,8 @@ const Feed: React.FC = () => {
       
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2 text-white dark:text-gray-900">Votre fil</h1>
-        <p className="text-gray-400 dark:text-gray-600 text-lg">Restez informé(e) des tendances musicales de la communauté.</p>
+        <h1 className="text-4xl font-bold mb-2 text-white dark:text-gray-900">{t('feed_title')}</h1>
+        <p className="text-gray-400 dark:text-gray-600 text-lg">{t('feed_subtitle')}</p>
       </div>
 
       {/* Barre de recherche */}
@@ -222,12 +224,12 @@ const Feed: React.FC = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Rechercher un utilisateur (ex: @alexdj), un album..."
+          placeholder={t('search_feed_placeholder')}
           className="w-full bg-[#1C1C28] dark:bg-white text-white dark:text-gray-900 text-sm rounded-xl py-3.5 pl-11 pr-4 border border-gray-800 dark:border-gray-200 outline-none transition-all shadow-lg"
         />
         {searchQuery && (
           <button onClick={() => setSearchQuery('')} className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-[#FF1E56] transition-colors">
-            Effacer
+            {t('clear_btn')}
           </button>
         )}
       </div>
@@ -247,7 +249,7 @@ const Feed: React.FC = () => {
             {tab === 'all' && <Sparkles size={18} />}
             {tab === 'following' && <Users size={18} />}
             {tab === 'trending' && <TrendingUp size={18} />}
-            {tab === 'all' ? 'Activités' : tab === 'following' ? 'Suivis' : 'Découverte'}
+            {tab === 'all' ? t('tab_activities') : tab === 'following' ? t('tab_following') : t('tab_discovery')}
           </button>
         ))}
       </div>
@@ -266,7 +268,7 @@ const Feed: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-white dark:text-gray-900 font-bold">
-                    {item.user.handle} <span className="text-gray-400 dark:text-gray-500 font-normal text-sm">{item.action}</span>
+                    {item.user.handle} <span className="text-gray-400 dark:text-gray-500 font-normal text-sm">{t(item.action)}</span>
                   </p>
                   <p className="text-gray-500 dark:text-gray-400 text-sm">{item.timeAgo}</p>
                 </div>
@@ -335,7 +337,7 @@ const Feed: React.FC = () => {
                                 onClick={() => setActiveReplyId(activeReplyId === comment.id ? null : comment.id)}
                                 className="text-xs text-gray-500 hover:text-white dark:hover:text-gray-900 font-medium transition-colors"
                               >
-                                Répondre
+                                {t('reply_btn')}
                               </button>
 
                               {/* Bouton Voir les réponses */}
@@ -345,8 +347,8 @@ const Feed: React.FC = () => {
                                   className="text-xs text-blue-500 hover:text-blue-400 font-medium transition-colors flex items-center gap-1"
                                 >
                                   {expandedReplies.includes(comment.id) 
-                                    ? 'Masquer les réponses' 
-                                    : `Voir les réponses (${comment.replies.length})`
+                                    ? t('hide_replies') 
+                                    : t('show_replies', { count: comment.replies.length })
                                   }
                                 </button>
                               )}
@@ -379,7 +381,7 @@ const Feed: React.FC = () => {
                               <input
                                 type="text"
                                 autoFocus
-                                placeholder={`Répondre à ${comment.user}...`}
+                                placeholder={`${t('reply_to_user', { user: comment.user })}`}
                                 value={replyInputs[comment.id] || ''}
                                 onChange={(e) => setReplyInputs({ ...replyInputs, [comment.id]: e.target.value })}
                                 onKeyDown={(e) => e.key === 'Enter' && submitReply(item.id, comment.id)}
@@ -393,7 +395,7 @@ const Feed: React.FC = () => {
                               </button>
                             </div>
                             <button onClick={() => setActiveReplyId(null)} className="text-xs text-gray-500 hover:text-white dark:hover:text-gray-900">
-                              Annuler
+                              {t('cancel_btn')}
                             </button>
                           </div>
                         )}
@@ -410,7 +412,7 @@ const Feed: React.FC = () => {
                     <div className="flex-1 relative">
                       <input
                         type="text"
-                        placeholder="Commenter cet avis..."
+                        placeholder={t('comment_placeholder')}
                         value={commentInputs[item.id] || ''}
                         onChange={(e) => setCommentInputs({ ...commentInputs, [item.id]: e.target.value })}
                         onKeyDown={(e) => e.key === 'Enter' && submitComment(item.id)}
@@ -433,7 +435,7 @@ const Feed: React.FC = () => {
         ) : (
           <div className="text-center py-12">
             <Search size={48} className="mx-auto text-gray-500 dark:text-gray-400 mb-4 opacity-50" />
-            <p className="text-gray-400 dark:text-gray-600 text-lg">Aucune publication trouvée.</p>
+            <p className="text-gray-400 dark:text-gray-600 text-lg">{t('no_post_found')}</p>
           </div>
         )}
       </div>

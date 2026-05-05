@@ -1,8 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { Camera, X, Trash2 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 
 const CreatePlaylist: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     
@@ -103,7 +106,7 @@ const CreatePlaylist: React.FC = () => {
                     <X size={28} className="text-white dark:text-gray-900" />
                 </button>
                 <h1 className="text-lg font-bold text-white dark:text-gray-900 tracking-wide">
-                    {isEditing ? "Modifier la playlist" : "Nouvelle playlist"}
+                    {isEditing ? t('edit_playlist') : t('new_playlist')}
                 </h1>
                 <div className="w-12"></div>
             </div>
@@ -132,7 +135,7 @@ const CreatePlaylist: React.FC = () => {
                         /* Affiche l'icône caméra si aucune image n'est choisie */
                         <div className="flex flex-col items-center">
                             <Camera size={48} className="text-slate-500 dark:text-gray-400 mb-3" />
-                            <span className="text-slate-400 dark:text-gray-500 font-medium">Ajouter une cover</span>
+                            <span className="text-slate-400 dark:text-gray-500 font-medium">{t('add_cover')}</span>
                         </div>
                     )}
                 </div>
@@ -149,7 +152,7 @@ const CreatePlaylist: React.FC = () => {
                 {/* Champ de texte pour saisir le nom de la playlist */}
                 <input
                     type="text"
-                    placeholder="Nom de la playlist"
+                    placeholder={t('playlist_name_placeholder')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     autoFocus={!isEditing}
@@ -159,7 +162,9 @@ const CreatePlaylist: React.FC = () => {
                 {/* Indication visuelle si un album est en attente d'ajout */}
                 {albumToAdd && (
                     <div className="mb-6 text-sm text-blue-400 dark:text-blue-600 bg-blue-900/20 dark:bg-blue-100 px-4 py-2 rounded-lg">
-                        L'album <b>{albumToAdd.title}</b> sera ajouté à cette playlist.
+                        <Trans i18nKey="album_will_be_added" values={{ title: albumToAdd.title }}>
+                            L'album <b>{albumToAdd.title}</b> sera ajouté à cette playlist.
+                        </Trans>
                     </div>
                 )}
 
@@ -173,7 +178,7 @@ const CreatePlaylist: React.FC = () => {
                         : 'bg-slate-800 dark:bg-gray-200 text-slate-500 dark:text-gray-400 cursor-not-allowed'
                     }`}
                 >
-                    {isEditing ? "ENREGISTRER LES MODIFS" : "CRÉER LA PLAYLIST"}
+                    {isEditing ? t('save_changes_btn') : t('create_playlist_btn')}
                 </button>
                 
             </div>

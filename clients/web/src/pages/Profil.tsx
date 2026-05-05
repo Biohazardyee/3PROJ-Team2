@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Link as LinkIcon, Calendar, Settings, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 type Album = {
   id: number;
@@ -72,13 +73,16 @@ const AlbumCard: React.FC<Album> = ({ title, artist, year, rating, genre, image 
 
 const Profil: React.FC = () => {
   const navigate = useNavigate(); 
-  const [activeTab, setActiveTab] = useState('Albums favoris');
+  const { t } = useTranslation();
+  
+  // Utilisation des clés techniques pour l'état actif
+  const [activeTab, setActiveTab] = useState('favorites');
 
   const tabs = [
-    'Albums favoris',
-    'Playlists (3)',
-    'Activités récentes',
-    'Statistiques'
+    { id: 'favorites', label: t('tab_favorite_albums') },
+    { id: 'playlists', label: `${t('tab_playlists')} (3)` },
+    { id: 'activity', label: t('tab_recent_activity') },
+    { id: 'stats', label: t('tab_stats') }
   ];
 
   return (
@@ -117,20 +121,20 @@ const Profil: React.FC = () => {
               className="flex items-center gap-2 bg-slate-800/80 dark:bg-white hover:bg-slate-700 dark:hover:bg-gray-100 text-slate-100 dark:text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-slate-700 dark:border-gray-200 self-start md:self-end mb-2 shadow-sm"
             >
               <Settings size={16} />
-              Modifier le profil
+              {t('profile_edit_btn')}
             </button>
           </div>
 
           {/* Bio */}
           <div className="max-w-2xl space-y-4">
             <p className="text-slate-200 dark:text-gray-700 leading-relaxed text-lg">
-              Passionné de musique électronique et de découverte de nouveaux sons. Toujours à la recherche du prochain album exceptionnel. 🎧 ✨
+              {t('profile_bio')}
             </p>
 
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-slate-400 dark:text-gray-500 text-sm">
               <div className="flex items-center gap-1.5">
                 <MapPin size={16} className="text-slate-500 dark:text-gray-400" />
-                Paris, France
+                {t('profile_location')}
               </div>
               <div className="flex items-center gap-1.5">
                 <LinkIcon size={16} className="text-slate-500 dark:text-gray-400" />
@@ -138,7 +142,7 @@ const Profil: React.FC = () => {
               </div>
               <div className="flex items-center gap-1.5">
                 <Calendar size={16} className="text-slate-500 dark:text-gray-400" />
-                Membre depuis Janvier 2023
+                {t('profile_member_since')}
               </div>
             </div>
 
@@ -146,15 +150,15 @@ const Profil: React.FC = () => {
             <div className="flex gap-8 pt-2">
               <div className="flex items-center gap-1.5">
                 <span className="text-white dark:text-gray-900 font-bold text-lg">1247</span>
-                <span className="text-slate-500 dark:text-gray-500 text-sm">Abonnés</span>
+                <span className="text-slate-500 dark:text-gray-500 text-sm">{t('profile_followers')}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-white dark:text-gray-900 font-bold text-lg">342</span>
-                <span className="text-slate-500 dark:text-gray-500 text-sm">Abonnés</span>
+                <span className="text-slate-500 dark:text-gray-500 text-sm">{t('profile_following')}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-white dark:text-gray-900 font-bold text-lg">138</span>
-                <span className="text-slate-500 dark:text-gray-500 text-sm">Albums</span>
+                <span className="text-slate-500 dark:text-gray-500 text-sm">{t('profile_albums')}</span>
               </div>
             </div>
           </div>
@@ -166,15 +170,15 @@ const Profil: React.FC = () => {
         <div className="bg-slate-900/50 dark:bg-white border border-slate-800 dark:border-gray-200 p-1 rounded-xl flex items-center justify-between shadow-inner transition-colors">
           {tabs.map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
               className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all ${
-                activeTab === tab 
+                activeTab === tab.id 
                 ? 'bg-slate-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md' 
                 : 'text-slate-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800/40 dark:hover:bg-gray-50'
               }`}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -182,11 +186,13 @@ const Profil: React.FC = () => {
 
       {/* Albums favoris */}
       <main className="max-w-6xl mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {FAVORITE_ALBUMS.map((album) => (
-            <AlbumCard key={album.id} {...album} />
-          ))}
-        </div>
+        {activeTab === 'favorites' && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {FAVORITE_ALBUMS.map((album) => (
+              <AlbumCard key={album.id} {...album} />
+            ))}
+          </div>
+        )}
       </main>
 
     </div>

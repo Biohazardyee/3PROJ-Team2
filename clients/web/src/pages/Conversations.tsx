@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, MoreVertical, Send } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Conversation = {
   id: number;
@@ -44,6 +45,7 @@ const INITIAL_CHAT_HISTORIES: Record<number, Message[]> = {
 };
 
 const Conversations: React.FC = () => {
+  const { t } = useTranslation();
   // État stockant l'ID de la conversation actuellement affichée
   const [selectedConvId, setSelectedConvId] = useState<number | null>(null);
 
@@ -107,6 +109,13 @@ const Conversations: React.FC = () => {
     setNewMessage(""); 
   };
 
+  // Helper pour traduire les dates statiques des conversations initiales
+  const translateTime = (time: string) => {
+    if (time === 'Hier') return t('yesterday');
+    if (time === 'Lundi') return t('monday');
+    return time;
+  };
+
   return (
     <div className="flex h-screen bg-[#0f1117] dark:bg-slate-50 text-slate-200 dark:text-slate-900 overflow-hidden font-sans transition-colors duration-300">
       
@@ -115,12 +124,12 @@ const Conversations: React.FC = () => {
         
         {/* Titre + barre de recherche des contacts */}
         <div className="p-6">
-          <h1 className="text-3xl font-bold text-white dark:text-gray-900 mb-6" style={{ fontFamily: "'Orbitron', sans-serif" }}>Messages</h1>
+          <h1 className="text-3xl font-bold text-white dark:text-gray-900 mb-6" style={{ fontFamily: "'Orbitron', sans-serif" }}>{t('messages_title')}</h1>
           <div className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={18} />
             <input 
               type="text" 
-              placeholder="Rechercher une conversation..." 
+              placeholder={t('search_conv_placeholder')} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-slate-200 rounded-lg py-2.5 pl-10 pr-4 text-sm dark:text-gray-900 focus:outline-none focus:border-blue-500/50 transition-all shadow-sm"
@@ -143,7 +152,7 @@ const Conversations: React.FC = () => {
               <div className="flex-1 text-left overflow-hidden">
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-white dark:text-gray-900 truncate">{conv.username}</span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">{conv.time}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">{translateTime(conv.time)}</span>
                 </div>
                 <p className="text-xs text-slate-400 dark:text-slate-600 truncate">{conv.lastMessage}</p>
               </div>
@@ -152,7 +161,7 @@ const Conversations: React.FC = () => {
           {/* Message si la recherche ne donne rien */}
           {filteredConversations.length === 0 && (
             <div className="p-6 text-center text-sm text-slate-500 dark:text-slate-400">
-              Aucun message ou contact trouvé.
+              {t('no_conv_found')}
             </div>
           )}
         </div>
@@ -205,7 +214,7 @@ const Conversations: React.FC = () => {
               <div className="flex items-center gap-2 bg-[#1a1d26] dark:bg-slate-100 border border-slate-800 dark:border-slate-200 rounded-xl px-4 py-2 focus-within:border-blue-500/50 transition-all">
                 <input 
                   type="text" 
-                  placeholder="Type a message..." 
+                  placeholder={t('type_message_placeholder')} 
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -226,7 +235,7 @@ const Conversations: React.FC = () => {
             <div className="w-20 h-20 bg-[#1a1d26] dark:bg-slate-100 rounded-full flex items-center justify-center mb-6 border border-slate-800 dark:border-slate-200 shadow-xl">
               <Search size={32} className="text-slate-600" />
             </div>
-            <h2 className="text-2xl font-bold text-white dark:text-gray-900 mb-2" style={{ fontFamily: "'Orbitron', sans-serif" }}>Sélectionner une conversation</h2>
+            <h2 className="text-2xl font-bold text-white dark:text-gray-900 mb-2" style={{ fontFamily: "'Orbitron', sans-serif" }}>{t('select_conv_title')}</h2>
           </div>
         )}
       </main>

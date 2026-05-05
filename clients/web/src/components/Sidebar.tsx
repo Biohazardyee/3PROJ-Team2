@@ -38,10 +38,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   // Liste des langues disponibles 
   const languages = [
     { code: 'fr', label: t('lang_fr', 'Français') },
-    { code: 'en', label: t('lang_en', 'Anglais') },
-    { code: 'es', label: t('lang_es', 'Espagnol') },
-    { code: 'de', label: t('lang_de', 'Allemand') },
-    { code: 'it', label: t('lang_it', 'Italien') }
+    { code: 'en', label: t('lang_en', 'English') },
+    { code: 'es', label: t('lang_es', 'Español') },
+    { code: 'de', label: t('lang_de', 'Deutsch') },
+    { code: 'it', label: t('lang_it', 'Italiano') }
   ];
 
   // Gère le clic sur un lien, navigue vers la page et ferme la sidebar
@@ -57,8 +57,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   };
 
   // Récupère le nom de la langue actuellement active
-  const currentLangCode = i18n.language?.substring(0, 2) || 'fr';
-  const currentLangLabel = languages.find(l => l.code === currentLangCode)?.label || t('lang_fr', 'Français');
+const currentLangCode = i18n.language?.substring(0, 2) || 'fr';
+  const currentLangLabel = languages.find(l => l.code === currentLangCode)?.label || 'Français';
 
   return (
     <>

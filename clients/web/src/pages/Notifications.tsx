@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Notification = {
   id: number;
   type: 'like' | 'commentaire' | 'follow';
   user: string;
-  actionText: string;
+  actionKey: string; // Utilisation d'une clé pour la traduction
+  albumName?: string; // Optionnel, pour le contexte du like
   timeAgo: string;
   unread: boolean;
 }
@@ -14,7 +16,8 @@ const notificationsData: Notification[] = [
     id: 1,
     type: 'like',
     user: '@alexdj',
-    actionText: 'a aimé votre avis sur "Midnight Pulse"',
+    actionKey: 'action_liked_review',
+    albumName: 'Midnight Pulse',
     timeAgo: 'Il y a 5 minutes',
     unread: true,
   },
@@ -22,7 +25,7 @@ const notificationsData: Notification[] = [
     id: 2,
     type: 'commentaire',
     user: '@beatmaster',
-    actionText: 'a commenté votre avis',
+    actionKey: 'action_commented_review',
     timeAgo: 'Il y a 1 heure',
     unread: true,
   },
@@ -30,7 +33,7 @@ const notificationsData: Notification[] = [
     id: 3,
     type: 'follow',
     user: '@musiclover92',
-    actionText: 'a commencé à vous suivre',
+    actionKey: 'action_started_following',
     timeAgo: 'Il y a 3 heures',
     unread: true,
   },
@@ -74,31 +77,37 @@ const StatusIcon: React.FC<{ type: Notification['type'] }> = ({ type }) => {
 };
 
 // Détails d'une notification
-const NotificationCard: React.FC<{ notification: Notification }> = ({ notification }) => (
-  <div className="bg-slate-900 dark:bg-white border border-slate-700 dark:border-gray-200 rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm hover:border-slate-600 dark:hover:border-gray-300 transition-colors cursor-pointer">
-    
-    <div className="flex items-center gap-5">
-      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-slate-800 dark:bg-gray-50 flex items-center justify-center shadow-inner">
-        <StatusIcon type={notification.type} />
-      </div>
-
-      <div className="flex flex-col">
-        <div className="text-slate-100 dark:text-gray-900 text-[15px] leading-relaxed">
-          <span className="font-bold text-white dark:text-gray-900 tracking-wide">{notification.user}</span>{' '}
-          <span className="text-slate-300 dark:text-gray-600">{notification.actionText}</span>
+const NotificationCard: React.FC<{ notification: Notification }> = ({ notification }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="bg-slate-900 dark:bg-white border border-slate-700 dark:border-gray-200 rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm hover:border-slate-600 dark:hover:border-gray-300 transition-colors cursor-pointer">
+      
+      <div className="flex items-center gap-5">
+        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-slate-800 dark:bg-gray-50 flex items-center justify-center shadow-inner">
+          <StatusIcon type={notification.type} />
         </div>
-        <p className="text-slate-500 dark:text-gray-400 text-sm mt-1">{notification.timeAgo}</p>
-      </div>
-    </div>
 
-    {/* Indicateur notifications non-lues */}
-    {notification.unread && (
-      <div className="flex-shrink-0 w-3 h-3 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
-    )}
-  </div>
-);
+        <div className="flex flex-col">
+          <div className="text-slate-100 dark:text-gray-900 text-[15px] leading-relaxed">
+            <span className="font-bold text-white dark:text-gray-900 tracking-wide">{notification.user}</span>{' '}
+            <span className="text-slate-300 dark:text-gray-600">
+              {t(notification.actionKey, { album: notification.albumName })}
+            </span>
+          </div>
+          <p className="text-slate-500 dark:text-gray-400 text-sm mt-1">{notification.timeAgo}</p>
+        </div>
+      </div>
+
+      {/* Indicateur notifications non-lues */}
+      {notification.unread && (
+        <div className="flex-shrink-0 w-3 h-3 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
+      )}
+    </div>
+  );
+};
 
 const Notifications: React.FC = () => {
+  const { t } = useTranslation();
   // Etats pour gérer les données et les onglets
   const [notifications, setNotifications] = useState<Notification[]>(notificationsData);
   const [activeTab, setActiveTab] = useState<'Tout' | 'Non lues' | 'Mentions'>('Tout');
@@ -126,10 +135,12 @@ const Notifications: React.FC = () => {
         <header className="flex justify-between items-start mb-10">
           <div>
             <h1 className="text-4xl font-extrabold text-white dark:text-gray-900 tracking-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-              Notifications
+              {t('notifications_title')}
             </h1>
             <p className="text-slate-400 dark:text-gray-600 text-lg mt-1.5 font-medium">
-              {unreadCount} notification{unreadCount !== 1 ? 's' : ''} non lue{unreadCount !== 1 ? 's' : ''}
+              {unreadCount === 1 
+                ? t('unread_count_one', { count: unreadCount }) 
+                : t('unread_count_other', { count: unreadCount })}
             </p>
           </div>
           <button 
@@ -141,15 +152,15 @@ const Notifications: React.FC = () => {
                 : 'bg-slate-900 dark:bg-gray-100 dark:text-gray-400 border-slate-800 dark:border-gray-200 text-slate-600 cursor-not-allowed'
             }`}
           >
-            Tout marquer comme lu
+            {t('mark_all_read')}
           </button>
         </header>
 
         {/* Navigation entre Tout, Non-lues et Mentions */}
         <nav className="bg-slate-900 dark:bg-white border border-slate-700 dark:border-gray-200 rounded-xl p-1.5 flex justify-center gap-1.5 shadow-inner">
-          <TabItem label="Tout" active={activeTab === 'Tout'} onClick={() => setActiveTab('Tout')} />
-          <TabItem label="Non lues" count={unreadCount} active={activeTab === 'Non lues'} onClick={() => setActiveTab('Non lues')} />
-          <TabItem label="Mentions" active={activeTab === 'Mentions'} onClick={() => setActiveTab('Mentions')} />
+          <TabItem label={t('tab_all')} active={activeTab === 'Tout'} onClick={() => setActiveTab('Tout')} />
+          <TabItem label={t('tab_unread')} count={unreadCount} active={activeTab === 'Non lues'} onClick={() => setActiveTab('Non lues')} />
+          <TabItem label={t('tab_mentions')} active={activeTab === 'Mentions'} onClick={() => setActiveTab('Mentions')} />
         </nav>
 
         {/* Liste défilante des notifications */}
@@ -160,7 +171,7 @@ const Notifications: React.FC = () => {
             ))
           ) : (
             <div className="text-center py-10 text-slate-500 dark:text-gray-400">
-              Aucune notification à afficher ici.
+              {t('no_notifications')}
             </div>
           )}
         </main>

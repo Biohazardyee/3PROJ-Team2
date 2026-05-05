@@ -1,8 +1,10 @@
 import React from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { AlbumCard } from '../components/AlbumCard'; 
 
 const Home: React.FC = () => {
+  const { t } = useTranslation();
 
   const albumsData = [
     { 
@@ -48,8 +50,8 @@ const Home: React.FC = () => {
       
       {/* Header de la page (Titre et sous-titre) */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2 text-white dark:text-gray-900">Explorer</h1>
-        <p className="text-gray-400 dark:text-gray-600 text-lg">Découvrez votre prochain album favori</p>
+        <h1 className="text-4xl font-bold mb-2 text-white dark:text-gray-900">{t('explore_title')}</h1>
+        <p className="text-gray-400 dark:text-gray-600 text-lg">{t('explore_subtitle')}</p>
       </div>
 
       {/* Recherche avancée avec filtres */}
@@ -58,32 +60,37 @@ const Home: React.FC = () => {
           
           {/* Champ de saisie pour la recherche */}
           <div className="flex-1">
-            <label className="block text-sm font-semibold mb-2 text-gray-300 dark:text-gray-600">Rechercher</label>
+            <label className="block text-sm font-semibold mb-2 text-gray-300 dark:text-gray-600">{t('search_label')}</label>
             <div className="flex items-center bg-[#2A2A38] dark:bg-gray-100 rounded-lg px-4 py-2.5 border border-gray-700 dark:border-gray-200 focus-within:border-indigo-500 transition-colors">
               <Search size={18} className="text-gray-400" />
-              <input type="text" placeholder="Rechercher des albums ou des artistes..." className="bg-transparent text-white dark:text-gray-900 outline-none w-full text-sm placeholder-gray-500 ml-3" />
+              <input type="text" placeholder={t('search_placeholder')} className="bg-transparent text-white dark:text-gray-900 outline-none w-full text-sm placeholder-gray-500 ml-3" />
             </div>
           </div>
 
           {/* Menu déroulant pour changer l'ordre d'affichage */}
           <div className="w-full lg:w-1/4">
-            <label className="block text-sm font-semibold mb-2 text-gray-300 dark:text-gray-600">Trier par</label>
+            <label className="block text-sm font-semibold mb-2 text-gray-300 dark:text-gray-600">{t('sort_label')}</label>
             <select className="w-full bg-[#2A2A38] dark:bg-gray-100 text-white dark:text-gray-900 border border-gray-700 dark:border-gray-200 rounded-lg px-4 py-3 outline-none appearance-none text-sm cursor-pointer focus:border-indigo-500 transition-colors">
-              <option className="bg-[#2A2A38] dark:bg-white">Les plus populaires</option>
-              <option className="bg-[#2A2A38] dark:bg-white">Dernières sorties</option>
-              <option className="bg-[#2A2A38] dark:bg-white">Les mieux notés</option>
+              <option className="bg-[#2A2A38] dark:bg-white">{t('sort_popular')}</option>
+              <option className="bg-[#2A2A38] dark:bg-white">{t('sort_recent')}</option>
+              <option className="bg-[#2A2A38] dark:bg-white">{t('sort_rating')}</option>
             </select>
           </div>
         </div>
 
         {/* Bouton pour appliquer les filtres avancés */}
         <button className="flex items-center gap-2 bg-[#2A2A38] dark:bg-gray-100 border border-gray-700 dark:border-gray-200 px-5 py-2.5 rounded-lg hover:bg-[#343446] dark:hover:bg-gray-200 transition-colors text-sm font-semibold text-gray-300 dark:text-gray-600 w-fit">
-          <SlidersHorizontal size={16} /> Filtrer
+          <SlidersHorizontal size={16} /> {t('filter_btn')}
         </button>
       </div>
 
       {/* Compteur dynamique indiquant le nombre de résultats */}
-      <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">{albumsData.length} albums trouvés</p>
+      <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
+        {albumsData.length > 1 
+          ? t('results_count_plural', { count: albumsData.length }) 
+          : t('results_count', { count: albumsData.length })
+        }
+      </p>
 
       {/* Affichage des albums */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">

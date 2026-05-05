@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   FaStar, FaRegClock, FaRegCalendarAlt, FaPlus, 
   FaChevronLeft, FaPaperPlane, FaChevronDown,
@@ -31,21 +32,23 @@ const Albums = [
     { id: "4", title: "Positions", artist: "Ariana Grande", cover: "https://yt3.googleusercontent.com/2-_pSt_yjP16a7YPYGAHO4g9HLcNYdnXCfH-wXxNxXTGG7XWdJ93xLaHK92JrXGuVtjA86nbogM3Kx9l=w544-h544-l90-rj", rating: 4.1, year: 2020, description: "Un mélange parfait de R&B et de Pop." },
 ];
 
-const STATUT_OPTIONS = [
-  { id: 'completed', label: 'Écoutés', icon: <FaCheckCircle />, color: 'text-emerald-400' },
-  { id: 'listening', label: 'A écouter plus tard', icon: <FaHeadphones />, color: 'text-blue-500' },
-  { id: 'wishlist', label: 'Favoris', icon: <FaStar />, color: 'text-amber-400' },
-  { id: 'dropped', label: "Je n'aime pas", icon: <FaTimesCircle />, color: 'text-rose-500' },
-];
-
 const AlbumDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  // On déplace les options ici pour que t() soit disponible
+  const STATUT_OPTIONS = [
+    { id: 'completed', label: t('status_completed'), icon: <FaCheckCircle />, color: 'text-emerald-400' },
+    { id: 'listening', label: t('status_listening'), icon: <FaHeadphones />, color: 'text-blue-500' },
+    { id: 'wishlist', label: t('status_wishlist'), icon: <FaStar />, color: 'text-amber-400' },
+    { id: 'dropped', label: t('status_dropped'), icon: <FaTimesCircle />, color: 'text-rose-500' },
+  ];
 
   // États locaux globaux
   const [activeTab, setActiveTab] = useState('Commentaires'); // Onglet commentaires par défaut
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState("Changer le statut");
+  const [currentStatus, setCurrentStatus] = useState(t('change_status'));
   
   // État pour la modale d'ajout aux playlists
   const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
@@ -91,8 +94,8 @@ const AlbumDetails: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#0f111a] dark:bg-slate-50 flex items-center justify-center text-white dark:text-gray-900 transition-colors">
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Album non trouvé</h1>
-          <button onClick={() => navigate('/home')} className="bg-blue-600 px-6 py-2 rounded-lg text-white">Retour</button>
+          <h1 className="text-3xl font-bold mb-4">{t('album_not_found')}</h1>
+          <button onClick={() => navigate('/home')} className="bg-blue-600 px-6 py-2 rounded-lg text-white">{t('back')}</button>
         </div>
       </div>
     );
@@ -165,7 +168,7 @@ const AlbumDetails: React.FC = () => {
 
   // Supprimer son propre commentaire
   const deleteComment = (commentId: number) => {
-    if(window.confirm("Voulez-vous vraiment supprimer cet avis ?")) {
+    if(window.confirm(t('delete_confirm'))) {
         setCommentsList(commentsList.filter(c => c.id !== commentId));
         setActiveMenuId(null);
     }
@@ -229,10 +232,10 @@ const AlbumDetails: React.FC = () => {
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={() => setIsPlaylistModalOpen(false)}></div>
           <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-4">
             <div className="bg-[#1a1b26] dark:bg-white border border-gray-800 dark:border-gray-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl pointer-events-auto animate-in fade-in zoom-in duration-200">
-              <h3 className="text-xl font-bold mb-4 text-white dark:text-gray-900">Ajouter à une playlist</h3>
+              <h3 className="text-xl font-bold mb-4 text-white dark:text-gray-900">{t('add_to_playlist')}</h3>
               
               <div className="space-y-2 mb-6 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                <p className="text-sm text-gray-500 text-center py-4">Aucune playlist disponible.</p>
+                <p className="text-sm text-gray-500 text-center py-4">{t('no_playlist')}</p>
               </div>
 
               <div className="space-y-3">
@@ -241,13 +244,13 @@ const AlbumDetails: React.FC = () => {
                   onClick={() => navigate('/create-playlist', { state: { returnTo: `/album/${id}`, albumToAdd: album } })} 
                   className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-900/20"
                 >
-                  <FaPlus size={14} /> Créer une playlist
+                  <FaPlus size={14} /> {t('create_playlist')}
                 </button>
                 <button 
                   onClick={() => setIsPlaylistModalOpen(false)} 
                   className="w-full py-3 text-gray-400 hover:text-white dark:hover:text-gray-900 font-bold transition-colors"
                 >
-                  Annuler
+                  {t('cancel')}
                 </button>
               </div>
             </div>
@@ -259,7 +262,7 @@ const AlbumDetails: React.FC = () => {
         
         {/* Bouton retour */}
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-400 dark:text-gray-600 hover:text-white dark:hover:text-gray-900 mb-8 group transition-colors">
-          <FaChevronLeft className="group-hover:-translate-x-1 transition-transform" /> Retour
+          <FaChevronLeft className="group-hover:-translate-x-1 transition-transform" /> {t('back')}
         </button>
 
         <div className="flex flex-col md:flex-row gap-12">
@@ -283,13 +286,13 @@ const AlbumDetails: React.FC = () => {
             <div className="flex items-center gap-3">
               <FaStar className="text-[#FF1E56] text-2xl" />
               <span className="text-3xl font-bold text-white dark:text-gray-900">{album.rating}</span>
-              <span className="text-gray-500 dark:text-gray-400 font-medium">(Note des fans)</span>
+              <span className="text-gray-500 dark:text-gray-400 font-medium">{t('fan_rating')}</span>
             </div>
 
             <div className="flex flex-wrap gap-y-4 gap-x-8 py-6 border-y border-gray-800/50 dark:border-gray-200 text-gray-400 dark:text-gray-600 text-sm">
-              <div className="flex items-center gap-2 text-white dark:text-gray-900"><span className="text-blue-500 dark:text-blue-600 font-bold text-lg">12</span> morceaux</div>
+              <div className="flex items-center gap-2 text-white dark:text-gray-900"><span className="text-blue-500 dark:text-blue-600 font-bold text-lg">12</span> {t('tracks')}</div>
               <div className="flex items-center gap-2"><FaRegClock className="text-gray-500 dark:text-gray-400" /> 42:15</div>
-              <div className="flex items-center gap-2"><FaRegCalendarAlt className="text-gray-500 dark:text-gray-400" /> Sorti en {album.year}</div>
+              <div className="flex items-center gap-2"><FaRegCalendarAlt className="text-gray-500 dark:text-gray-400" /> {t('released_in', { year: album.year })}</div>
             </div>
 
             {/* Actions et Menu Déroulant */}
@@ -334,26 +337,30 @@ const AlbumDetails: React.FC = () => {
 
             {/* Description */}
             <section>
-              <h3 className="text-xl font-bold mb-4 border-b border-gray-800 dark:border-gray-200 pb-2 w-fit text-white dark:text-gray-900">Description</h3>
+              <h3 className="text-xl font-bold mb-4 border-b border-gray-800 dark:border-gray-200 pb-2 w-fit text-white dark:text-gray-900">{t('description_title')}</h3>
               <p className="text-gray-400 dark:text-gray-600 leading-relaxed max-w-2xl">{album.description}</p>
             </section>
 
             {/* Onglets Navigation */}
             <div className="mt-4">
               <div className="flex gap-2 mb-8 bg-[#1a1b26] dark:bg-white p-1.5 rounded-xl w-fit border border-gray-800 dark:border-gray-200 shadow-sm transition-colors">
-                {[`Commentaires (${commentsList.length})`, 'Albums similaires'].map((tab) => (
-                  <button 
-                    key={tab} 
-                    onClick={() => setActiveTab(tab.startsWith('Commentaires') ? 'Commentaires' : 'Albums')} 
-                    className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${
-                      (activeTab === 'Commentaires' && tab.startsWith('Commentaires')) || (activeTab === 'Albums' && tab === 'Albums similaires')
-                      ? 'bg-gray-700 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md' 
-                      : 'text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900'
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
+                {[t('tab_comments'), t('tab_similar')].map((tabLabel, idx) => {
+                  const isCommentsTab = idx === 0;
+                  const isTabActive = isCommentsTab ? activeTab === 'Commentaires' : activeTab === 'Albums';
+                  return (
+                    <button 
+                      key={tabLabel} 
+                      onClick={() => setActiveTab(isCommentsTab ? 'Commentaires' : 'Albums')} 
+                      className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${
+                        isTabActive
+                        ? 'bg-gray-700 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md' 
+                        : 'text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900'
+                      }`}
+                    >
+                      {isCommentsTab ? `${t('tab_comments')} (${commentsList.length})` : tabLabel}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Onglets commentaires et albums similaires */}
@@ -361,10 +368,10 @@ const AlbumDetails: React.FC = () => {
                 <>
                   {/* Formulaire nouvel avis */}
                   <div className="mb-10 bg-[#1a1b26] dark:bg-white p-6 rounded-2xl border border-gray-800 dark:border-gray-200 transition-colors shadow-sm">
-                    <h4 className="text-lg font-bold mb-6 italic text-white dark:text-gray-900">Ecrire un commentaire</h4>
+                    <h4 className="text-lg font-bold mb-6 italic text-white dark:text-gray-900">{t('write_comment')}</h4>
                     <div className="flex flex-col gap-5">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm text-gray-400 dark:text-gray-500 mr-2 font-medium">Note <span className="text-[#FF1E56]">*</span> :</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 mr-2 font-medium">{t('rating')} <span className="text-[#FF1E56]">*</span> :</p>
                         <div className="flex gap-1">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <FaStar
@@ -381,25 +388,25 @@ const AlbumDetails: React.FC = () => {
                       
                       <div>
                         <label className="block text-sm font-bold mb-2 text-gray-200 dark:text-gray-800">
-                          Titre <span className="text-[#FF1E56]">*</span>
+                          {t('title_label')} <span className="text-[#FF1E56]">*</span>
                         </label>
                         <input
                           type="text"
                           value={commentTitle}
                           onChange={(e) => setCommentTitle(e.target.value)}
-                          placeholder="Ex: Masterclass !"
+                          placeholder={t('placeholder_title')}
                           className="w-full bg-[#161b2c] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm text-gray-200 dark:text-gray-900 focus:outline-none focus:border-blue-500 transition-all placeholder:text-gray-500"
                         />
                       </div>
 
                       <div>
                         <label className="block text-sm font-bold mb-2 text-gray-200 dark:text-gray-800">
-                          Commentaires <span className="text-[#FF1E56]">*</span>
+                          {t('comment_label')} <span className="text-[#FF1E56]">*</span>
                         </label>
                         <textarea
                           value={commentText}
                           onChange={(e) => setCommentText(e.target.value)}
-                          placeholder="Écrivez votre avis sur cet album..."
+                          placeholder={t('placeholder_comment')}
                           className="w-full bg-[#161b2c] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm text-gray-200 dark:text-gray-900 focus:outline-none focus:border-blue-500 transition-all min-h-[100px] resize-none placeholder:text-gray-500"
                         />
                       </div>
@@ -414,7 +421,7 @@ const AlbumDetails: React.FC = () => {
                             : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-900/20'
                           }`}
                         >
-                          <FaPaperPlane size={12} /> Publier le commentaire
+                          <FaPaperPlane size={12} /> {t('publish_btn')}
                         </button>
                       </div>
                     </div>
@@ -428,10 +435,10 @@ const AlbumDetails: React.FC = () => {
                         {editingCommentId === comment.id ? (
                           /* Modification */
                           <div className="flex flex-col gap-5 animate-in fade-in duration-200">
-                            <h4 className="text-lg font-bold italic text-white dark:text-gray-900">Modifier votre avis</h4>
+                            <h4 className="text-lg font-bold italic text-white dark:text-gray-900">{t('edit_comment')}</h4>
                             
                             <div className="flex items-center gap-2">
-                              <p className="text-sm text-gray-400 dark:text-gray-500 mr-2 font-medium">Note <span className="text-[#FF1E56]">*</span> :</p>
+                              <p className="text-sm text-gray-400 dark:text-gray-500 mr-2 font-medium">{t('rating')} <span className="text-[#FF1E56]">*</span> :</p>
                               <div className="flex gap-1">
                                 {[1, 2, 3, 4, 5].map((star) => (
                                   <FaStar
@@ -448,25 +455,25 @@ const AlbumDetails: React.FC = () => {
                             
                             <div>
                               <label className="block text-sm font-bold mb-2 text-gray-200 dark:text-gray-800">
-                                Titre <span className="text-[#FF1E56]">*</span>
+                                {t('title_label')} <span className="text-[#FF1E56]">*</span>
                               </label>
                               <input
                                 type="text"
                                 value={editTitle}
                                 onChange={(e) => setEditTitle(e.target.value)}
-                                placeholder="Ex: Masterclass !"
+                                placeholder={t('placeholder_title')}
                                 className="w-full bg-[#1a1b26] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm text-gray-200 dark:text-gray-900 focus:outline-none focus:border-blue-500 transition-all placeholder:text-gray-500"
                               />
                             </div>
 
                             <div>
                               <label className="block text-sm font-bold mb-2 text-gray-200 dark:text-gray-800">
-                                Commentaires <span className="text-[#FF1E56]">*</span>
+                                {t('comment_label')} <span className="text-[#FF1E56]">*</span>
                               </label>
                               <textarea
                                 value={editText}
                                 onChange={(e) => setEditText(e.target.value)}
-                                placeholder="Écrivez votre avis..."
+                                placeholder={t('placeholder_comment')}
                                 className="w-full bg-[#1a1b26] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm text-gray-200 dark:text-gray-900 focus:outline-none focus:border-blue-500 transition-all min-h-[100px] resize-none placeholder:text-gray-500"
                               />
                             </div>
@@ -476,7 +483,7 @@ const AlbumDetails: React.FC = () => {
                                 onClick={cancelEditing} 
                                 className="px-4 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white dark:hover:text-gray-900 transition-colors"
                               >
-                                Annuler
+                                {t('cancel')}
                               </button>
                               <button 
                                 onClick={() => saveEdit(comment.id)}
@@ -487,7 +494,7 @@ const AlbumDetails: React.FC = () => {
                                   : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20'
                                 }`}
                               >
-                                Enregistrer
+                                {t('save')}
                               </button>
                             </div>
                           </div>
@@ -513,13 +520,13 @@ const AlbumDetails: React.FC = () => {
                                                 onClick={() => startEditing(comment)}
                                                 className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors text-left border-b border-gray-800 dark:border-gray-200 text-gray-200 dark:text-gray-900 font-medium"
                                             >
-                                                <Edit3 size={14} /> Modifier
+                                                <Edit3 size={14} /> {t('modify')}
                                             </button>
                                             <button 
                                                 onClick={() => deleteComment(comment.id)}
                                                 className="w-full flex items-center gap-3 px-4 py-3 text-sm text-rose-500 hover:bg-rose-500/10 transition-colors text-left font-medium"
                                             >
-                                                <Trash2 size={14} /> Supprimer
+                                                <Trash2 size={14} /> {t('delete')}
                                             </button>
                                         </div>
                                       </>
@@ -534,7 +541,7 @@ const AlbumDetails: React.FC = () => {
                                 </div>
                                 <div>
                                   <h4 className="font-bold text-gray-100 dark:text-gray-900">{comment.user}</h4>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Aujourd'hui</p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{t('today')}</p>
                                 </div>
                               </div>
                               <div className={`flex text-[#FF1E56] gap-0.5 ${comment.user === "@moi" ? "mr-10" : ""}`}>
@@ -559,7 +566,7 @@ const AlbumDetails: React.FC = () => {
                                 onClick={() => setActiveReplyId(activeReplyId === comment.id ? null : comment.id)}
                                 className="flex items-center gap-2 hover:text-white dark:hover:text-gray-900 transition-colors"
                               >
-                                <MessageCircle size={14} /> {comment.replies.length} Répondre
+                                <MessageCircle size={14} /> {comment.replies.length} {t('reply')}
                               </button>
 
                               {comment.replies.length > 0 && (
@@ -567,7 +574,7 @@ const AlbumDetails: React.FC = () => {
                                   onClick={() => toggleReplies(comment.id)}
                                   className="text-xs text-blue-500 hover:text-blue-400 font-medium ml-auto transition-colors"
                                 >
-                                  {expandedReplies.includes(comment.id) ? 'Masquer les réponses' : `Voir les réponses (${comment.replies.length})`}
+                                  {expandedReplies.includes(comment.id) ? t('hide_replies') : t('show_replies', { count: comment.replies.length })}
                                 </button>
                               )}
                             </div>
@@ -580,7 +587,7 @@ const AlbumDetails: React.FC = () => {
                                     <input
                                       type="text"
                                       autoFocus
-                                      placeholder={`Répondre à ${comment.user}...`}
+                                      placeholder={t('reply_to', { user: comment.user })}
                                       value={replyInputs[comment.id] || ''}
                                       onChange={(e) => setReplyInputs({ ...replyInputs, [comment.id]: e.target.value })}
                                       onKeyDown={(e) => e.key === 'Enter' && submitReply(comment.id)}
@@ -594,7 +601,7 @@ const AlbumDetails: React.FC = () => {
                                     </button>
                                   </div>
                                   <button onClick={() => setActiveReplyId(null)} className="text-xs text-gray-500 hover:text-white dark:hover:text-gray-900 px-2">
-                                    Annuler
+                                    {t('cancel')}
                                   </button>
                                 </div>
                               </div>
@@ -637,7 +644,7 @@ const AlbumDetails: React.FC = () => {
                     </div>
                   ))}
                   {Albums.filter(a => a.id !== id).length === 0 && (
-                     <p className="col-span-full text-center text-gray-500 py-10">Aucun album similaire trouvé.</p>
+                     <p className="col-span-full text-center text-gray-500 py-10">{t('no_similar')}</p>
                   )}
                 </div>
               )}
