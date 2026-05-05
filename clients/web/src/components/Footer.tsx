@@ -1,30 +1,45 @@
 import React from "react";
-import { FaMusic } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
+// Composant principal du footer
 export const Footer: React.FC = () => {
+  const { t } = useTranslation();
   return (
-    <footer className="border-t border-gray-800 mt-16 bg- py-12">
+    // Bordures en haut et espacements
+    <footer className="border-t border-gray-800 dark:border-gray-200 mt-16 bg-transparent dark:bg-white py-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
         
-        {/* Logo */}
+        {/* Logo + nom de l'application */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-linear-to-tr from- to- rounded-lg flex items-center justify-center">
-            <FaMusic className="w-5 h-5 text-white" />
+          <div className="w-15 bg-linear-to-tr from-transparent to-transparent rounded-lg flex items-center justify-center relative">
+              <img 
+                src="/public/logo.png" 
+                alt="Logo Melodia" 
+                className="absolute w-13 h-13" 
+              />
           </div>
-          <span className="font-bold text-xl tracking-tight">SUPCONTENT</span>
+          <span className="font-bold text-xl tracking-tight text-white dark:text-gray-900">Melodia</span>
         </div>
 
-        {/* Links */}
-        <ul className="flex gap-6 text-sm text-gray-400">
-          <li className="hover:text-white transition cursor-pointer">About</li>
-          <li className="hover:text-white transition cursor-pointer">Privacy</li>
-          <li className="hover:text-white transition cursor-pointer">Terms</li>
-          <li className="hover:text-white transition cursor-pointer">Contact</li>
+        {/* Menu footer (À propos, Confidentialité, etc.) */}
+        <ul className="flex gap-6 text-sm text-gray-400 dark:text-gray-500">
+            <li className="hover:text-white dark:hover:text-gray-900 transition cursor-pointer">
+              {t('about')}
+            </li>
+            <li className="hover:text-white dark:hover:text-gray-900 transition cursor-pointer">
+              {t('privacy')}
+            </li>
+            <li className="hover:text-white dark:hover:text-gray-900 transition cursor-pointer">
+              {t('terms')}
+            </li>
+            <li className="hover:text-white dark:hover:text-gray-900 transition cursor-pointer">
+              {t('contact')}
+            </li>
         </ul>
 
-        {/* Copyright */}
-        <p className="text-sm text-gray-500">
-          © 2026 SUPCONTENT. Tous droits réservés.
+        {/* Mentions légales et droits d'auteur */}
+        <p className="text-sm text-gray-500 dark:text-gray-400">  
+          © 2026 Melodia. {t('rights')}
         </p>
       </div>
     </footer>

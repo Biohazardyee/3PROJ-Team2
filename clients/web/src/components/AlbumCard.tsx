@@ -1,83 +1,51 @@
-import { FaStar, FaPlus, FaHeart } from "react-icons/fa";
-import { Button } from './ButtonForAlbumCard';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Star } from 'lucide-react';
 
-type AlbumCardProps = {
+type TrendingCardProps = {
   id: string;
   title: string;
   artist: string;
   cover: string;
-  rating?: number;
-  year?: number;
-  genre?: string;
-  onClick?: () => void;
+  rating: number;
+  year: number;
 }
 
-export function AlbumCard({
-  title,
-  artist,
-  cover,
-  rating,
-  year,
-  genre,
-  onClick,
-}: AlbumCardProps) {
-  const fallbackImage = "https://via.placeholder.com/500x500?text=No+Image";
+export const AlbumCard : React.FC<TrendingCardProps> = ({ 
+  id, title, artist, cover, rating, year
+}) => {
+  const navigate = useNavigate();
 
   return (
-    <div
-      className="group relative bg-[#1a1b26] rounded-xl overflow-hidden border border-transparent hover:border-blue-500/50 transition-all duration-300 cursor-pointer w-64"
-      onClick={onClick}
+    <div 
+      onClick={() => navigate(`/album/${id}`)}
+      className="bg-[#1C1C28] dark:bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer group border border-gray-800 dark:border-gray-200 hover:border-indigo-500/50 dark:hover:border-indigo-400 flex flex-col h-full"
     >
-      {/* Container de l'image */}
-      <div className="relative aspect-square overflow-hidden">
-        <img
-          src={cover}
-          alt={`${title} par ${artist}`}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          onError={(e) => (e.currentTarget.src = fallbackImage)}
+      {/* Image */}
+      <div className="relative aspect-square w-full overflow-hidden bg-gray-900 dark:bg-gray-100">
+        <img 
+          src={cover} 
+          alt={title} 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
         />
-
-        {/* Overlay qui apparaît au Hover */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-          <div className="flex gap-2 items-center">
-            {/* Bouton Ajouter style bleu */}
-            <Button className="flex-1 bg-blue-600 hover:bg-blue-500 text-white border-none h-10 py-0 flex items-center justify-center gap-2">
-              <FaPlus className="text-sm" />
-              <span className="font-bold">Add</span>
-            </Button>
-            
-            {/* Bouton Coeur */}
-            <button className="bg-[#1a1b26]/80 p-2.5 rounded-lg border border-gray-700 text-white hover:text-red-400 transition-colors">
-              <FaHeart size={18} />
-            </button>
-          </div>
-        </div>
-
-        {/* Badge Genre  */}
-        {genre && (
-          <div className="absolute top-3 right-3 bg-pink-600 text-white text-xs font-bold px-3 py-1 rounded-lg">
-            {genre}
-          </div>
-        )}
       </div>
 
-      {/* Infos sous l'image */}
-      <div className="p-4 space-y-1">
-        <h3 className="font-bold text-blue-400 text-lg leading-tight truncate">
+      {/* Contenu */}
+      <div className="p-4 flex flex-col flex-grow">
+        <h3 className="font-bold text-base text-white dark:text-gray-900 truncate mb-1 group-hover:text-indigo-400 transition-colors">
           {title}
         </h3>
-        <p className="text-gray-400 text-sm truncate font-medium">{artist}</p>
-
-        <div className="flex items-center justify-between mt-3">
-          {rating && (
-            <div className="flex items-center gap-1.5">
-              <FaStar className="text-pink-600 w-4 h-4" />
-              <span className="text-white font-bold">{rating.toFixed(1)}</span>
-            </div>
-          )}
-          {year && <span className="text-gray-500 text-sm">{year}</span>}
+        <p className="text-gray-400 dark:text-gray-500 text-xs mb-4">{artist}</p>
+        
+        {/* Bas de la carte */}
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-1 text-[#FF1E56]">
+            <Star size={14} fill="currentColor" />
+            <span className="font-bold text-sm text-gray-200 dark:text-gray-700">{rating}</span>
+          </div>
+          <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold">{year}</span>
         </div>
       </div>
     </div>
   );
-}
+};
