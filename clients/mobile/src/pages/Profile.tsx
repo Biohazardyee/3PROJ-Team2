@@ -22,6 +22,30 @@ import { AuthGuardWrapper } from "../components/AuthGuardMapper";
 import apiClient from "../api/client";
 import { getValidSource } from "@/helpers/helpers";
 
+const formatReviewItem = (item: any, username: string) => {
+  const content = item.media?.content;
+  const isLastFm = !!content?.album;
+
+  return {
+    id: item.id,
+    review_id: item.id,
+    media_id: item.media_id,
+    user_name: username,
+    album: isLastFm ? content.album.name : content?.name,
+    artist: isLastFm ? content.album.artist : content?.artist,
+    cover: isLastFm
+      ? content.album.image?.find((img: any) => img.size === "extralarge")?.[
+          "#text"
+        ] || content.album.image?.[0]?.["#text"]
+      : content?.cover,
+    rating: item.rating,
+    content: item.content,
+    likes_count: item._count?.likes || 0,
+    comments_count: item._count?.comments || 0,
+    isLiked: item.likes && item.likes.length > 0,
+  };
+};
+
 const ProfileScreen = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -239,37 +263,16 @@ const ProfileScreen = () => {
   const fetchRecentActivity = async (offset: number, userId: string) => {
     if (loadingMore || (!hasMoreActivity && offset !== 0)) return;
     setLoadingMore(true);
+
     try {
       const response = await apiClient.get(`/reviews/user/${userId}/activity`, {
         params: { limit: 10, offset: offset },
       });
 
-      const newItems = (response.data.data || []).map((review: any) => {
-        const c = review.media?.content;
-
-        // Détection du format (Brut vs Propre)
-        const isRaw = !!c?.album;
-
-        return {
-          id: review.id,
-          user_name: userProfil?.username,
-          // Mapping conditionnel
-          album: isRaw ? c.album.name : c?.name,
-          artist: isRaw ? c.album.artist : c?.artist,
-          cover: isRaw
-            ? c.album.image?.find((img: any) => img.size === "extralarge")?.[
-                "#text"
-              ] || c.album.image?.[0]?.["#text"]
-            : c?.cover,
-          rating: review.rating,
-          content: review.content,
-          likes_count: review._count?.likes || 0,
-          comments_count: review._count?.comments || 0,
-          isLiked: review.likes && review.likes.length > 0,
-          review_id: review.id,
-          media_id: review.media_id,
-        };
-      });
+      // Utilisation de la fonction de formatage
+      const newItems = (response.data.data || []).map((review: any) =>
+        formatReviewItem(review, userProfil?.username || "User"),
+      );
 
       if (offset === 0) setRecentActivity(newItems);
       else setRecentActivity((prev) => [...prev, ...newItems]);
@@ -508,17 +511,69 @@ const ProfileScreen = () => {
               <View style={styles.postsList}>
                 {recentActivity.map((item) => (
                   <View key={item.id} style={styles.card}>
+                    {/* Header : User + Action */}
                     <Text style={styles.cardUserName}>
                       {item.user_name}{" "}
-                      <Text style={styles.actionText}>rated an album</Text>
+                      <Text style={styles.actionText}>a évalué un album</Text>
                     </Text>
+
+                    {/* Aperçu Album (Cliquable) */}
+                    <TouchableOpacity
+                      style={styles.activityAlbumBox}
+                      onPress={() => {
+                        console.log(
+                          "DEBUG - Navigation vers Album, ID:",
+                          item.media_id,
+                        );
+                        if (!item.media_id) {
+                          console.error(
+                            "ERREUR : Aucun media_id trouvé dans cet item !",
+                            item,
+                          );
+                          return;
+                        }
+                        router.push({
+                          pathname: "/albumdetails",
+                          params: {
+                            id: item.media_id,
+                            album: item.album, 
+                            artist: item.artist, 
+                            cover: item.cover
+                          },
+                        });
+                      }}
+                    >
+                      <Image
+                        source={{ uri: item.cover }}
+                        style={styles.activityAlbumImage}
+                      />
+                      <View style={styles.activityAlbumInfo}>
+                        <Text
+                          style={styles.activityAlbumTitle}
+                          numberOfLines={1}
+                        >
+                          {item.album}
+                        </Text>
+                        <Text style={styles.activityAlbumArtist}>
+                          {item.artist}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+
+                    {/* Review Content */}
                     <Text style={styles.postContent}>{item.content}</Text>
-                    <TouchableOpacity onPress={() => handleLike(item.id)}>
+
+                    {/* Footer : Like */}
+                    <TouchableOpacity
+                      onPress={() => handleLike(item.id)}
+                      style={styles.likeContainer}
+                    >
                       <Ionicons
                         name={item.isLiked ? "heart" : "heart-outline"}
                         size={20}
                         color={item.isLiked ? "#ec4899" : "#9ca3af"}
                       />
+                      <Text style={styles.likesCount}>{item.likes_count}</Text>
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -551,6 +606,42 @@ const styles = StyleSheet.create({
     height: 110,
     overflow: "hidden",
     backgroundColor: "#0f0f1e",
+  },
+  activityAlbumBox: {
+    flexDirection: "row",
+    backgroundColor: "#2a2a40",
+    borderRadius: 8,
+    padding: 8,
+    marginVertical: 10,
+    alignItems: "center",
+  },
+  activityAlbumImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 4,
+  },
+  activityAlbumInfo: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  activityAlbumTitle: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  activityAlbumArtist: {
+    color: "#9ca3af",
+    fontSize: 12,
+  },
+  likeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  likesCount: {
+    color: "#9ca3af",
+    marginLeft: 6,
+    fontSize: 12,
   },
   profilePicInner: {
     flex: 1,
