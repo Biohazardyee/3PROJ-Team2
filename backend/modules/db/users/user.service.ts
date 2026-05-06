@@ -478,9 +478,7 @@ export class UserService {
     });
   }
 
-  /**
-   * ✅ Méthode sécurisée (sans password) pour les autres cas
-   */
+ 
   async getByEmail(email: string): Promise<UserResponseDto> {
     if (isEmptyString(email)) {
       throw new BadRequest("Email cannot be empty");

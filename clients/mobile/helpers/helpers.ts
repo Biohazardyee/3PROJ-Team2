@@ -5,10 +5,13 @@ export const getValidSource = (cover: any) => {
   if (typeof cover === "object" && cover !== null) {
     return cover;
   }
- 
+
+
   if (typeof cover === "string" && cover.trim() !== "") {
+ 
     return { uri: cover };
   }
- 
-  return PlaceholderImg;
+
+  
+  return null;
 };

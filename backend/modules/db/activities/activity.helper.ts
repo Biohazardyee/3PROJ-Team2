@@ -9,15 +9,29 @@ const placeholder_img = "";
 export const getImageUrl = (images: any[]) => {
   if (!images || !images.length) return placeholder_img;
 
-  // Sécurité pour Last.fm : on cherche l'image la plus grande
   const img =
     images.find((i) => i.size === "extralarge") || images[images.length - 1];
 
   const url = img["#text"];
-  // Si Last.fm renvoie l'étoile grise par défaut, on considère que c'est vide
   if (url && url.includes("2a96cbd8b46e4423")) return placeholder_img;
 
   return url || placeholder_img;
+};
+
+export const formatBinaryToImage = (data: any) => {
+  if (!data) return null;
+
+  if (typeof data === "string") return data;
+
+  if (Buffer.isBuffer(data) || data instanceof Uint8Array) {
+    return `data:image/jpeg;base64,${Buffer.from(data).toString("base64")}`;
+  }
+
+  if (typeof data === "object" && data.type === "Buffer" && data.data) {
+    return `data:image/jpeg;base64,${Buffer.from(data.data).toString("base64")}`;
+  }
+
+  return null;
 };
 
 export const getAverageRating = async (mediaId: string): Promise<number> => {
@@ -50,6 +64,12 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
   const media = act.media || review?.media;
   const content = media?.content;
 
+  const user = act.user || review?.user;
+
+  const rawUserImage = user?.profile_picture || user?.image;
+
+  const formattedUserImage = formatBinaryToImage(rawUserImage);
+
   let foundCover = null;
 
   if (content) {
@@ -62,8 +82,6 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
     }
   }
 
-  // Si foundCover est une string vide ou contient l'image par défaut de Last.fm,
-  // on s'assure de renvoyer "" pour que le mobile utilise son image locale.
   const albumCover =
     foundCover && foundCover.trim() !== ""
       ? foundCover
@@ -75,13 +93,10 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
     id: act.id,
     type: isReview ? "review" : "like",
 
-    user_id: act.user?.id || review?.user?.id,
-    user_name:
-      act.user?.name ||
-      act.user?.username ||
-      review?.user?.name ||
-      "Utilisateur",
-    user_image: act.user?.image || review?.user?.image,
+    user_id: user?.id,
+    user_name: user?.name || user?.username || "Utilisateur",
+
+    user_image: formattedUserImage || undefined,
 
     album:
       content?.name ||
@@ -97,7 +112,6 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
       review?.artist_name ||
       "Artiste inconnu",
 
-    // On renvoie la string (URL ou vide)
     cover: albumCover,
 
     media_id: media?.id || act.media_id || review?.media_id,

@@ -10,6 +10,26 @@ class NotificationsMapper extends BaseMapper<
   Notifications,
   NotificationsResponseDto
 > {
+  formatImage = (profile_picture: any) => {
+    if (!profile_picture) return null;
+
+    if (typeof profile_picture === "string") return profile_picture;
+
+    let base64String = "";
+
+    if (Buffer.isBuffer(profile_picture)) {
+      base64String = profile_picture.toString("base64");
+    } else if (profile_picture instanceof Uint8Array) {
+      base64String = Buffer.from(profile_picture).toString("base64");
+    } else if (Array.isArray(profile_picture)) {
+      base64String = Buffer.from(profile_picture).toString("base64");
+    } else {
+      return null;
+    }
+
+    return `data:image/jpeg;base64,${base64String}`;
+  };
+
   protected mapOne(notification: any): NotificationsResponseDto {
     return {
       id: notification.id,
@@ -19,6 +39,9 @@ class NotificationsMapper extends BaseMapper<
       related_user: notification.related_user
         ? {
             username: notification.related_user.username,
+            profile_image: this.formatImage(
+              notification.related_user.profile_picture,
+            ),
           }
         : null,
       review_id: notification.review_id,

@@ -40,7 +40,7 @@ export interface UserPublicDto {
     username: string;
     biography: string | null;
     favorite_band: string | null;
-    profile_picture: Uint8Array<ArrayBuffer> | null;
+    profile_picture: string | null;
     created_at: Date;
 }
 

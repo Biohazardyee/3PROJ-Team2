@@ -88,7 +88,12 @@ export class NotificationService {
         media_id: data.media_id,
       },
       include: {
-        related_user: { select: { username: true } },
+        related_user: {
+          select: {
+            username: true,
+            profile_picture: true,
+          },
+        },
       },
     });
 
@@ -124,10 +129,10 @@ export class NotificationService {
         user_id: id,
       },
       include: {
-
         related_user: {
           select: {
             username: true,
+            profile_picture: true,
           },
         },
       },
