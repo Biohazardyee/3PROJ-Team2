@@ -16,6 +16,13 @@ export interface UserResponseDto {
     updated_at: Date;
 }
 
+export interface TokenPayloadDto {
+    id: string;
+    email: string;
+    username: string;
+    role: string;
+}
+
 export interface UserResponseLoginDto {
     id: string,
     email: string;

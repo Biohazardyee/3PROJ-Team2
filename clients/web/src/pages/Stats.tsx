@@ -1,6 +1,6 @@
-import React, { ReactNode, useState } from 'react';
+import React, {ReactNode, useState} from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlbumCard } from '../components/AlbumCard'; 
+import { AlbumCard } from '../components/AlbumCard';
 
 type StatCardData = {
   id: string;

@@ -17,46 +17,40 @@ import AdminDashboard from './pages/AdminDashboard';
 import CreatePlaylist from './pages/CreatePlaylist';
 import ScrollToTop from './components/ScrollToTop';
 import AuthGuard from './components/AuthGuard'
+import AuthRequired from "./pages/AuthRequired.tsx";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
-
-// On définit le composant avec le type React.FC (Functional Component)
 const App: React.FC = () => {
     return (
         <Router>
             <ScrollToTop />
             <Routes>
-                {/* Par défaut, on affiche la page d'accueil */}
+                {/* ROUTES PUBLIQUES (SANS BARRE DE NAVIGATION) */}
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/LandingPage" element={<LandingPage />} />
-                {/* Route pour la page Register */}
                 <Route path="/register" element={<Register />} />
-                {/* Route pour la page Login */}
                 <Route path="/login" element={<Login />} />
 
+                {/* ROUTES AVEC LAYOUT */}
                 <Route element={<Layout />}>
-                    {/* Route pour la page Home */}
+                    {/* Page accessible même sans connexion (ex: pour voir le message d'erreur) */}
+                    <Route path="/auth-required" element={<AuthRequired />} />
                     <Route path="/home" element={<Home />} />
-                    {/* Route pour la page Feed */}
-                    <Route path="/feed" element={<Feed />} />
-                    {/* Route pour la page AlbumDetails */}
-                    <Route path="/album/:id" element={<AlbumDetails />} />
-                    {/* Route pour la page Stats */}
-                    <Route path="/stats" element={<Stats />} />
-                    {/* Route pour la page Library */}
-                    <Route path="/library" element={<Library />} />
-                    {/* Route pour la page Notifications */}
-                    <Route path="/notifications" element={<Notifications />} />
-                    {/* Route pour la page Conversions */}
-                    <Route path="/conversations" element={<Conversations />} />
-                    {/* Route pour la page Profil */}
-                    <Route path="/profil" element={<Profil />} />
-                    {/* Route pour la page Settings */}
-                    <Route path="/settings" element={<Settings />} />
-                    {/* Route pour la page Admin */}
-                    <Route path="/admindashboard" element={<AdminDashboard />} />
-                    {/* Route pour la page CreatePlaylist */}
-                    <Route path="/create-playlist" element={<CreatePlaylist />} />
-                    <Route path="/authguard" element={<AuthGuard/>} />
+
+                    {/* --- DEBUT DES ROUTES PROTEGÉES --- */}
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="/feed" element={<Feed />} />
+                        <Route path="/album/:id" element={<AlbumDetails />} />
+                        <Route path="/stats" element={<Stats />} />
+                        <Route path="/library" element={<Library />} />
+                        <Route path="/notifications" element={<Notifications />} />
+                        <Route path="/conversations" element={<Conversations />} />
+                        <Route path="/profil" element={<Profil />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/admindashboard" element={<AdminDashboard />} />
+                        <Route path="/create-playlist" element={<CreatePlaylist />} />
+                        <Route path="/authguard" element={<AuthGuard/>} />
+                    </Route>
+                    {/* --- FIN DES ROUTES PROTEGÉES --- */}
                 </Route>
             </Routes>
         </Router>

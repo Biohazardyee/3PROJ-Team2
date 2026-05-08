@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Edit2, Trash2, Plus, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import {Edit2, Trash2, Plus, ArrowLeft} from 'lucide-react';
+import {useNavigate} from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-// Cartes playlist
 const ListCard: React.FC<any> = ({ id, title, count, image, onClick, onEdit, onDelete }) => {
     const { t } = useTranslation();
-    
     return (
         <div className="flex flex-col gap-3 group">
             {/* Zone cliquable de l'image */}

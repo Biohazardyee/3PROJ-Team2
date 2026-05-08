@@ -38,7 +38,15 @@ const Login: React.FC = () => {
       navigate('/home');
 
     } catch (err: any) {
-      setError(err.message);
+      if (err.response && err.response.data) {
+        const serverMessage = err.response.data.message;
+        setError(t(serverMessage));
+        if (err.response.status === 401) {
+          setFormData(prev => ({...prev, password: ''}));
+        }
+      } else {
+        setError(t('login_error_network'));
+      }
     } finally {
       setIsLoading(false);
     }
