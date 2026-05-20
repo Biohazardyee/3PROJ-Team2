@@ -104,7 +104,6 @@ export class UserService {
     try {
       await checkIfNotBanned(data.email);
 
-      // 1. Chercher par provider + provider_id
       const existing: Users | null = await PrismaDb.users.findUnique({
         where: {
           provider_provider_id: {
@@ -114,34 +113,26 @@ export class UserService {
         },
       });
 
-      // 2. Retourner l'utilisateur existant directement
       if (existing) {
-        console.log("User already exists"); // ← log
+        console.log("User already exists"); 
         return userMapper.toDto(existing);
       }
 
-      console.log("🆕 Creating new OAuth user..."); // ← log
 
-      // 3. Vérifier si l'email est déjà utilisé (compte local)
       const emailConflict: Users | null = await PrismaDb.users.findUnique({
         where: { email: data.email },
       });
 
       if (emailConflict) {
-        // Option : lier les comptes ou throw une erreur claire
         throw new BadRequest(
           "An account with this email already exists. Please log in with your password.",
         );
       }
 
-      console.log("2️⃣ email conflict check done");
-
-      // 4. Créer le nouveau compte OAuth
       const username: string = await generateUniqueUsername(
         data.username || data.email.split("@")[0],
       );
 
-      console.log("3️⃣ username generated:", username);
 
       const newUser: Users = await PrismaDb.users.create({
         data: {
@@ -153,11 +144,10 @@ export class UserService {
         },
       });
 
-      console.log("✅ New user created:", newUser.id);
 
       return userMapper.toDto(newUser);
     } catch (err) {
-      console.error("❌ Error in findOrCreateOAuthUser:", err); // ← catch ici
+      console.error("❌ Error in findOrCreateOAuthUser:", err);
       throw err;
     }
   }
@@ -458,10 +448,7 @@ export class UserService {
     }
   }
 
-  /**
-   * ✅ Méthode publique mais retourne le User complet (avec password)
-   * Utilisée UNIQUEMENT pour l'authentification
-   */
+
   async getByEmailForAuth(email: string): Promise<Users | null> {
     if (isEmptyString(email)) {
       throw new BadRequest("Email cannot be empty");
@@ -505,7 +492,6 @@ export class UserService {
       throw new BadRequest("User id cannot be empty");
     }
 
-    // On vérifie si l'utilisateur existe
     const exist = await PrismaDb.users.findUnique({
       where: { id },
     });
@@ -553,8 +539,6 @@ export class UserService {
 
     return userMapper.toDto(updatedUser);
   }
-
-  // backend/modules/db/users/user.service.ts
 
   async updatePushToken(id: string, token: string): Promise<void> {
     

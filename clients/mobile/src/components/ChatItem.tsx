@@ -32,18 +32,8 @@ const ChatItem = ({
           unread > 0 && styles.avatarUnreadBorder,
         ]}
       >
-        {/* On affiche l'image seulement si elle existe ET qu'il n'y a pas d'erreur */}
-        {image && !hasError ? (
-          <Image
-            source={image}
-            style={styles.avatarImage}
-            resizeMode="cover"
-            resizeMethod="resize" 
-            onError={() => setHasError(true)} 
-          />
-        ) : (
-          <Text style={styles.avatarText}>{initials}</Text>
-        )}
+        <Text style={styles.avatarText}>{initials}</Text>
+
         <View style={styles.onlineStatus} />
       </View>
 

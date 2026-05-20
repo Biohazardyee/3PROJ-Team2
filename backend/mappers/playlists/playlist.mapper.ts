@@ -21,12 +21,12 @@ class PlaylistMapper extends BaseMapper<Playlists, PlaylistResponseDto> {
       id: playlist.id,
       user_id: playlist.user_id,
       name: playlist.name,
+      is_public: playlist.is_public,
       image_url: playlist.image_url
         ? `data:image/jpeg;base64,${Buffer.from(playlist.image_url).toString("base64")}`
         : undefined,
       created_at: playlist.created_at,
       updated_at: playlist.updated_at,
-      // Maintenant TypeScript reconnaît 'items' !
       items: playlist.items
         ? playlist.items.map((item) => ({
             media_id: item.media_id,

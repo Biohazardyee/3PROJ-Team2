@@ -20,11 +20,11 @@ import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import * as ImagePicker from "expo-image-picker";
 
-// Components
 import AlbumCard from "@/src/components/AlbumCard";
 import Header from "@/src/components/Header";
 import { AuthGuardWrapper } from "../components/AuthGuardMapper";
 import apiClient from "../api/client";
+import ReportUserButton from "../components/reports/ReportUserButton";
 
 const formatReviewItem = (item: any, username: string) => {
   const content = item.media?.content;
@@ -59,7 +59,6 @@ const ProfileScreen = () => {
     ? externalUserIdRaw[0]
     : externalUserIdRaw;
 
-  // States Généraux
   const [activeTab, setActiveTab] = useState("Favorite Albums");
   const [userProfil, setUserProfil] = useState<any>(null);
   const [userConnected, setUserConnected] = useState<string>("");
@@ -73,7 +72,6 @@ const ProfileScreen = () => {
   const [loading, setLoading] = useState(true);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
-  // States pour l'Activité
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [activityOffset, setActivityOffset] = useState(0);
   const [hasMoreActivity, setHasMoreActivity] = useState(true);
@@ -113,7 +111,7 @@ const ProfileScreen = () => {
 
       await Promise.all([
         fetchProfile(targetId),
-        fetchPlaylists(targetId),
+        fetchPlaylists(targetId, ownProfile),
         fetchFavoriteAlbums(targetId),
         fetchFollowCounts(targetId),
         !ownProfile && checkFollowStatus(targetId, currentUserId),
@@ -181,6 +179,8 @@ const ProfileScreen = () => {
     }
   };
 
+  useEffect(() => {}, [playlists]);
+
   const handleFollowToggle: () => Promise<void> = async (): Promise<void> => {
     if (!userProfil?.id || !userConnected || isInteracting.current) return;
     isInteracting.current = true;
@@ -219,7 +219,7 @@ const ProfileScreen = () => {
       fetchFollowCounts(userProfil.id);
     } catch (error) {
       console.error("Erreur Follow/Unfollow:", error);
-      Alert.alert("Erreur", "Impossible de mettre à jour le follow."); // Rollback UI en cas d'erreur
+      Alert.alert("Erreur", "Impossible de mettre à jour le follow."); 
       setIsFollowing(previousStatus);
       setFollowCounts((prev) => ({ ...prev, followers: previousFollowers }));
     } finally {
@@ -227,14 +227,19 @@ const ProfileScreen = () => {
     }
   };
 
-  const fetchPlaylists: (userId: string) => Promise<void> = async (
+  const fetchPlaylists = async (
     userId: string,
+    ownProfile: boolean,
   ): Promise<void> => {
     try {
       const response = await apiClient.get(`/playlists/user/${userId}`);
-      setPlaylists(
-        response.data.playlists || response.data.data || response.data || [],
-      );
+      const allPlaylists = response.data.playlists || [];
+
+      const filtered = ownProfile
+        ? allPlaylists
+        : allPlaylists.filter((p: any) => p.is_public === true);
+
+      setPlaylists(filtered);
     } catch (error: any) {
       console.error("❌ Erreur Playlists :", error.response?.status);
     }
@@ -461,7 +466,7 @@ const ProfileScreen = () => {
                     borderRadius: 15,
                     padding: 6,
                     zIndex: 10, // Force l'icône au premier plan (iOS/Web)
-                    elevation: 10, 
+                    elevation: 10,
                   }}
                 >
                   <Ionicons name="camera" size={16} color="white" />
@@ -496,26 +501,36 @@ const ProfileScreen = () => {
                 <Text style={styles.editButtonText}>Edit Profile</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                style={[
-                  styles.editButton,
-                  isFollowing ? styles.followingButton : styles.followButton,
-                ]}
-                onPress={handleFollowToggle}
-              >
-                <Ionicons
-                  name={
-                    isFollowing
-                      ? "checkmark-circle-outline"
-                      : "person-add-outline"
-                  }
-                  size={18}
-                  color="#fff"
-                />
-                <Text style={styles.editButtonText}>
-                  {isFollowing ? "Following" : "Follow"}
-                </Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: "row", gap: 10 }}>
+                <TouchableOpacity
+                  style={[
+                    styles.editButton,
+                    isFollowing ? styles.followingButton : styles.followButton,
+                    { flex: 1 },
+                  ]}
+                  onPress={handleFollowToggle}
+                >
+                  <Ionicons
+                    name={
+                      isFollowing
+                        ? "checkmark-circle-outline"
+                        : "person-add-outline"
+                    }
+                    size={18}
+                    color="#fff"
+                  />
+                  <Text style={styles.editButtonText}>
+                    {isFollowing ? "Following" : "Follow"}
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={{ justifyContent: "center" }}>
+                  <ReportUserButton
+                    targetUserId={userProfil?.id}
+                    reporterUserId={userConnected}
+                  />
+                </View>
+              </View>
             )}
             <Text style={styles.bio}>
               {userProfil?.biography || "No biography yet."}
@@ -596,7 +611,12 @@ const ProfileScreen = () => {
                         />
                       )}
                     </View>
-                    <Text style={styles.playlistName}>{playlist.name}</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.playlistName}>{playlist.name} </Text>
+                      {String(playlist.is_public) === "false" && (
+                        <Text style={styles.privateLabel}>Privée</Text>
+                      )}
+                    </View>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -616,10 +636,6 @@ const ProfileScreen = () => {
                     <TouchableOpacity
                       style={styles.activityAlbumBox}
                       onPress={(): void => {
-                        console.log(
-                          "DEBUG - Navigation vers Album, ID:",
-                          item.media_id,
-                        );
                         if (!item.media_id) {
                           console.error(
                             "ERREUR : Aucun media_id trouvé dans cet item !",
@@ -742,6 +758,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#4A90E2",
     justifyContent: "center",
     alignItems: "center",
+  },
+  privateLabel: {
+    color: "#9ca3af",
+    fontSize: 12,
+    marginTop: 2,
+    fontStyle: "italic",
   },
   fullImage: { width: "100%", height: "100%" },
   profileLetter: { color: "white", fontSize: 36, fontWeight: "bold" },

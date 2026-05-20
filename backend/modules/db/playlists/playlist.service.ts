@@ -19,7 +19,6 @@ import { Prisma } from "../../../generated/prisma/client.js";
 
 export class PlaylistService {
   async create(data: PlaylistAddDto): Promise<PlaylistResponseAddDto> {
-    console.log("KEYS RECUES:", Object.keys(data));
 
     if (isEmptyString(data.name)) {
       throw new BadRequest("Playlist name cannot be empty");
@@ -44,10 +43,8 @@ export class PlaylistService {
         ? data.image_url.split("base64,")[1]
         : data.image_url;
 
-      // Création du buffer classique
       const buffer = Buffer.from(base64Data, "base64");
 
-      // On affecte le buffer tel quel
       imageData = buffer;
     }
 

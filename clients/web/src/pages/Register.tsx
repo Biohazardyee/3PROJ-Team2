@@ -47,7 +47,6 @@ const Register: React.FC = () => {
       });
 
       if (response.status === 201 || response.status === 200) {
-        console.log("Utilisateur créé :", response.data);
         navigate('/login', { state: { message: 'Compte créé avec succès !' } });
       }
 

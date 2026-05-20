@@ -19,7 +19,6 @@ class PlaylistController extends Controller {
 
   async add(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-     
       const createData: PlaylistAddDto = {
         name: req.body.name,
         user_id: req.body.user_id,
@@ -27,9 +26,11 @@ class PlaylistController extends Controller {
         image_url: req.body.image_url,
       };
 
-      
-
-      if (!createData.name || !createData.user_id || !createData.is_public) {
+      if (
+        !createData.name ||
+        !createData.user_id ||
+        createData.is_public === undefined
+      ) {
         throw new BadRequest("Name, User_id and Is_Public are required");
       }
 
@@ -125,7 +126,7 @@ class PlaylistController extends Controller {
 
       if (req.body.image_url !== undefined) {
         updateData.image_url = req.body.image_url;
-        }
+      }
 
       if (Object.keys(updateData).length === 0) {
         throw new BadRequest("No fields provided");

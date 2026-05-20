@@ -4,6 +4,7 @@ export interface PlaylistResponseDto {
   user_id: string;
   name: string;
   image_url?: string;
+  is_public: boolean;
   items?: { media_id: string }[];
   created_at: Date;
   updated_at: Date;

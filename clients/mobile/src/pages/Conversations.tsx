@@ -8,7 +8,6 @@ import {
   TextInput,
   RefreshControl,
   ActivityIndicator,
-  Image,
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Header from "@/src/components/Header";
@@ -19,7 +18,6 @@ import { io, Socket } from "socket.io-client";
 
 import ChatItem from "../components/ChatItem";
 
-import { getValidSource } from "../../helpers/helpers";
 
 const SOCKET_URL: string = process.env.EXPO_PUBLIC_API_URL || "";
 
@@ -35,8 +33,8 @@ interface Conversation {
   id: string;
   user1_id: string;
   user2_id: string;
-  user1: { username: string; role: string };
-  user2: { username: string; role: string };
+  user1: { username: string; role: string; profile_picture?: string | null };
+  user2: { username: string; role: string; profile_picture?: string | null };
   messages: Message[];
   _count?: {
     messages: number;
@@ -51,7 +49,8 @@ const Conversations = () => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
-  // 1. Initialisation du UserId
+  const activeConversationIdRef = useRef<string | null>(null);
+
   useEffect(() => {
     const getUserId = async () => {
       try {
@@ -69,14 +68,6 @@ const Conversations = () => {
     getUserId();
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (currentUserId) {
-        fetchConversations();
-      }
-    }, [currentUserId]),
-  );
-
   const fetchConversations = async () => {
     if (!currentUserId) return;
     try {
@@ -85,34 +76,30 @@ const Conversations = () => {
       );
       setConversations(response.data.conversations || []);
     } catch (error: any) {
-      if (error.response) {
-        console.error("Erreur Réponse:", error.response.data);
-        console.error("Statut:", error.response.status);
-      } else if (error.request) {
-        console.error("Erreur Requête (pas de réponse):", error.request);
-      } else {
-        console.error("Erreur Axios:", error.message);
-      }
+      console.error("Erreur Fetch Conversations:", error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      activeConversationIdRef.current = null;
+      if (currentUserId) {
+        fetchConversations();
+      }
+    }, [currentUserId]),
+  );
+
   useEffect(() => {
     if (!currentUserId) return;
 
     const setupSocket = async () => {
       const token: string | null = await SecureStore.getItemAsync("userToken");
+      if (!token) return;
 
-      if (!token) {
-        console.error("Aucun token trouvé, annulation de la connexion");
-        return;
-      }
-
-      console.log("Tentative de connexion socket sur:", SOCKET_URL);
-
-      socketRef.current = io(process.env.EXPO_PUBLIC_API_URL!, {
+      socketRef.current = io(SOCKET_URL, {
         auth: { token },
         transports: ["websocket"],
       });
@@ -126,15 +113,30 @@ const Conversations = () => {
             );
             if (convIndex === -1) return prev;
 
-            const newConvs: Conversation[] = [...prev];
+            const newConvs = [...prev];
+
+            const isCurrentlyReading =
+              activeConversationIdRef.current === newMessage.conversation_id;
+            const currentUnreadCount =
+              newConvs[convIndex]._count?.messages || 0;
+
             newConvs[convIndex] = {
               ...newConvs[convIndex],
               messages: [newMessage],
               _count: {
-                messages: (newConvs[convIndex]._count?.messages || 0) + 1,
+                messages: isCurrentlyReading ? 0 : currentUnreadCount + 1,
               },
             };
-            return newConvs;
+
+            return newConvs.sort((a, b) => {
+              const dateA = a.messages[0]
+                ? new Date(a.messages[0].created_at).getTime()
+                : 0;
+              const dateB = b.messages[0]
+                ? new Date(b.messages[0].created_at).getTime()
+                : 0;
+              return dateB - dateA;
+            });
           });
         },
       );
@@ -153,12 +155,6 @@ const Conversations = () => {
     return () => {
       socketRef.current?.disconnect();
     };
-  }, [currentUserId]);
-
-  useEffect(() => {
-    if (currentUserId) {
-      fetchConversations();
-    }
   }, [currentUserId]);
 
   const onRefresh = useCallback(() => {
@@ -201,17 +197,16 @@ const Conversations = () => {
           {conversations.map((conv: any) => {
             const otherUser =
               conv.user1_id === currentUserId ? conv.user2 : conv.user1;
-
             if (!otherUser) return null;
 
             const lastMsg =
               conv.messages && conv.messages.length > 0
                 ? conv.messages[0]
                 : null;
-
             const lastMsgDate: Date | null = lastMsg
               ? new Date(lastMsg.created_at)
               : null;
+
             const formattedTime: string =
               lastMsgDate && !isNaN(lastMsgDate.getTime())
                 ? lastMsgDate.toLocaleTimeString([], {
@@ -220,20 +215,19 @@ const Conversations = () => {
                   })
                 : "";
 
-            const userImage = getValidSource(otherUser.profile_picture);
-
             return (
               <ChatItem
                 key={conv.id}
                 id={conv.id}
                 name={otherUser.username}
-                image={userImage}
                 msg={lastMsg?.content || "Commencez la discussion..."}
                 time={formattedTime}
                 unread={conv._count?.messages || 0}
                 initials={otherUser.username.substring(0, 2).toUpperCase()}
                 isSystem={otherUser.role === "ADMIN"}
-                onPress={() => {
+                onPress={async () => {
+                  activeConversationIdRef.current = conv.id;
+
                   setConversations((prev: Conversation[]): Conversation[] =>
                     prev.map(
                       (c: Conversation): Conversation =>
@@ -242,7 +236,14 @@ const Conversations = () => {
                           : c,
                     ),
                   );
-                  (navigation as any).navigate("detailsConversations", {
+
+                  try {
+                    await apiClient.patch(`/conversations/${conv.id}/read`);
+                  } catch (e) {
+                    console.log("Erreur de marquage de lecture en BD :", e);
+                  }
+
+                  navigation.navigate("detailsConversations", {
                     conversationId: conv.id,
                     userName: otherUser.username,
                   });
@@ -294,8 +295,6 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   chatList: { gap: 14 },
-
-  // --- AVATAR ---
   avatarCircle: {
     width: 60,
     height: 60,
@@ -309,7 +308,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2d2e4a",
   },
   avatarSystem: {
-    backgroundColor: "#f72585", // Rose néon pour l'admin
+    backgroundColor: "#f72585",
   },
   avatarUnreadBorder: {
     borderWidth: 2,
@@ -327,12 +326,10 @@ const styles = StyleSheet.create({
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: "#4ade80", // Vert flash
+    backgroundColor: "#4ade80",
     borderWidth: 2,
     borderColor: "#16172b",
   },
-
-  // --- CONTENU TEXTE ---
   chatInfo: {
     flex: 1,
   },

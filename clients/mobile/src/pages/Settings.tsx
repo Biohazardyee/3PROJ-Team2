@@ -87,7 +87,6 @@ const SettingRow = ({
     </TouchableOpacity>
 );
 
-// --- COMPOSANT PRINCIPAL ---
 const Settings = () => {
     const router: Router = useRouter();
 
@@ -112,7 +111,6 @@ const Settings = () => {
         await AsyncStorage.setItem("pref_notifications", JSON.stringify(value));
     };
 
-    // 3. VRAIE fonction d'Exportation
     const handleExportData: () => Promise<void> = async (): Promise<void> => {
         try {
             const keys: readonly string[] = await AsyncStorage.getAllKeys();
@@ -170,13 +168,12 @@ const Settings = () => {
                         icon="person-outline"
                         title="Modifier le profil"
                         subtitle="Nom, Email, Mot de passe"
-                        onPress={() => router.push("/profile")}
+                        onPress={() => router.push("/updateProfile")}
                     />
                 </View>
 
                 <Text style={styles.sectionTitle}>Préférences</Text>
                 <View style={[styles.section, {backgroundColor: theme.card}]}>
-                    {/* L'interrupteur est maintenant branché au cerveau (toggleTheme) */}
                     <SettingRow
                         theme={theme}
                         icon="moon-outline"
@@ -242,7 +239,6 @@ const Settings = () => {
     );
 };
 
-// Les styles restent, MAIS on a retiré les couleurs en dur qui ont été gérées dans le JSX plus haut
 const styles = StyleSheet.create({
     container: {flex: 1},
     header: {

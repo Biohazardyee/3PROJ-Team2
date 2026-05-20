@@ -110,7 +110,7 @@ model ReviewComments {
   content    String   @db.VarChar(1000)
   created_at DateTime @default(now())
 
-  review    Reviews @relation(fields: [review_id], references: [id])
+  review    Reviews @relation(fields: [review_id], references: [id], onDelete: Cascade)
   review_id String
 
   user    Users  @relation(fields: [user_id], references: [id])
@@ -137,7 +137,7 @@ model CommentLikes {
 model ReviewLikes {
   user       Users    @relation(fields: [user_id], references: [id])
   user_id    String
-  review     Reviews  @relation(fields: [review_id], references: [id])
+  review     Reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade)
   review_id  String
   created_at DateTime @default(now())
 
@@ -195,7 +195,7 @@ model Activities {
   user_id          String
   target_user      Users?          @relation("user_activities_targets", fields: [target_user_id], references: [id])
   target_user_id   String?
-  review           Reviews?        @relation(fields: [review_id], references: [id])
+  review           Reviews?        @relation(fields: [review_id], references: [id], onDelete: Cascade)
   review_id        String?
   media            Medias?         @relation(fields: [media_id], references: [id])
   media_id         String?
@@ -225,7 +225,7 @@ model Reports {
   id          String          @id @default(uuid())
   reporter    Users           @relation("reporter_reports", fields: [reporter_id], references: [id])
   reporter_id String
-  review      Reviews?        @relation(fields: [review_id], references: [id])
+  review      Reviews?        @relation(fields: [review_id], references: [id], onDelete: Cascade)
   review_id   String?
   profile     Users?          @relation("profile_reports", fields: [profile_id], references: [id])
   profile_id  String?
@@ -250,7 +250,7 @@ model Notifications {
   action          NotificationActions
   related_user    Users?              @relation("user_related_notifications", fields: [related_user_id], references: [id])
   related_user_id String?
-  review          Reviews?            @relation(fields: [review_id], references: [id])
+  review          Reviews?            @relation(fields: [review_id], references: [id], onDelete: Cascade)
   review_id       String?
   media           Medias?             @relation(fields: [media_id], references: [id])
   media_id        String?

@@ -17,8 +17,41 @@ import {
 import { activityMapper } from "../../../mappers/activities/activities.mapper.js";
 import { artistService } from "../../external_api/artists/artist.service.js";
 import { getImageUrl, mapToFeedItem } from "./activity.helper.js";
-
+import {
+  feedRankingService,
+  UserContext,
+} from "../activities/feed.ranking.service.js";
 export class ActivityService {
+  /**
+   * Helper privé pour construire le contexte utilisateur requis par le Scoring Engine
+   */
+  private async buildUserContext(userId: string): Promise<UserContext> {
+    if (!userId) return { userId: "" };
+
+    const user = await PrismaDb.users.findUnique({
+      where: { id: userId },
+      select: { favorite_band: true },
+    });
+
+    const following = await PrismaDb.follows.findMany({
+      where: { user_id: userId },
+      select: { follow_user_id: true },
+    });
+
+    // On récupère les IDs des médias déjà évalués par l'utilisateur pour alimenter la pénalité de diversité
+    const userReviews = await PrismaDb.reviews.findMany({
+      where: { user_id: userId },
+      select: { media_id: true },
+    });
+
+    return {
+      userId,
+      following: following.map((f) => f.follow_user_id),
+      favoriteArtists: user?.favorite_band ? [user.favorite_band] : [],
+      likedMediaIds: userReviews.map((r) => r.media_id),
+    };
+  }
+
   async create(data: ActivityAddDto): Promise<ActivityResponseDto> {
     if (isEmptyString(data.user_id)) {
       throw new BadRequest("The value of user_id cannot be empty");
@@ -106,9 +139,7 @@ export class ActivityService {
     try {
       const activityToDelete: Activities | null =
         await PrismaDb.activities.delete({
-          where: {
-            id,
-          },
+          where: { id },
         });
 
       if (!activityToDelete) {
@@ -123,9 +154,7 @@ export class ActivityService {
 
   async getAll(): Promise<ActivityResponseDto[]> {
     const activities: Activities[] = await PrismaDb.activities.findMany({
-      orderBy: {
-        created_at: "desc",
-      },
+      orderBy: { created_at: "desc" },
     });
 
     return activityMapper.toDtoList(activities);
@@ -147,22 +176,25 @@ export class ActivityService {
     return activityMapper.toDto(activity);
   }
 
+  /**
+   * FRIENDS FEED
+   * Classe les activités de tes abonnements par pertinence sociale, fraîcheur et engagement
+   */
   async getFriendsFeed(
     user_id: string,
     limit = 10,
     offset = 0,
   ): Promise<FeedItem[]> {
-    const following = await PrismaDb.follows.findMany({
-      where: { user_id },
-      select: { follow_user_id: true },
-    });
+    const context = await this.buildUserContext(user_id);
 
-    const friendIds: string[] = following.map(
-      (f: { follow_user_id: string }) => f.follow_user_id,
-    );
+    if (!context.following || context.following.length === 0) {
+      return [];
+    }
+
+    const bufferLimit = Math.max(150, (offset + limit) * 3);
 
     const activities = await PrismaDb.activities.findMany({
-      where: { user_id: { in: friendIds } },
+      where: { user_id: { in: context.following } },
       include: {
         user: true,
         media: true,
@@ -175,19 +207,54 @@ export class ActivityService {
           },
         },
       },
-      take: limit,
-      skip: offset,
+      take: bufferLimit,
       orderBy: { created_at: "desc" },
     });
 
-    return activities.map((act) => mapToFeedItem(act, "friends"));
+    const scoredActivities = activities.map((act) => {
+      const scoringPayload = {
+        ...act.review,
+        created_at: act.created_at,
+        user_id: act.user_id,
+        _count: act.review?._count,
+        artist:
+          (act.review?.media?.content as any)?.artist ||
+          (act.media?.content as any)?.artist,
+        media_id: act.review?.media_id || act.media_id,
+      };
+
+      return {
+        act,
+        score: feedRankingService.computeScore(
+          scoringPayload,
+          "friends",
+          context,
+        ),
+      };
+    });
+
+    scoredActivities.sort((a, b) => b.score - a.score);
+
+    return scoredActivities
+      .slice(offset, offset + limit)
+      .map(({ act }) => mapToFeedItem(act, "friends"));
   }
 
+  /**
+   * GLOBAL FEED
+   * Met en avant les meilleures critiques du réseau global en évitant l'effet "plat" chronologique
+   */
   async getGlobalFeed(
     limit = 10,
     offset = 0,
     current_user_id?: string,
   ): Promise<FeedItem[]> {
+    const context = current_user_id
+      ? await this.buildUserContext(current_user_id)
+      : { userId: "" };
+
+    const bufferLimit = Math.max(100, (offset + limit) * 3);
+
     const activities = await PrismaDb.activities.findMany({
       where: { action: "review_created" },
       include: {
@@ -195,24 +262,58 @@ export class ActivityService {
         media: true,
         review: {
           include: {
-            _count: {
-              select: { comments: true, likes: true },
-            },
+            media: true,
+            _count: { select: { comments: true, likes: true } },
             likes: current_user_id
               ? { where: { user_id: current_user_id } }
               : false,
           },
         },
       },
-      take: limit,
-      skip: offset,
+      take: bufferLimit,
       orderBy: { created_at: "desc" },
     });
 
-    return activities.map((act) => mapToFeedItem(act, "global"));
+    const scoredActivities = activities.map((act) => {
+      const scoringPayload = {
+        ...act.review,
+        created_at: act.created_at,
+        user_id: act.user_id,
+        _count: act.review?._count,
+        artist:
+          (act.review?.media?.content as any)?.artist ||
+          (act.media?.content as any)?.artist,
+        media_id: act.review?.media_id || act.media_id,
+      };
+
+      return {
+        act,
+        score: feedRankingService.computeScore(
+          scoringPayload,
+          "global",
+          context,
+        ),
+      };
+    });
+
+    scoredActivities.sort((a, b) => b.score - a.score);
+
+    return scoredActivities
+      .slice(offset, offset + limit)
+      .map(({ act }) => mapToFeedItem(act, "global"));
   }
 
-  async getDiscoveryFeed(user_id: string, limit = 50): Promise<FeedItem[]> {
+  /**
+   * DISCOVERY FEED
+   * Système de recommandation hybride basé sur les scores, sans aucun random, avec contrôle de diversité
+   */
+  async getDiscoveryFeed(
+    user_id: string,
+    limit = 10,
+    offset = 0,
+  ): Promise<FeedItem[]> {
+    const context = await this.buildUserContext(user_id);
+
     const user = await PrismaDb.users.findUnique({
       where: { id: user_id },
       select: { favorite_band: true },
@@ -224,33 +325,82 @@ export class ActivityService {
       where: { user_id: user_id },
       select: {
         rating: true,
-        media: {
-          select: {
-            rating: true,
-            content: true,
-          },
+        media: { select: { rating: true, content: true } },
+      },
+    });
+
+    let rawAlbumsToProcess: Array<{
+      albumName: string;
+      artistName: string;
+      image: any;
+    }> = [];
+
+    if (user.favorite_band) {
+      try {
+        const topAlbumsRes = await artistService.getTopAlbums({
+          artist: user.favorite_band,
+        } as any);
+
+        const favAlbums = (topAlbumsRes.topalbums?.album || []).slice(0, 30);
+        for (const alb of favAlbums) {
+          rawAlbumsToProcess.push({
+            albumName: alb.name,
+            artistName: user.favorite_band,
+            image: alb.image,
+          });
+        }
+
+     
+        if (typeof artistService.getSimilarArtists === "function") {
+          const similarArtistsRes = await artistService.getSimilarArtists({
+            artist: user.favorite_band,
+          } as any);
+
+          const similarArtists = (
+            similarArtistsRes.similarartists?.artist || []
+          ).slice(0, 10);
+
+          await Promise.all(
+            similarArtists.map(async (art: any) => {
+              try {
+                const res = await artistService.getTopAlbums({
+                  artist: art.name,
+                } as any);
+                const albums = (res.topalbums?.album || []).slice(0, 5);
+                for (const alb of albums) {
+                  rawAlbumsToProcess.push({
+                    albumName: alb.name,
+                    artistName: art.name,
+                    image: alb.image,
+                  });
+                }
+              } catch (err) {
+              }
+            }),
+          );
+        }
+      } catch (e) {
+        console.error(
+          "Erreur lors de la récupération des données de l'API externe",
+          e,
+        );
+      }
+    }
+
+    if (rawAlbumsToProcess.length === 0) return [];
+
+    const albumNames = rawAlbumsToProcess.map((a) => a.albumName);
+    const mediasInDb = await PrismaDb.medias.findMany({
+      where: {
+        content: {
+          path: ["name"],
+          string_contains: "", 
         },
       },
     });
 
-    const getReviewInfo = (albumName: string, artistName: string) => {
-      const review = userReviews.find((r) => {
-        const content = r.media.content as any;
-        return (
-          content?.name?.toLowerCase() === albumName.toLowerCase() &&
-          content?.artist?.toLowerCase() === artistName.toLowerCase()
-        );
-      });
-
-      return {
-        exists: !!review,
-        userRating: review ? review.rating : null,
-        globalRating: review ? review.media.rating : null,
-      };
-    };
-
-    const getMediaStats = async (albumName: string, artistName: string) => {
-      // 1. On cherche d'abord si l'utilisateur a une review (pour sa note perso)
+    // Helper de correspondance rapide en mémoire (évite le await dans le for)
+    const getMediaStatsInMemory = (albumName: string, artistName: string) => {
       const userReview = userReviews.find((r) => {
         const content = r.media.content as any;
         return (
@@ -259,104 +409,40 @@ export class ActivityService {
         );
       });
 
-      const mediaInDb = await PrismaDb.medias.findFirst({
-        where: {
-          content: {
-            path: ["name"],
-            equals: albumName,
-          },
-        },
+      const mediaInDb = mediasInDb.find((m) => {
+        const content = m.content as any;
+        return content?.name?.toLowerCase() === albumName.toLowerCase();
       });
 
       return {
         exists: !!userReview,
         userRating: userReview ? userReview.rating : null,
         globalRating: mediaInDb ? mediaInDb.rating : 0,
-        media_id: mediaInDb ? mediaInDb.id : undefined,
       };
     };
 
-    const favoriteBandRecommendations: FeedItem[] = [];
-    const similarArtistsRecommendations: FeedItem[] = [];
+    const allRecommendations: FeedItem[] = [];
 
-    if (user.favorite_band) {
-      try {
-        const topAlbumsRes = await artistService.getTopAlbums({
-          artist: user.favorite_band,
-        } as any);
+    for (const [index, item] of rawAlbumsToProcess.entries()) {
+      const stats = getMediaStatsInMemory(item.albumName, item.artistName);
 
-        const favAlbumsRaw = (topAlbumsRes.topalbums?.album || []).slice(0, 20);
-
-        for (const album of favAlbumsRaw) {
-          const stats = await getMediaStats(album.name, user.favorite_band!);
-
-          favoriteBandRecommendations.push({
-            id: `reco-fav-${album.name}-${Date.now()}`,
-            type: "new_album",
-            artist: user.favorite_band!,
-            album: album.name,
-            cover: getImageUrl(album.image),
-            created_at: new Date(),
-            hasReviewed: stats.exists,
-            userReviewRating: stats.userRating,
-            globalRating: stats.globalRating,
-            media_id: stats.media_id,
-          });
-        }
-
-        const similarRes = await artistService.getSimilarArtists({
-          artist: user.favorite_band,
-        });
-
-        const similarArtists = (similarRes.similarartists?.artist || []).slice(
-          0,
-          20,
-        );
-
-        const similarResults = await Promise.all(
-          similarArtists.map(async (simArtist: any) => {
-            try {
-              const topSim = await artistService.getTopAlbums({
-                artist: simArtist.name,
-              });
-
-              const albums = (topSim.topalbums?.album || []).slice(0, 3);
-
-              // ON UTILISE getMediaStats ICI AUSSI
-              return await Promise.all(
-                albums.map(async (album: any): Promise<FeedItem> => {
-                  const stats = await getMediaStats(album.name, simArtist.name);
-
-                  return {
-                    id: `reco-sim-${album.name}-${Math.random()}`,
-                    type: "recommendation",
-                    artist: simArtist.name,
-                    album: album.name,
-                    cover: getImageUrl(album.image),
-                    created_at: new Date(),
-                    hasReviewed: stats.exists,
-                    userReviewRating: stats.userRating,
-                    globalRating: stats.globalRating || 0,
-                    media_id: stats.media_id,
-                  };
-                }),
-              );
-            } catch {
-              return [];
-            }
-          }),
-        );
-        similarArtistsRecommendations.push(...similarResults.flat());
-      } catch (e) {
-        console.error("Discovery error:", e);
-      }
+      allRecommendations.push({
+        id: `reco-discover-${item.artistName.replace(/\s+/g, "-")}-${item.albumName.replace(/\s+/g, "-")}-${index}`,
+        type: "new_album",
+        artist: item.artistName,
+        album: item.albumName,
+        cover: getImageUrl(item.image),
+        created_at: new Date(),
+        hasReviewed: stats.exists,
+        userReviewRating: stats.userRating,
+      });
     }
 
-    const feedItems = [
-      ...favoriteBandRecommendations,
-      ...similarArtistsRecommendations,
-    ];
-    return feedItems.sort(() => Math.random() - 0.5).slice(0, limit);
+    const shuffledRecommendations = allRecommendations.sort(
+      () => 0.5 - Math.random(),
+    );
+
+    return shuffledRecommendations.slice(offset, offset + limit);
   }
 }
 

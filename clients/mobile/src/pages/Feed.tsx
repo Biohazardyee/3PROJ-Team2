@@ -5,12 +5,11 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   StatusBar,
   ActivityIndicator,
-  RefreshControl,
   Image,
   Alert,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect, Router } from "expo-router";
@@ -23,19 +22,58 @@ import { getValidSource } from "@/helpers/helpers";
 
 type Filter = "Review" | "Abonnement" | "Tendances";
 
+interface FeedCache {
+  Review: any[];
+  Abonnement: any[];
+  Tendances: any[];
+}
+
+interface PageCache {
+  Review: number;
+  Abonnement: number;
+  Tendances: number;
+}
+
+interface HasMoreCache {
+  Review: boolean;
+  Abonnement: boolean;
+  Tendances: boolean;
+}
+
+const ITEMS_PER_PAGE = 10;
+
 const Feed = () => {
   const router: Router = useRouter();
   const [activeFilter, setActiveFilter] = useState<Filter>("Review");
   const [searchQuery, setSearchQuery] = useState("");
-  const [feedItems, setFeedItems] = useState<any[]>([]);
+
+  const [feedsCache, setFeedsCache] = useState<FeedCache>({
+    Review: [],
+    Abonnement: [],
+    Tendances: [],
+  });
+
+  const [pagesCache, setPagesCache] = useState<PageCache>({
+    Review: 0,
+    Abonnement: 0,
+    Tendances: 0,
+  });
+
+  const [hasMoreCache, setHasMoreCache] = useState<HasMoreCache>({
+    Review: true,
+    Abonnement: true,
+    Tendances: true,
+  });
+
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const isFirstRender = useRef(true);
   const isInteracting = useRef(false);
+  const activeFilterRef = useRef<Filter>(activeFilter);
 
-  // Récupération de l'ID de l'utilisateur actuel au montage
   useEffect(() => {
     const getUserId = async () => {
       try {
@@ -52,11 +90,38 @@ const Feed = () => {
     getUserId();
   }, []);
 
-  const fetchFeed = async (showLoader = true) => {
+  useEffect(() => {
+    activeFilterRef.current = activeFilter;
+    if (feedsCache[activeFilter].length === 0) {
+      fetchFeed(activeFilter, 0, false);
+    } else {
+      setIsLoading(false);
+    }
+  }, [activeFilter]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+      onRefresh();
+    }, [activeFilter]),
+  );
+
+  const fetchFeed = async (
+    targetFilter: Filter,
+    currentOffset: number,
+    isLoadMoreAction = false,
+  ) => {
     if (isInteracting.current) return;
 
     try {
-      if (showLoader && feedItems.length === 0) setIsLoading(true);
+      if (!isLoadMoreAction && !isRefreshing) {
+        setIsLoading(true);
+      } else if (isLoadMoreAction) {
+        setIsLoadingMore(true);
+      }
 
       const token: string | null = await SecureStore.getItemAsync("userToken");
       if (!token) return;
@@ -64,45 +129,55 @@ const Feed = () => {
       const decoded: any = jwtDecode(token);
       const userId: any = decoded.id;
 
-      let endpoint: string = "";
-      switch (activeFilter) {
+      let endpoint = "";
+      const queryParams = `limit=${ITEMS_PER_PAGE}&offset=${currentOffset}`;
+
+      switch (targetFilter) {
         case "Review":
-          endpoint = `/activities/feed/global?current_user_id=${userId}`;
+          endpoint = `/activities/feed/global?current_user_id=${userId}&${queryParams}`;
           break;
         case "Abonnement":
-          endpoint = `/activities/feed/friends/${userId}?current_user_id=${userId}`;
+          endpoint = `/activities/feed/friends/${userId}?current_user_id=${userId}&${queryParams}`;
           break;
         case "Tendances":
-          endpoint = `/activities/feed/discovery/${userId}?current_user_id=${userId}`;
+          endpoint = `/activities/feed/discovery/${userId}?current_user_id=${userId}&${queryParams}`;
           break;
       }
 
       const response = await apiClient.get(endpoint);
-      const items: any = response.data?.feed || response.data || [];
-      setFeedItems(items);
+      const items: any[] = response.data?.feed || response.data || [];
+
+      setFeedsCache((prev) => ({
+        ...prev,
+        [targetFilter]: isLoadMoreAction
+          ? [...prev[targetFilter], ...items]
+          : items,
+      }));
+
+      setHasMoreCache((prev) => ({
+        ...prev,
+        [targetFilter]: items.length === ITEMS_PER_PAGE,
+      }));
+
+      if (isLoadMoreAction) {
+        setPagesCache((prev) => ({
+          ...prev,
+          [targetFilter]: currentOffset + ITEMS_PER_PAGE,
+        }));
+      } else {
+        setPagesCache((prev) => ({
+          ...prev,
+          [targetFilter]: ITEMS_PER_PAGE,
+        }));
+      }
     } catch (error) {
-      console.error("Erreur récupération feed:", error);
+      console.error(`Erreur récupération feed (${targetFilter}):`, error);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
+      setIsLoadingMore(false);
     }
   };
-
-  // Chargement initial et au changement de filtre
-  useEffect(() => {
-    fetchFeed(true);
-  }, [activeFilter]);
-
-  // Rafraîchissement quand l'écran revient au premier plan
-  useFocusEffect(
-    useCallback(() => {
-      if (isFirstRender.current) {
-        isFirstRender.current = false;
-        return;
-      }
-      fetchFeed(false);
-    }, [activeFilter]),
-  );
 
   const handleLike = async (id: string) => {
     if (!currentUserId) {
@@ -113,29 +188,31 @@ const Feed = () => {
     if (isInteracting.current) return;
     isInteracting.current = true;
 
-    const itemIndex: number = feedItems.findIndex((f) => f.id === id);
+    const currentFeedItems = feedsCache[activeFilter];
+    const itemIndex: number = currentFeedItems.findIndex((f) => f.id === id);
     if (itemIndex === -1) {
       isInteracting.current = false;
       return;
     }
 
-    const item = feedItems[itemIndex];
+    const item = currentFeedItems[itemIndex];
     if (item.type !== "review") {
       isInteracting.current = false;
       return;
     }
 
     const currentlyLiked: boolean = !!item.isLiked;
-    const updatedFeed = [...feedItems];
-    const targetItem = { ...updatedFeed[itemIndex] };
+    const updatedItems = [...currentFeedItems];
+    const targetItem = { ...updatedItems[itemIndex] };
 
     targetItem.isLiked = !currentlyLiked;
     targetItem.likes_count = currentlyLiked
       ? Math.max(0, (targetItem.likes_count || 1) - 1)
       : (targetItem.likes_count || 0) + 1;
 
-    updatedFeed[itemIndex] = targetItem;
-    setFeedItems(updatedFeed);
+    updatedItems[itemIndex] = targetItem;
+
+    setFeedsCache((prev) => ({ ...prev, [activeFilter]: updatedItems }));
 
     try {
       const response = await apiClient.post(`/reviews/likes/toggle`, {
@@ -144,12 +221,17 @@ const Feed = () => {
       });
 
       const { isLiked, likes_count } = response.data;
-      const finalFeed = [...updatedFeed];
-      finalFeed[itemIndex] = { ...finalFeed[itemIndex], isLiked, likes_count };
-      setFeedItems(finalFeed);
+      const finalItems = [...updatedItems];
+      finalItems[itemIndex] = {
+        ...finalItems[itemIndex],
+        isLiked,
+        likes_count,
+      };
+
+      setFeedsCache((prev) => ({ ...prev, [activeFilter]: finalItems }));
     } catch (error) {
       console.error("Erreur toggle like:", error);
-      fetchFeed(false);
+      fetchFeed(activeFilter, 0, false);
       Alert.alert("Erreur", "Impossible de mettre à jour le like.");
     } finally {
       isInteracting.current = false;
@@ -158,10 +240,16 @@ const Feed = () => {
 
   const onRefresh = () => {
     setIsRefreshing(true);
-    fetchFeed(false);
+    fetchFeed(activeFilter, 0, false);
   };
 
-  const filteredItems = feedItems.filter((item) => {
+  const loadMoreData = () => {
+    if (isLoadingMore || !hasMoreCache[activeFilter]) return;
+    const nextOffset = pagesCache[activeFilter];
+    fetchFeed(activeFilter, nextOffset, true);
+  };
+
+  const filteredItems = (feedsCache[activeFilter] || []).filter((item) => {
     if (!item) return false;
     const searchLower: string = (searchQuery || "").toLowerCase().trim();
     if (searchLower === "") return true;
@@ -172,7 +260,197 @@ const Feed = () => {
     );
   });
 
-  if (isLoading) {
+  const renderItem = ({ item, index }: { item: any; index: number }) => {
+    const liked: boolean = !!item.isLiked;
+    const displayRating: number =
+      item.userReviewRating ?? item.globalRating ?? item.rating ?? 0;
+
+    return (
+      <View style={styles.card}>
+        <View style={styles.userRow}>
+          <TouchableOpacity
+            style={styles.userInfoClickable}
+            onPress={(): void =>
+              router.push({
+                pathname: "/profile",
+                params: { id: item.user_id },
+              })
+            }
+          >
+            {item.user_image ? (
+              <Image source={{ uri: item.user_image }} style={styles.avatar} />
+            ) : (
+              <View
+                style={[
+                  styles.avatar,
+                  {
+                    backgroundColor:
+                      item.type === "review" ? "#2563eb" : "#ec4899",
+                  },
+                ]}
+              >
+                <Text style={styles.avatarText}>
+                  {item.user_name
+                    ? item.user_name.substring(0, 2).toUpperCase()
+                    : "AI"}
+                </Text>
+              </View>
+            )}
+            <View>
+              <Text style={styles.userName}>
+                {item.user_name || "Recommandation"}
+                <Text style={styles.actionText}>
+                  {item.type === "review"
+                    ? " a écrit une review"
+                    : " Nouvel album"}
+                </Text>
+              </Text>
+              <Text style={styles.timeText}>
+                {item.type === "recommendation" ? "SUGGESTION IA" : "RÉCENT"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={(): void =>
+            router.push({
+              pathname: "/albumdetails",
+              params: {
+                id: item.api_id || item.media_id || "",
+                artist: item.artist,
+                album: item.album,
+                cover: item.cover,
+              },
+            })
+          }
+        >
+          <View style={styles.albumRow}>
+            {item.cover ? (
+              <Image
+                source={getValidSource(item.cover)}
+                style={styles.albumCover}
+              />
+            ) : (
+              <View style={[styles.albumCover, styles.albumCoverPlaceholder]}>
+                <Ionicons name="musical-notes" size={30} color="#4b5563" />
+              </View>
+            )}
+            <View style={styles.albumDetails}>
+              <Text style={styles.albumTitle} numberOfLines={1}>
+                {item.album}
+              </Text>
+              <Text style={styles.artistName}>{item.artist}</Text>
+              <View style={styles.starsRow}>
+                {[...Array(5)].map((_, i: number) => (
+                  <Ionicons
+                    key={i}
+                    name="star"
+                    size={14}
+                    color={i < displayRating ? "#ec4899" : "#374151"}
+                  />
+                ))}
+                {item.hasReviewed && (
+                  <Text style={styles.userRatingBadge}>VOTRE NOTE</Text>
+                )}
+              </View>
+            </View>
+          </View>
+
+          {item.type === "review" && item.content && (
+            <View style={styles.reviewBody}>
+              {item.title && (
+                <Text style={styles.reviewTitle}>{item.title}</Text>
+              )}
+              <Text style={styles.postContent} numberOfLines={3}>
+                {item.content}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
+
+        <View style={styles.cardFooter}>
+          {item.type === "review" ? (
+            <>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => handleLike(item.id)}
+              >
+                <Ionicons
+                  name={liked ? "heart" : "heart-outline"}
+                  size={20}
+                  color={liked ? "#ec4899" : "#9ca3af"}
+                />
+                <Text
+                  style={[styles.actionCount, liked && { color: "#ec4899" }]}
+                >
+                  {item.likes_count || 0}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={(): void =>
+                  router.push(`/review/${item.review_id}/comments`)
+                }
+              >
+                <Ionicons name="chatbubble-outline" size={18} color="#9ca3af" />
+                <Text style={styles.actionCount}>
+                  {item.comments_count || 0}
+                </Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                styles.writeReviewBtn,
+                item.hasReviewed && styles.alreadyReviewedBtn,
+              ]}
+              onPress={(): void =>
+                router.push({
+                  pathname: "/albumdetails",
+                  params: {
+                    id: item.api_id || item.media_id,
+                    artist: item.artist,
+                    album: item.album,
+                    cover: typeof item.cover === "string" ? item.cover : "",
+                  },
+                })
+              }
+            >
+              <Ionicons
+                name={item.hasReviewed ? "checkmark-circle" : "create-outline"}
+                size={18}
+                color={item.hasReviewed ? "#10b981" : "#ec4899"}
+              />
+              <Text
+                style={[
+                  styles.actionCount,
+                  { color: item.hasReviewed ? "#10b981" : "#ec4899" },
+                ]}
+              >
+                {item.hasReviewed ? "Déjà noté" : "Écrire une review"}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    );
+  };
+
+  const renderFooter = () => {
+    if (!isLoadingMore) return <View style={{ height: 20 }} />;
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color="#ec4899" />
+      </View>
+    );
+  };
+
+  // Écran de chargement initial plein écran
+  if (isLoading && feedsCache[activeFilter].length === 0) {
     return (
       <View style={[styles.container, styles.center]}>
         <ActivityIndicator size="large" color="#ec4899" />
@@ -185,273 +463,68 @@ const Feed = () => {
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <Header />
-        <ScrollView
+
+        <FlatList
+          data={filteredItems}
+          keyExtractor={(item, index) =>
+            item.id ? `${item.id}-${index}` : `feed-${index}`
+          }
+          renderItem={renderItem}
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={onRefresh}
-              tintColor="#ec4899"
-            />
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
+          ListHeaderComponent={
+            <>
+              <View style={styles.headerSection}>
+                <Text style={styles.title}>Votre fil</Text>
+                <Text style={styles.subtitle}>
+                  Découvrez de nouvelles pépites !
+                </Text>
+              </View>
+
+              <View style={styles.searchContainer}>
+                <Ionicons
+                  name="search"
+                  size={20}
+                  color="#6b7280"
+                  style={styles.searchIcon}
+                />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Rechercher un album..."
+                  placeholderTextColor="#6b7280"
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                />
+              </View>
+
+              <View style={styles.filterTabs}>
+                <FilterButton
+                  label="Reviews"
+                  active={activeFilter === "Review"}
+                  icon="grid-outline"
+                  onPress={(): void => setActiveFilter("Review")}
+                />
+                <FilterButton
+                  label="Amis"
+                  active={activeFilter === "Abonnement"}
+                  icon="people-outline"
+                  onPress={(): void => setActiveFilter("Abonnement")}
+                />
+                <FilterButton
+                  label="Découverte"
+                  active={activeFilter === "Tendances"}
+                  icon="sparkles-outline"
+                  onPress={(): void => setActiveFilter("Tendances")}
+                />
+              </View>
+            </>
           }
-        >
-          <View style={styles.headerSection}>
-            <Text style={styles.title}>Votre fil</Text>
-            <Text style={styles.subtitle}>
-              Découvrez de nouvelles pépites !
-            </Text>
-          </View>
-
-          <View style={styles.searchContainer}>
-            <Ionicons
-              name="search"
-              size={20}
-              color="#6b7280"
-              style={styles.searchIcon}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Rechercher un album..."
-              placeholderTextColor="#6b7280"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
-
-          <View style={styles.filterTabs}>
-            <FilterButton
-              label="Reviews"
-              active={activeFilter === "Review"}
-              icon="grid-outline"
-              onPress={(): void => setActiveFilter("Review")}
-            />
-            <FilterButton
-              label="Amis"
-              active={activeFilter === "Abonnement"}
-              icon="people-outline"
-              onPress={(): void => setActiveFilter("Abonnement")}
-            />
-            <FilterButton
-              label="Découverte"
-              active={activeFilter === "Tendances"}
-              icon="sparkles-outline"
-              onPress={(): void => setActiveFilter("Tendances")}
-            />
-          </View>
-
-          <View style={styles.postsList}>
-            {filteredItems.map((item: any, index: number) => {
-              const liked: boolean = !!item.isLiked;
-              const displayRating: number =
-                item.userReviewRating ?? item.globalRating ?? item.rating ?? 0;
-
-              return (
-                <View key={item.id || `feed-${index}`} style={styles.card}>
-                  <View style={styles.userRow}>
-                    <TouchableOpacity
-                      style={styles.userInfoClickable}
-                      onPress={(): void =>
-                        router.push({
-                          pathname: "/profile",
-                          params: { id: item.user_id },
-                        })
-                      }
-                    >
-                      {item.user_image ? (
-                        <Image
-                          source={{ uri: item.user_image }}
-                          style={styles.avatar}
-                        />
-                      ) : (
-                        <View
-                          style={[
-                            styles.avatar,
-                            {
-                              backgroundColor:
-                                item.type === "review" ? "#2563eb" : "#ec4899",
-                            },
-                          ]}
-                        >
-                          <Text style={styles.avatarText}>
-                            {item.user_name
-                              ? item.user_name.substring(0, 2).toUpperCase()
-                              : "AI"}
-                          </Text>
-                        </View>
-                      )}
-                      <View>
-                        <Text style={styles.userName}>
-                          {item.user_name || "Recommandation"}
-                          <Text style={styles.actionText}>
-                            {item.type === "review"
-                              ? " a écrit une review"
-                              : " Nouvel album"}
-                          </Text>
-                        </Text>
-                        <Text style={styles.timeText}>
-                          {item.type === "recommendation"
-                            ? "SUGGESTION IA"
-                            : "RÉCENT"}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={(): void =>
-                      router.push({
-                        pathname: "/albumdetails",
-                        params: {
-                          id: item.api_id || item.media_id || "",
-                          artist: item.artist,
-                          album: item.album,
-                          cover: item.cover,
-                        },
-                      })
-                    }
-                  >
-                    <View style={styles.albumRow}>
-                      {item.cover ? (
-                        <Image
-                          source={getValidSource(item.cover)}
-                          style={styles.albumCover}
-                        />
-                      ) : (
-                        <View
-                          style={[
-                            styles.albumCover,
-                            styles.albumCoverPlaceholder,
-                          ]}
-                        >
-                          <Ionicons
-                            name="musical-notes"
-                            size={30}
-                            color="#4b5563"
-                          />
-                        </View>
-                      )}
-                      <View style={styles.albumDetails}>
-                        <Text style={styles.albumTitle} numberOfLines={1}>
-                          {item.album}
-                        </Text>
-                        <Text style={styles.artistName}>{item.artist}</Text>
-                        <View style={styles.starsRow}>
-                          {[...Array(5)].map((_, i: number) => (
-                            <Ionicons
-                              key={i}
-                              name="star"
-                              size={14}
-                              color={i < displayRating ? "#ec4899" : "#374151"}
-                            />
-                          ))}
-                          {item.hasReviewed && (
-                            <Text style={styles.userRatingBadge}>
-                              VOTRE NOTE
-                            </Text>
-                          )}
-                        </View>
-                      </View>
-                    </View>
-
-                    {item.type === "review" && item.content && (
-                      <View style={styles.reviewBody}>
-                        {item.title && (
-                          <Text style={styles.reviewTitle}>{item.title}</Text>
-                        )}
-                        <Text style={styles.postContent} numberOfLines={3}>
-                          {item.content}
-                        </Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
-
-                  <View style={styles.cardFooter}>
-                    {item.type === "review" ? (
-                      <>
-                        <TouchableOpacity
-                          style={styles.actionButton}
-                          onPress={(): Promise<void> => handleLike(item.id)}
-                        >
-                          <Ionicons
-                            name={liked ? "heart" : "heart-outline"}
-                            size={20}
-                            color={liked ? "#ec4899" : "#9ca3af"}
-                          />
-                          <Text
-                            style={[
-                              styles.actionCount,
-                              liked && { color: "#ec4899" },
-                            ]}
-                          >
-                            {item.likes_count || 0}
-                          </Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                          style={styles.actionButton}
-                          onPress={(): void =>
-                            router.push(`/review/${item.review_id}/comments`)
-                          }
-                        >
-                          <Ionicons
-                            name="chatbubble-outline"
-                            size={18}
-                            color="#9ca3af"
-                          />
-                          <Text style={styles.actionCount}>
-                            {item.comments_count || 0}
-                          </Text>
-                        </TouchableOpacity>
-                      </>
-                    ) : (
-                      <TouchableOpacity
-                        style={[
-                          styles.actionButton,
-                          styles.writeReviewBtn,
-                          item.hasReviewed && styles.alreadyReviewedBtn,
-                        ]}
-                        onPress={(): void =>
-                          router.push({
-                            pathname: "/albumdetails",
-                            params: {
-                              id: item.api_id || item.media_id,
-                              artist: item.artist,
-                              album: item.album,
-                              cover:
-                                typeof item.cover === "string"
-                                  ? item.cover
-                                  : "",
-                            },
-                          })
-                        }
-                      >
-                        <Ionicons
-                          name={
-                            item.hasReviewed
-                              ? "checkmark-circle"
-                              : "create-outline"
-                          }
-                          size={18}
-                          color={item.hasReviewed ? "#10b981" : "#ec4899"}
-                        />
-                        <Text
-                          style={[
-                            styles.actionCount,
-                            { color: item.hasReviewed ? "#10b981" : "#ec4899" },
-                          ]}
-                        >
-                          {item.hasReviewed ? "Déjà noté" : "Écrire une review"}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-        </ScrollView>
+        />
       </View>
     </AuthGuardWrapper>
   );
@@ -511,25 +584,17 @@ const styles = StyleSheet.create({
   filterBtnActive: { backgroundColor: "#2a2e3f" },
   filterBtnText: { color: "#6b7280", fontSize: 12, fontWeight: "600" },
   filterBtnTextActive: { color: "#fff" },
-  postsList: { paddingHorizontal: 20 },
   card: {
     backgroundColor: "#1a1d29",
     borderRadius: 20,
     padding: 16,
     marginBottom: 16,
+    marginHorizontal: 20, // Ajouté car la FlatList prend toute la largeur
     borderWidth: 1,
     borderColor: "#1f2937",
   },
-  userRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  userInfoClickable: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
+  userRow: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
+  userInfoClickable: { flexDirection: "row", alignItems: "center", gap: 10 },
   avatar: {
     width: 36,
     height: 36,
@@ -597,6 +662,11 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: "bold",
     marginLeft: 4,
+  },
+  footerLoader: {
+    verticalAlign: "middle",
+    paddingVertical: 15,
+    alignItems: "center",
   },
 });
 

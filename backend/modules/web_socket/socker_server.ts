@@ -21,18 +21,10 @@ export const initSocket = (server: http.Server) => {
 
   io.use(async (socket, next): Promise<void> => {
     try {
-      
       const rawToken = socket.handshake.auth.token;
       const token = rawToken?.replace(/#$/, "");
 
       if (!token) {
-        return next(new Error("Token missing"));
-      }
-      console.log("TOKEN REÇU CÔTÉ SERVEUR:", token);
-      if (!token) {
-        console.error(
-          `[Socket Auth] Rejected: No token provided from ${socket.handshake.address}`,
-        );
         return next(new Error("Token missing"));
       }
 
@@ -50,9 +42,7 @@ export const initSocket = (server: http.Server) => {
       }
 
       socket.data.user = decoded;
-      console.log(
-        `[Socket Auth] Success: User ${decoded.id} connected via socket ${socket.id}`,
-      );
+
       next();
     } catch (err) {
       console.error("[Socket Auth] Error:", err);
@@ -60,30 +50,19 @@ export const initSocket = (server: http.Server) => {
     }
   });
 
-  // --- GESTION DES CONNEXIONS ---
   io.on("connection", (socket): void => {
     const user = socket.data.user as SocketUser;
 
-    // Joint la room spécifique à l'utilisateur
     socket.join(`user_${user.id}`);
-    console.log(
-      `[Socket Connection] User ${user.id} joined room: user_${user.id}`,
-    );
 
-    // Log des erreurs socket locales
     socket.on("error", (err) => {
       console.error(`[Socket Internal Error] User ${user.id}:`, err);
     });
 
-    // --- REJOINDRE CONVERSATION ---
     socket.on(
       "join_conversation",
       async ({ conversationId }: { conversationId: string }): Promise<void> => {
         try {
-          console.log(
-            `[Join Request] User ${user.id} attempting to join conv: ${conversationId}`,
-          );
-
           const conversation: Conversations | null =
             await PrismaDb.conversations.findUnique({
               where: { id: conversationId },
@@ -101,9 +80,6 @@ export const initSocket = (server: http.Server) => {
           }
 
           socket.join(conversationId);
-          console.log(
-            `[Join Success] User ${user.id} joined room: ${conversationId}`,
-          );
 
           const updatedMessages = await PrismaDb.messages.updateMany({
             where: {
@@ -115,9 +91,6 @@ export const initSocket = (server: http.Server) => {
           });
 
           if (updatedMessages.count > 0) {
-            console.log(
-              `[Read Receipts] ${updatedMessages.count} messages marked as read by ${user.id}`,
-            );
             io.to(`user_${conversation.user1_id}`).emit(
               "conversation_marked_read",
               { conversationId },
@@ -133,7 +106,6 @@ export const initSocket = (server: http.Server) => {
       },
     );
 
-    // --- ENVOYER MESSAGE ---
     socket.on(
       "send_message",
       async (data: {
@@ -141,10 +113,6 @@ export const initSocket = (server: http.Server) => {
         content: string;
       }): Promise<void> => {
         try {
-          console.log(
-            `[Message Sent] User ${user.id} in ${data.conversation_id}: "${data.content.substring(0, 20)}..."`,
-          );
-
           if (!data.conversation_id || !data.content) return;
 
           const conversation: Conversations | null =
@@ -173,11 +141,6 @@ export const initSocket = (server: http.Server) => {
             ...message,
             created_at: message.created_at || new Date().toISOString(),
           };
-
-          // Émission
-          console.log(
-            `[Emitting] Sending message to rooms: user_${conversation.user1_id} & user_${conversation.user2_id}`,
-          );
 
           io.to(`user_${conversation.user1_id}`).emit(
             "update_conversation_list",
@@ -231,11 +194,7 @@ export const initSocket = (server: http.Server) => {
       },
     );
 
-    socket.on("disconnect", (reason): void => {
-      console.log(
-        `❌ User disconnected: ${user.id} (Socket: ${socket.id}) | Reason: ${reason}`,
-      );
-    });
+    socket.on("disconnect", (): void => {});
   });
 
   return io;
