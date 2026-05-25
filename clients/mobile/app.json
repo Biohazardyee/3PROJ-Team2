@@ -22,8 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.biohazardyesorganization.melodia"
+      "predictiveBackGestureEnabled": false
     },
     "androidStatusBar": {
       "backgroundColor": "#1C1C28",
