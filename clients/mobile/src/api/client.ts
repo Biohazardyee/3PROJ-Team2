@@ -4,7 +4,7 @@ import { router } from "expo-router";
 
 const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
-  timeout: 30000, // Passez à 30 secondes au lieu de la valeur par défaut
+  timeout: 30000, 
 });
 
 apiClient.interceptors.request.use(
@@ -26,7 +26,7 @@ apiClient.interceptors.response.use(
   async (error): Promise<never> => {
     if (error.response?.status === 401) {
       await SecureStore.deleteItemAsync("userToken");
-      router.replace("/login"); // mieux que push
+      router.replace("/login"); 
     }
 
     let errorMessage = "Erreur inconnue";
@@ -45,7 +45,7 @@ apiClient.interceptors.response.use(
     import('react-native').then(({ Alert }) => {
       Alert.alert("DEBUG API", errorMessage);
     });
-    
+
     return Promise.reject(error);
   },
 );
