@@ -31,10 +31,7 @@ const LoginMobile: React.FC = () => {
     provider: "google" | "discord",
   ): Promise<void> => {
     try {
-      const redirectUri: string = AuthSession.makeRedirectUri({
-        scheme: "projetsupcontentmobile",
-        preferLocalhost: false,
-      });
+      const redirectUri = "projetsupcontentmobile://";
 
       const authUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/oauth/auth/${provider}?platform=mobile&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
@@ -58,11 +55,11 @@ const LoginMobile: React.FC = () => {
         }
       }
     } catch (error) {
-      console.log("DEBUG: Erreur complète", error); 
+      console.log("DEBUG: Erreur complète", error);
       Alert.alert("ERREUR CRITIQUE", JSON.stringify(error));
       setIsLoading(false);
 
-    //   Alert.alert("Erreur", "La connexion a échoué.");
+      Alert.alert("Erreur", "La connexion a échoué.");
     }
   };
 

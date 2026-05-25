@@ -17,17 +17,27 @@
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
+      "package": "com.biohazardyesorganization.melodia",
+      "scheme": "projetsupcontentmobile",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": {
+            "scheme": "projetsupcontentmobile"
+          },
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
       "config": {
         "usesCleartextTraffic": true,
         "networkSecurityConfig": "./network_security_config.xml"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.biohazardyesorganization.melodia"
+      "predictiveBackGestureEnabled": false
     },
     "androidStatusBar": {
       "backgroundColor": "#1C1C28",
