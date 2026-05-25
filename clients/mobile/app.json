@@ -21,6 +21,9 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "config": {
+        "usesCleartextTraffic": true
+      },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.biohazardyesorganization.melodia"

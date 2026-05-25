@@ -51,7 +51,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: '*', // Autorise toutes les origines pour l'APK
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
