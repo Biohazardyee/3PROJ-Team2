@@ -111,27 +111,7 @@ const Settings = () => {
         await AsyncStorage.setItem("pref_notifications", JSON.stringify(value));
     };
 
-    const handleExportData: () => Promise<void> = async (): Promise<void> => {
-        try {
-            const keys: readonly string[] = await AsyncStorage.getAllKeys();
-            const stores: readonly KeyValuePair[] = await AsyncStorage.multiGet(keys);
-            const exportData: { [k: string]: string | null } = Object.fromEntries(stores);
-            const jsonString: string = JSON.stringify(exportData, null, 2);
-
-            const fileUri: string =
-                FileSystem.documentDirectory + "mes_donnees_playlist.json";
-            await FileSystem.writeAsStringAsync(fileUri, jsonString);
-
-            if (await Sharing.isAvailableAsync()) {
-                await Sharing.shareAsync(fileUri);
-            } else {
-                Alert.alert("Erreur", "Le partage n'est pas disponible.");
-            }
-        } catch (e) {
-            Alert.alert("Erreur", "Impossible d'exporter les données.");
-            console.error(e);
-        }
-    };
+   
 
     // 4. VRAIE fonction de déconnexion
     const handleLogout: () => void = (): void => {
@@ -213,7 +193,6 @@ const Settings = () => {
                         icon="download-outline"
                         title="Exporter mes données"
                         type="action"
-                        onPress={handleExportData}
                     />
                 </View>
 
