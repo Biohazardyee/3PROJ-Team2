@@ -31,7 +31,10 @@ const LoginMobile: React.FC = () => {
     provider: "google" | "discord",
   ): Promise<void> => {
     try {
-      const redirectUri = "projetsupcontentmobile://";
+      const redirectUri = AuthSession.makeRedirectUri({
+        scheme: "projetsupcontentmobile",
+        path: "auth",
+      });
 
       const authUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/oauth/auth/${provider}?platform=mobile&redirect_uri=${encodeURIComponent(redirectUri)}`;
 

@@ -35,6 +35,7 @@ export default {
           data: [
             {
               scheme: "projetsupcontentmobile",
+              host: "auth"
             },
           ],
           category: ["BROWSABLE", "DEFAULT"],
