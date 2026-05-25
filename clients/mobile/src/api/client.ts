@@ -28,24 +28,6 @@ apiClient.interceptors.response.use(
       await SecureStore.deleteItemAsync("userToken");
       router.replace("/login"); // mieux que push
     }
-
-    let errorMessage = "Erreur inconnue";
-
-    if (error.response) {
-      // Le serveur a répondu avec un code hors 2xx
-      errorMessage = `Serveur: ${error.response.status} - ${JSON.stringify(error.response.data)}`;
-    } else if (error.request) {
-      // La requête a été faite mais aucune réponse reçue (problème réseau/CORS)
-      errorMessage = "Aucune réponse du serveur (Réseau/CORS ?)";
-    } else {
-      // Erreur de configuration
-      errorMessage = error.message;
-    }
-
-    import('react-native').then(({ Alert }) => {
-      Alert.alert("DEBUG API", errorMessage);
-    });
-    
     return Promise.reject(error);
   },
 );
