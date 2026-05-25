@@ -19,10 +19,7 @@ import Constants from "expo-constants";
 
 import ChatItem from "../components/ChatItem";
 
-
-
-const SOCKET_URL =
-  Constants.expoConfig?.extra?.apiUrl || "";
+const SOCKET_URL = Constants.expoConfig?.extra?.apiUrl || "";
 
 interface Message {
   id: string;

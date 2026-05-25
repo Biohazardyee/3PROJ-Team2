@@ -1,56 +1,39 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
-
 import Constants from "expo-constants";
 
-const API_URL = Constants.expoConfig?.extra?.apiUrl;
+const API_URL =
+  Constants.expoConfig?.extra?.apiUrl ||
+  Constants.manifest2?.extra?.expoClient?.extra?.apiUrl ||
+  "https://doe-rational-bobcat.ngrok-free.app";
 
-console.log("API URL =", API_URL);
+console.log("✅ API URL =", API_URL);
 
 const apiClient = axios.create({
   baseURL: API_URL,
   timeout: 30000,
 });
 
-apiClient.interceptors.request.use(
-  async (
-    config: InternalAxiosRequestConfig,
-  ): Promise<InternalAxiosRequestConfig> => {
-    const token: string | null = await SecureStore.getItemAsync("userToken");
+apiClient.interceptors.request.use(async (config) => {
+  const token = await SecureStore.getItemAsync("userToken");
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-    return config;
-  },
-);
+  return config;
+});
 
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error): Promise<never> => {
+  async (error) => {
+    console.log("❌ AXIOS ERROR =", error);
+
     if (error.response?.status === 401) {
       await SecureStore.deleteItemAsync("userToken");
       router.replace("/login");
     }
-
-    let errorMessage = "Erreur inconnue";
-
-    if (error.response) {
-      // Le serveur a répondu avec un code hors 2xx
-      errorMessage = `Serveur: ${error.response.status} - ${JSON.stringify(error.response.data)}`;
-    } else if (error.request) {
-      // La requête a été faite mais aucune réponse reçue (problème réseau/CORS)
-      errorMessage = "Aucune réponse du serveur (Réseau/CORS ?)";
-    } else {
-      // Erreur de configuration
-      errorMessage = error.message;
-    }
-
-    import("react-native").then(({ Alert }) => {
-      Alert.alert("DEBUG API", errorMessage);
-    });
 
     return Promise.reject(error);
   },
