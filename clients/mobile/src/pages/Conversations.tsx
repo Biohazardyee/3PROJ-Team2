@@ -15,11 +15,14 @@ import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import apiClient from "../api/client";
 import { io, Socket } from "socket.io-client";
+import Constants from "expo-constants";
 
 import ChatItem from "../components/ChatItem";
 
 
-const SOCKET_URL: string = process.env.EXPO_PUBLIC_API_URL || "";
+
+const SOCKET_URL =
+  Constants.expoConfig?.extra?.apiUrl || "";
 
 interface Message {
   id: string;

@@ -22,10 +22,11 @@
       "intentFilters": [
         {
           "action": "VIEW",
-          "autoVerify": true,
-          "data": {
-            "scheme": "projetsupcontentmobile"
-          },
+          "data": [
+            {
+              "scheme": "projetsupcontentmobile"
+            }
+          ],
           "category": [
             "BROWSABLE",
             "DEFAULT"

@@ -2,9 +2,15 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 
+import Constants from "expo-constants";
+
+const API_URL = Constants.expoConfig?.extra?.apiUrl;
+
+console.log("API URL =", API_URL);
+
 const apiClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
-  timeout: 30000, 
+  baseURL: API_URL,
+  timeout: 30000,
 });
 
 apiClient.interceptors.request.use(
@@ -26,7 +32,7 @@ apiClient.interceptors.response.use(
   async (error): Promise<never> => {
     if (error.response?.status === 401) {
       await SecureStore.deleteItemAsync("userToken");
-      router.replace("/login"); 
+      router.replace("/login");
     }
 
     let errorMessage = "Erreur inconnue";
@@ -42,7 +48,7 @@ apiClient.interceptors.response.use(
       errorMessage = error.message;
     }
 
-    import('react-native').then(({ Alert }) => {
+    import("react-native").then(({ Alert }) => {
       Alert.alert("DEBUG API", errorMessage);
     });
 
