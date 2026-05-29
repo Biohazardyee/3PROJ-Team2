@@ -29,7 +29,6 @@ type ReviewFull = Prisma.ReviewsGetPayload<{
   };
 }>;
 class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
-  
   private parseMediaContent(media: any): { id: string; content: any } | null {
     if (!media) return null;
 
@@ -85,7 +84,16 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
       likes_count: r._count?.likes ?? 0,
       comments_count: r._count?.comments ?? 0,
       isLiked: false,
-      user: r.user ? { username: r.user.username } : undefined,
+      user: r.user
+        ? {
+            id: r.user.id,
+            username: r.user.username,
+            // CORRECTION ICI : Conversion du Uint8Array en chaîne Base64 lisible par le navigateur
+            image: r.user.profile_picture
+              ? `data:image/jpeg;base64,${Buffer.from(r.user.profile_picture).toString("base64")}`
+              : null,
+          }
+        : undefined,
       media: this.parseMediaContent(r.media) as any,
     };
   }
@@ -103,8 +111,43 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
       likes_count: r._count.likes,
       comments_count: r._count.comments,
       isLiked: isLiked,
-      user: r.user ? { username: r.user.username } : undefined,
+      user: r.user
+        ? {
+            id: r.user.id,
+            username: r.user.username,
+            // CORRECTION ICI
+            image: r.user.profile_picture
+              ? `data:image/jpeg;base64,${Buffer.from(r.user.profile_picture).toString("base64")}`
+              : null,
+          }
+        : undefined,
       media: this.parseMediaContent(r.media),
+    };
+  }
+
+  toReviewWithMediaDto(review: any): ReviewWithMediaDto {
+    return {
+      id: review.id,
+      rating: review.rating,
+      user_id: review.user_id,
+      media_id: review.media_id,
+      title: review.title,
+      content: review.content,
+      created_at: review.created_at,
+      likes: review.likes || [],
+      likes_count: review._count?.likes ?? 0,
+      _count: review._count || { comments: 0, likes: 0 },
+      user: review.user
+        ? {
+            id: review.user.id,
+            username: review.user.username,
+            // CORRECTION ICI
+            image: review.user.profile_picture
+              ? `data:image/jpeg;base64,${Buffer.from(review.user.profile_picture).toString("base64")}`
+              : null,
+          }
+        : null,
+      media: this.parseMediaContent(review.media),
     };
   }
 
@@ -125,28 +168,6 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
       id: review.id,
       user_id: review.user_id,
       media_id: review.media_id,
-    };
-  }
-
-  toReviewWithMediaDto(review: any): ReviewWithMediaDto {
-    return {
-      id: review.id,
-      rating: review.rating,
-      user_id: review.user_id,
-      media_id: review.media_id,
-      title: review.title,
-      content: review.content,
-      created_at: review.created_at,
-      likes: review.likes || [],
-      likes_count: review._count?.likes ?? 0, // On l'ajoute ici aussi
-      _count: review._count || { comments: 0, likes: 0 },
-      user: review.user
-        ? {
-            username: review.user.username,
-            id: review.user.id,
-          }
-        : null,
-      media: this.parseMediaContent(review.media),
     };
   }
 

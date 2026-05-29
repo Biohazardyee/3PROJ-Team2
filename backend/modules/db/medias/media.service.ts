@@ -11,8 +11,6 @@ import { mediaMapper } from "../../../mappers/medias/media.mapper.js";
 import { Prisma } from "../../../generated/prisma/client.js";
 
 export class MediaService {
-
-
   async create(data: MediaCreateDto) {
     if (isEmptyString(data.api_id)) {
       throw new BadRequest("API ID cannot be empty");
@@ -26,15 +24,13 @@ export class MediaService {
       throw new BadRequest("Media with this API ID already exists");
     }
 
-   
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 30);
 
-   
     const media: Medias = await PrismaDb.medias.create({
       data: {
         api_id: data.api_id,
-        content: data.content, 
+        content: data.content,
         expires_at: expiresAt,
       },
     });
@@ -59,10 +55,7 @@ export class MediaService {
 
     const media = await PrismaDb.medias.findFirst({
       where: {
-        OR: [
-          { id: identifier }, // Si c'est un UUID de ta DB
-          { api_id: identifier }, // Si c'est le mbid ou le format "album:artiste"
-        ],
+        OR: [{ id: identifier }, { api_id: identifier }],
       },
     });
 
@@ -70,7 +63,17 @@ export class MediaService {
       throw new NotFound("Media not found in local database");
     }
 
-    return mediaMapper.toDto(media);
+    const ratings = await PrismaDb.reviews.aggregate({
+      where: { media_id: media.id },
+      _avg: { rating: true },
+    });
+
+    const avgRating = ratings._avg?.rating || 0;
+
+    return mediaMapper.toDto({
+      ...media,
+      rating: Math.round(avgRating * 10) / 10,
+    } as any);
   }
 
   async update(id: string, data: MediaUpdateDto): Promise<MediaResponseDto> {
@@ -137,35 +140,30 @@ export class MediaService {
     }
 
     const medias = await PrismaDb.medias.findMany({
-      where: {
-        api_id: { in: apiIds },
-      },
+      where: { api_id: { in: apiIds } },
     });
 
     if (medias.length === 0) return [];
 
     const ratings = await PrismaDb.reviews.groupBy({
       by: ["media_id"],
-      _avg: {
-        rating: true,
-      },
-      where: {
-        media_id: { in: medias.map((m) => m.id) },
-      },
+      _avg: { rating: true },
+      where: { media_id: { in: medias.map((m) => m.id) } },
     });
 
+    // 🔥 On attache le rating sur chaque entité brute avant le passage dans le mapper
     const mediasWithRatings = medias.map((media) => {
       const avgData = ratings.find((r) => r.media_id === media.id);
       return {
         ...media,
-        rating: avgData?._avg?.rating || 0,
+        rating: Math.round((avgData?._avg?.rating || 0) * 10) / 10,
       };
     });
 
-    return mediaMapper.toDtoList(mediasWithRatings);
+    return mediaMapper.toDtoList(mediasWithRatings as any);
   }
 
-  async syncSearchResults(albums: any[]): Promise<any[]> {
+  async syncSearchResults(albums: any[]): Promise<MediaResponseDto[]> {
     if (!Array.isArray(albums) || albums.length === 0) {
       throw new BadRequest("'albums' array is required");
     }
@@ -174,7 +172,6 @@ export class MediaService {
       albums.map(async (album: any) => {
         const { api_id, name, artist, cover, mbid } = album;
 
-       
         const fallbackId = `album:${artist}:${name}`;
         const targetId = api_id || fallbackId;
 
@@ -197,7 +194,6 @@ export class MediaService {
           });
         }
 
-        // Récupérer la note moyenne
         const ratings = await PrismaDb.reviews.aggregate({
           where: { media_id: media.id },
           _avg: { rating: true },
@@ -205,15 +201,10 @@ export class MediaService {
 
         const avgRating = ratings._avg?.rating || 0;
 
-        return {
-          id: media.id,
-          api_id: media.api_id,
-          name: name,
-          artist: artist,
-          cover: cover,
+        return mediaMapper.toDto({
+          ...media,
           rating: Math.round(avgRating * 10) / 10,
-          mbid: mbid || null,
-        };
+        } as any);
       }),
     );
   }

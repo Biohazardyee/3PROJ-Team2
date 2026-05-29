@@ -4,11 +4,11 @@ export interface MediaResponseDto {
   api_id: string;
   name: string;
   artist: string;
-  cover: string | null; 
+  cover: string | null;
+  mbid: string | null; 
   rating?: number;
   created_at: Date;
 }
-
 
 export interface MediaCreateDto {
   api_id: string;

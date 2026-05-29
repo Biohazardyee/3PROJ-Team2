@@ -54,8 +54,22 @@ class UserController extends Controller {
 
       const user: UserResponseAddDto = await this.service.add(registrationData);
 
+      const token: string = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+          email: registrationData.email.trim().toLowerCase(),
+          role: "USER",
+        },
+        process.env.JWT_SECRET!,
+        {
+          expiresIn: "24h",
+        },
+      );
+
       res.status(201).json({
         message: "User created successfully",
+        token,
         user,
       });
     } catch (err) {

@@ -59,7 +59,7 @@ const AlbumDetails = () => {
           await SecureStore.getItemAsync("userToken");
         if (token) {
           const decoded: any = jwtDecode(token);
-          setCurrentUserId(decoded.id);
+          setCurrentUserId(decoded.id || decoded.sub || decoded.userId);
         }
       } catch (err) {
         console.error("Erreur décodage token:", err);
@@ -68,7 +68,6 @@ const AlbumDetails = () => {
     initUser();
     fetchAlbumDetails();
   }, [id, mbid]);
-
 
   useEffect(() => {
     const fetchCurrentStatus = async () => {
@@ -175,7 +174,7 @@ const AlbumDetails = () => {
 
       Alert.alert("Succès", "Vos playlists ont été mises à jour.");
       setShowPlaylistSelector(false);
-      fetchUserPlaylists(); 
+      fetchUserPlaylists();
     } catch (err: any) {
       Alert.alert("Erreur", "Impossible de mettre à jour les playlists.");
     }
@@ -189,9 +188,12 @@ const AlbumDetails = () => {
       if (id && id.includes("-")) {
         try {
           const res = await apiClient.get(`/medias/${id}`);
-          if (res.data.media) {
-            finalData = res.data.media.content;
-            finalData.db_id = res.data.media.id;
+          const media = res.data.media || res.data;
+          if (media) {
+            finalData = {
+              ...(media.content || media),
+              db_id: media.id,
+            };
           }
         } catch (err) {}
       }
@@ -241,8 +243,7 @@ const AlbumDetails = () => {
       setLoadingReviews(true);
 
       const res = await apiClient.get("/reviews");
-
-      const allReviews = res.data.reviews || [];
+      const allReviews = res.data.reviews || res.data || [];
 
       const targetArtist: string = String(artist || "")
         .toLowerCase()
@@ -253,18 +254,20 @@ const AlbumDetails = () => {
         .trim();
 
       const filtered = allReviews.filter((rev: any): boolean => {
-        const content = rev.media?.content;
-
-        if (!content) return false;
+        const media = rev.media;
+        if (!media) return false;
 
         const revArtist: string = String(
-          content.album?.artist || content.artist || "",
+          media.content?.album?.artist ||
+            media.content?.artist ||
+            media.artist ||
+            "",
         )
           .toLowerCase()
           .trim();
 
         const revAlbum: string = String(
-          content.album?.name || content.name || "",
+          media.content?.album?.name || media.content?.name || media.name || "",
         )
           .toLowerCase()
           .trim();
@@ -599,11 +602,26 @@ const AlbumDetails = () => {
                       {/* HEADER */}
                       <View style={styles.reviewHeader}>
                         <View style={styles.userInfo}>
-                          <Ionicons
-                            name="person-circle"
-                            size={24}
-                            color="#94a3b8"
-                          />
+                          {/* Vérification et affichage de l'image de l'utilisateur */}
+                          {rev.user?.avatar ||
+                          rev.user?.image ||
+                          rev.user?.profilePicture ? (
+                            <Image
+                              source={getValidSource(
+                                rev.user.avatar ||
+                                  rev.user.image ||
+                                  rev.user.profilePicture,
+                              )}
+                              style={styles.userAvatarImage}
+                            />
+                          ) : (
+                            <Ionicons
+                              name="person-circle"
+                              size={24}
+                              color="#94a3b8"
+                              style={{ marginRight: 8 }} 
+                            />
+                          )}
 
                           <TouchableOpacity
                             disabled={!rev.user?.id}
@@ -980,43 +998,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
   },
-  reviewContentText: { color: "#94a3b8", fontSize: 14 },
+  reviewContentText: { color: "#94a3b8", fontSize: 14, lineHeight: 20 },
   reviewFooter: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#2d2d3f",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 12,
   },
-  reviewActionsLeft: { flexDirection: "row", gap: 20 },
-  actionIconBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
-  actionCountText: { color: "#94a3b8" },
-  reviewDate: { color: "#475569", fontSize: 11 },
-  similarGrid: { paddingVertical: 10 },
-  similarCard: { width: 130, marginRight: 15 },
-  similarCover: {
-    width: 130,
-    height: 130,
-    borderRadius: 12,
-    backgroundColor: "#1e1e2d",
-  },
-  similarTitle: {
-    color: "white",
-    fontWeight: "bold",
-    marginTop: 8,
-    fontSize: 13,
-  },
+  reviewActionsLeft: { flexDirection: "row", gap: 16 },
+  actionIconBtn: { flexDirection: "row", alignItems: "center", gap: 4 },
+  actionCountText: { color: "#94a3b8", fontSize: 12 },
+  ownerActions: { flexDirection: "row", gap: 12 },
+  ownerActionBtn: { padding: 4 },
+  reviewDate: { color: "#64748b", fontSize: 12 },
+  similarGrid: { marginTop: 10 },
+  similarCard: { marginRight: 14, width: 120 },
+  similarCover: { width: 120, height: 120, borderRadius: 12 },
+  similarTitle: { color: "white", fontSize: 14, marginTop: 6 },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    backgroundColor: "rgba(0,0,0,0.7)",
     justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: "#1a1d29",
+    backgroundColor: "#10121d",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 20,
+    padding: 24,
     maxHeight: "80%",
   },
   modalHeader: {
@@ -1026,61 +1034,49 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   modalTitle: { color: "white", fontSize: 18, fontWeight: "bold" },
-  modalScroll: { marginBottom: 10 },
+  modalScroll: { marginBottom: 20 },
   playlistItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
-    backgroundColor: "#242838",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderRadius: 12,
-    marginBottom: 10,
-    gap: 12,
+    marginBottom: 8,
+    backgroundColor: "#1a1d29",
   },
-  playlistItemActive: {
-    backgroundColor: "rgba(236, 72, 153, 0.1)",
-    borderColor: "#ec4899",
-    borderWidth: 1,
-  },
-  playlistItemText: { color: "#94a3b8", fontSize: 15 },
-  whiteText: { color: "white", fontWeight: "600" },
+  playlistItemActive: { backgroundColor: "#2d2d3f" },
+  playlistItemText: { color: "#94a3b8", fontSize: 16, marginLeft: 12 },
+  whiteText: { color: "white" },
   checkbox: {
     width: 22,
     height: 22,
     borderRadius: 6,
     borderWidth: 2,
     borderColor: "#475569",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
   },
   checkboxActive: { backgroundColor: "#ec4899", borderColor: "#ec4899" },
-  confirmBtn: {
-    backgroundColor: "#ec4899",
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  confirmBtnText: { color: "white", fontWeight: "bold" },
   createPlaylistBtn: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
-    gap: 10,
-    marginTop: 5,
-    borderStyle: "dashed",
-    borderWidth: 1,
-    borderColor: "#475569",
-    borderRadius: 12,
-    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 12,
+    marginTop: 8,
   },
-  createPlaylistText: { color: "#00ffa3", fontWeight: "600" },
-  ownerActions: {
-    flexDirection: "row",
-    gap: 12,
+  createPlaylistText: { color: "#00ffa3", fontSize: 16, fontWeight: "bold" },
+  confirmBtn: {
+    backgroundColor: "#ec4899",
+    padding: 16,
+    borderRadius: 14,
     alignItems: "center",
   },
-  ownerActionBtn: {
-    padding: 4,
+  confirmBtnText: { color: "white", fontWeight: "bold", fontSize: 16 },
+  userAvatarImage: {
+    width: 24,
+    height: 24,
+    borderRadius: 12, 
+    marginRight: 8, 
   },
 });
 

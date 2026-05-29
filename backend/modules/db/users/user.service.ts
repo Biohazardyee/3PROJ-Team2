@@ -98,7 +98,7 @@ export class UserService {
   }
 
   /**
-   * ✅ Trouve ou crée un utilisateur OAuth
+   *  fusionne ou crée un utilisateur OAuth
    */
   async findOrCreateOAuthUser(data: OAuthUserDto): Promise<UserResponseDto> {
     try {
@@ -114,25 +114,33 @@ export class UserService {
       });
 
       if (existing) {
-        console.log("User already exists"); 
+        console.log("User already exists with this provider account");
         return userMapper.toDto(existing);
       }
-
 
       const emailConflict: Users | null = await PrismaDb.users.findUnique({
         where: { email: data.email },
       });
 
       if (emailConflict) {
-        throw new BadRequest(
-          "An account with this email already exists. Please log in with your password.",
+        console.log(
+          `[OAuth Fusion] Email match found for ${data.email}. Linking ${data.provider} to this account.`,
         );
+
+        const mergedUser: Users = await PrismaDb.users.update({
+          where: { id: emailConflict.id },
+          data: {
+            provider: data.provider,
+            provider_id: data.provider_id,
+          },
+        });
+
+        return userMapper.toDto(mergedUser);
       }
 
       const username: string = await generateUniqueUsername(
         data.username || data.email.split("@")[0],
       );
-
 
       const newUser: Users = await PrismaDb.users.create({
         data: {
@@ -143,7 +151,6 @@ export class UserService {
           provider_id: data.provider_id,
         },
       });
-
 
       return userMapper.toDto(newUser);
     } catch (err) {
@@ -448,7 +455,6 @@ export class UserService {
     }
   }
 
-
   async getByEmailForAuth(email: string): Promise<Users | null> {
     if (isEmptyString(email)) {
       throw new BadRequest("Email cannot be empty");
@@ -465,7 +471,6 @@ export class UserService {
     });
   }
 
- 
   async getByEmail(email: string): Promise<UserResponseDto> {
     if (isEmptyString(email)) {
       throw new BadRequest("Email cannot be empty");
@@ -541,7 +546,6 @@ export class UserService {
   }
 
   async updatePushToken(id: string, token: string): Promise<void> {
-    
     if (isEmptyString(id) || isEmptyString(token)) {
       throw new BadRequest("User ID and token are required");
     }

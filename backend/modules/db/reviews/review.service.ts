@@ -246,6 +246,7 @@ export class ReviewService {
       skip: offset,
       include: {
         media: true,
+        user: true, 
         _count: { select: { comments: true, likes: true } },
       },
     });
