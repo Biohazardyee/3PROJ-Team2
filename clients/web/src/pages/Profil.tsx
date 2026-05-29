@@ -73,6 +73,16 @@ const Profil: React.FC = () => {
   }, [externalUserId]);
 
   useEffect(() => {
+    const handleProfileUpdate = () => {
+      loadData();
+    };
+
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+    return () =>
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+  }, [userConnected]);
+
+  useEffect(() => {
     if (
       activeTab === "activity" &&
       recentActivity.length === 0 &&
@@ -236,6 +246,13 @@ const Profil: React.FC = () => {
       await apiClient.put(`/users/${userConnected}`, {
         profile_picture: base64Image,
       });
+
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      user.profile_picture = base64Image;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      window.dispatchEvent(new Event("profileUpdated"));
+
       alert("Votre photo de profil a été mise à jour !");
     } catch (error) {
       console.error("Erreur upload image:", error);

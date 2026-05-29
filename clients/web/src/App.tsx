@@ -1,5 +1,10 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import { LandingPage } from "./pages/LandingPage";
 import Layout from "./components/Layout";
 import Register from "./pages/Register";
@@ -21,9 +26,25 @@ import AuthRequired from "./pages/AuthRequired.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import AuthCallback from "./pages/AuthCallback.tsx";
 
+const AuthRedirectListener: React.FC = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      navigate("/auth-required");
+    };
+
+    window.addEventListener("unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("unauthorized", handleUnauthorized);
+  }, [navigate]);
+
+  return null; // Ce composant n'affiche rien
+};
+
 const App: React.FC = () => {
   return (
     <Router>
+      <AuthRedirectListener></AuthRedirectListener>
       <ScrollToTop />
       <Routes>
         {/* ROUTES PUBLIQUES (SANS BARRE DE NAVIGATION) */}
@@ -37,11 +58,11 @@ const App: React.FC = () => {
           {/* Page accessible même sans connexion (ex: pour voir le message d'erreur) */}
           <Route path="/auth-required" element={<AuthRequired />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/album/:id" element={<AlbumDetails />} />
 
           {/* --- DEBUT DES ROUTES PROTEGÉES --- */}
           <Route element={<ProtectedRoute />}>
             <Route path="/feed" element={<Feed />} />
-            <Route path="/album/:id" element={<AlbumDetails />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/library" element={<Library />} />
             <Route path="/notifications" element={<Notifications />} />

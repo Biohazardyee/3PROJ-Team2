@@ -1,7 +1,7 @@
 import React from 'react';
 import { Lock, Music, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // Import de i18n
+import { useTranslation } from 'react-i18next'; 
 
 const AuthRequired: React.FC = () => {
     const navigate = useNavigate();

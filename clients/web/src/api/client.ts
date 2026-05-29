@@ -1,23 +1,32 @@
-import axios, {AxiosInstance, InternalAxiosRequestConfig} from "axios";
+import axios, {
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+  AxiosResponse,
+} from "axios";
 
 const apiClient: AxiosInstance = axios.create({
-    baseURL: "http://localhost:3000/",
-    timeout: 10000,
+  baseURL: "http://localhost:3000/",
+  timeout: 10000,
 });
 
-apiClient.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('token');
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+apiClient.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
 
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+      window.dispatchEvent(new CustomEvent("unauthorized"));
     }
+    return Promise.reject(error);
+  },
 );
 
 export default apiClient;

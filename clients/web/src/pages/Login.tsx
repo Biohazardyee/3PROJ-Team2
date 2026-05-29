@@ -36,6 +36,7 @@ const Login: React.FC = () => {
 
       const token: string = response.data.token;
       localStorage.setItem("token", token);
+
       navigate("/home");
     } catch (err: any) {
       if (err.response && err.response.data) {
