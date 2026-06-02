@@ -31,28 +31,29 @@ const AlbumDetails: React.FC = () => {
     const urlMbid = searchParams.get("mbid") || "";
 
     // Options de statut adaptées au Web
+// Ces IDs DOIVENT correspondre aux valeurs de votre enum MediaStatus dans le backend
     const STATUT_OPTIONS = [
         {
-            id: "completed",
-            label: t("status_completed"),
+            id: "listened",
+            label: t("status_listened"),
             icon: <FaCheckCircle/>,
             color: "text-emerald-400",
         },
         {
-            id: "listening",
-            label: t("status_listening"),
+            id: "later",
+            label: t("status_later"),
             icon: <FaHeadphones/>,
             color: "text-blue-500",
         },
         {
-            id: "wishlist",
-            label: t("status_wishlist"),
+            id: "favorite",
+            label: t("status_favorite"),
             icon: <FaStar/>,
             color: "text-amber-400",
         },
         {
-            id: "dropped",
-            label: t("status_dropped"),
+            id: "disliked",
+            label: t("status_disliked"),
             icon: <FaTimesCircle/>,
             color: "text-rose-500",
         },
@@ -69,13 +70,18 @@ const AlbumDetails: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState<TabType>("Commentaires");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [currentStatus, setCurrentStatus] = useState(t("change_status"));
     const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
 
     const [userRating, setUserRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [commentTitle, setCommentTitle] = useState("");
     const [commentText, setCommentText] = useState("");
+
+    const [userStatus, setUserStatus] = useState<string | null>(null);
+    const activeOption = STATUT_OPTIONS.find((opt) => opt.id === userStatus);
+
+    const [userPlaylists, setUserPlaylists] = useState<any[]>([]);
+    const [loadingPlaylists, setLoadingPlaylists] = useState(false);
 
     const [similarAlbums, setSimilarAlbums] = useState<any[]>([]);
     const [loadingSimilar, setLoadingSimilar] = useState(false);
@@ -106,6 +112,69 @@ const AlbumDetails: React.FC = () => {
         }
     }
 
+    const mediaIdInDB = albumData?.db_id || (id?.includes("-") ? id : null);
+
+    useEffect(() => {
+        const fetchUserStatus = async () => {
+            if (!currentUserId || !mediaIdInDB) return;
+
+            try {
+
+                const res = await apiClient.get(`/medias/status/${currentUserId}/${mediaIdInDB}`);
+
+                // Votre service retourne "none" si aucun statut n'est trouvé
+                const status = res.data.mediaStatus?.status;
+
+                if (status && status !== "none") {
+                    setUserStatus(status);
+                } else {
+                    setUserStatus(null);
+                }
+            } catch (error) {
+                console.log("Aucun statut trouvé pour ce média, démarrage à null.");
+                setUserStatus(null);
+            }
+        };
+
+        fetchUserStatus();
+    }, [currentUserId, mediaIdInDB]);
+
+    const fetchUserPlaylists = async () => {
+        if (!currentUserId) return;
+        setLoadingPlaylists(true);
+        try {
+            const res = await apiClient.get(`/playlists/user/${currentUserId}`);
+            // Assurez-vous d'adapter selon la structure de votre réponse API
+            setUserPlaylists(res.data.playlists || res.data || []);
+        } catch (err) {
+            console.error("Erreur chargement playlists:", err);
+        } finally {
+            setLoadingPlaylists(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isPlaylistModalOpen) {
+            fetchUserPlaylists();
+        }
+    }, [isPlaylistModalOpen]);
+
+    const handleAddToPlaylist = async (playlistId: string) => {
+        if (!mediaIdInDB) return;
+
+        try {
+            await apiClient.post("/playlist-items", {
+                playlist_id: playlistId,
+                media_id: mediaIdInDB,
+            });
+
+            alert("Ajouté à la playlist avec succès !");
+            setIsPlaylistModalOpen(false);
+        } catch (err: any) {
+            console.error("Erreur lors de l'ajout:", err);
+            alert("Impossible d'ajouter à la playlist.");
+        }
+    };
     const isMyComment = (comment: any) => {
         if (!currentUserId) return false;
         const cUserId =
@@ -119,47 +188,45 @@ const AlbumDetails: React.FC = () => {
     const hasAlreadyReviewed = commentsList.some((comment) =>
         isMyComment(comment),
     );
-    const mediaIdInDB = albumData?.db_id || (id?.includes("-") ? id : null);
+
 
     useEffect(() => {
-        const fetchAlbumDetails = async () => {
-            try {
-                setLoading(true);
-                let finalData = null;
+        const fetchAlbumData = async () => {
+            setLoading(true);
+            let finalData = null;
 
-                if (id && id.includes("-")) {
-                    try {
-                        const res = await apiClient.get(`/medias/${id}`);
-                        const media = res.data.media || res.data;
+            // 1. Ne tenter la recherche locale que si l'ID ne semble pas être un ID de "recommandation"
+            // On vérifie que l'ID ne commence pas par "reco-"
+            const isLocalId = id && id.includes("-") && !id.startsWith("reco-");
 
-                        if (media) {
-                            finalData = {
-                                name: media.name,
-                                artist: media.artist,
-                                cover: media.cover,
-                                rating: media.rating !== undefined ? media.rating : 0,
-                                mbid: media.mbid,
-                                db_id: media.id,
-                            };
-                        }
-                    } catch (err) {
-                        console.log(
-                            "Média non trouvé en DB locale, tentative API externe...",
-                        );
+            if (isLocalId) {
+                try {
+                    const res = await apiClient.get(`/medias/${id}`);
+                    const media = res.data.media || res.data;
+                    if (media) {
+                        finalData = {
+                            name: media.name,
+                            artist: media.artist,
+                            cover: media.cover,
+                            rating: media.rating ?? 0,
+                            mbid: media.mbid,
+                            db_id: media.id,
+                        };
                     }
+                } catch (err) {
+                    console.log("Média non trouvé en DB locale, passage à l'API externe...");
                 }
+            }
 
-                if (!finalData && urlArtist && urlAlbum) {
+            // 2. Si pas trouvé (ou si c'était un ID de reco), appeler API externe + Sync
+            if (!finalData && urlArtist && urlAlbum) {
+                try {
                     const res = await apiClient.get("/api/albums/info", {
                         params: {artist: urlArtist, album: urlAlbum, mbid: urlMbid},
                     });
+                    // ... (reste de votre code de sync inchangé)
                     const externalInfo = res.data.albumInfo || {};
-
-                    const imageUrl =
-                        urlCover ||
-                        externalInfo.image?.[3]?.["#text"] ||
-                        externalInfo.image?.[2]?.["#text"] ||
-                        "";
+                    const imageUrl = urlCover || externalInfo.image?.[3]?.["#text"] || "";
 
                     finalData = {
                         name: externalInfo.name || urlAlbum,
@@ -170,18 +237,16 @@ const AlbumDetails: React.FC = () => {
                         db_id: null,
                     };
 
-                    const fallbackId = `album:${urlArtist.trim()}:${urlAlbum.trim()}`;
+                    // Tentative de synchronisation en DB
                     try {
                         const syncRes = await apiClient.post("/medias/sync-search", {
-                            albums: [
-                                {
-                                    api_id: urlMbid || fallbackId,
-                                    name: urlAlbum.trim(),
-                                    artist: urlArtist.trim(),
-                                    cover: finalData.cover,
-                                    mbid: finalData.mbid,
-                                },
-                            ],
+                            albums: [{
+                                api_id: urlMbid || `album:${urlArtist.trim()}:${urlAlbum.trim()}`,
+                                name: urlAlbum.trim(),
+                                artist: urlArtist.trim(),
+                                cover: finalData.cover,
+                                mbid: finalData.mbid,
+                            }],
                         });
 
                         const synced = syncRes.data.medias || syncRes.data;
@@ -189,27 +254,37 @@ const AlbumDetails: React.FC = () => {
 
                         if (syncedMedia) {
                             finalData.db_id = syncedMedia.id;
-                            finalData.rating =
-                                syncedMedia.rating !== undefined ? syncedMedia.rating : 0;
+                            finalData.rating = syncedMedia.rating ?? 0;
                         }
                     } catch (syncErr) {
-                        console.warn(
-                            "Échec de la synchronisation dans les détails",
-                            syncErr,
-                        );
+                        console.warn("Échec de la synchronisation", syncErr);
                     }
+                } catch (err) {
+                    console.error("Erreur API externe :", err);
                 }
-                setAlbumData(finalData);
-            } catch (error) {
-                console.error("Erreur chargement des détails de l'album:", error);
-            } finally {
-                setLoading(false);
             }
+
+
+            setAlbumData(finalData);
+
+
+            if (currentUserId && finalData?.db_id) {
+                try {
+                    const statusRes = await apiClient.get(`/medias/status/${currentUserId}/${finalData.db_id}`);
+                    const status = statusRes.data.mediaStatus?.status;
+                    setUserStatus(status && status !== "none" ? status : null);
+                } catch (err) {
+                    console.log("Aucun statut trouvé, démarrage à null.");
+                    setUserStatus(null);
+                }
+            }
+
+            setLoading(false);
         };
-
-        fetchAlbumDetails();
-    }, [id, urlArtist, urlAlbum, urlMbid, urlCover]);
-
+        if (id || (urlArtist && urlAlbum)) {
+            fetchAlbumData();
+        }
+    }, [id, urlArtist, urlAlbum, urlMbid, urlCover, currentUserId]);
     const fetchSimilar = async () => {
         if (!urlArtist || !urlAlbum) return;
 
@@ -232,6 +307,47 @@ const AlbumDetails: React.FC = () => {
     useEffect(() => {
         fetchSimilar();
     }, [urlArtist, urlAlbum]);
+
+
+    const handleStatusChange = async (newStatus: string) => {
+        if (!currentUserId || !mediaIdInDB) return;
+
+        const previousStatus = userStatus;
+        const isDeselecting = userStatus === newStatus;
+
+        // 1. Mise à jour optimiste de l'UI
+        setUserStatus(isDeselecting ? null : newStatus);
+
+        try {
+            if (isDeselecting) {
+                // Suppression
+                await apiClient.delete(`/media/status/${currentUserId}/${mediaIdInDB}`);
+            } else {
+                // 2. Tentative de POST (Création)
+                try {
+                    await apiClient.post(`/medias/status`, {
+                        user_id: currentUserId,
+                        media_id: mediaIdInDB,
+                        status: newStatus,
+                    });
+                } catch (err: any) {
+                    // 3. SI le POST échoue avec une erreur 400 (Already exists), on tente le PUT
+                    if (err.response?.status === 400) {
+                        await apiClient.put(`/medias/status/${currentUserId}/${mediaIdInDB}`, {
+                            status: newStatus
+                        });
+                    } else {
+                        throw err; // C'est une autre erreur, on la laisse remonter
+                    }
+                }
+            }
+        } catch (error: any) {
+            // Rollback en cas d'échec total
+            setUserStatus(previousStatus);
+            console.error("Erreur critique lors du changement de statut:", error);
+            alert("Impossible de mettre à jour le statut.");
+        }
+    };
 
     const fetchReviews = async () => {
         try {
@@ -320,9 +436,7 @@ const AlbumDetails: React.FC = () => {
         );
     }
 
-    const selectedStatusOption = STATUT_OPTIONS.find(
-        (opt) => opt.label === currentStatus,
-    );
+
     const isFormInvalid =
         userRating === 0 || commentTitle.trim() === "" || commentText.trim() === "";
     const isEditInvalid =
@@ -493,10 +607,25 @@ const AlbumDetails: React.FC = () => {
                         <div
                             className="bg-[#1a1b26] dark:bg-white border border-gray-800 dark:border-gray-200 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
                             <h3 className="text-xl font-bold mb-4">{t("add_to_playlist")}</h3>
+
                             <div className="space-y-2 mb-6 max-h-48 overflow-y-auto pr-2">
-                                <p className="text-sm text-gray-500 text-center py-4">
-                                    {t("no_playlist")}
-                                </p>
+                                {loadingPlaylists ? (
+                                    <div className="flex justify-center py-4"><Loader2 className="animate-spin"/></div>
+                                ) : userPlaylists.length > 0 ? (
+                                    userPlaylists.map((pl) => (
+                                        <button
+                                            key={pl.id}
+                                            onClick={() => handleAddToPlaylist(pl.id)}
+                                            className="w-full text-left p-3 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors border border-gray-700 dark:border-gray-200"
+                                        >
+                                            <span className="font-bold text-white dark:text-gray-900">{pl.name}</span>
+                                        </button>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-gray-500 text-center py-4">
+                                        {t("no_playlist")}
+                                    </p>
+                                )}
                             </div>
                             <div className="space-y-3">
                                 <button
@@ -577,48 +706,50 @@ const AlbumDetails: React.FC = () => {
                             </button>
 
                             <div className="relative">
+                                {/* --- BOUTON DÉCLENCHEUR --- */}
                                 <button
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                     className="bg-[#1a1b26] dark:bg-white border border-gray-700 dark:border-gray-200 px-5 py-3.5 rounded-xl text-white dark:text-gray-900 flex items-center gap-4 min-w-[220px] justify-between shadow-lg"
                                 >
-                  <span className="text-sm font-bold tracking-wide uppercase flex items-center gap-2">
-                    {selectedStatusOption && (
-                        <span className={selectedStatusOption.color}>
-                        {selectedStatusOption.icon}
-                      </span>
-                    )}
-                      {currentStatus}
-                  </span>
+        <span className="text-sm font-bold tracking-wide uppercase flex items-center gap-2">
+            {activeOption ? (
+                <>
+                    <span className={activeOption.color}>{activeOption.icon}</span>
+                    {activeOption.label}
+                </>
+            ) : (
+                <span>{t("select_status", "Statut")}</span>
+            )}
+        </span>
                                     <FaChevronDown
                                         className={`text-gray-500 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`}
                                         size={12}
                                     />
                                 </button>
 
+                                {/* --- LISTE DES OPTIONS --- */}
                                 {isDropdownOpen && (
                                     <>
-                                        <div
-                                            className="fixed inset-0 z-40"
-                                            onClick={() => setIsDropdownOpen(false)}
-                                        ></div>
+                                        <div className="fixed inset-0 z-40"
+                                             onClick={() => setIsDropdownOpen(false)}></div>
                                         <div
                                             className="absolute top-full left-0 mt-2 w-full bg-[#1a1b26] dark:bg-white border border-gray-800 dark:border-gray-200 rounded-xl shadow-2xl overflow-hidden z-50">
                                             {STATUT_OPTIONS.map((option) => (
                                                 <button
                                                     key={option.id}
                                                     onClick={() => {
-                                                        setCurrentStatus(option.label);
+                                                        handleStatusChange(option.id);
                                                         setIsDropdownOpen(false);
                                                     }}
-                                                    className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-gray-800 dark:hover:bg-gray-100 text-left border-b border-gray-800 dark:border-gray-200 last:border-0"
+                                                    className={`w-full flex items-center gap-3 px-4 py-3.5 hover:bg-gray-800 dark:hover:bg-gray-100 text-left border-b border-gray-800 dark:border-gray-200 last:border-0 ${
+                                                        userStatus === option.id ? 'bg-gray-800/50 dark:bg-gray-100' : ''
+                                                    }`}
                                                 >
-                          <span className={`${option.color}`}>
-                            {option.icon}
-                          </span>
+                                                    <span className={`${option.color}`}>{option.icon}</span>
                                                     <span
                                                         className="text-sm font-bold text-gray-200 dark:text-gray-700 uppercase">
                             {option.label}
-                          </span>
+                        </span>
                                                 </button>
                                             ))}
                                         </div>
@@ -1085,7 +1216,7 @@ const AlbumDetails: React.FC = () => {
                                 <div className="mt-6">
                                     {loadingSimilar ? (
                                         <div className="flex justify-center py-10">
-                                            <Loader2 className="animate-spin text-[#FF1E56]" size={32} />
+                                            <Loader2 className="animate-spin text-[#FF1E56]" size={32}/>
                                         </div>
                                     ) : similarAlbums.length > 0 ? (
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1094,8 +1225,18 @@ const AlbumDetails: React.FC = () => {
                                                     key={idx}
                                                     className="cursor-pointer hover:opacity-80 transition-opacity"
                                                     onClick={() => {
-                                                        // Redirection vers la page détail de l'album similaire
-                                                        navigate(`/albumdetails?artist=${item.artist.name}&album=${item.name}&cover=${encodeURIComponent(item.image?.[3]?.["#text"] || '')}`);
+                                                        const artistName = item.artist?.name || item.artist || "";
+                                                        const albumName = item.name || "";
+                                                        const coverUrl = item.image?.[3]?.["#text"] || item.image?.[2]?.["#text"] || "";
+                                                        const albumId = item.mbid || item.api_id || item.media_id || `album:${artistName}:${albumName}`;
+                                                        const params = new URLSearchParams({
+                                                            artist: artistName,
+                                                            album: albumName,
+                                                            cover: coverUrl,
+                                                            mbid: item.mbid || "",
+                                                        }).toString();
+
+                                                        navigate(`/album/${albumId}?${params}`);
                                                     }}
                                                 >
                                                     <img

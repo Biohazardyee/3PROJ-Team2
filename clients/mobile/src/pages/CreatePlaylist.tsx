@@ -36,6 +36,7 @@ const CreatePlaylist = () => {
 
   const [isPublic, setIsPublic] = useState<boolean>(isPublicParam);
 
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],

@@ -161,7 +161,7 @@ model Playlists {
 
 model PlaylistItems {
   id          String    @id @default(uuid())
-  playlist    Playlists @relation(fields: [playlist_id], references: [id])
+  playlist    Playlists @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
   playlist_id String
   media       Medias    @relation(fields: [media_id], references: [id])
   media_id    String

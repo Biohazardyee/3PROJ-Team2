@@ -155,7 +155,7 @@ export class MediaStatusService {
       where: {
         user_id_media_id: {
           user_id: user_id,
-          media_id: media.id, // Utilise toujours l'ID interne de ta DB
+          media_id: media.id,
         },
       },
       update: {
@@ -167,7 +167,6 @@ export class MediaStatusService {
         status: data.status as MediaStatus,
       },
     });
-
     return mediaStatusMapper.toDto(mediaStatus);
   }
 

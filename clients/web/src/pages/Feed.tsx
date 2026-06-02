@@ -262,13 +262,26 @@ const Feed: React.FC = () => {
     // ── Navigation ─────────────────────────────────────────────────────────────
 
     const handleNavigateToAlbum = (item: FeedItem) => {
-        const albumId = item.api_id || item.media_id || "";
+        // 1. Inspectez la console (F12) pour voir la structure de l'objet
+        console.log("Clic sur item :", item);
+
+        // 2. Essayez de trouver l'ID.
+        // Peut-être que votre API renvoie l'ID dans une autre propriété,
+        // par exemple "item.id" ou "item.review_id" ?
+        const albumId = item.media_id || item.api_id || item.id;
+
+        if (!albumId) {
+            console.error("Impossible de naviguer : aucun ID trouvé dans l'item", item);
+            return;
+        }
+
         const params = new URLSearchParams({
             artist: item.artist || "",
             album: item.album || "",
             cover: item.cover || "",
-            mbid: "",
+            mbid: item.api_id || "",
         }).toString();
+
         navigate(`/album/${albumId}?${params}`);
     };
 

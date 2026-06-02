@@ -1,186 +1,176 @@
-import React, { useState, useRef } from 'react';
-import { Camera, X, Trash2 } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Trans } from 'react-i18next';
+import React, {useState, useRef, useEffect} from 'react';
+import {Camera, X, Trash2, Loader2} from 'lucide-react';
+import {useNavigate, useLocation} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
+import {jwtDecode} from "jwt-decode";
+import apiClient from "../api/client"; // Votre client Axios configuré
 
 const CreatePlaylist: React.FC = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
-    
-    // Récupère les infos de la playlist si on la modifie, ou les infos de l'album à ajouter
+
     const state = location.state as any;
     const isEditing = !!state?.id;
     const albumToAdd = state?.albumToAdd;
     const returnTo = state?.returnTo;
-    
-    // États pour stocker le nom de la playlist et l'image de couverture
+
     const [name, setName] = useState(state?.title || '');
     const [image, setImage] = useState<string | null>(state?.image || null);
-    
-    // Référence pour cliquer sur l'input de fichier caché
+    const [loading, setLoading] = useState(false);
+    const [isPublic, setIsPublic] = useState(false); // Exemple d'ajout de BDD
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Transforme l'image choisie sur l'ordinateur en lien lisible (Base64)
+    // Charger les données de la playlist si on est en édition (depuis la BDD)
+    useEffect(() => {
+        if (isEditing) {
+            const fetchPlaylist = async () => {
+                try {
+                    const res = await apiClient.get(`/playlists/${state.id}`);
+                    const pl = res.data.playlist;
+                    setName(pl.name);
+                    setImage(pl.image_url);
+                    setIsPublic(pl.is_public);
+                } catch (err) {
+                    console.error("Erreur chargement playlist:", err);
+                }
+            };
+            fetchPlaylist();
+        }
+    }, [isEditing, state?.id]);
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImage(reader.result as string);
+                setImage(reader.result as string); // Base64 pour le backend
             };
             reader.readAsDataURL(file);
         }
     };
 
-    // Supprime l'image actuelle et réinitialise l'input
-    const handleRemoveImage = (e: React.MouseEvent) => {
-        e.stopPropagation(); // Évite de déclencher l'ajout d'image par erreur
-        setImage(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    };
+    const handleSave = async () => {
+        if (!name.trim()) return;
+        setLoading(true);
 
-    // Enregistre la playlist dans le stockage local du navigateur
-    const handleSave = () => {
         try {
-            const savedData = localStorage.getItem('user_playlists');
-            let playlists = savedData ? JSON.parse(savedData) : [];
+            const token = localStorage.getItem("token");
+            if (!token) throw new Error("Non authentifié");
+            const decoded: any = jwtDecode(token);
+            const userId = decoded.id || decoded.userId;
 
+            // Log pour vérifier ce que vous envoyez
+            console.log("Album à ajouter:", albumToAdd);
+            const mediaId = albumToAdd?.db_id || albumToAdd?.id;
+            console.log("Media ID détecté:", mediaId);
+
+            let newPlaylistId = state?.id;
+
+            // 1. Création (ou mise à jour) de la playlist
             if (isEditing) {
-                // Met à jour la playlist existante dans la liste
-                playlists = playlists.map((p: any) => 
-                    p.id === state.id 
-                        ? { ...p, title: name, image: image } 
-                        : p
-                );
+                await apiClient.put(`/playlists/${state.id}`, {
+                    name: name.trim(),
+                    is_public: isPublic,
+                    image_url: image
+                });
             } else {
-                // On met la cover de l'album comme image de playlist par défaut.
-                let albumWithProperImage = null;
-                if (albumToAdd) {
-                    // On force la propriété "image" pour qu'elle corresponde à "cover"
-                    albumWithProperImage = {
-                        ...albumToAdd,
-                        image: albumToAdd.image || albumToAdd.cover 
-                    };
-                }
-
-                const newPlaylist = {
-                    id: Date.now().toString(),
-                    title: name,
-                    description: '',
-                    tags: [],
-                    count: albumToAdd ? 1 : 0, 
-                    // Si on ne choisit pas d'image on utilise la cover de l'album 
-                    image: image || (albumToAdd ? (albumToAdd.cover || albumToAdd.image) : undefined),
-                    images: [],
-                    albums: albumWithProperImage ? [albumWithProperImage] : [] 
+                const playlistPayload = {
+                    name: name.trim(),
+                    user_id: userId,
+                    is_public: isPublic,
+                    image_url: image,
                 };
-                playlists.push(newPlaylist);
+                const res = await apiClient.post("/playlists", playlistPayload);
+                newPlaylistId = res.data.playlist?.id || res.data.id;
             }
-            
-            // Sauvegarde la liste mise à jour
-            localStorage.setItem('user_playlists', JSON.stringify(playlists));
-            
-            // Redirection vers la page /library
-            if (returnTo) {
-                // Si on vient d'un album, on y retourne
-                navigate(returnTo);
-            } else {
-                // Sinon on retourne à la bibliothèque
-                navigate('/library');
+
+            // 2. Ajout de l'album (seulement si mediaId existe)
+            if (albumToAdd && newPlaylistId) {
+                if (!mediaId) {
+                    console.error("Impossible d'ajouter l'album : Aucun ID trouvé pour cet album.");
+                    alert("La playlist a été créée, mais l'album n'a pas pu être ajouté (ID manquant).");
+                } else {
+                    try {
+                        await apiClient.post("/playlist-items", {
+                            playlist_id: newPlaylistId,
+                            media_id: mediaId
+                        });
+                    } catch (err: any) {
+                        console.error("Erreur API playlist-items:", err.response?.data);
+                        // On ne bloque pas la redirection si la playlist est bien créée
+                        alert("Playlist créée, mais erreur lors de l'ajout de l'album : " + (err.response?.data?.message || "Erreur serveur"));
+                    }
+                }
             }
-        } catch (e) {
-            console.error("Erreur lors de la sauvegarde :", e);
+
+            // Redirection finale
+            if (returnTo) navigate(returnTo);
+            else navigate('/library');
+
+        } catch (e: any) {
+            console.error("Erreur sauvegarde:", e);
+            alert(e.response?.data?.message || "Erreur lors de l'enregistrement.");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 dark:bg-slate-50 text-slate-50 dark:text-gray-900 flex flex-col font-sans transition-colors duration-300">
-            
-            {/* Titre + bouton fermer */}
-            <div className="flex justify-between items-center p-6 border-b border-slate-800 dark:border-gray-200">
-                <button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-800 dark:hover:bg-gray-200 rounded-full transition-colors">
-                    <X size={28} className="text-white dark:text-gray-900" />
+        <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col font-sans transition-colors duration-300">
+            <div className="flex justify-between items-center p-6 border-b border-slate-800">
+                <button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-800 rounded-full">
+                    <X size={28}/>
                 </button>
-                <h1 className="text-lg font-bold text-white dark:text-gray-900 tracking-wide">
-                    {isEditing ? t('edit_playlist') : t('new_playlist')}
-                </h1>
+                <h1 className="text-lg font-bold">{isEditing ? t('edit_playlist') : t('new_playlist')}</h1>
                 <div className="w-12"></div>
             </div>
 
             <div className="flex flex-col items-center flex-grow pt-16 px-6">
-                
-                {/* Ajouter ou modifier la cover de la playlist */}
-                <div 
-                    className="w-56 h-56 bg-slate-900 dark:bg-white border-2 border-slate-800 dark:border-gray-300 border-dashed rounded-xl overflow-hidden flex flex-col justify-center items-center cursor-pointer hover:border-blue-500 transition-colors mb-12 shadow-lg"
+                <div
+                    className="w-56 h-56 bg-slate-900 border-2 border-slate-800 border-dashed rounded-xl overflow-hidden flex flex-col justify-center items-center cursor-pointer mb-12 shadow-lg"
                     onClick={() => fileInputRef.current?.click()}
                 >
                     {image ? (
-                        /* Affiche la cover avec un bouton de suppression au survol */
                         <div className="relative w-full h-full group">
-                            <img src={image} alt="Cover" className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-50" />
-                            <button 
-                                onClick={handleRemoveImage}
-                                className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                            >
-                                <div className="bg-gray-500 dark:bg-gray-900 opacity-75 p-4 rounded-full text-white shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
-                                    <Trash2 size={32} />
-                                </div>
+                            <img src={image} alt="Cover" className="w-full h-full object-cover"/>
+                            <button onClick={(e) => {
+                                e.stopPropagation();
+                                setImage(null);
+                            }}
+                                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50">
+                                <Trash2 size={32}/>
                             </button>
                         </div>
                     ) : (
-                        /* Affiche l'icône caméra si aucune image n'est choisie */
                         <div className="flex flex-col items-center">
-                            <Camera size={48} className="text-slate-500 dark:text-gray-400 mb-3" />
-                            <span className="text-slate-400 dark:text-gray-500 font-medium">{t('add_cover')}</span>
+                            <Camera size={48} className="text-slate-500 mb-3"/>
+                            <span className="text-slate-400 font-medium">{t('add_cover')}</span>
                         </div>
                     )}
                 </div>
-                
-                {/* Input de type fichier caché */}
-                <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleImageChange} 
-                    accept="image/*" 
-                    className="hidden" 
-                />
 
-                {/* Champ de texte pour saisir le nom de la playlist */}
+                <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden"/>
+
                 <input
                     type="text"
                     placeholder={t('playlist_name_placeholder')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    autoFocus={!isEditing}
-                    className="w-full max-w-md bg-transparent border-b-2 border-slate-700 dark:border-gray-300 focus:border-blue-500 dark:focus:border-blue-600 text-white dark:text-gray-900 text-3xl text-center py-3 mb-12 outline-none transition-colors placeholder:text-slate-600 dark:placeholder:text-gray-300 font-bold"
+                    className="w-full max-w-md bg-transparent border-b-2 border-slate-700 focus:border-blue-500 text-white text-3xl text-center py-3 mb-12 outline-none font-bold"
                 />
 
-                {/* Indication visuelle si un album est en attente d'ajout */}
-                {albumToAdd && (
-                    <div className="mb-6 text-sm text-blue-400 dark:text-blue-600 bg-blue-900/20 dark:bg-blue-100 px-4 py-2 rounded-lg">
-                        <Trans i18nKey="album_will_be_added" values={{ title: albumToAdd.title }}>
-                            L'album <b>{albumToAdd.title}</b> sera ajouté à cette playlist.
-                        </Trans>
-                    </div>
-                )}
-
-                {/* Bouton pour valider la création ou les modifications */}
-                <button 
+                <button
                     onClick={handleSave}
-                    disabled={!name.trim()} 
+                    disabled={!name.trim() || loading}
                     className={`px-10 py-4 rounded-full font-bold text-lg transition-all shadow-lg ${
-                        name.trim() 
-                        ? 'bg-blue-600 hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 text-white shadow-blue-500/25 hover:scale-105' 
-                        : 'bg-slate-800 dark:bg-gray-200 text-slate-500 dark:text-gray-400 cursor-not-allowed'
+                        name.trim() ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'
                     }`}
                 >
-                    {isEditing ? t('save_changes_btn') : t('create_playlist_btn')}
+                    {loading ? <Loader2
+                        className="animate-spin"/> : (isEditing ? t('save_changes_btn') : t('create_playlist_btn'))}
                 </button>
-                
             </div>
         </div>
     );

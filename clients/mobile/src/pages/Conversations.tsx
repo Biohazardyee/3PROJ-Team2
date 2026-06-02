@@ -19,7 +19,7 @@ import { io, Socket } from "socket.io-client";
 import ChatItem from "../components/ChatItem";
 
 
-const SOCKET_URL: string = process.env.EXPO_PUBLIC_API_URL || "";
+const SOCKET_URL: string = process.env.EXPO_PUBLIC_API_URL|| "";
 
 interface Message {
   id: string;
