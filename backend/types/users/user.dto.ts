@@ -72,6 +72,7 @@ export interface UserUpdateDto {
     email?: string;
     username?: string;
     password?: string;
+    oldPassword?: string;
     phone_number?: string | null;
     biography?: string | null
     favorite_band?: string

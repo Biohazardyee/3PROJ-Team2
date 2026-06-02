@@ -1,547 +1,420 @@
-import React, { useState } from "react";
+import React, {useState, useEffect, useRef, useCallback} from "react";
 import {
-  Sparkles,
-  Users,
-  TrendingUp,
-  Star,
-  Heart,
-  MessageCircle,
-  Search,
-  Send,
-  CornerDownRight,
+    Sparkles,
+    Users,
+    TrendingUp,
+    Search,
+    Music,
+    RefreshCw,
+    ChevronDown,
+    Loader2,
 } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
+import {useNavigate} from "react-router-dom";
+import apiClient from "../api/client";
+import {jwtDecode} from "jwt-decode";
+import FeedCard, {FeedItem} from "../components/FeedCard";
 
-type Reply = {
-  id: number;
-  user: string;
-  text: string;
-};
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-type Comment = {
-  id: number;
-  user: string;
-  text: string;
-  replies: Reply[];
-};
+type TabType = "all" | "following" | "trending";
 
-type FeedItem = {
-  id: number;
-  user: { handle: string; initials: string; color: string };
-  action: string;
-  timeAgo: string;
-  album: { title: string; artist: string; rating: number; cover: string };
-  content: string;
-  likes: number;
-  isLiked: boolean;
-  commentsList: Comment[];
-  isFollowing: boolean;
-};
+interface FeedsCache {
+    all: FeedItem[];
+    following: FeedItem[];
+    trending: FeedItem[];
+}
+
+interface PagesCache {
+    all: number;
+    following: number;
+    trending: number;
+}
+
+interface HasMoreCache {
+    all: boolean;
+    following: boolean;
+    trending: boolean;
+}
+
+const ITEMS_PER_PAGE = 10;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function getCurrentUserId(): string | null {
+    try {
+        const token = localStorage.getItem("token") || localStorage.getItem("userToken");
+        if (!token) return null;
+        const decoded: any = jwtDecode(token);
+        return decoded.id ?? null;
+    } catch {
+        return null;
+    }
+}
+
+// ─── Sub-components ────────────────────────────────────────────────────────────
+
+const SkeletonCard: React.FC = () => (
+    <div
+        className="bg-[#1C1C28] dark:bg-white rounded-xl p-6 border border-gray-800 dark:border-gray-200 animate-pulse">
+        <div className="flex items-center gap-4 mb-5">
+            <div className="w-12 h-12 rounded-full bg-gray-800 dark:bg-gray-200"/>
+            <div className="flex-1 space-y-2">
+                <div className="h-3 bg-gray-800 dark:bg-gray-200 rounded w-1/3"/>
+                <div className="h-2 bg-gray-800 dark:bg-gray-200 rounded w-1/4"/>
+            </div>
+        </div>
+        <div className="flex gap-4 bg-[#13131A] dark:bg-gray-50 p-4 rounded-xl mb-5">
+            <div className="w-20 h-20 rounded-md bg-gray-800 dark:bg-gray-200"/>
+            <div className="flex-1 space-y-2 py-1">
+                <div className="h-4 bg-gray-800 dark:bg-gray-200 rounded w-2/3"/>
+                <div className="h-3 bg-gray-800 dark:bg-gray-200 rounded w-1/2"/>
+            </div>
+        </div>
+        <div className="space-y-2">
+            <div className="h-3 bg-gray-800 dark:bg-gray-200 rounded"/>
+            <div className="h-3 bg-gray-800 dark:bg-gray-200 rounded w-5/6"/>
+        </div>
+    </div>
+);
+
+const EmptyState: React.FC<{ tab: TabType }> = ({tab}) => (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div
+            className="w-16 h-16 rounded-2xl bg-[#1C1C28] dark:bg-white border border-gray-800 dark:border-gray-200 flex items-center justify-center mb-4">
+            {tab === "following" ? (
+                <Users size={28} className="text-gray-600"/>
+            ) : tab === "trending" ? (
+                <TrendingUp size={28} className="text-gray-600"/>
+            ) : (
+                <Music size={28} className="text-gray-600"/>
+            )}
+        </div>
+        <p className="text-gray-400 dark:text-gray-600 font-semibold mb-1">
+            {tab === "following"
+                ? "Aucune activité de tes abonnements"
+                : tab === "trending"
+                    ? "Aucune découverte disponible"
+                    : "Aucune review pour le moment"}
+        </p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+            {tab === "following"
+                ? "Abonne-toi à des utilisateurs pour voir leur activité"
+                : "Reviens plus tard !"}
+        </p>
+    </div>
+);
+
+// ─── Main Feed Component ───────────────────────────────────────────────────────
 
 const Feed: React.FC = () => {
-  const { t } = useTranslation();
+    const {t} = useTranslation();
+    const navigate = useNavigate();
 
-  // --- 1. TOUS LES HOOKS (ÉTATS) EN PREMIER ---
-  const [activeTab, setActiveTab] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+    const currentUserId = getCurrentUserId();
 
-  const [feedItems, setFeedItems] = useState<FeedItem[]>([
-    {
-      id: 1,
-      user: {
-        handle: "@alexdj",
-        initials: "AL",
-        color:
-          "bg-indigo-900/50 text-indigo-400 dark:bg-indigo-100 dark:text-indigo-600",
-      },
-      action: "action_wrote_review",
-      timeAgo: "Il y a 2 heures",
-      album: {
-        title: "Midnight Pulse",
-        artist: "Neon Dreams",
-        rating: 5,
-        cover:
-          "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&q=80&w=150",
-      },
-      content: "An absolute masterpiece of modern techno...",
-      likes: 124,
-      isLiked: false,
-      isFollowing: true,
-      commentsList: [
-        {
-          id: 101,
-          user: "@technofan",
-          text: "Totalement d'accord, masterclass !",
-          replies: [
-            {
-              id: 1011,
-              user: "@vinyljunkie",
-              text: "Je confirme, la prod est dingue.",
+    const [activeTab, setActiveTab] = useState<TabType>("all");
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const [feedsCache, setFeedsCache] = useState<FeedsCache>({all: [], following: [], trending: []});
+    const [pagesCache, setPagesCache] = useState<PagesCache>({all: 0, following: 0, trending: 0});
+    const [hasMoreCache, setHasMoreCache] = useState<HasMoreCache>({all: true, following: true, trending: true});
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [likingId, setLikingId] = useState<string | null>(null);
+
+    const observerTarget = useRef<HTMLDivElement>(null);
+    const activeTabRef = useRef<TabType>(activeTab);
+    activeTabRef.current = activeTab;
+
+    // ── Fetch ──────────────────────────────────────────────────────────────────
+
+    const fetchFeed = useCallback(
+        async (targetTab: TabType, currentOffset: number, isLoadMore = false) => {
+            try {
+                if (!isLoadMore) setIsLoading(true);
+                else setIsLoadingMore(true);
+
+                const queryParams = `limit=${ITEMS_PER_PAGE}&offset=${currentOffset}`;
+                let endpoint = "";
+
+                switch (targetTab) {
+                    case "all":
+                        endpoint = `/activities/feed/global?${currentUserId ? `current_user_id=${currentUserId}&` : ""}${queryParams}`;
+                        break;
+                    case "following":
+                        if (!currentUserId) {
+                            setIsLoading(false);
+                            return;
+                        }
+                        endpoint = `/activities/feed/friends/${currentUserId}?${queryParams}`;
+                        break;
+                    case "trending":
+                        if (!currentUserId) {
+                            setIsLoading(false);
+                            return;
+                        }
+                        endpoint = `/activities/feed/discovery/${currentUserId}?${queryParams}`;
+                        break;
+                }
+
+                const response = await apiClient.get(endpoint);
+                const items: FeedItem[] = response.data?.feed || [];
+
+                setFeedsCache((prev) => ({
+                    ...prev,
+                    [targetTab]: isLoadMore ? [...prev[targetTab], ...items] : items,
+                }));
+                setHasMoreCache((prev) => ({...prev, [targetTab]: items.length === ITEMS_PER_PAGE}));
+                setPagesCache((prev) => ({
+                    ...prev,
+                    [targetTab]: isLoadMore ? currentOffset + ITEMS_PER_PAGE : ITEMS_PER_PAGE,
+                }));
+            } catch (error) {
+                console.error(`Erreur feed (${targetTab}):`, error);
+            } finally {
+                setIsLoading(false);
+                setIsRefreshing(false);
+                setIsLoadingMore(false);
+            }
+        },
+        [currentUserId]
+    );
+
+    useEffect(() => {
+        if (feedsCache[activeTab].length === 0) fetchFeed(activeTab, 0, false);
+        else setIsLoading(false);
+    }, [activeTab, fetchFeed]);
+
+    useEffect(() => {
+        fetchFeed("all", 0, false);
+    }, [fetchFeed]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && !isLoadingMore && hasMoreCache[activeTabRef.current]) {
+                    fetchFeed(activeTabRef.current, pagesCache[activeTabRef.current], true);
+                }
             },
-          ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      user: {
-        handle: "@beatmaster",
-        initials: "BE",
-        color:
-          "bg-blue-900/50 text-blue-400 dark:bg-blue-100 dark:text-blue-600",
-      },
-      action: "action_wrote_review",
-      timeAgo: "Il y a 1 jour",
-      album: {
-        title: "Vinyl Dreams",
-        artist: "Retro Beats",
-        rating: 5,
-        cover:
-          "https://images.unsplash.com/photo-1603048297172-c92544798d5e?auto=format&fit=crop&q=80&w=150",
-      },
-      content: "A perfect blend of old-school vibes and modern production...",
-      likes: 45,
-      isLiked: true,
-      isFollowing: false,
-      commentsList: [
-        {
-          id: 201,
-          user: "@vinyljunkie",
-          text: "J'adore ce style rétro.",
-          replies: [],
-        },
-        {
-          id: 202,
-          user: "@musiclover92",
-          text: "Il me le faut en physique !",
-          replies: [],
-        },
-      ],
-    },
-  ]);
+            {threshold: 0.5}
+        );
+        if (observerTarget.current) observer.observe(observerTarget.current);
+        return () => observer.disconnect();
+    }, [fetchFeed, isLoadingMore, hasMoreCache, pagesCache]);
 
-  const [openComments, setOpenComments] = useState<number[]>([]);
-  const [commentInputs, setCommentInputs] = useState<{ [key: number]: string }>(
-    {},
-  );
-  const [activeReplyId, setActiveReplyId] = useState<number | null>(null);
-  const [replyInputs, setReplyInputs] = useState<{ [key: number]: string }>({});
-  const [expandedReplies, setExpandedReplies] = useState<number[]>([]);
+    // ── Like ───────────────────────────────────────────────────────────────────
 
-  // --- 3. LOGIQUE DE FILTRAGE ---
-  const displayedFeed = feedItems
-    .filter((item) => {
-      if (activeTab === "following" && !item.isFollowing) return false;
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        const matchUser = item.user.handle.toLowerCase().includes(query);
-        const matchContent = item.content.toLowerCase().includes(query);
-        const matchAlbum = item.album.title.toLowerCase().includes(query);
-        const matchArtist = item.album.artist.toLowerCase().includes(query);
-        if (!matchUser && !matchContent && !matchAlbum && !matchArtist)
-          return false;
-      }
-      return true;
-    })
-    .sort((a, b) => {
-      if (activeTab === "trending") return b.likes - a.likes;
-      return a.id - b.id;
+    const handleLike = useCallback(
+        async (id: string) => {
+            if (!currentUserId || likingId) return;
+            const currentItems = feedsCache[activeTabRef.current];
+            const idx = currentItems.findIndex((f) => f.id === id);
+            if (idx === -1) return;
+
+            const item = currentItems[idx];
+            if (item.type !== "review") return;
+            const wasLiked = !!item.isLiked;
+            setLikingId(id);
+
+            setFeedsCache((prev) => {
+                const updated = [...prev[activeTabRef.current]];
+                updated[idx] = {
+                    ...updated[idx],
+                    isLiked: !wasLiked,
+                    likes_count: wasLiked ? Math.max(0, (item.likes_count ?? 1) - 1) : (item.likes_count ?? 0) + 1,
+                };
+                return {...prev, [activeTabRef.current]: updated};
+            });
+
+            try {
+                const response = await apiClient.post("/reviews/likes/toggle", {
+                    review_id: item.review_id || item.id,
+                    user_id: currentUserId,
+                });
+                const {isLiked, likes_count} = response.data;
+                setFeedsCache((prev) => {
+                    const updated = [...prev[activeTabRef.current]];
+                    const freshIdx = updated.findIndex((f) => f.id === id);
+                    if (freshIdx !== -1) updated[freshIdx] = {...updated[freshIdx], isLiked, likes_count};
+                    return {...prev, [activeTabRef.current]: updated};
+                });
+            } catch {
+                setFeedsCache((prev) => {
+                    const updated = [...prev[activeTabRef.current]];
+                    const freshIdx = updated.findIndex((f) => f.id === id);
+                    if (freshIdx !== -1) updated[freshIdx] = {
+                        ...updated[freshIdx],
+                        isLiked: wasLiked,
+                        likes_count: item.likes_count
+                    };
+                    return {...prev, [activeTabRef.current]: updated};
+                });
+            } finally {
+                setLikingId(null);
+            }
+        },
+        [currentUserId, feedsCache, likingId]
+    );
+
+    // ── Navigation ─────────────────────────────────────────────────────────────
+
+    const handleNavigateToAlbum = (item: FeedItem) => {
+        const albumId = item.api_id || item.media_id || "";
+        const params = new URLSearchParams({
+            artist: item.artist || "",
+            album: item.album || "",
+            cover: item.cover || "",
+            mbid: "",
+        }).toString();
+        navigate(`/album/${albumId}?${params}`);
+    };
+
+    const handleNavigateToProfile = (userId: string) => {
+        navigate(`/profil/${userId}`);
+    };
+
+    // ── Filter ─────────────────────────────────────────────────────────────────
+
+    const displayedItems = (feedsCache[activeTab] || []).filter((item) => {
+        if (!item) return false;
+        const q = searchQuery.toLowerCase().trim();
+        if (!q) return true;
+        return (
+            item.album?.toLowerCase().includes(q) ||
+            item.artist?.toLowerCase().includes(q) ||
+            item.user_name?.toLowerCase().includes(q) ||
+            item.content?.toLowerCase().includes(q)
+        );
     });
 
-  // --- 4. GESTIONNAIRES D'ÉVÉNEMENTS ---
-  const toggleLike = (postId: number) => {
-    setFeedItems((prevItems) =>
-      prevItems.map((item) => {
-        if (item.id === postId) {
-          return {
-            ...item,
-            isLiked: !item.isLiked,
-            likes: item.isLiked ? item.likes - 1 : item.likes + 1,
-          };
-        }
-        return item;
-      }),
-    );
-  };
+    // ─── Render ────────────────────────────────────────────────────────────────
 
-  const toggleCommentSection = (postId: number) => {
-    setOpenComments((prev) =>
-      prev.includes(postId)
-        ? prev.filter((id) => id !== postId)
-        : [...prev, postId],
-    );
-  };
-
-  const toggleReplies = (commentId: number) => {
-    setExpandedReplies((prev) =>
-      prev.includes(commentId)
-        ? prev.filter((id) => id !== commentId)
-        : [...prev, commentId],
-    );
-  };
-
-  const submitComment = (postId: number) => {
-    const text = commentInputs[postId];
-    if (!text || text.trim() === "") return;
-    setFeedItems((prevItems) =>
-      prevItems.map((item) => {
-        if (item.id === postId) {
-          return {
-            ...item,
-            commentsList: [
-              ...item.commentsList,
-              {
-                id: Date.now(),
-                user: "@moi",
-                text: text.trim(),
-                replies: [],
-              },
-            ],
-          };
-        }
-        return item;
-      }),
-    );
-    setCommentInputs((prev) => ({ ...prev, [postId]: "" }));
-  };
-
-  const submitReply = (postId: number, commentId: number) => {
-    const text = replyInputs[commentId];
-    if (!text || text.trim() === "") return;
-    setFeedItems((prevItems) =>
-      prevItems.map((item) => {
-        if (item.id === postId) {
-          return {
-            ...item,
-            commentsList: item.commentsList.map((comment) => {
-              if (comment.id === commentId) {
-                return {
-                  ...comment,
-                  replies: [
-                    ...(comment.replies || []),
-                    {
-                      id: Date.now(),
-                      user: "@moi",
-                      text: text.trim(),
-                    },
-                  ],
-                };
-              }
-              return comment;
-            }),
-          };
-        }
-        return item;
-      }),
-    );
-    setReplyInputs((prev) => ({ ...prev, [commentId]: "" }));
-    setActiveReplyId(null);
-    if (!expandedReplies.includes(commentId)) {
-      setExpandedReplies((prev) => [...prev, commentId]);
-    }
-  };
-
-  // --- 6. RENDER PRINCIPAL ---
-  return (
-    <div className="p-8 max-w-[2048px] mx-auto w-full font-sans min-h-screen bg-transparent dark:bg-slate-50 text-white dark:text-gray-900 transition-colors duration-300">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2 text-white dark:text-gray-900">
-          {t("feed_title")}
-        </h1>
-        <p className="text-gray-400 dark:text-gray-600 text-lg">
-          {t("feed_subtitle")}
-        </p>
-      </div>
-
-      <div className="relative mb-8 max-w-2xl">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search size={18} className="text-gray-500" />
-        </div>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={t("search_feed_placeholder")}
-          className="w-full bg-[#1C1C28] dark:bg-white text-white dark:text-gray-900 text-sm rounded-xl py-3.5 pl-11 pr-4 border border-gray-800 dark:border-gray-200 outline-none transition-all shadow-lg"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery("")}
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-[#FF1E56] transition-colors"
-          >
-            {t("clear_btn")}
-          </button>
-        )}
-      </div>
-
-      <div className="flex bg-[#1C1C28] dark:bg-white rounded-xl p-1 mb-8 border border-gray-800 dark:border-gray-200 shadow-sm">
-        {["all", "following", "trending"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm transition-all ${
-              activeTab === tab
-                ? "bg-[#2A2A38] dark:bg-gray-100 text-white dark:text-gray-900 shadow"
-                : "text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900"
-            }`}
-          >
-            {tab === "all" && <Sparkles size={18} />}
-            {tab === "following" && <Users size={18} />}
-            {tab === "trending" && <TrendingUp size={18} />}
-            {tab === "all"
-              ? t("tab_activities")
-              : tab === "following"
-                ? t("tab_following")
-                : t("tab_discovery")}
-          </button>
-        ))}
-      </div>
-
-      <div className="space-y-6 pb-10">
-        {displayedFeed.length > 0 ? (
-          displayedFeed.map((item) => (
-            <div
-              key={item.id}
-              className="bg-[#1C1C28] dark:bg-white rounded-xl p-6 border border-gray-800 dark:border-gray-200 shadow-sm transition-colors"
-            >
-              <div className="flex items-center gap-4 mb-5">
-                <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${item.user.color}`}
-                >
-                  {item.user.initials}
-                </div>
+    return (
+        <div
+            className="p-8 max-w-[2048px] mx-auto w-full font-sans min-h-screen bg-transparent dark:bg-slate-50 text-white dark:text-gray-900 transition-colors duration-300">
+            {/* Header */}
+            <div className="mb-8 flex items-start justify-between">
                 <div>
-                  <p className="text-white dark:text-gray-900 font-bold">
-                    {item.user.handle}{" "}
-                    <span className="text-gray-400 dark:text-gray-500 font-normal text-sm">
-                      {t(item.action)}
-                    </span>
-                  </p>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    {item.timeAgo}
-                  </p>
+                    <h1 className="text-4xl font-bold mb-2 text-white dark:text-gray-900">
+                        {t("feed_title", "Votre fil")}
+                    </h1>
+                    <p className="text-gray-400 dark:text-gray-600 text-lg">
+                        {t("feed_subtitle", "Restez informé(e) des tendances musicales de la communauté.")}
+                    </p>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-5 mb-5 bg-[#13131A] dark:bg-gray-50 p-4 rounded-xl border border-gray-800/50 dark:border-gray-200 w-fit pr-8 transition-colors">
-                <img
-                  src={item.album.cover}
-                  alt={item.album.title}
-                  className="w-20 h-20 rounded-md object-cover shadow-md"
-                />
-                <div>
-                  <h3 className="font-bold text-lg text-white dark:text-gray-900 mb-1">
-                    {item.album.title}
-                  </h3>
-                  <p className="text-gray-400 dark:text-gray-600 text-sm mb-2">
-                    {item.album.artist}
-                  </p>
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={16}
-                        className={
-                          i < item.album.rating
-                            ? "text-[#FF1E56] fill-[#FF1E56]"
-                            : "text-gray-600 dark:text-gray-300"
-                        }
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-gray-200 dark:text-gray-700 leading-relaxed text-[15px] mb-6">
-                {item.content}
-              </p>
-              <div className="h-px w-full bg-gray-800 dark:bg-gray-200 mb-4"></div>
-
-              <div className="flex items-center gap-6">
                 <button
-                  onClick={() => toggleLike(item.id)}
-                  className={`flex items-center gap-2 text-sm font-semibold transition-colors ${
-                    item.isLiked
-                      ? "text-[#FF1E56]"
-                      : "text-gray-400 dark:text-gray-500 hover:text-[#FF1E56]"
-                  }`}
+                    onClick={() => {
+                        setIsRefreshing(true);
+                        fetchFeed(activeTab, 0, false);
+                    }}
+                    disabled={isRefreshing}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1C1C28] dark:bg-white border border-gray-800 dark:border-gray-200 text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:border-gray-700 transition-all text-sm disabled:opacity-50"
                 >
-                  <Heart
-                    size={18}
-                    className={item.isLiked ? "fill-[#FF1E56]" : ""}
-                  />
-                  {item.likes}
+                    <RefreshCw size={15} className={isRefreshing ? "animate-spin" : ""}/>
+                    Actualiser
                 </button>
-
-                <button
-                  onClick={() => toggleCommentSection(item.id)}
-                  className="flex items-center gap-2 text-sm font-semibold text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 transition-colors"
-                >
-                  <MessageCircle size={18} />
-                  {item.commentsList.length}
-                </button>
-              </div>
-
-              {openComments.includes(item.id) && (
-                <div className="mt-6 pt-4 border-t border-gray-800/50 dark:border-gray-200 animate-in fade-in duration-200">
-                  <div className="space-y-4 mb-4">
-                    {item.commentsList.map((comment) => (
-                      <div key={comment.id} className="flex flex-col gap-2">
-                        <div className="flex gap-3 bg-[#13131A] dark:bg-gray-50 p-3 rounded-lg border border-gray-800/50 dark:border-gray-200 transition-colors">
-                          <div className="w-8 h-8 rounded-full bg-slate-800 dark:bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-300 dark:text-slate-600 shrink-0">
-                            {comment.user.substring(1, 3).toUpperCase()}
-                          </div>
-                          <div className="flex-1">
-                            <span className="font-bold text-white dark:text-gray-900 text-sm block">
-                              {comment.user}
-                            </span>
-                            <span className="text-gray-300 dark:text-gray-600 text-sm block mb-1">
-                              {comment.text}
-                            </span>
-                            <div className="flex items-center gap-4 mt-1">
-                              <button
-                                onClick={() =>
-                                  setActiveReplyId(
-                                    activeReplyId === comment.id
-                                      ? null
-                                      : comment.id,
-                                  )
-                                }
-                                className="text-xs text-gray-500 hover:text-white dark:hover:text-gray-900 font-medium transition-colors"
-                              >
-                                {t("reply_btn")}
-                              </button>
-                              {comment.replies &&
-                                comment.replies.length > 0 && (
-                                  <button
-                                    onClick={() => toggleReplies(comment.id)}
-                                    className="text-xs text-blue-500 hover:text-blue-400 font-medium transition-colors flex items-center gap-1"
-                                  >
-                                    {expandedReplies.includes(comment.id)
-                                      ? t("hide_replies")
-                                      : t("show_replies", {
-                                          count: comment.replies.length,
-                                        })}
-                                  </button>
-                                )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {expandedReplies.includes(comment.id) &&
-                          comment.replies &&
-                          comment.replies.length > 0 && (
-                            <div className="pl-10 space-y-2 mt-1 animate-in fade-in slide-in-from-top-2 duration-200">
-                              {comment.replies.map((reply: Reply) => (
-                                <div
-                                  key={reply.id}
-                                  className="flex gap-3 bg-[#1C1C28] dark:bg-white p-2.5 rounded-lg border border-gray-800/30 dark:border-gray-200"
-                                >
-                                  <CornerDownRight
-                                    size={14}
-                                    className="text-gray-600 dark:text-gray-400 mt-1 shrink-0"
-                                  />
-                                  <div className="w-6 h-6 rounded-full bg-blue-900/50 dark:bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-300 dark:text-blue-600 shrink-0">
-                                    {reply.user.substring(1, 3).toUpperCase()}
-                                  </div>
-                                  <div>
-                                    <span className="font-bold text-white dark:text-gray-900 text-xs block">
-                                      {reply.user}
-                                    </span>
-                                    <span className="text-gray-300 dark:text-gray-600 text-xs">
-                                      {reply.text}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-
-                        {activeReplyId === comment.id && (
-                          <div className="pl-10 mt-1 flex items-center gap-2 animate-in fade-in zoom-in duration-200">
-                            <div className="flex-1 relative">
-                              <input
-                                type="text"
-                                autoFocus
-                                placeholder={`${t("reply_to_user", { user: comment.user })}`}
-                                value={replyInputs[comment.id] || ""}
-                                onChange={(e) =>
-                                  setReplyInputs({
-                                    ...replyInputs,
-                                    [comment.id]: e.target.value,
-                                  })
-                                }
-                                onKeyDown={(e) =>
-                                  e.key === "Enter" &&
-                                  submitReply(item.id, comment.id)
-                                }
-                                className="w-full bg-[#13131A] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-full py-1.5 pl-3 pr-10 text-xs text-white dark:text-gray-900 focus:outline-none transition-colors"
-                              />
-                              <button
-                                onClick={() => submitReply(item.id, comment.id)}
-                                className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#FF1E56] transition-colors p-1"
-                              >
-                                <Send size={12} />
-                              </button>
-                            </div>
-                            <button
-                              onClick={() => setActiveReplyId(null)}
-                              className="text-xs text-gray-500 hover:text-white dark:hover:text-gray-900"
-                            >
-                              {t("cancel_btn")}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-3 mt-4">
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
-                      MO
-                    </div>
-                    <div className="flex-1 relative">
-                      <input
-                        type="text"
-                        placeholder={t("comment_placeholder")}
-                        value={commentInputs[item.id] || ""}
-                        onChange={(e) =>
-                          setCommentInputs({
-                            ...commentInputs,
-                            [item.id]: e.target.value,
-                          })
-                        }
-                        onKeyDown={(e) =>
-                          e.key === "Enter" && submitComment(item.id)
-                        }
-                        className="w-full bg-[#13131A] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm text-white dark:text-gray-900 focus:outline-none transition-colors"
-                      />
-                      <button
-                        onClick={() => submitComment(item.id)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#FF1E56] transition-colors p-1"
-                      >
-                        <Send size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
-          ))
-        ) : (
-          <div className="text-center py-12">
-            <Search
-              size={48}
-              className="mx-auto text-gray-500 dark:text-gray-400 mb-4 opacity-50"
-            />
-            <p className="text-gray-400 dark:text-gray-600 text-lg">
-              {t("no_post_found")}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+
+            {/* Search */}
+            <div className="relative mb-8 max-w-2xl">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Search size={18} className="text-gray-500"/>
+                </div>
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t("search_feed_placeholder", "Rechercher un utilisateur, un album...")}
+                    className="w-full bg-[#1C1C28] dark:bg-white text-white dark:text-gray-900 text-sm rounded-xl py-3.5 pl-11 pr-4 border border-gray-800 dark:border-gray-200 outline-none transition-all shadow-lg"
+                />
+                {searchQuery && (
+                    <button
+                        onClick={() => setSearchQuery("")}
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-[#FF1E56] transition-colors text-sm"
+                    >
+                        ✕
+                    </button>
+                )}
+            </div>
+
+            {/* Tabs */}
+            <div
+                className="flex bg-[#1C1C28] dark:bg-white rounded-xl p-1 mb-8 border border-gray-800 dark:border-gray-200 shadow-sm max-w-lg">
+                {([
+                    {key: "all", label: t("tab_activities", "Activités"), icon: Sparkles},
+                    {key: "following", label: t("tab_following", "Suivis"), icon: Users},
+                    {key: "trending", label: t("tab_discovery", "Découverte"), icon: TrendingUp},
+                ] as const).map(({key, label, icon: Icon}) => (
+                    <button
+                        key={key}
+                        onClick={() => setActiveTab(key)}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm transition-all ${
+                            activeTab === key
+                                ? "bg-[#2A2A38] dark:bg-gray-100 text-white dark:text-gray-900 shadow"
+                                : "text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900"
+                        }`}
+                    >
+                        <Icon size={18}/>
+                        {label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Feed List */}
+            <div className="space-y-6 pb-10">
+                {isLoading && feedsCache[activeTab].length === 0 ? (
+                    [...Array(3)].map((_, i) => <SkeletonCard key={i}/>)
+                ) : displayedItems.length === 0 ? (
+                    searchQuery ? (
+                        <div className="text-center py-12">
+                            <Search size={48} className="mx-auto text-gray-500 dark:text-gray-400 mb-4 opacity-50"/>
+                            <p className="text-gray-400 dark:text-gray-600 text-lg">
+                                {t("no_post_found", "Aucun résultat pour")} &quot;{searchQuery}&quot;
+                            </p>
+                        </div>
+                    ) : (
+                        <EmptyState tab={activeTab}/>
+                    )
+                ) : (
+                    <>
+                        {displayedItems.map((item) => (
+                            <FeedCard
+                                key={item.id}
+                                item={item}
+                                onLike={handleLike}
+                                onNavigateToAlbum={handleNavigateToAlbum}
+                                onNavigateToProfile={handleNavigateToProfile}
+                                likingId={likingId}
+                                currentUserId={currentUserId}
+                            />
+                        ))}
+
+                        <div ref={observerTarget} className="h-4"/>
+
+                        {isLoadingMore && (
+                            <div className="flex items-center justify-center py-6">
+                                <Loader2 size={24} className="text-[#FF1E56] animate-spin"/>
+                            </div>
+                        )}
+
+                        {!hasMoreCache[activeTab] && displayedItems.length > 0 && (
+                            <div className="text-center py-8">
+                                <div
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1C1C28] dark:bg-white border border-gray-800 dark:border-gray-200">
+                                    <ChevronDown size={14} className="text-gray-600"/>
+                                    <span
+                                        className="text-gray-600 dark:text-gray-400 text-xs font-semibold tracking-wide">FIN DU FIL</span>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default Feed;

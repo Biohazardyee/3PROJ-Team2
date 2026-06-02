@@ -16,6 +16,8 @@ import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import UserAvatar from "../components/UserAvatar";
 
+type TabType = "Commentaires" | "Albums";
+
 const AlbumDetails: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const [searchParams] = useSearchParams();
@@ -65,7 +67,7 @@ const AlbumDetails: React.FC = () => {
     const [commentsList, setCommentsList] = useState<any[]>([]);
     const [loadingReviews, setLoadingReviews] = useState(false);
 
-    const [activeTab, setActiveTab] = useState("Commentaires");
+    const [activeTab, setActiveTab] = useState<TabType>("Commentaires");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [currentStatus, setCurrentStatus] = useState(t("change_status"));
     const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
@@ -74,6 +76,9 @@ const AlbumDetails: React.FC = () => {
     const [hoverRating, setHoverRating] = useState(0);
     const [commentTitle, setCommentTitle] = useState("");
     const [commentText, setCommentText] = useState("");
+
+    const [similarAlbums, setSimilarAlbums] = useState<any[]>([]);
+    const [loadingSimilar, setLoadingSimilar] = useState(false);
 
     const [editingCommentId, setEditingCommentId] = useState<
         number | string | null
@@ -204,6 +209,29 @@ const AlbumDetails: React.FC = () => {
 
         fetchAlbumDetails();
     }, [id, urlArtist, urlAlbum, urlMbid, urlCover]);
+
+    const fetchSimilar = async () => {
+        if (!urlArtist || !urlAlbum) return;
+
+        setLoadingSimilar(true);
+        try {
+            const res = await apiClient.get("/api/albums/similar", {
+                params: {
+                    artist: urlArtist,
+                    album: urlAlbum
+                },
+            });
+            setSimilarAlbums(res.data.similarAlbums || []);
+        } catch (err) {
+            console.error("Erreur chargement similaires:", err);
+        } finally {
+            setLoadingSimilar(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSimilar();
+    }, [urlArtist, urlAlbum]);
 
     const fetchReviews = async () => {
         try {
@@ -638,416 +666,457 @@ const AlbumDetails: React.FC = () => {
 
                             {activeTab === "Commentaires" ? (
                                 <>
-                  {!hasAlreadyReviewed ? (
-                      <div
-                          className="mb-10 bg-[#1a1b26] dark:bg-white p-6 rounded-2xl border border-gray-800 dark:border-gray-200 shadow-sm">
-                          <h4 className="text-lg font-bold mb-6 italic">
-                              {t("write_comment")}
-                          </h4>
-                          <div className="flex flex-col gap-5">
-                              <div className="flex items-center gap-2">
-                                  <p className="text-sm text-gray-400 dark:text-gray-500 mr-2 font-medium">
-                                      {t("rating")} * :
-                                  </p>
-                                  <div className="flex gap-1">
-                                      {[1, 2, 3, 4, 5].map((star) => (
-                                          <FaStar
-                                              key={star}
-                                              className={`cursor-pointer transition-colors ${(hoverRating || userRating) >= star ? "text-[#FF1E56]" : "text-gray-700 dark:text-gray-300"}`}
-                                              size={20}
-                                              onMouseEnter={() => setHoverRating(star)}
-                                              onMouseLeave={() => setHoverRating(0)}
-                                              onClick={() => setUserRating(star)}
-                                          />
-                                      ))}
-                                  </div>
-                              </div>
+                                    {!hasAlreadyReviewed ? (
+                                        <div
+                                            className="mb-10 bg-[#1a1b26] dark:bg-white p-6 rounded-2xl border border-gray-800 dark:border-gray-200 shadow-sm">
+                                            <h4 className="text-lg font-bold mb-6 italic">
+                                                {t("write_comment")}
+                                            </h4>
+                                            <div className="flex flex-col gap-5">
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-sm text-gray-400 dark:text-gray-500 mr-2 font-medium">
+                                                        {t("rating")} * :
+                                                    </p>
+                                                    <div className="flex gap-1">
+                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                            <FaStar
+                                                                key={star}
+                                                                className={`cursor-pointer transition-colors ${(hoverRating || userRating) >= star ? "text-[#FF1E56]" : "text-gray-700 dark:text-gray-300"}`}
+                                                                size={20}
+                                                                onMouseEnter={() => setHoverRating(star)}
+                                                                onMouseLeave={() => setHoverRating(0)}
+                                                                onClick={() => setUserRating(star)}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
 
-                              <div>
-                                  <label className="block text-sm font-bold mb-2">
-                                      {t("title_label")} *
-                                  </label>
-                                  <input
-                                      type="text"
-                                      value={commentTitle}
-                                      onChange={(e) => setCommentTitle(e.target.value)}
-                                      placeholder={t("placeholder_title")}
-                                      className="w-full bg-[#161b2c] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm focus:outline-none"
-                                  />
-                              </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold mb-2">
+                                                        {t("title_label")} *
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={commentTitle}
+                                                        onChange={(e) => setCommentTitle(e.target.value)}
+                                                        placeholder={t("placeholder_title")}
+                                                        className="w-full bg-[#161b2c] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm focus:outline-none"
+                                                    />
+                                                </div>
 
-                              <div>
-                                  <label className="block text-sm font-bold mb-2">
-                                      {t("comment_label")} *
-                                  </label>
-                                  <textarea
-                                      value={commentText}
-                                      onChange={(e) => setCommentText(e.target.value)}
-                                      placeholder={t("placeholder_comment")}
-                                      className="w-full bg-[#161b2c] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm focus:outline-none min-h-[100px] resize-none"
-                                  />
-                              </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold mb-2">
+                                                        {t("comment_label")} *
+                                                    </label>
+                                                    <textarea
+                                                        value={commentText}
+                                                        onChange={(e) => setCommentText(e.target.value)}
+                                                        placeholder={t("placeholder_comment")}
+                                                        className="w-full bg-[#161b2c] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm focus:outline-none min-h-[100px] resize-none"
+                                                    />
+                                                </div>
 
-                              <div className="flex justify-end mt-2">
-                                  <button
-                                      onClick={submitMainComment}
-                                      disabled={isFormInvalid}
-                                      className={`px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${isFormInvalid ? "bg-gray-600 opacity-50 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-500 text-white"}`}
-                                  >
-                                      <FaPaperPlane size={12}/> {t("publish_btn")}
-                                  </button>
-                              </div>
-                          </div>
-                      </div>
-                  ) : (
-                      <div
-                          className="mb-10 bg-blue-500/10 border border-blue-500/20 p-5 rounded-2xl text-center text-sm text-blue-400 font-semibold shadow-inner">
-                          💡 Vous avez déjà publié un avis pour cet album. Vous
-                          pouvez l'éditer ou le supprimer directement sur votre
-                          commentaire ci-dessous.
-                      </div>
-                  )}
+                                                <div className="flex justify-end mt-2">
+                                                    <button
+                                                        onClick={submitMainComment}
+                                                        disabled={isFormInvalid}
+                                                        className={`px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${isFormInvalid ? "bg-gray-600 opacity-50 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-500 text-white"}`}
+                                                    >
+                                                        <FaPaperPlane size={12}/> {t("publish_btn")}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className="mb-10 bg-blue-500/10 border border-blue-500/20 p-5 rounded-2xl text-center text-sm text-blue-400 font-semibold shadow-inner">
+                                            💡 Vous avez déjà publié un avis pour cet album. Vous
+                                            pouvez l'éditer ou le supprimer directement sur votre
+                                            commentaire ci-dessous.
+                                        </div>
+                                    )}
 
-                  {/* Liste dynamique des avis */}
-                  {loadingReviews ? (
-                      <div className="flex justify-center py-6">
-                          <Loader2
-                              className="animate-spin text-pink-500"
-                              size={32}
-                          />
-                      </div>
-                  ) : commentsList.length > 0 ? (
-                      <div className="space-y-6">
-                          {commentsList.map((comment) => (
-                              <div
-                                  key={comment.id}
-                                  className="bg-[#161b2c] dark:bg-white p-8 rounded-2xl border border-gray-800/50 dark:border-gray-200 relative"
-                              >
-                                  {editingCommentId === comment.id ? (
-                                      <div className="flex flex-col gap-5">
-                                          <h4 className="text-lg font-bold italic">
-                                              {t("edit_comment")}
-                                          </h4>
-                                          <div className="flex gap-1">
-                                              {[1, 2, 3, 4, 5].map((star) => (
-                                                  <FaStar
-                                                      key={star}
-                                                      size={20}
-                                                      className={`cursor-pointer ${(editHoverRating || editRating) >= star ? "text-[#FF1E56]" : "text-gray-700"}`}
-                                                      onMouseEnter={() =>
-                                                          setEditHoverRating(star)
-                                                      }
-                                                      onMouseLeave={() => setEditHoverRating(0)}
-                                                      onClick={() => setEditRating(star)}
-                                                  />
-                                              ))}
-                                          </div>
-                                          <input
-                                              type="text"
-                                              value={editTitle}
-                                              onChange={(e) => setEditTitle(e.target.value)}
-                                              className="w-full bg-[#1a1b26] dark:bg-gray-50 border p-4 text-sm rounded-xl focus:outline-none"
-                                          />
-                                          <textarea
-                                              value={editText}
-                                              onChange={(e) => setEditText(e.target.value)}
-                                              className="w-full bg-[#1a1b26] dark:bg-gray-50 border p-4 text-sm rounded-xl min-h-[100px] resize-none focus:outline-none"
-                                          />
-                                          <div className="flex justify-end gap-3">
-                                              <button
-                                                  onClick={cancelEditing}
-                                                  className="px-4 py-2 text-sm font-bold text-gray-400"
-                                              >
-                                                  {t("cancel")}
-                                              </button>
-                                              <button
-                                                  onClick={() => saveEdit(comment.id)}
-                                                  disabled={isEditInvalid}
-                                                  className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg"
-                                              >
-                                                  {t("save")}
-                                              </button>
-                                          </div>
-                                      </div>
-                                  ) : (
-                                      <>
-                                          {/* Actions directes (Modifier / Supprimer) affichées UNIQUEMENT si l'avis appartient à l'utilisateur connecté */}
-                                          {isMyComment(comment) && (
-                                              <div className="absolute top-6 right-6 flex items-center gap-2">
-                                                  <button
-                                                      onClick={() => startEditing(comment)}
-                                                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700 dark:bg-gray-100 dark:text-gray-700 dark:hover:bg-gray-200 dark:border-gray-300"
-                                                  >
-                                                      <Edit3 size={13}/>
-                                                      {t("modify") || "Modifier"}
-                                                  </button>
-                                                  <button
-                                                      onClick={() => deleteComment(comment.id)}
-                                                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600 rounded-lg transition-colors border border-rose-500/20"
-                                                  >
-                                                      <Trash2 size={13}/>
-                                                      {t("delete") || "Supprimer"}
-                                                  </button>
-                                              </div>
-                                          )}
+                                    {/* Liste dynamique des avis */}
+                                    {loadingReviews ? (
+                                        <div className="flex justify-center py-6">
+                                            <Loader2
+                                                className="animate-spin text-pink-500"
+                                                size={32}
+                                            />
+                                        </div>
+                                    ) : commentsList.length > 0 ? (
+                                        <div className="space-y-6">
+                                            {commentsList.map((comment) => (
+                                                <div
+                                                    key={comment.id}
+                                                    className="bg-[#161b2c] dark:bg-white p-8 rounded-2xl border border-gray-800/50 dark:border-gray-200 relative"
+                                                >
+                                                    {editingCommentId === comment.id ? (
+                                                        <div className="flex flex-col gap-5">
+                                                            <h4 className="text-lg font-bold italic">
+                                                                {t("edit_comment")}
+                                                            </h4>
+                                                            <div className="flex gap-1">
+                                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                                    <FaStar
+                                                                        key={star}
+                                                                        size={20}
+                                                                        className={`cursor-pointer ${(editHoverRating || editRating) >= star ? "text-[#FF1E56]" : "text-gray-700"}`}
+                                                                        onMouseEnter={() =>
+                                                                            setEditHoverRating(star)
+                                                                        }
+                                                                        onMouseLeave={() => setEditHoverRating(0)}
+                                                                        onClick={() => setEditRating(star)}
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                value={editTitle}
+                                                                onChange={(e) => setEditTitle(e.target.value)}
+                                                                className="w-full bg-[#1a1b26] dark:bg-gray-50 border p-4 text-sm rounded-xl focus:outline-none"
+                                                            />
+                                                            <textarea
+                                                                value={editText}
+                                                                onChange={(e) => setEditText(e.target.value)}
+                                                                className="w-full bg-[#1a1b26] dark:bg-gray-50 border p-4 text-sm rounded-xl min-h-[100px] resize-none focus:outline-none"
+                                                            />
+                                                            <div className="flex justify-end gap-3">
+                                                                <button
+                                                                    onClick={cancelEditing}
+                                                                    className="px-4 py-2 text-sm font-bold text-gray-400"
+                                                                >
+                                                                    {t("cancel")}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => saveEdit(comment.id)}
+                                                                    disabled={isEditInvalid}
+                                                                    className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg"
+                                                                >
+                                                                    {t("save")}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            {/* Actions directes (Modifier / Supprimer) affichées UNIQUEMENT si l'avis appartient à l'utilisateur connecté */}
+                                                            {isMyComment(comment) && (
+                                                                <div
+                                                                    className="absolute top-6 right-6 flex items-center gap-2">
+                                                                    <button
+                                                                        onClick={() => startEditing(comment)}
+                                                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700 dark:bg-gray-100 dark:text-gray-700 dark:hover:bg-gray-200 dark:border-gray-300"
+                                                                    >
+                                                                        <Edit3 size={13}/>
+                                                                        {t("modify") || "Modifier"}
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => deleteComment(comment.id)}
+                                                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600 rounded-lg transition-colors border border-rose-500/20"
+                                                                    >
+                                                                        <Trash2 size={13}/>
+                                                                        {t("delete") || "Supprimer"}
+                                                                    </button>
+                                                                </div>
+                                                            )}
 
-                                          <div className="flex justify-between items-start mb-6">
-                                              <div className="flex items-center gap-4">
-                                                  <div
-                                                      onClick={() => comment.user?.id && navigate(`/profil/${comment.user.id}`)}
-                                                      className="cursor-pointer transition-transform hover:scale-105"
-                                                  >
-                                                      <UserAvatar user={comment.user}/>
-                                                  </div>
+                                                            <div className="flex justify-between items-start mb-6">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div
+                                                                        onClick={() => comment.user?.id && navigate(`/profil/${comment.user.id}`)}
+                                                                        className="cursor-pointer transition-transform hover:scale-105"
+                                                                    >
+                                                                        <UserAvatar user={comment.user}/>
+                                                                    </div>
 
-                                                  <div>
-                                                      {/* On aligne le nom et les étoiles sur la même ligne */}
-                                                      <div className="flex items-center gap-3">
-                                                          <h4
-                                                              onClick={() => comment.user?.id && navigate(`/profil/${comment.user.id}`)}
-                                                              className="font-bold text-gray-100 dark:text-gray-900 hover:underline cursor-pointer"
-                                                          >
-                                                              {comment.user?.username || "Anonyme"}
-                                                          </h4>
+                                                                    <div>
+                                                                        {/* On aligne le nom et les étoiles sur la même ligne */}
+                                                                        <div className="flex items-center gap-3">
+                                                                            <h4
+                                                                                onClick={() => comment.user?.id && navigate(`/profil/${comment.user.id}`)}
+                                                                                className="font-bold text-gray-100 dark:text-gray-900 hover:underline cursor-pointer"
+                                                                            >
+                                                                                {comment.user?.username || "Anonyme"}
+                                                                            </h4>
 
-                                                          {/* Les étoiles migrent ici, plus aucun risque de collision ! */}
-                                                          <div className="flex text-[#FF1E56] gap-0.5">
-                                                              {[...Array(5)].map((_, i) => (
-                                                                  <FaStar
-                                                                      key={i}
-                                                                      size={14}
-                                                                      className={i < comment.rating ? "text-[#FF1E56]" : "text-gray-700"}
-                                                                  />
-                                                              ))}
-                                                          </div>
-                                                      </div>
-                                                      <p className="text-xs text-gray-500 font-medium">
-                                                          {new Date(comment.created_at || Date.now()).toLocaleDateString()}
-                                                      </p>
-                                                  </div>
-                                              </div>
-                                          </div>
+                                                                            {/* Les étoiles migrent ici, plus aucun risque de collision ! */}
+                                                                            <div
+                                                                                className="flex text-[#FF1E56] gap-0.5">
+                                                                                {[...Array(5)].map((_, i) => (
+                                                                                    <FaStar
+                                                                                        key={i}
+                                                                                        size={14}
+                                                                                        className={i < comment.rating ? "text-[#FF1E56]" : "text-gray-700"}
+                                                                                    />
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
+                                                                        <p className="text-xs text-gray-500 font-medium">
+                                                                            {new Date(comment.created_at || Date.now()).toLocaleDateString()}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                          {comment.title && (
-                                              <h5 className="text-lg font-bold mb-3 italic tracking-wide uppercase">
-                                                  {comment.title}
-                                              </h5>
-                                          )}
-                                          <p className="text-gray-400 dark:text-gray-600 text-sm leading-relaxed mb-6 italic">
-                                              {comment.content || comment.text}
-                                          </p>
+                                                            {comment.title && (
+                                                                <h5 className="text-lg font-bold mb-3 italic tracking-wide uppercase">
+                                                                    {comment.title}
+                                                                </h5>
+                                                            )}
+                                                            <p className="text-gray-400 dark:text-gray-600 text-sm leading-relaxed mb-6 italic">
+                                                                {comment.content || comment.text}
+                                                            </p>
 
-                                          <div className="flex gap-6 text-gray-500 text-sm items-center">
-                                              <button
-                                                  onClick={() => handleToggleLike(comment.id)}
-                                                  className="flex items-center gap-2 transition-colors"
-                                              >
-                                                  <Heart
-                                                      size={14}
-                                                      className={
-                                                          likedCommentIds.has(comment.id)
-                                                              ? "text-[#FF1E56] fill-[#FF1E56]"
-                                                              : "text-gray-500"
-                                                      }
-                                                  />
-                                                  {comment.likes?.length || 0}
-                                              </button>
-                                              <button
-                                                  onClick={() =>
-                                                      setActiveReplyId(activeReplyId === comment.id ? null : comment.id)
-                                                  }
-                                                  className="flex items-center gap-2"
-                                              >
-                                                  <MessageCircle size={14}/>
-                                                  {comment.reviewComments?.length || 0} {t("reply")}
-                                              </button>
+                                                            <div
+                                                                className="flex gap-6 text-gray-500 text-sm items-center">
+                                                                <button
+                                                                    onClick={() => handleToggleLike(comment.id)}
+                                                                    className="flex items-center gap-2 transition-colors"
+                                                                >
+                                                                    <Heart
+                                                                        size={14}
+                                                                        className={
+                                                                            likedCommentIds.has(comment.id)
+                                                                                ? "text-[#FF1E56] fill-[#FF1E56]"
+                                                                                : "text-gray-500"
+                                                                        }
+                                                                    />
+                                                                    {comment.likes?.length || 0}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() =>
+                                                                        setActiveReplyId(activeReplyId === comment.id ? null : comment.id)
+                                                                    }
+                                                                    className="flex items-center gap-2"
+                                                                >
+                                                                    <MessageCircle size={14}/>
+                                                                    {comment.reviewComments?.length || 0} {t("reply")}
+                                                                </button>
 
-                                              {comment.reviewComments?.length > 0 && (
-                                                  <button
-                                                      onClick={() => toggleReplies(comment.id)}
-                                                      className="text-xs text-blue-500 ml-auto"
-                                                  >
-                                                      {expandedReplies.includes(comment.id)
-                                                          ? t("hide_replies")
-                                                          : t("show_replies", {count: comment.reviewComments.length})}
-                                                  </button>
-                                              )}
-                                          </div>
+                                                                {comment.reviewComments?.length > 0 && (
+                                                                    <button
+                                                                        onClick={() => toggleReplies(comment.id)}
+                                                                        className="text-xs text-blue-500 ml-auto"
+                                                                    >
+                                                                        {expandedReplies.includes(comment.id)
+                                                                            ? t("hide_replies")
+                                                                            : t("show_replies", {count: comment.reviewComments.length})}
+                                                                    </button>
+                                                                )}
+                                                            </div>
 
-                                          {/* Champ de saisie interactif pour les réponses */}
-                                          {/* Input réponse — réponse directe à la review, pas à un commentaire */}
-                                          {activeReplyId === comment.id && (
-                                              <div
-                                                  className="mt-4 pt-4 border-t border-gray-800/50 dark:border-gray-200">
-                                                  <div className="flex items-center gap-2">
-                                                      <input
-                                                          type="text"
-                                                          autoFocus
-                                                          placeholder={t("reply_to", {user: comment.user?.username || "Anonyme"})}
-                                                          value={replyInputs[String(comment.id)] || ""}
-                                                          onChange={(e) =>
-                                                              setReplyInputs({
-                                                                  ...replyInputs,
-                                                                  [String(comment.id)]: e.target.value
-                                                              })
-                                                          }
-                                                          onKeyDown={(e) =>
-                                                              e.key === "Enter" && submitReply(comment.id) // ✅ pas de parentCommentId
-                                                          }
-                                                          className="flex-1 bg-[#1a1b26] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 p-3 text-sm rounded-xl focus:outline-none"
-                                                      />
-                                                      <button
-                                                          onClick={() => submitReply(comment.id)} // ✅ pas de parentCommentId
-                                                          className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors"
-                                                      >
-                                                          <FaPaperPlane size={14}/>
-                                                      </button>
-                                                  </div>
-                                              </div>
-                                          )}
+                                                            {/* Champ de saisie interactif pour les réponses */}
+                                                            {/* Input réponse — réponse directe à la review, pas à un commentaire */}
+                                                            {activeReplyId === comment.id && (
+                                                                <div
+                                                                    className="mt-4 pt-4 border-t border-gray-800/50 dark:border-gray-200">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <input
+                                                                            type="text"
+                                                                            autoFocus
+                                                                            placeholder={t("reply_to", {user: comment.user?.username || "Anonyme"})}
+                                                                            value={replyInputs[String(comment.id)] || ""}
+                                                                            onChange={(e) =>
+                                                                                setReplyInputs({
+                                                                                    ...replyInputs,
+                                                                                    [String(comment.id)]: e.target.value
+                                                                                })
+                                                                            }
+                                                                            onKeyDown={(e) =>
+                                                                                e.key === "Enter" && submitReply(comment.id) // ✅ pas de parentCommentId
+                                                                            }
+                                                                            className="flex-1 bg-[#1a1b26] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 p-3 text-sm rounded-xl focus:outline-none"
+                                                                        />
+                                                                        <button
+                                                                            onClick={() => submitReply(comment.id)} // ✅ pas de parentCommentId
+                                                                            className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors"
+                                                                        >
+                                                                            <FaPaperPlane size={14}/>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            )}
 
-                                          {/* Réponses */}
-                                          {expandedReplies.includes(comment.id) && comment.reviewComments && (
-                                              <div
-                                                  className="mt-4 border-l-2 border-gray-700 dark:border-gray-300 ml-2 pl-4 flex flex-col gap-2">
-                                                  {comment.reviewComments.map((reply: any) => {
-                                                      const depth = getReplyDepth(reply, comment.reviewComments);
-                                                      const isNested = depth > 0;
-                                                      const parentComment = isNested
-                                                          ? comment.reviewComments.find((c: any) => c.id === reply.parent_id)
-                                                          : null;
+                                                            {/* Réponses */}
+                                                            {expandedReplies.includes(comment.id) && comment.reviewComments && (
+                                                                <div
+                                                                    className="mt-4 border-l-2 border-gray-700 dark:border-gray-300 ml-2 pl-4 flex flex-col gap-2">
+                                                                    {comment.reviewComments.map((reply: any) => {
+                                                                        const depth = getReplyDepth(reply, comment.reviewComments);
+                                                                        const isNested = depth > 0;
+                                                                        const parentComment = isNested
+                                                                            ? comment.reviewComments.find((c: any) => c.id === reply.parent_id)
+                                                                            : null;
 
-                                                      return (
-                                                          <div key={reply.id}>
-                                                              {/* ✅ Indentation si réponse imbriquée */}
-                                                              <div
-                                                                  className={depth === 1 ? "ml-6" : depth === 2 ? "ml-12" : ""}>
-                                                                  <div
-                                                                      className={`
+                                                                        return (
+                                                                            <div key={reply.id}>
+                                                                                {/* ✅ Indentation si réponse imbriquée */}
+                                                                                <div
+                                                                                    className={depth === 1 ? "ml-6" : depth === 2 ? "ml-12" : ""}>
+                                                                                    <div
+                                                                                        className={`
                                                                         bg-[#1a1b26] dark:bg-white rounded-xl p-3 text-sm
                                                                         flex justify-between items-start gap-3
                                                                         border border-gray-800/60 dark:border-gray-200
                                                                         ${depth === 1 ? "border-l-2 border-l-blue-500" : ""}
                                                                         ${depth === 2 ? "border-l-2 border-l-purple-500" : ""}
                                                                       `}
-                                                                  >
-                                                                      <div className="flex items-start gap-2 min-w-0">
-                                                                          {/* Mini avatar */}
-                                                                          <div
-                                                                              className="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-[10px] font-bold text-blue-400 shrink-0">
-                                                                              {(reply.user?.username || "A").slice(0, 2).toUpperCase()}
-                                                                          </div>
-                                                                          <div className="min-w-0">
-                                                                              <div
-                                                                                  className="flex items-center gap-2 flex-wrap mb-1">
-                                                                                    <span className="font-bold text-blue-400 text-xs">
+                                                                                    >
+                                                                                        <div
+                                                                                            className="flex items-start gap-2 min-w-0">
+                                                                                            {/* Mini avatar */}
+                                                                                            <div
+                                                                                                className="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-[10px] font-bold text-blue-400 shrink-0">
+                                                                                                {(reply.user?.username || "A").slice(0, 2).toUpperCase()}
+                                                                                            </div>
+                                                                                            <div className="min-w-0">
+                                                                                                <div
+                                                                                                    className="flex items-center gap-2 flex-wrap mb-1">
+                                                                                    <span
+                                                                                        className="font-bold text-blue-400 text-xs">
                                                                                       {reply.user?.username || "Anonyme"}
                                                                                     </span>
-                                                                                  {/* ✅ Mention @parent si réponse imbriquée */}
-                                                                                  {parentComment && (
-                                                                                      <span
-                                                                                          className="text-xs bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">
+                                                                                                    {/* ✅ Mention @parent si réponse imbriquée */}
+                                                                                                    {parentComment && (
+                                                                                                        <span
+                                                                                                            className="text-xs bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">
                                                                                         @{parentComment.user?.username || "Anonyme"}
                                                                                       </span>
-                                                                                  )}
-                                                                                  <span
-                                                                                      className="text-gray-600 dark:text-gray-400 text-[11px]">
+                                                                                                    )}
+                                                                                                    <span
+                                                                                                        className="text-gray-600 dark:text-gray-400 text-[11px]">
                                                                                   {new Date(reply.created_at || Date.now()).toLocaleDateString()}
                                                                                 </span>
-                                                                              </div>
-                                                                              <p className="text-gray-300 dark:text-gray-600 leading-snug">
-                                                                                  {reply.content}
-                                                                              </p>
-                                                                          </div>
-                                                                      </div>
+                                                                                                </div>
+                                                                                                <p className="text-gray-300 dark:text-gray-600 leading-snug">
+                                                                                                    {reply.content}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
 
-                                                                      <div className="flex items-center gap-2 shrink-0 mt-0.5">
-                                                                          <button
-                                                                              onClick={() =>
-                                                                                  setActiveNestedReplyId(
-                                                                                      activeNestedReplyId === reply.id ? null : reply.id
-                                                                                  )
-                                                                              }
-                                                                              className="text-xs text-blue-500 hover:text-blue-400"
-                                                                          >
-                                                                              {t("reply")}
-                                                                          </button>
+                                                                                        <div
+                                                                                            className="flex items-center gap-2 shrink-0 mt-0.5">
+                                                                                            <button
+                                                                                                onClick={() =>
+                                                                                                    setActiveNestedReplyId(
+                                                                                                        activeNestedReplyId === reply.id ? null : reply.id
+                                                                                                    )
+                                                                                                }
+                                                                                                className="text-xs text-blue-500 hover:text-blue-400"
+                                                                                            >
+                                                                                                {t("reply")}
+                                                                                            </button>
 
-                                                                          {/* ✅ Bouton supprimer uniquement si c'est mon commentaire */}
-                                                                          {isMyComment(reply) && (
-                                                                              <button
-                                                                                  onClick={() => deleteReply(reply.id)}
-                                                                                  className="flex items-center gap-1 text-xs text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600 px-2 py-1 rounded-lg transition-colors border border-rose-500/20"
-                                                                              >
-                                                                                  <Trash2 size={11} />
-                                                                                  {t("delete") || "Supprimer"}
-                                                                              </button>
-                                                                          )}
-                                                                      </div>
-                                                                  </div>
+                                                                                            {/* ✅ Bouton supprimer uniquement si c'est mon commentaire */}
+                                                                                            {isMyComment(reply) && (
+                                                                                                <button
+                                                                                                    onClick={() => deleteReply(reply.id)}
+                                                                                                    className="flex items-center gap-1 text-xs text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600 px-2 py-1 rounded-lg transition-colors border border-rose-500/20"
+                                                                                                >
+                                                                                                    <Trash2 size={11}/>
+                                                                                                    {t("delete") || "Supprimer"}
+                                                                                                </button>
+                                                                                            )}
+                                                                                        </div>
+                                                                                    </div>
 
-                                                                  {/* Input réponse imbriquée */}
-                                                                  {activeNestedReplyId === reply.id && (
-                                                                      <div
-                                                                          className={`mt-2 ${depth === 1 ? "ml-[3.75rem]" : depth === 2 ? "ml-[5.25rem]" : "ml-9"}`}>
-                                                                          <div className="flex items-center gap-2">
-                                                                              <input
-                                                                                  type="text"
-                                                                                  autoFocus
-                                                                                  placeholder={`Répondre à ${reply.user?.username || "Anonyme"}...`}
-                                                                                  value={replyInputs[String(reply.id)] || ""}
-                                                                                  onChange={(e) =>
-                                                                                      setReplyInputs({
-                                                                                          ...replyInputs,
-                                                                                          [String(reply.id)]: e.target.value
-                                                                                      })
-                                                                                  }
-                                                                                  onKeyDown={(e) => {
-                                                                                      if (e.key === "Enter") {
-                                                                                          submitReply(comment.id, reply.id);
-                                                                                          setActiveNestedReplyId(null);
-                                                                                      }
-                                                                                  }}
-                                                                                  className="flex-1 bg-[#161b2c] dark:bg-gray-50 border border-gray-700 dark:border-gray-300 p-2.5 text-sm rounded-xl focus:outline-none focus:border-blue-500"
-                                                                              />
-                                                                              <button
-                                                                                  onClick={() => {
-                                                                                      submitReply(comment.id, reply.id);
-                                                                                      setActiveNestedReplyId(null);
-                                                                                  }}
-                                                                                  className="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors"
-                                                                              >
-                                                                                  <FaPaperPlane size={12}/>
-                                                                              </button>
-                                                                              <button
-                                                                                  onClick={() => setActiveNestedReplyId(null)}
-                                                                                  className="text-xs text-gray-500 hover:text-gray-300 px-1"
-                                                                              >
-                                                                                  {t("cancel")}
-                                                                              </button>
-                                                                          </div>
-                                                                      </div>
-                                                                  )}
-                                                              </div>
-                                                          </div>
-                                                      );
-                                                  })}
-                                              </div>
-                                          )}
-                                      </>
-                                  )}
-                              </div>
-                          ))}
-                      </div>
-                  ) : (
-                      <div className="text-center py-10 text-gray-500">
-                          Soyez le premier à donner votre avis !
-                      </div>
-                  )}
+                                                                                    {/* Input réponse imbriquée */}
+                                                                                    {activeNestedReplyId === reply.id && (
+                                                                                        <div
+                                                                                            className={`mt-2 ${depth === 1 ? "ml-[3.75rem]" : depth === 2 ? "ml-[5.25rem]" : "ml-9"}`}>
+                                                                                            <div
+                                                                                                className="flex items-center gap-2">
+                                                                                                <input
+                                                                                                    type="text"
+                                                                                                    autoFocus
+                                                                                                    placeholder={`Répondre à ${reply.user?.username || "Anonyme"}...`}
+                                                                                                    value={replyInputs[String(reply.id)] || ""}
+                                                                                                    onChange={(e) =>
+                                                                                                        setReplyInputs({
+                                                                                                            ...replyInputs,
+                                                                                                            [String(reply.id)]: e.target.value
+                                                                                                        })
+                                                                                                    }
+                                                                                                    onKeyDown={(e) => {
+                                                                                                        if (e.key === "Enter") {
+                                                                                                            submitReply(comment.id, reply.id);
+                                                                                                            setActiveNestedReplyId(null);
+                                                                                                        }
+                                                                                                    }}
+                                                                                                    className="flex-1 bg-[#161b2c] dark:bg-gray-50 border border-gray-700 dark:border-gray-300 p-2.5 text-sm rounded-xl focus:outline-none focus:border-blue-500"
+                                                                                                />
+                                                                                                <button
+                                                                                                    onClick={() => {
+                                                                                                        submitReply(comment.id, reply.id);
+                                                                                                        setActiveNestedReplyId(null);
+                                                                                                    }}
+                                                                                                    className="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors"
+                                                                                                >
+                                                                                                    <FaPaperPlane
+                                                                                                        size={12}/>
+                                                                                                </button>
+                                                                                                <button
+                                                                                                    onClick={() => setActiveNestedReplyId(null)}
+                                                                                                    className="text-xs text-gray-500 hover:text-gray-300 px-1"
+                                                                                                >
+                                                                                                    {t("cancel")}
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-10 text-gray-500">
+                                            Soyez le premier à donner votre avis !
+                                        </div>
+                                    )}
                                 </>
-                            ) : (
-                                <div className="text-center py-10 text-gray-500">
-                                    {t("no_similar")}
+                            ) : activeTab === "Albums" && (
+                                <div className="mt-6">
+                                    {loadingSimilar ? (
+                                        <div className="flex justify-center py-10">
+                                            <Loader2 className="animate-spin text-[#FF1E56]" size={32} />
+                                        </div>
+                                    ) : similarAlbums.length > 0 ? (
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            {similarAlbums.map((item: any, idx: number) => (
+                                                <div
+                                                    key={idx}
+                                                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                                                    onClick={() => {
+                                                        // Redirection vers la page détail de l'album similaire
+                                                        navigate(`/albumdetails?artist=${item.artist.name}&album=${item.name}&cover=${encodeURIComponent(item.image?.[3]?.["#text"] || '')}`);
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={item.image?.[3]?.["#text"]}
+                                                        alt={item.name}
+                                                        className="w-full aspect-square object-cover rounded-lg"
+                                                    />
+                                                    <p className="text-sm mt-2 font-medium text-white truncate">
+                                                        {item.name}
+                                                    </p>
+                                                    <p className="text-xs text-gray-400 truncate">
+                                                        {item.artist.name}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-10 text-gray-500">
+                                            {t("no_similar", "Aucun album similaire trouvé.")}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
