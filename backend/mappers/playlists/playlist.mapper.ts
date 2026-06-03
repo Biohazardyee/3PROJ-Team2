@@ -52,7 +52,7 @@ class PlaylistMapper extends BaseMapper<Playlists, PlaylistResponseDto> {
                     cover = imgObj?.['#text'];
                 }
 
-             
+
                 const ratingValue = item.rating || item.media?.rating || 0;
 
                 return {

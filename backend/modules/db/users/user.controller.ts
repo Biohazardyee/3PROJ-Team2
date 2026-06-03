@@ -44,8 +44,7 @@ class UserController extends Controller {
             if (
                 !registrationData.email ||
                 !registrationData.username ||
-                !registrationData.password ||
-                !registrationData.favorite_band
+                !registrationData.password 
             ) {
                 throw new BadRequest(
                     "Email, username, password & favorite band are required",

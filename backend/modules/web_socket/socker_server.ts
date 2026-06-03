@@ -61,8 +61,17 @@ export const initSocket = (server: http.Server) => {
 
     socket.on(
       "join_conversation",
-      async ({ conversationId }: { conversationId: string }): Promise<void> => {
+      async (data: { conversation_id: string }): Promise<void> => {
         try {
+          const conversationId = data?.conversation_id;
+
+          if (!conversationId) {
+            console.warn(
+              `[Join Denied] User ${user.id} sent a missing or invalid conversation_id.`,
+            );
+            return;
+          }
+
           const conversation: Conversations | null =
             await PrismaDb.conversations.findUnique({
               where: { id: conversationId },
@@ -90,18 +99,67 @@ export const initSocket = (server: http.Server) => {
             data: { is_read: true },
           });
 
+          // CORRIGÉ : Envoi uniforme de "conversation_id" au lieu de "conversationId"
           if (updatedMessages.count > 0) {
             io.to(`user_${conversation.user1_id}`).emit(
               "conversation_marked_read",
-              { conversationId },
+              { conversation_id: conversationId },
             );
             io.to(`user_${conversation.user2_id}`).emit(
               "conversation_marked_read",
-              { conversationId },
+              { conversation_id: conversationId },
             );
           }
         } catch (err) {
           console.error(`[Join Error] for user ${user.id}:`, err);
+        }
+      },
+    );
+
+    // AJOUTÉ : Gestionnaire d'événement "mark_as_read" pour enregistrer la lecture en DB en temps réel
+    socket.on(
+      "mark_as_read",
+      async (data: { conversation_id: string }): Promise<void> => {
+        try {
+          const conversationId = data?.conversation_id;
+          if (!conversationId) return;
+
+          const updatedMessages = await PrismaDb.messages.updateMany({
+            where: {
+              conversation_id: conversationId,
+              sender_id: { not: user.id },
+              is_read: false,
+            },
+            data: { is_read: true },
+          });
+
+          if (updatedMessages.count > 0) {
+            const conversation = await PrismaDb.conversations.findUnique({
+              where: { id: conversationId },
+            });
+
+            if (conversation) {
+              io.to(`user_${conversation.user1_id}`).emit(
+                "conversation_marked_read",
+                { conversation_id: conversationId },
+              );
+              io.to(`user_${conversation.user2_id}`).emit(
+                "conversation_marked_read",
+                { conversation_id: conversationId },
+              );
+            }
+          }
+        } catch (err) {
+          console.error(`[Mark As Read Error] User ${user.id}:`, err);
+        }
+      },
+    );
+
+    socket.on(
+      "leave_conversation",
+      (data: { conversation_id: string }): void => {
+        if (data?.conversation_id) {
+          socket.leave(data.conversation_id);
         }
       },
     );
@@ -159,7 +217,6 @@ export const initSocket = (server: http.Server) => {
             messageToEmit,
           );
 
-          // Notification Push
           const recipientId =
             conversation.user1_id === user.id
               ? conversation.user2_id

@@ -76,7 +76,7 @@ const RegisterMobile: React.FC = () => {
     };
 
     const handleRegister: () => Promise<void> = async (): Promise<void> => {
-        if (!email || !username || !password || !favorite_band) {
+        if (!email || !username || !password) {
             Alert.alert("Erreur", "Veuillez remplir tous les champs.");
             return;
         }

@@ -46,9 +46,6 @@ export class UserService {
             throw new BadRequest("Password cannot be empty");
         }
 
-        if (isEmptyString(data.favorite_band)) {
-            throw new BadRequest("Favorite band cannot be empty");
-        }
 
         if (!isValidEmail(data.email)) {
             throw new BadRequest("Invalid email format");
