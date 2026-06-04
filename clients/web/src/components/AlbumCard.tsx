@@ -19,7 +19,6 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
   cover,
   rating,
   year,
-  genre = "N/A", 
 }) => {
   const navigate = useNavigate();
 
@@ -34,12 +33,6 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
           alt={title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
-        {/* Affichage conditionnel du badge seulement s'il existe */}
-        {genre && (
-          <span className="absolute top-3 right-3 bg-[#e91e63]/90 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-sm">
-            {genre}
-          </span>
-        )}
       </div>
 
       <div className="p-4 flex flex-col flex-grow">

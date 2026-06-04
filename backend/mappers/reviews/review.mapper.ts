@@ -72,6 +72,8 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
 
   protected mapOne(review: Reviews): ReviewResponseDto {
     const r = review as ReviewFull;
+    const userHasLiked =
+      Array.isArray((r as any).likes) && (r as any).likes.length > 0;
     return {
       id: r.id,
       user_id: r.user_id,
@@ -83,12 +85,11 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
       updated_at: r.updated_at,
       likes_count: r._count?.likes ?? 0,
       comments_count: r._count?.comments ?? 0,
-      isLiked: false,
+      isLiked: userHasLiked,
       user: r.user
         ? {
             id: r.user.id,
             username: r.user.username,
-            // CORRECTION ICI : Conversion du Uint8Array en chaîne Base64 lisible par le navigateur
             image: r.user.profile_picture
               ? `data:image/jpeg;base64,${Buffer.from(r.user.profile_picture).toString("base64")}`
               : null,

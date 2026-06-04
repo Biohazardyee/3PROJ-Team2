@@ -1,5 +1,5 @@
 import { MediaStatus } from "../../generated/prisma/enums";
-import { MediaResponseDto } from "./media.dto"; // Importe ton DTO de média
+import { MediaResponseDto } from "./media.dto"; 
 
 export interface MediaStatusResponseDto {
   user_id: string;

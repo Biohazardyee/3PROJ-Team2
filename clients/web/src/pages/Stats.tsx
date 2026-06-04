@@ -1,5 +1,7 @@
 import React, { ReactNode, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { jwtDecode } from "jwt-decode";
+import apiClient from "../api/client";
 import { AlbumCard } from "../components/AlbumCard";
 
 type StatCardData = {
@@ -12,7 +14,6 @@ type StatCardData = {
   icon: ReactNode;
 };
 
-// Interface correspondant à la structure retournée par votre backend (Prisma include media)
 type UserMediaStatusResponse = {
   user_id: string;
   media_id: string;
@@ -20,74 +21,61 @@ type UserMediaStatusResponse = {
   created_at: string;
   media: {
     id: string;
-    title: string;
+    api_id: string;
+    name: string;
     artist: string;
-    image: string;
-    rating: number;
-    year: number;
-    description: string;
+    cover: string | null;
+    rating?: number;
+    created_at: string;
   } | null;
 };
 
 const Stats: React.FC = () => {
   const { t } = useTranslation();
 
-  const [activeFilter, setActiveFilter] = useState<string>("completed");
+  const [activeFilter, setActiveFilter] = useState<string>("listened");
   const [mediaStatuses, setMediaStatuses] = useState<UserMediaStatusResponse[]>(
     [],
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // À ADAPTER : Récupérez l'ID de l'utilisateur connecté (via un hook d'auth, un context, localStorage...)
-  // Exemple fictif : const { user } = useAuth(); const userId = user?.id;
-  const userId = "VOTRE_USER_ID_CONNECTE";
-
-  // 1. Fetch des données depuis l'API Express
   useEffect(() => {
     const fetchUserStats = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Ajustez le préfixe de l'URL (/api) selon la configuration de votre proxy ou routeur de l'application
-        const response = await fetch(`/api/status/user/${userId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // Ajoutez votre token d'authentification si authGuard est activé :
-            // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(
-            "Erreur lors de la récupération des données statistiques.",
-          );
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("Vous devez être connecté pour voir vos statistiques.");
+          setLoading(false);
+          return;
         }
 
-        const data = await response.json();
-        // L'API renvoie { message: "...", mediasStatus: [...] }
-        setMediaStatuses(data.mediasStatus || []);
+        const decoded: any = jwtDecode(token);
+        const userId = decoded.id || decoded.userId;
+
+        const response = await apiClient.get(`/medias/status/user/${userId}`);
+        const data = response.data.mediasStatus || [];
+
+        setMediaStatuses(data);
       } catch (err: any) {
-        console.error(err);
-        setError(err.message || "Une erreur est survenue");
+        console.error("Erreur lors du chargement des statistiques:", err);
+        setError(err.response?.data?.message || "Une erreur est survenue");
       } finally {
         setLoading(false);
       }
     };
 
-    if (userId && userId !== "VOTRE_USER_ID_CONNECTE") {
-      fetchUserStats();
-    }
-  }, [userId]);
+    fetchUserStats();
+  }, []);
 
-  // 2. Calcul dynamique des compteurs par statut (gère la casse de la DB au cas où)
   const counts = {
-    completed: 0,
-    listening: 0,
-    wishlist: 0,
-    dropped: 0,
+    listened: 0,
+    later: 0,
+    favorite: 0,
+    disliked: 0,
   };
 
   mediaStatuses.forEach((item) => {
@@ -98,20 +86,20 @@ const Stats: React.FC = () => {
   });
 
   const totalAlbums =
-    counts.completed + counts.listening + counts.wishlist + counts.dropped;
+    counts.listened + counts.later + counts.favorite + counts.disliked;
 
   const getPercentage = (count: number) => {
     if (totalAlbums === 0) return 0;
     return Math.round((count / totalAlbums) * 100);
   };
 
-  // 3. Remplissage des cartes statistiques avec les vraies valeurs calculées
+  // 3. Remplissage des cartes statistiques
   const STATS_CARDS: StatCardData[] = [
     {
-      id: "completed",
-      label: t("status_completed"),
-      value: counts.completed,
-      progress: getPercentage(counts.completed),
+      id: "listened",
+      label: "Écoutés", // Remplace par t("status_listened") si dispo
+      value: counts.listened,
+      progress: getPercentage(counts.listened),
       colorClass: "text-emerald-400",
       bgClass: "bg-emerald-400",
       icon: (
@@ -132,10 +120,10 @@ const Stats: React.FC = () => {
       ),
     },
     {
-      id: "listening",
-      label: t("status_listening"),
-      value: counts.listening,
-      progress: getPercentage(counts.listening),
+      id: "later",
+      label: "À écouter", // Remplace par t("status_later")
+      value: counts.later,
+      progress: getPercentage(counts.later),
       colorClass: "text-blue-500",
       bgClass: "bg-blue-500",
       icon: (
@@ -150,16 +138,16 @@ const Stats: React.FC = () => {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            d="M4 6h16M4 10h16M4 14h16M4 18h16"
           />
         </svg>
       ),
     },
     {
-      id: "wishlist",
-      label: t("status_wishlist"),
-      value: counts.wishlist,
-      progress: getPercentage(counts.wishlist),
+      id: "favorite",
+      label: "Favoris", // Remplace par t("status_favorite")
+      value: counts.favorite,
+      progress: getPercentage(counts.favorite),
       colorClass: "text-amber-400",
       bgClass: "bg-amber-400",
       icon: (
@@ -174,16 +162,16 @@ const Stats: React.FC = () => {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
           />
         </svg>
       ),
     },
     {
-      id: "dropped",
-      label: t("status_dropped"),
-      value: counts.dropped,
-      progress: getPercentage(counts.dropped),
+      id: "disliked",
+      label: "Détestés",
+      value: counts.disliked,
+      progress: getPercentage(counts.disliked),
       colorClass: "text-rose-500",
       bgClass: "bg-rose-500",
       icon: (
@@ -206,34 +194,13 @@ const Stats: React.FC = () => {
   ];
 
   const FILTERS = [
-    {
-      id: "completed",
-      label: t("status_completed"),
-      count: counts.completed,
-      icon: "✅",
-    },
-    {
-      id: "listening",
-      label: t("status_listening"),
-      count: counts.listening,
-      icon: "🎧",
-    },
-    {
-      id: "wishlist",
-      label: t("status_wishlist"),
-      count: counts.wishlist,
-      icon: "⭐",
-    },
-    {
-      id: "dropped",
-      label: t("status_dropped"),
-      count: counts.dropped,
-      icon: "❌",
-    },
+    { id: "listened", label: "Écoutés", count: counts.listened, icon: "✅" },
+    { id: "later", label: "À écouter", count: counts.later, icon: "🎧" },
+    { id: "favorite", label: "Favoris", count: counts.favorite, icon: "⭐" },
+    { id: "disliked", label: "Détestés", count: counts.disliked, icon: "❌" },
   ];
 
-  // 4. Calcul du camembert SVG dynamique (Slices imbriquées à l'aide de strokeDashoffset cumulés)
-  const pieOrder = ["completed", "wishlist", "listening", "dropped"];
+  const pieOrder = ["listened", "favorite", "later", "disliked"];
   let accumulatedPercentage = 0;
 
   const pieSlices = pieOrder.map((id) => {
@@ -243,14 +210,13 @@ const Stats: React.FC = () => {
     accumulatedPercentage += percentage;
 
     let colorClass = "text-emerald-400";
-    if (id === "wishlist") colorClass = "text-amber-400";
-    if (id === "listening") colorClass = "text-blue-500";
-    if (id === "dropped") colorClass = "text-rose-500";
+    if (id === "favorite") colorClass = "text-amber-400";
+    if (id === "later") colorClass = "text-blue-500";
+    if (id === "disliked") colorClass = "text-rose-500";
 
     return { id, percentage, offset: -offset, colorClass };
   });
 
-  // 5. Filtrage et extraction des albums pour l'affichage de la grille
   const displayedAlbums = mediaStatuses
     .filter(
       (item) =>
@@ -258,13 +224,18 @@ const Stats: React.FC = () => {
     )
     .map((item) => {
       const album = item.media!;
+
+      const albumYear = album.created_at
+        ? new Date(album.created_at).getFullYear()
+        : new Date().getFullYear();
+
       return {
         id: album.id,
-        title: album.title,
+        title: album.name, 
         artist: album.artist,
-        image: album.image,
-        rating: album.rating,
-        year: album.year,
+        image: album.cover || "", 
+        rating: album.rating ?? 0,
+        year: albumYear, 
       };
     });
 
@@ -288,17 +259,15 @@ const Stats: React.FC = () => {
 
   return (
     <div className="p-8 max-w-[2048px] mx-auto w-full space-y-6 min-h-screen bg-transparent dark:bg-slate-50 text-white dark:text-gray-900 transition-colors duration-300">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2 text-white dark:text-gray-900">
-          {t("stats_title")}
+          {t("stats_title", "Statistiques")}
         </h1>
         <p className="text-gray-400 dark:text-gray-600 text-lg">
-          {t("stats_subtitle")}
+          {t("stats_subtitle", "Découvrez vos habitudes d'écoute")}
         </p>
       </div>
 
-      {/* Cartes des statistiques */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {STATS_CARDS.map((stat) => (
           <div
@@ -324,7 +293,6 @@ const Stats: React.FC = () => {
         ))}
       </div>
 
-      {/* Graphique */}
       <div className="bg-slate-900 dark:bg-white border border-slate-800 dark:border-gray-200 rounded-xl p-6 shadow-sm transition-colors">
         <h2
           className="text-lg font-bold flex items-center gap-2 mb-8 text-white dark:text-gray-900"
@@ -344,17 +312,15 @@ const Stats: React.FC = () => {
               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
             />
           </svg>
-          {t("stats_detail_title")}
+          {t("stats_detail_title", "Répartition")}
         </h2>
 
         <div className="flex flex-col items-center justify-center">
-          {/* Camembert */}
           <div className="relative w-64 h-64">
             <svg
               viewBox="0 0 36 36"
               className="w-full h-full transform -rotate-90"
             >
-              {/* Cercle de fond gris */}
               <path
                 className="text-slate-800 dark:text-gray-100"
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -362,8 +328,6 @@ const Stats: React.FC = () => {
                 stroke="currentColor"
                 strokeWidth="4"
               />
-
-              {/* Portions dynamiques du camembert */}
               {totalAlbums > 0 &&
                 pieSlices.map((slice) => (
                   <path
@@ -375,13 +339,11 @@ const Stats: React.FC = () => {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="4"
-                    transition-all="true"
-                    duration-300="true"
+                    style={{ transition: "stroke-dasharray 0.3s ease" }}
                   />
                 ))}
             </svg>
 
-            {/* Icône de musique au centre du camembert */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="bg-slate-800 dark:bg-gray-100 p-4 rounded-full shadow-lg border border-slate-700 dark:border-gray-200 text-blue-500 dark:text-blue-600 transition-colors">
                 <svg
@@ -402,14 +364,13 @@ const Stats: React.FC = () => {
             </div>
           </div>
 
-          {/* Légende */}
           <div className="flex flex-wrap justify-center gap-6 mt-8 text-sm font-medium">
             {STATS_CARDS.map((stat) => (
               <div
                 key={`legend-${stat.id}`}
                 className={`flex items-center gap-2 ${stat.colorClass}`}
               >
-                <div className={`w-3 h-3 rounded-sm ${stat.bgClass}`}></div>{" "}
+                <div className={`w-3 h-3 rounded-sm ${stat.bgClass}`}></div>
                 {stat.label} ({stat.value})
               </div>
             ))}
@@ -417,7 +378,6 @@ const Stats: React.FC = () => {
         </div>
       </div>
 
-      {/* Barre de filtres */}
       <div className="flex flex-col sm:flex-row flex-wrap bg-slate-900 dark:bg-white rounded-xl p-1 border border-slate-800 dark:border-gray-200 shadow-sm transition-colors mb-6">
         {FILTERS.map((filter) => (
           <button
@@ -436,7 +396,6 @@ const Stats: React.FC = () => {
         ))}
       </div>
 
-      {/* AlbumCard dynamique */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {displayedAlbums.map((album) => (
           <AlbumCard
@@ -445,16 +404,15 @@ const Stats: React.FC = () => {
             title={album.title}
             artist={album.artist}
             cover={album.image}
-            rating={album.rating}
+            rating={album.rating ?? 0}
             year={album.year}
           />
         ))}
       </div>
 
-      {/* Message affiché si une catégorie est vide */}
       {displayedAlbums.length === 0 && (
         <div className="text-center py-12 text-gray-500">
-          {t("no_album_category")}
+          {t("no_album_category", "Aucun album dans cette catégorie")}
         </div>
       )}
     </div>
