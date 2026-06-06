@@ -1,21 +1,20 @@
-import React, {useState, useEffect} from "react";
-import {useParams, useNavigate, useSearchParams} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {
-    FaStar,
-    FaPlus,
-    FaChevronLeft,
-    FaPaperPlane,
-    FaChevronDown,
     FaCheckCircle,
+    FaChevronDown,
+    FaChevronLeft,
     FaHeadphones,
+    FaPaperPlane,
+    FaPlus,
+    FaStar,
     FaTimesCircle,
 } from "react-icons/fa";
-import {Heart, MessageCircle, Trash2, Edit3, Loader2} from "lucide-react";
+import {Edit3, Heart, Loader2, MessageCircle, Trash2} from "lucide-react";
 import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import UserAvatar from "../components/UserAvatar";
-
 type TabType = "Commentaires" | "Albums";
 
 const AlbumDetails: React.FC = () => {
@@ -195,8 +194,6 @@ const AlbumDetails: React.FC = () => {
             setLoading(true);
             let finalData = null;
 
-            // 1. Ne tenter la recherche locale que si l'ID ne semble pas être un ID de "recommandation"
-            // On vérifie que l'ID ne commence pas par "reco-"
             const isLocalId = id && id.includes("-") && !id.startsWith("reco-");
 
             if (isLocalId) {
@@ -217,14 +214,11 @@ const AlbumDetails: React.FC = () => {
                     console.log("Média non trouvé en DB locale, passage à l'API externe...");
                 }
             }
-
-            // 2. Si pas trouvé (ou si c'était un ID de reco), appeler API externe + Sync
             if (!finalData && urlArtist && urlAlbum) {
                 try {
                     const res = await apiClient.get("/api/albums/info", {
                         params: {artist: urlArtist, album: urlAlbum, mbid: urlMbid},
                     });
-                    // ... (reste de votre code de sync inchangé)
                     const externalInfo = res.data.albumInfo || {};
                     const imageUrl = urlCover || externalInfo.image?.[3]?.["#text"] || "";
 
@@ -237,7 +231,6 @@ const AlbumDetails: React.FC = () => {
                         db_id: null,
                     };
 
-                    // Tentative de synchronisation en DB
                     try {
                         const syncRes = await apiClient.post("/medias/sync-search", {
                             albums: [{
@@ -436,7 +429,6 @@ const AlbumDetails: React.FC = () => {
         );
     }
 
-
     const isFormInvalid =
         userRating === 0 || commentTitle.trim() === "" || commentText.trim() === "";
     const isEditInvalid =
@@ -567,23 +559,61 @@ const AlbumDetails: React.FC = () => {
         const text = replyInputs[String(key)];
         if (!text || !text.trim()) return;
 
+        const tempId = `temp-${Date.now()}`;
+        const tempReply = {
+            id: tempId,
+            content: text.trim(),
+            user_id: currentUserId,
+            parent_id: parentCommentId && parentCommentId !== reviewId ? parentCommentId : null,
+            created_at: new Date().toISOString(),
+            user: { username: "Moi", id: currentUserId }
+        };
+
+        setCommentsList((prev) =>
+            prev.map((review) => {
+                if (review.id === reviewId) {
+                    return {
+                        ...review,
+                        reviewComments: [...(review.reviewComments || []), tempReply]
+                    };
+                }
+                return review;
+            })
+        );
+
+        setReplyInputs((prev) => ({ ...prev, [String(key)]: "" }));
+        setActiveReplyId(null);
+        setActiveNestedReplyId(null);
+        setExpandedReplies((prev) => (prev.includes(reviewId) ? prev : [...prev, reviewId]));
+
         try {
-            await apiClient.post(`/review-comments`, {
+            const response = await apiClient.post(`/review-comments`, {
                 review_id: reviewId,
-                // ✅ parent_id uniquement si on répond à un ReviewComment existant, pas à la review elle-même
-                ...(parentCommentId && parentCommentId !== reviewId ? {parent_id: parentCommentId} : {}),
+                ...(parentCommentId && parentCommentId !== reviewId ? { parent_id: parentCommentId } : {}),
                 content: text.trim(),
             });
 
-            setReplyInputs((prev) => ({...prev, [String(key)]: ""}));
-            setActiveReplyId(null);
-            setExpandedReplies((prev) =>
-                prev.includes(reviewId) ? prev : [...prev, reviewId]
+            const saved = response.data?.reviewComment || response.data;
+
+            setCommentsList((prev) =>
+                prev.map((review) => {
+                    if (review.id === reviewId) {
+                        return {
+                            ...review,
+                            reviewComments: review.reviewComments.map((c: any) =>
+                                c.id === tempId
+                                    ? { ...c, id: saved.id || tempId, created_at: saved.created_at || c.created_at }
+                                    : c
+                            )
+                        };
+                    }
+                    return review;
+                })
             );
-            fetchReviews();
         } catch (err) {
             console.error("Erreur lors de l'envoi de la réponse:", err);
             alert("Impossible d'envoyer la réponse.");
+            fetchReviews();
         }
     };
 
@@ -688,13 +718,13 @@ const AlbumDetails: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <FaStar className="text-[#FF1E56] text-2xl"/>
                             <span className="text-3xl font-bold">
-                {albumData?.rating !== undefined
-                    ? Number(albumData.rating).toFixed(1)
-                    : "0.0"}
-              </span>
+                            {albumData?.rating !== undefined
+                                ? Number(albumData.rating).toFixed(1)
+                                : "0.0"}
+                          </span>
                             <span className="text-gray-500 font-medium">
-                {t("fan_rating")}
-              </span>
+                            {t("fan_rating")}
+                          </span>
                         </div>
 
                         <div className="flex flex-wrap gap-3 items-center">
@@ -711,16 +741,16 @@ const AlbumDetails: React.FC = () => {
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                     className="bg-[#1a1b26] dark:bg-white border border-gray-700 dark:border-gray-200 px-5 py-3.5 rounded-xl text-white dark:text-gray-900 flex items-center gap-4 min-w-[220px] justify-between shadow-lg"
                                 >
-        <span className="text-sm font-bold tracking-wide uppercase flex items-center gap-2">
-            {activeOption ? (
-                <>
-                    <span className={activeOption.color}>{activeOption.icon}</span>
-                    {activeOption.label}
-                </>
-            ) : (
-                <span>{t("select_status", "Statut")}</span>
-            )}
-        </span>
+                                    <span className="text-sm font-bold tracking-wide uppercase flex items-center gap-2">
+                                        {activeOption ? (
+                                            <>
+                                                <span className={activeOption.color}>{activeOption.icon}</span>
+                                                {activeOption.label}
+                                            </>
+                                        ) : (
+                                            <span>{t("select_status", "Statut")}</span>
+                                        )}
+                                    </span>
                                     <FaChevronDown
                                         className={`text-gray-500 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`}
                                         size={12}
@@ -957,7 +987,11 @@ const AlbumDetails: React.FC = () => {
                                                                         onClick={() => comment.user?.id && navigate(`/profil/${comment.user.id}`)}
                                                                         className="cursor-pointer transition-transform hover:scale-105"
                                                                     >
-                                                                        <UserAvatar user={comment.user}/>
+                                                                        <UserAvatar
+                                                                            userId={comment.user?.id || comment.user_id}
+                                                                            username={comment.user?.username}
+                                                                            sizeClass="w-10 h-10 text-sm"
+                                                                        />
                                                                     </div>
 
                                                                     <div>
@@ -1039,30 +1073,30 @@ const AlbumDetails: React.FC = () => {
                                                             {/* Champ de saisie interactif pour les réponses */}
                                                             {/* Input réponse — réponse directe à la review, pas à un commentaire */}
                                                             {activeReplyId === comment.id && (
-                                                                <div
-                                                                    className="mt-4 pt-4 border-t border-gray-800/50 dark:border-gray-200">
+                                                                <div className="mt-4 pt-4 border-t border-gray-800/50 dark:border-gray-200">
                                                                     <div className="flex items-center gap-2">
                                                                         <input
                                                                             type="text"
                                                                             autoFocus
-                                                                            placeholder={t("reply_to", {user: comment.user?.username || "Anonyme"})}
+                                                                            placeholder={t("reply_to", { user: comment.user?.username || "Anonyme" })}
                                                                             value={replyInputs[String(comment.id)] || ""}
                                                                             onChange={(e) =>
-                                                                                setReplyInputs({
-                                                                                    ...replyInputs,
-                                                                                    [String(comment.id)]: e.target.value
-                                                                                })
+                                                                                setReplyInputs({ ...replyInputs, [String(comment.id)]: e.target.value })
                                                                             }
-                                                                            onKeyDown={(e) =>
-                                                                                e.key === "Enter" && submitReply(comment.id) // ✅ pas de parentCommentId
-                                                                            }
-                                                                            className="flex-1 bg-[#1a1b26] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 p-3 text-sm rounded-xl focus:outline-none"
+                                                                            onKeyDown={(e) => e.key === "Enter" && submitReply(comment.id)}
+                                                                            className="flex-1 bg-[#1a1b26] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 p-2.5 text-sm rounded-xl focus:outline-none focus:border-blue-500"
                                                                         />
                                                                         <button
-                                                                            onClick={() => submitReply(comment.id)} // ✅ pas de parentCommentId
-                                                                            className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors"
+                                                                            onClick={() => submitReply(comment.id)}
+                                                                            className="flex items-center justify-center w-10 h-10 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors shrink-0"
                                                                         >
-                                                                            <FaPaperPlane size={14}/>
+                                                                            <FaPaperPlane size={13} />
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() => setActiveReplyId(null)}
+                                                                            className="text-sm font-semibold text-gray-500 hover:text-gray-300 px-2 transition-colors"
+                                                                        >
+                                                                            Cancel
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -1096,10 +1130,11 @@ const AlbumDetails: React.FC = () => {
                                                                                         <div
                                                                                             className="flex items-start gap-2 min-w-0">
                                                                                             {/* Mini avatar */}
-                                                                                            <div
-                                                                                                className="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-[10px] font-bold text-blue-400 shrink-0">
-                                                                                                {(reply.user?.username || "A").slice(0, 2).toUpperCase()}
-                                                                                            </div>
+                                                                                            <UserAvatar
+                                                                                                userId={reply.user?.id || reply.user_id}
+                                                                                                username={reply.user?.username}
+                                                                                                sizeClass="w-7 h-7 text-[10px]"
+                                                                                            />
                                                                                             <div className="min-w-0">
                                                                                                 <div
                                                                                                     className="flex items-center gap-2 flex-wrap mb-1">
@@ -1153,44 +1188,34 @@ const AlbumDetails: React.FC = () => {
 
                                                                                     {/* Input réponse imbriquée */}
                                                                                     {activeNestedReplyId === reply.id && (
-                                                                                        <div
-                                                                                            className={`mt-2 ${depth === 1 ? "ml-[3.75rem]" : depth === 2 ? "ml-[5.25rem]" : "ml-9"}`}>
-                                                                                            <div
-                                                                                                className="flex items-center gap-2">
+                                                                                        <div className={`mt-2 ${depth === 1 ? "ml-[3.75rem]" : depth === 2 ? "ml-[5.25rem]" : "ml-9"}`}>
+                                                                                            <div className="flex items-center gap-2">
                                                                                                 <input
                                                                                                     type="text"
                                                                                                     autoFocus
                                                                                                     placeholder={`Répondre à ${reply.user?.username || "Anonyme"}...`}
                                                                                                     value={replyInputs[String(reply.id)] || ""}
                                                                                                     onChange={(e) =>
-                                                                                                        setReplyInputs({
-                                                                                                            ...replyInputs,
-                                                                                                            [String(reply.id)]: e.target.value
-                                                                                                        })
+                                                                                                        setReplyInputs({ ...replyInputs, [String(reply.id)]: e.target.value })
                                                                                                     }
                                                                                                     onKeyDown={(e) => {
                                                                                                         if (e.key === "Enter") {
                                                                                                             submitReply(comment.id, reply.id);
-                                                                                                            setActiveNestedReplyId(null);
                                                                                                         }
                                                                                                     }}
-                                                                                                    className="flex-1 bg-[#161b2c] dark:bg-gray-50 border border-gray-700 dark:border-gray-300 p-2.5 text-sm rounded-xl focus:outline-none focus:border-blue-500"
+                                                                                                    className="flex-1 bg-[#161b2c] dark:bg-gray-50 border border-gray-700 dark:border-gray-300 p-2 text-sm rounded-xl focus:outline-none focus:border-blue-500"
                                                                                                 />
                                                                                                 <button
-                                                                                                    onClick={() => {
-                                                                                                        submitReply(comment.id, reply.id);
-                                                                                                        setActiveNestedReplyId(null);
-                                                                                                    }}
-                                                                                                    className="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors"
+                                                                                                    onClick={() => submitReply(comment.id, reply.id)}
+                                                                                                    className="flex items-center justify-center w-9 h-9 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors shrink-0"
                                                                                                 >
-                                                                                                    <FaPaperPlane
-                                                                                                        size={12}/>
+                                                                                                    <FaPaperPlane size={11} />
                                                                                                 </button>
                                                                                                 <button
                                                                                                     onClick={() => setActiveNestedReplyId(null)}
-                                                                                                    className="text-xs text-gray-500 hover:text-gray-300 px-1"
+                                                                                                    className="text-xs font-semibold text-gray-500 hover:text-gray-300 px-2 transition-colors"
                                                                                                 >
-                                                                                                    {t("cancel")}
+                                                                                                    Cancel
                                                                                                 </button>
                                                                                             </div>
                                                                                         </div>
@@ -1267,5 +1292,7 @@ const AlbumDetails: React.FC = () => {
         </div>
     );
 };
+
+
 
 export default AlbumDetails;

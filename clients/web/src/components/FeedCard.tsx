@@ -18,8 +18,10 @@ import apiClient from "../api/client";
 export interface ReviewReply {
     id: string | number;
     user: string;
+    user_id?: string | number;
     user_image?: string;
     text: string;
+    parent_id?: string | number | null;
     parent_user?: string;
     created_at?: string;
 }
@@ -27,6 +29,7 @@ export interface ReviewReply {
 export interface ReviewComment {
     id: string | number;
     user: string;
+    user_id?: string | number;
     user_image?: string;
     text: string;
     created_at?: string;
@@ -64,6 +67,7 @@ interface FeedCardProps {
     onNavigateToProfile: (userId: string) => void;
     likingId: string | null;
     currentUserId: string | null;
+    currentUserRole?: "BASIC" | "ADMIN";
 }
 
 
@@ -110,6 +114,25 @@ const StarRating: React.FC<{ rating: number }> = ({rating}) => (
     </div>
 );
 
+// ─── Helpers ───────────────────────────────────────────────────────────────────
+
+// Profondeur max affichée visuellement (0 = racine, 1 = réponse, 2 = réponse à la réponse)
+const MAX_DEPTH = 2;
+
+/** Renvoie la classe d'indentation selon la profondeur. */
+function depthClass(depth: number): string {
+    if (depth === 1) return "ml-6";
+    if (depth >= 2) return "ml-12";
+    return "";
+}
+
+/** Renvoie la classe de bordure colorée selon la profondeur. */
+function depthBorderClass(depth: number): string {
+    if (depth === 1) return "border-l-[3px] border-l-[#3b82f6]";
+    if (depth >= 2) return "border-l-[3px] border-l-[#a855f7]";
+    return "";
+}
+
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 const FeedCard: React.FC<FeedCardProps> = ({
@@ -119,15 +142,18 @@ const FeedCard: React.FC<FeedCardProps> = ({
                                                onNavigateToProfile,
                                                likingId,
                                                currentUserId,
+                                               currentUserRole = "BASIC",
                                            }) => {
     const {t} = useTranslation();
     const displayRating: number = item.userReviewRating ?? item.globalRating ?? item.rating ?? 0;
     const isReview: boolean = item.type === "review";
     const isNew: boolean = item.type === "new_album" || item.type === "recommendation";
     const isLiking: boolean = likingId === item.id;
+    const isAdmin: boolean = currentUserRole === "ADMIN";
 
     const [commentsOpen, setCommentsOpen] = useState(false);
-    const [comments, setComments] = useState<ReviewComment[]>([]);
+    // On stocke maintenant un tableau PLAT de tous les commentaires (parents + enfants)
+    const [allComments, setAllComments] = useState<ReviewReply[]>([]);
     const [commentsLoading, setCommentsLoading] = useState(false);
     const [commentsFetched, setCommentsFetched] = useState(false);
 
@@ -135,41 +161,32 @@ const FeedCard: React.FC<FeedCardProps> = ({
     const [submittingComment, setSubmittingComment] = useState(false);
     const [activeReplyId, setActiveReplyId] = useState<string | number | null>(null);
     const [replyInputs, setReplyInputs] = useState<{ [key: string | number]: string }>({});
-    const [expandedReplies, setExpandedReplies] = useState<(string | number)[]>([]);
+    const [expandedParents, setExpandedParents] = useState<(string | number)[]>([]);
     const [submittingReply, setSubmittingReply] = useState<string | number | null>(null);
+    const [deletingId, setDeletingId] = useState<string | number | null>(null);
 
-    // Charger et transformer la liste plate en arbre
+    // ─── Chargement : on garde la liste PLATE avec parent_id ──────────────────
     const fetchComments = useCallback(async () => {
         if (!item.review_id || commentsFetched) return;
         setCommentsLoading(true);
         try {
             const response = await apiClient.get(`/review-comments/review/${item.review_id}`);
-            const raw = response.data?.comments || response.data || [];
+            const raw: any[] = response.data?.comments || response.data || [];
 
-            // 1. Identifier parents et enfants grâce au parent_id
-            const parentComments = raw.filter((c: any) => !c.parent_id);
-            const childComments = raw.filter((c: any) => c.parent_id);
+            // On conserve tous les commentaires à plat, en normalisant les champs
+            const normalized: ReviewReply[] = raw
+                .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+                .map((c: any) => ({
+                    id: c.id,
+                    user: c.user?.username || c.user_name || "Anonyme",
+                    user_id: c.user?.id || c.user_id || c.userId,
+                    user_image: c.user?.profile_picture,
+                    text: c.content || c.text || "",
+                    parent_id: c.parent_id ?? null,
+                    created_at: c.created_at,
+                }));
 
-            // 2. Construire la hiérarchie
-            setComments(
-                parentComments.map((p: any) => ({
-                    id: p.id,
-                    user: p.user?.username || p.user_name || "Anonyme",
-                    user_image: p.user?.profile_picture,
-                    text: p.content || p.text || "",
-                    created_at: p.created_at,
-                    replies: childComments
-                        .filter((child: any) => child.parent_id === p.id)
-                        .map((r: any) => ({
-                            id: r.id,
-                            user: r.user?.username || r.user_name || "Anonyme",
-                            user_image: r.user?.profile_picture,
-                            text: r.content || r.text || "",
-                            created_at: r.created_at,
-                            parent_user: p.user?.username || p.user_name || "Anonyme",
-                        })),
-                }))
-            );
+            setAllComments(normalized);
             setCommentsFetched(true);
         } catch {
             setCommentsFetched(true);
@@ -184,19 +201,31 @@ const FeedCard: React.FC<FeedCardProps> = ({
         if (next && !commentsFetched) fetchComments();
     };
 
+    // ─── Helpers de permission ─────────────────────────────────────────────────
+
+    const canDelete = (commentUserId?: string | number): boolean => {
+        if (isAdmin) return true;
+        if (!currentUserId || !commentUserId) return false;
+        return String(commentUserId) === String(currentUserId);
+    };
+
+    // ─── Soumission d'un commentaire racine ────────────────────────────────────
+
     const handleSubmitComment = async () => {
         const text = commentInput.trim();
         if (!text || !currentUserId || !item.review_id) return;
         setSubmittingComment(true);
 
-        const tempComment: ReviewComment = {
-            id: `temp-${Date.now()}`,
+        const tempId = `temp-${Date.now()}`;
+        const tempComment: ReviewReply = {
+            id: tempId,
             user: "Moi",
+            user_id: currentUserId,
             text,
+            parent_id: null,
             created_at: new Date().toISOString(),
-            replies: [],
         };
-        setComments((prev) => [...prev, tempComment]);
+        setAllComments((prev) => [...prev, tempComment]);
         setCommentInput("");
 
         try {
@@ -205,53 +234,53 @@ const FeedCard: React.FC<FeedCardProps> = ({
                 user_id: currentUserId,
                 content: text,
             });
-            const saved = response.data?.comment || response.data;
-            setComments((prev) =>
+            const saved = response.data?.reviewComment || response.data;
+
+            setAllComments((prev) =>
                 prev.map((c) =>
-                    c.id === tempComment.id
+                    c.id === tempId
                         ? {
-                            id: saved.id,
+                            id: saved.id || tempId,
                             user: saved.user?.username || "Moi",
+                            user_id: saved.user?.id || currentUserId,
                             user_image: saved.user?.profile_picture,
                             text: saved.content || text,
+                            parent_id: null,
                             created_at: saved.created_at || tempComment.created_at,
-                            replies: [],
                         }
                         : c
                 )
             );
         } catch {
-            setComments((prev) => prev.filter((c) => c.id !== tempComment.id));
+            setAllComments((prev) => prev.filter((c) => c.id !== tempId));
             setCommentInput(text);
         } finally {
             setSubmittingComment(false);
         }
     };
 
-    const handleSubmitReply = async (commentId: string | number) => {
-        const text = (replyInputs[commentId] || "").trim();
-        if (!text || !currentUserId) return;
-        setSubmittingReply(commentId);
 
-        const parentUser = comments.find(c => c.id === commentId)?.user || "Anonyme";
+    const handleSubmitReply = async (parentId: string | number) => {
+        const text = (replyInputs[parentId] || "").trim();
+        if (!text || !currentUserId || !item.review_id) return;
+        setSubmittingReply(parentId);
+
+        const tempId = `temp-reply-${Date.now()}`;
         const tempReply: ReviewReply = {
-            id: `temp-reply-${Date.now()}`,
+            id: tempId,
             user: "Moi",
+            user_id: currentUserId,
             text,
-            parent_user: parentUser,
-            created_at: new Date().toISOString()
+            parent_id: parentId,
+            created_at: new Date().toISOString(),
         };
 
-        setComments((prev) =>
-            prev.map((c) =>
-                c.id === commentId ? {...c, replies: [...c.replies, tempReply]} : c
-            )
-        );
-
-        setReplyInputs((prev) => ({...prev, [commentId]: ""}));
+        setAllComments((prev) => [...prev, tempReply]);
+        setReplyInputs((prev) => ({...prev, [parentId]: ""}));
         setActiveReplyId(null);
-        if (!expandedReplies.includes(commentId)) {
-            setExpandedReplies((prev) => [...prev, commentId]);
+
+        if (!expandedParents.includes(parentId)) {
+            setExpandedParents((prev) => [...prev, parentId]);
         }
 
         try {
@@ -259,39 +288,232 @@ const FeedCard: React.FC<FeedCardProps> = ({
                 review_id: item.review_id,
                 user_id: currentUserId,
                 content: text,
-                parent_id: commentId,
+                parent_id: parentId,
             });
-            const saved = response.data?.comment || response.data;
-            setComments((prev) =>
+
+            const saved = response.data?.reviewComment || response.data;
+
+            setAllComments((prev) =>
                 prev.map((c) =>
-                    c.id === commentId
+                    c.id === tempId
                         ? {
-                            ...c,
-                            replies: c.replies.map((r) =>
-                                r.id === tempReply.id
-                                    ? {
-                                        id: saved.id,
-                                        user: saved.user?.username || "Moi",
-                                        text: saved.content || text,
-                                        parent_user: parentUser,
-                                        created_at: saved.created_at || tempReply.created_at
-                                    }
-                                    : r
-                            ),
+                            id: saved.id || tempId,
+                            user: saved.user?.username || "Moi",
+                            user_id: saved.user?.id || currentUserId,
+                            text: saved.content || text,
+                            parent_id: parentId,
+                            created_at: saved.created_at || tempReply.created_at,
                         }
                         : c
                 )
             );
         } catch {
-            setComments((prev) =>
-                prev.map((c) =>
-                    c.id === commentId ? {...c, replies: c.replies.filter((r) => r.id !== tempReply.id)} : c
-                )
-            );
+            setAllComments((prev) => prev.filter((c) => c.id !== tempId));
         } finally {
             setSubmittingReply(null);
         }
     };
+
+    // ─── Suppression ──────────────────────────────────────────────────────────
+
+    const handleDelete = async (commentId: string | number) => {
+        setDeletingId(commentId);
+        try {
+            await apiClient.delete(`/review-comments/${commentId}`);
+            // Supprimer le commentaire ET tous ses descendants
+            const collectDescendants = (id: string | number, comments: ReviewReply[]): (string | number)[] => {
+                const children = comments.filter((c) => c.parent_id === id);
+                return [id, ...children.flatMap((child) => collectDescendants(child.id, comments))];
+            };
+            const toRemove = new Set(collectDescendants(commentId, allComments));
+            setAllComments((prev) => prev.filter((c) => !toRemove.has(c.id)));
+        } catch {
+            // Erreur silencieuse — on pourrait afficher un toast ici
+        } finally {
+            setDeletingId(null);
+        }
+    };
+
+    // ─── Dérivations ──────────────────────────────────────────────────────────
+
+    // Commentaires racines (sans parent)
+    const rootComments = allComments.filter((c) => !c.parent_id);
+
+    // Enfants directs d'un parent donné
+    const directReplies = (parentId: string | number) =>
+        allComments.filter((c) => c.parent_id === parentId);
+
+    // Tous les descendants d'un parent (pour compter) — avec garde-fou anti-boucle
+    const allDescendants = (parentId: string | number, visited = new Set<string | number>()): ReviewReply[] => {
+        if (visited.has(parentId)) return [];
+        visited.add(parentId);
+        const direct = directReplies(parentId);
+        return direct.flatMap((r) => [r, ...allDescendants(r.id, visited)]);
+    };
+
+    // ─── Rendu d'un commentaire (récursif, max MAX_DEPTH niveaux) ────────────────
+
+    const renderComment = (comment: ReviewReply, depth: number = 0): React.ReactNode => {
+        const children = directReplies(comment.id);
+        const isExpanded = expandedParents.includes(comment.id);
+        const isReplying = activeReplyId === comment.id;
+        const totalDescendants = allDescendants(comment.id).length;
+        const isDeleting = deletingId === comment.id;
+        // Mention @parent : uniquement si ce commentaire est une réponse
+        const parentComment = comment.parent_id
+            ? allComments.find((c) => c.id === comment.parent_id)
+            : null;
+
+        // Au niveau max (depth 2), "Répondre" cible le commentaire de niveau 1 (direct enfant de la racine)
+        // pour que la nouvelle réponse s'insère dans ce fil sans créer un 4e niveau
+        const replyTargetId = depth >= MAX_DEPTH && parentComment
+            ? parentComment.id   // on répond au niveau 1, pas au niveau 2
+            : comment.id;
+
+        return (
+            <div key={String(comment.id)} className={depth > 0 ? depthClass(depth) : undefined}>
+                <div className={depth > 0 ? "border-l-2 border-[#2A2A38] dark:border-gray-300 pl-4" : undefined}>
+
+                    {/* ── Bulle du commentaire ── */}
+                    <div
+                        className={`flex gap-3 bg-[#13131A] dark:bg-gray-50 p-4 rounded-xl border border-gray-800/50 dark:border-gray-200 transition-colors ${depth > 0 ? depthBorderClass(depth) : ""}`}
+                    >
+                        {/* Avatar */}
+                        <div
+                            className={`rounded-full bg-[#2A2A38] dark:bg-slate-200 flex items-center justify-center font-bold text-blue-400 shrink-0 overflow-hidden ${depth === 0 ? "w-10 h-10 text-sm" : "w-8 h-8 text-xs"}`}
+                        >
+                            {comment.user_image
+                                ? <img src={comment.user_image} alt={comment.user} className="w-full h-full object-cover"/>
+                                : getInitials(comment.user)
+                            }
+                        </div>
+
+                        {/* Corps */}
+                        <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start mb-1 gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="font-bold text-white dark:text-gray-900 text-sm">
+                                        {comment.user}
+                                    </span>
+                                    {parentComment && (
+                                        <span className="text-[10px] px-2 py-0.5 rounded bg-[#1C1C28] dark:bg-blue-50 text-[#3b82f6] font-medium border border-[#3b82f6]/20">
+                                            @{parentComment.user}
+                                        </span>
+                                    )}
+                                    <span className="text-gray-500 text-xs">
+                                        {comment.created_at ? new Date(comment.created_at).toLocaleDateString() : ""}
+                                    </span>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex items-center gap-2 shrink-0">
+                                    <button
+                                        onClick={() => setActiveReplyId(isReplying ? null : comment.id)}
+                                        className="text-xs text-[#3b82f6] hover:text-blue-400 font-medium transition-colors"
+                                    >
+                                        Répondre
+                                    </button>
+
+                                    {canDelete(comment.user_id) && (
+                                        <button
+                                            onClick={() => handleDelete(comment.id)}
+                                            disabled={isDeleting}
+                                            className="flex items-center gap-1 text-[11px] text-[#ef4444] border border-[#ef4444]/30 hover:bg-[#ef4444]/10 px-2 py-1 rounded transition-colors disabled:opacity-50"
+                                        >
+                                            {isDeleting
+                                                ? <Loader2 size={11} className="animate-spin"/>
+                                                : <Trash size={11}/>
+                                            }
+                                            {isAdmin && String(comment.user_id) !== String(currentUserId)
+                                                ? "Suppr. (admin)"
+                                                : "Supprimer"
+                                            }
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            <p className="text-gray-300 dark:text-gray-600 text-sm mt-1 leading-relaxed">
+                                {comment.text}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* ── Input de réponse (affiché sous ce commentaire si actif) ── */}
+                    {activeReplyId === comment.id && (
+                        <div className="mt-2 mb-2 flex items-center gap-2 animate-in fade-in zoom-in duration-200">
+                            <div className="flex-1 relative">
+                                <input
+                                    type="text"
+                                    autoFocus
+                                    placeholder={`Répondre à ${comment.user}…`}
+                                    value={replyInputs[comment.id] || ""}
+                                    onChange={(e) => setReplyInputs((prev) => ({...prev, [comment.id]: e.target.value}))}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") handleSubmitReply(replyTargetId);
+                                    }}
+                                    className="w-full bg-[#13131A] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm text-white dark:text-gray-900 focus:outline-none transition-colors"
+                                />
+                                <button
+                                    onClick={() => handleSubmitReply(replyTargetId)}
+                                    disabled={submittingReply === comment.id}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#FF1E56] transition-colors p-1"
+                                >
+                                    {submittingReply === comment.id
+                                        ? <Loader2 size={16} className="animate-spin"/>
+                                        : <Send size={16}/>
+                                    }
+                                </button>
+                            </div>
+                            <button
+                                onClick={() => setActiveReplyId(null)}
+                                className="text-xs text-gray-500 hover:text-white dark:hover:text-gray-900 shrink-0"
+                            >
+                                {t("cancel_btn", "Annuler")}
+                            </button>
+                        </div>
+                    )}
+
+                    {/* ── Bouton toggle réponses (seulement s'il y a des enfants) ── */}
+                    {children.length > 0 && (
+                        <div className="mt-2 mb-1">
+                            <button
+                                onClick={() =>
+                                    setExpandedParents((prev) =>
+                                        prev.includes(comment.id)
+                                            ? prev.filter((id) => id !== comment.id)
+                                            : [...prev, comment.id]
+                                    )
+                                }
+                                className="text-xs text-[#3b82f6] hover:text-blue-400 font-medium transition-colors"
+                            >
+                                {isExpanded
+                                    ? "Masquer les réponses"
+                                    : `Voir les réponses (${totalDescendants})`
+                                }
+                            </button>
+                        </div>
+                    )}
+
+                    {/* ── Réponses récursives (bloquées à MAX_DEPTH) ── */}
+                    {isExpanded && children.length > 0 && depth < MAX_DEPTH && (
+                        <div className="mt-2 space-y-3 animate-in fade-in duration-200">
+                            {children.map((child) => renderComment(child, depth + 1))}
+                        </div>
+                    )}
+
+                    {/* ── Au niveau max : réponses affichées à plat sans indentation sup ── */}
+                    {isExpanded && children.length > 0 && depth >= MAX_DEPTH && (
+                        <div className="mt-2 space-y-3 animate-in fade-in duration-200">
+                            {children.map((child) => renderComment(child, MAX_DEPTH))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    // ─── Rendu principal ──────────────────────────────────────────────────────
 
     return (
         <div
@@ -406,158 +628,18 @@ const FeedCard: React.FC<FeedCardProps> = ({
                     <div className="space-y-4 mb-4">
                         {commentsLoading ? (
                             <div className="flex items-center gap-2 text-gray-500 text-sm py-2">
-                                <Loader2 size={14} className="animate-spin"/> Chargement...
+                                <Loader2 size={14} className="animate-spin"/> Chargement…
                             </div>
-                        ) : comments.length === 0 ? (
-                            <p className="text-gray-600 dark:text-gray-400 text-sm py-2">Aucun commentaire pour le
-                                moment.</p>
+                        ) : rootComments.length === 0 ? (
+                            <p className="text-gray-600 dark:text-gray-400 text-sm py-2">
+                                Aucun commentaire pour le moment.
+                            </p>
                         ) : (
-                            comments.map((comment) => (
-                                <div key={comment.id} className="flex flex-col relative">
-
-                                    {/* MESSAGE PRINCIPAL */}
-                                    <div
-                                        className="flex gap-4 bg-[#13131A] dark:bg-gray-50 p-4 rounded-xl border border-gray-800/50 dark:border-gray-200 transition-colors z-10">
-                                        <div
-                                            className="w-10 h-10 rounded-full bg-[#2A2A38] dark:bg-slate-200 flex items-center justify-center text-sm font-bold text-blue-400 shrink-0 overflow-hidden">
-                                            {comment.user_image ? (
-                                                <img src={comment.user_image} alt={comment.user}
-                                                     className="w-full h-full object-cover"/>
-                                            ) : (
-                                                getInitials(comment.user)
-                                            )}
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex justify-between items-start mb-1">
-                                                <div className="flex items-center gap-2">
-                                                    <span
-                                                        className="font-bold text-white dark:text-gray-900 text-sm">{comment.user}</span>
-                                                    <span className="text-gray-500 text-xs">
-                                                        {comment.created_at ? new Date(comment.created_at).toLocaleDateString() : ""}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-3">
-                                                    <button
-                                                        onClick={() => setActiveReplyId(activeReplyId === comment.id ? null : comment.id)}
-                                                        className="text-xs text-[#3b82f6] hover:text-blue-400 font-medium transition-colors"
-                                                    >
-                                                        Répondre
-                                                    </button>
-                                                    {/* Condition de suppression (à adapter si nécessaire) */}
-                                                    <button
-                                                        className="flex items-center gap-1 text-[11px] text-[#ef4444] border border-[#ef4444]/30 hover:bg-[#ef4444]/10 px-2 py-1 rounded transition-colors">
-                                                        <Trash size={12}/> Supprimer
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <p className="text-gray-300 dark:text-gray-600 text-sm mt-1">{comment.text}</p>
-                                        </div>
-                                    </div>
-
-                                    {/* LIGNE D'HÉRITAGE PRINCIPALE & RÉPONSES */}
-                                    {expandedReplies.includes(comment.id) && comment.replies.length > 0 && (
-                                        <div
-                                            className="pl-6 ml-5 border-l-2 border-[#2A2A38] dark:border-gray-300 space-y-3 mt-3 mb-2 animate-in fade-in duration-200">
-                                            {comment.replies.map((reply, index) => (
-                                                <div key={reply.id}
-                                                     className={`flex gap-4 bg-[#13131A] dark:bg-gray-50 p-4 rounded-xl border border-gray-800/50 dark:border-gray-200 border-l-[3px] ${index % 2 === 0 ? "border-l-[#3b82f6]" : "border-l-[#a855f7]"}`}>
-                                                    <div
-                                                        className="w-8 h-8 rounded-full bg-[#2A2A38] flex items-center justify-center text-xs font-bold text-blue-400 shrink-0 overflow-hidden">
-                                                        {reply.user_image ? (
-                                                            <img src={reply.user_image} alt={reply.user}
-                                                                 className="w-full h-full object-cover"/>
-                                                        ) : (
-                                                            getInitials(reply.user)
-                                                        )}
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="flex justify-between items-start mb-1">
-                                                            <div className="flex items-center gap-2 flex-wrap">
-                                                                <span
-                                                                    className="font-bold text-white dark:text-gray-900 text-sm">{reply.user}</span>
-                                                                {reply.parent_user && (
-                                                                    <span
-                                                                        className="text-[10px] px-2 py-0.5 rounded bg-[#1C1C28] text-[#3b82f6] font-medium border border-[#3b82f6]/20">
-                                                                        @{reply.parent_user}
-                                                                    </span>
-                                                                )}
-                                                                <span className="text-gray-500 text-xs">
-                                                                    {reply.created_at ? new Date(reply.created_at).toLocaleDateString() : ""}
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex items-center gap-3">
-                                                                <button
-                                                                    onClick={() => setActiveReplyId(comment.id)}
-                                                                    className="text-xs text-[#3b82f6] hover:text-blue-400 font-medium transition-colors"
-                                                                >
-                                                                    Répondre
-                                                                </button>
-                                                                <button
-                                                                    className="flex items-center gap-1 text-[11px] text-[#ef4444] border border-[#ef4444]/30 hover:bg-[#ef4444]/10 px-2 py-1 rounded transition-colors">
-                                                                    <Trash size={12}/> Supprimer
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <p className="text-gray-300 dark:text-gray-600 text-sm mt-1">{reply.text}</p>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* BOUTON MASQUER / AFFICHER LES RÉPONSES */}
-                                    {comment.replies.length > 0 && (
-                                        <div className="pl-6 ml-5 mt-2 mb-4">
-                                            <button
-                                                onClick={() => setExpandedReplies((prev) => prev.includes(comment.id) ? prev.filter((id) => id !== comment.id) : [...prev, comment.id])}
-                                                className="text-xs text-[#3b82f6] hover:text-blue-400 font-medium transition-colors"
-                                            >
-                                                {expandedReplies.includes(comment.id)
-                                                    ? "Masquer les réponses"
-                                                    : `Voir les réponses (${comment.replies.length})`}
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {/* INPUT POUR RÉPONDRE (Attaché en bas du fil) */}
-                                    {activeReplyId === comment.id && (
-                                        <div
-                                            className="pl-6 ml-5 mt-1 mb-4 flex items-center gap-2 animate-in fade-in zoom-in duration-200">
-                                            <div className="flex-1 relative">
-                                                <input
-                                                    type="text"
-                                                    autoFocus
-                                                    placeholder={`Répondre à ${comment.user}…`}
-                                                    value={replyInputs[comment.id] || ""}
-                                                    onChange={(e) => setReplyInputs((prev) => ({
-                                                        ...prev,
-                                                        [comment.id]: e.target.value
-                                                    }))}
-                                                    onKeyDown={(e) => e.key === "Enter" && handleSubmitReply(comment.id)}
-                                                    className="w-full bg-[#13131A] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm text-white dark:text-gray-900 focus:outline-none transition-colors"
-                                                />
-                                                <button
-                                                    onClick={() => handleSubmitReply(comment.id)}
-                                                    disabled={submittingReply === comment.id}
-                                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#FF1E56] transition-colors p-1"
-                                                >
-                                                    {submittingReply === comment.id ?
-                                                        <Loader2 size={16} className="animate-spin"/> :
-                                                        <Send size={16}/>}
-                                                </button>
-                                            </div>
-                                            <button onClick={() => setActiveReplyId(null)}
-                                                    className="text-xs text-gray-500 hover:text-white dark:hover:text-gray-900">
-                                                {t("cancel_btn", "Annuler")}
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            ))
+                            rootComments.map((comment) => renderComment(comment, 0))
                         )}
                     </div>
 
-                    {/* INPUT PRINCIPAL DU COMMENTAIRE */}
+                    {/* INPUT PRINCIPAL */}
                     <div className="flex items-center gap-3 mt-4">
                         <div
                             className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-sm font-bold text-white shrink-0">
@@ -577,7 +659,8 @@ const FeedCard: React.FC<FeedCardProps> = ({
                                 disabled={submittingComment}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#FF1E56] transition-colors p-1"
                             >
-                                {submittingComment ? <Loader2 size={18} className="animate-spin"/> : <Send size={18}/>}
+                                {submittingComment ? <Loader2 size={18} className="animate-spin"/> :
+                                    <Send size={18}/>}
                             </button>
                         </div>
                     </div>
