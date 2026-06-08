@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
   Users, FileText, AlertTriangle, Search,
-  ShieldAlert, Ban, Eye, Activity, Check, Trash2, Filter
+  ShieldAlert, Ban, Activity, Check, Trash2, Filter
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import apiClient from '../api/client';
 import UserAvatar from "../components/UserAvatar.tsx";
 import StatCard from "../components/StatCard.tsx";
@@ -46,20 +46,18 @@ interface AdminStats {
 }
 
 const AdminDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // Par défaut, on arrive sur la fenêtre des Signalements
   const [activeTab, setActiveTab] = useState<AdminTab>('reports');
   const [reports, setReports] = useState<Report[]>([]);
   const [bannedUsers, setBannedUsers] = useState<BannedUser[]>([]);
   const [stats, setStats] = useState<AdminStats>({ totalUsers: 0, bannedUsers: 0, reviews: 0, reports: 0 });
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Filtres de recherche
   const [reportFilter, setReportFilter] = useState<'all' | 'profile' | 'comment' | 'review'>('all');
   const [userSearch, setUserSearch] = useState<string>('');
 
-  // Chargement initial des données depuis les contrôleurs
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -138,7 +136,12 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Action : Débannir un utilisateur (Supprimer sa ligne de la table des bannis)
+  const handleCheckContent = (report: Report) => {
+    if (report.reason_type === 'profile' && report.profile_id) {
+      navigate(`/profil/${report.profile_id}`);
+    }
+  };
+
   const handleUnbanUser = async (banId: string) => {
     if (!window.confirm(t('confirm_unban', "Êtes-vous sûr de vouloir débannir cet utilisateur ?"))) return;
 
@@ -158,7 +161,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Action : Rejeter le signalement
   const handleRejectReport = async (reportId: string) => {
     if (!window.confirm(t('confirm_reject_report', "Êtes-vous sûr de vouloir rejeter et supprimer ce signalement sans prendre de mesure ?"))) return;
     try {
@@ -170,7 +172,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Ordre des onglets modifié : Les signalements apparaissent en premier
   const tabs = [
     { id: 'reports', label: t('tab_reports', 'Signalements') },
     { id: 'users', label: t('banned_users_btn', 'Utilisateurs Bannis') },
@@ -179,7 +180,6 @@ const AdminDashboard: React.FC = () => {
 
   const pendingReportsCount = reports.filter(r => !r.is_checked).length;
 
-  // Filtrage des signalements pour l'affichage
   const displayedReports = reports.filter(report =>
       reportFilter === 'all' ? true : report.reason_type === reportFilter
   );
@@ -370,19 +370,33 @@ const AdminDashboard: React.FC = () => {
                                 </div>
 
                                 <div className="bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl p-4 mb-6">
-                                  <p className="text-sm text-slate-300 dark:text-gray-700 mb-2 font-medium">
-                                    <strong className="text-white dark:text-gray-900">{t('target_label', 'Cible :')}</strong>{' '}
-                                    {report.profile?.username ? `@${report.profile.username}` : (report.review_id ? `${t('type_review', 'Review')} (ID: ${report.review_id.substring(0,8)})` : `${t('type_comment', 'Commentaire')} (ID: ${report.comment_id?.substring(0,8)})`)}
-                                  </p>
-                                  <p className="text-sm text-slate-300 dark:text-gray-700 font-medium">
-                                    <strong className="text-white dark:text-gray-900">{t('reason', 'Motif')} :</strong> {report.reason}
-                                  </p>
-                                </div>
+                                <p className="text-sm text-slate-300 dark:text-gray-700 mb-2 font-medium">
+                                  <strong className="text-white dark:text-gray-900">{t('target_label', 'Cible :')}</strong>{' '}
+                                  {report.reason_type === 'profile' ? (
+                                      report.profile?.username
+                                          ? `@${report.profile.username} (ID: ${report.profile_id?.substring(0, 8)})`
+                                          : `${t('type_profile', 'Profil')} (ID: ${report.profile_id?.substring(0, 8)})`
+                                  ) : report.reason_type === 'review' ? (
+                                      `${t('type_review', 'Review')} (ID: ${report.review_id?.substring(0, 8)})`
+                                  ) : (
+                                      `${t('type_comment', 'Commentaire')} (ID: ${report.comment_id?.substring(0, 8)})`
+                                  )}
+                                </p>
+                                <p className="text-sm text-slate-300 dark:text-gray-700 font-medium">
+                                  <strong className="text-white dark:text-gray-900">{t('reason', 'Motif')} :</strong> {report.reason}
+                                </p>
+                              </div>
 
                                 <div className="flex flex-wrap gap-3">
-                                  <button className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-2">
-                                    <Eye size={14} /> {t('check_targeted_content_btn', 'Vérifier le contenu ciblé')}
-                                  </button>
+                                  {/* Le bouton s'affichera UNIQUEMENT si c'est un signalement de profil */}
+                                  {report.reason_type === 'profile' && (
+                                      <button
+                                          onClick={() => handleCheckContent(report)}
+                                          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm"
+                                      >
+                                        {t('check_content', 'Vérifier le contenu')}
+                                      </button>
+                                  )}
 
                                   <button
                                       onClick={() => handleBanUserFromReport(report)}

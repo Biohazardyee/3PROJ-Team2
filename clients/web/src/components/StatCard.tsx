@@ -1,3 +1,4 @@
+
 const StatCard = ({ icon: Icon, value, label, badge, isUrgent }: any) => (
     <div className={`bg-[#1a1d26] dark:bg-white border ${isUrgent ? 'border-rose-500/50' : 'border-slate-800 dark:border-gray-200'} rounded-xl p-5 relative overflow-hidden transition-all hover:border-slate-700 dark:hover:border-gray-300 shadow-sm`}>
         <div className="flex justify-between items-start mb-4">

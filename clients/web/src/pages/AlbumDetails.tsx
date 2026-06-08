@@ -11,7 +11,7 @@ import {
     FaStar,
     FaTimesCircle,
 } from "react-icons/fa";
-import {Edit3, Heart, Loader2, MessageCircle, Trash2} from "lucide-react";
+import { Edit3, Heart, Loader2, MessageCircle, Trash2, Flag } from "lucide-react";
 import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import UserAvatar from "../components/UserAvatar";
@@ -99,6 +99,12 @@ const AlbumDetails: React.FC = () => {
     const [replyInputs, setReplyInputs] = useState<{ [key: string]: string }>({});
     const [expandedReplies, setExpandedReplies] = useState<any[]>([]);
 
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [reportingReviewId, setReportingReviewId] = useState<string | number | null>(null);
+    const [reportReason, setReportReason] = useState("");
+    const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+    const [reportingCommentId, setReportingCommentId] = useState<string | null>(null);
+
     const token = localStorage.getItem("token");
     let currentUserId: string | null = null;
     if (token) {
@@ -158,6 +164,39 @@ const AlbumDetails: React.FC = () => {
         }
     }, [isPlaylistModalOpen]);
 
+    const handleSendReport = async () => {
+        if (!reportReason.trim() || !currentUserId) return;
+
+        setIsSubmittingReport(true);
+        try {
+            const payload: any = {
+                reporter_id: currentUserId,
+                reason: reportReason,
+                reason_type: reportingCommentId ? 'comment' : 'review',
+            };
+
+            if (reportingCommentId) {
+                payload.comment_id = reportingCommentId;
+            } else if (reportingReviewId) {
+                payload.review_id = reportingReviewId;
+            }
+
+            await apiClient.post('/reports', payload);
+
+            alert(t("report_success", "Signalement envoyé avec succès."));
+
+            setIsReportModalOpen(false);
+            setReportReason("");
+            setReportingReviewId(null);
+            setReportingCommentId(null);
+        } catch (error) {
+            console.error("Erreur lors de l'envoi du signalement:", error);
+            alert(t("report_error", "Impossible d'envoyer le signalement."));
+        } finally {
+            setIsSubmittingReport(false);
+        }
+    };
+
     const handleAddToPlaylist = async (playlistId: string) => {
         if (!mediaIdInDB) return;
 
@@ -175,13 +214,17 @@ const AlbumDetails: React.FC = () => {
         }
     };
     const isMyComment = (comment: any) => {
-        if (!currentUserId) return false;
+        if (!currentUserId || !comment) return false;
+
         const cUserId =
             comment.user_id ||
             comment.userId ||
             comment.user?.id ||
             comment.user?._id;
-        return String(cUserId) === String(currentUserId);
+
+        if (!cUserId) return false;
+
+        return String(cUserId).toLowerCase() === String(currentUserId).toLowerCase();
     };
 
     const hasAlreadyReviewed = commentsList.some((comment) =>
@@ -992,26 +1035,43 @@ const AlbumDetails: React.FC = () => {
                                                         </div>
                                                     ) : (
                                                         <>
-                                                            {/* Actions directes (Modifier / Supprimer) affichées UNIQUEMENT si l'avis appartient à l'utilisateur connecté */}
-                                                            {isMyComment(comment) && (
-                                                                <div
-                                                                    className="absolute top-6 right-6 flex items-center gap-2">
+                                                            {/* Actions directes */}
+                                                            <div className="absolute top-6 right-6 flex items-center gap-2">
+                                                                {isMyComment(comment) ? (
+                                                                    <>
+                                                                        {/* Bouton Modifier */}
+                                                                        <button
+                                                                            onClick={() => startEditing(comment)}
+                                                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-blue-400 bg-slate-800/40 hover:bg-blue-500/10 rounded-lg transition-all border border-slate-700/50 hover:border-blue-500/20"
+                                                                        >
+                                                                            <Edit3 size={13}/>
+                                                                            <span>{t("modify")}</span>
+                                                                        </button>
+
+                                                                        {/* Bouton Supprimer */}
+                                                                        <button
+                                                                            onClick={() => deleteComment(comment.id)}
+                                                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-rose-500 bg-slate-800/40 hover:bg-rose-500/10 rounded-lg transition-all border border-slate-700/50 hover:border-rose-500/20"
+                                                                        >
+                                                                            <Trash2 size={13}/>
+                                                                            <span>{t("delete")}</span>
+                                                                        </button>
+                                                                    </>
+                                                                ) : (
+                                                                    /* Bouton de signalement pour les avis des autres */
                                                                     <button
-                                                                        onClick={() => startEditing(comment)}
-                                                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700 dark:bg-gray-100 dark:text-gray-700 dark:hover:bg-gray-200 dark:border-gray-300"
+                                                                        onClick={() => {
+                                                                            setReportingReviewId(comment.id);
+                                                                            setIsReportModalOpen(true);
+                                                                        }}
+                                                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-rose-500 bg-slate-800/40 hover:bg-rose-500/10 rounded-lg transition-all border border-slate-700/50 hover:border-rose-500/20"
+                                                                        title={t("report_review", "Signaler cet avis")}
                                                                     >
-                                                                        <Edit3 size={13}/>
-                                                                        {t("modify") || "Modifier"}
+                                                                        <Flag size={13}/>
+                                                                        <span>{t("report", "Signaler")}</span>
                                                                     </button>
-                                                                    <button
-                                                                        onClick={() => deleteComment(comment.id)}
-                                                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600 rounded-lg transition-colors border border-rose-500/20"
-                                                                    >
-                                                                        <Trash2 size={13}/>
-                                                                        {t("delete") || "Supprimer"}
-                                                                    </button>
-                                                                </div>
-                                                            )}
+                                                                )}
+                                                            </div>
 
                                                             <div className="flex justify-between items-start mb-6">
                                                                 <div className="flex items-center gap-4">
@@ -1205,14 +1265,27 @@ const AlbumDetails: React.FC = () => {
                                                                                                 {t("reply")}
                                                                                             </button>
 
-                                                                                            {/* ✅ Bouton supprimer uniquement si c'est mon commentaire */}
-                                                                                            {isMyComment(reply) && (
+                                                                                            {/* ✅ Si c'est mon commentaire : Supprimer, sinon : Signaler */}
+                                                                                            {isMyComment(reply) ? (
                                                                                                 <button
                                                                                                     onClick={() => deleteReply(reply.id)}
                                                                                                     className="flex items-center gap-1 text-xs text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600 px-2 py-1 rounded-lg transition-colors border border-rose-500/20"
                                                                                                 >
                                                                                                     <Trash2 size={11}/>
                                                                                                     {t("delete") || "Supprimer"}
+                                                                                                </button>
+                                                                                            ) : (
+                                                                                                <button
+                                                                                                    onClick={() => {
+                                                                                                        setReportingCommentId(reply.id);
+                                                                                                        setReportingReviewId(null);
+                                                                                                        setIsReportModalOpen(true);
+                                                                                                    }}
+                                                                                                    className="flex items-center gap-1 text-xs text-slate-500 hover:text-rose-500 transition-colors"
+                                                                                                    title={t("report_comment", "Signaler ce commentaire")}
+                                                                                                >
+                                                                                                    <Flag size={11}/>
+                                                                                                    <span>{t("report", "Signaler")}</span>
                                                                                                 </button>
                                                                                             )}
                                                                                         </div>
@@ -1320,6 +1393,54 @@ const AlbumDetails: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                {/* Modal de Signalement */}
+                {isReportModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div className="bg-[#1a1b26] dark:bg-white w-full max-w-md rounded-2xl border border-gray-800 dark:border-gray-200 shadow-2xl overflow-hidden">
+                            <div className="p-6">
+                                <div className="flex items-center gap-3 text-rose-500 mb-4">
+                                    <Flag size={24} />
+                                    <h3 className="text-xl font-bold">{t("report_title", "Signaler un contenu")}</h3>
+                                </div>
+
+                                <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
+                                    {t("report_instruction", "Veuillez expliquer pourquoi vous signalez cet avis. Un administrateur l'examinera sous peu.")}
+                                </p>
+
+                                <textarea
+                                    value={reportReason}
+                                    onChange={(e) => setReportReason(e.target.value)}
+                                    placeholder={t("report_placeholder", "Raison du signalement (ex: propos injurieux, spam...)")}
+                                    className="w-full bg-[#161b2c] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm text-white dark:text-gray-900 focus:outline-none focus:border-rose-500 min-h-[120px] resize-none"
+                                    autoFocus
+                                />
+
+                                <div className="flex gap-3 mt-6">
+                                    <button
+                                        onClick={() => {
+                                            setIsReportModalOpen(false);
+                                            setReportReason("");
+                                        }}
+                                        className="flex-1 px-4 py-3 rounded-xl font-bold text-gray-400 hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                                    >
+                                        {t("cancel")}
+                                    </button>
+                                    <button
+                                        onClick={handleSendReport}
+                                        disabled={isSubmittingReport || !reportReason.trim()}
+                                        className="flex-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 disabled:hover:bg-rose-600 text-white px-4 py-3 rounded-xl font-bold transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
+                                    >
+                                        {isSubmittingReport ? (
+                                            <Loader2 size={18} className="animate-spin" />
+                                        ) : (
+                                            t("confirm_report", "Envoyer le signalement")
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     );
