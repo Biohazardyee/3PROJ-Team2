@@ -143,11 +143,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
             >
               {profilePic ? (
                 <img
-                  src={
-                    profilePic.startsWith("data")
-                      ? profilePic
-                      : `data:image/jpeg;base64,${profilePic}`
-                  }
+                  src={profilePic}
                   alt="Profil"
                   className="w-full h-full object-cover"
                 />

@@ -5,8 +5,11 @@ import {
   ReviewLikeAddDto,
   ReviewLikeResponseDto,
 } from "../../../types/reviews/review.like.dto.js";
-import { Users, Reviews } from "../../../generated/prisma/client.js";
-import { ReviewLikes } from "../../../generated/prisma/browser.js";
+import {
+  Users,
+  Reviews,
+  ReviewLikes,
+} from "../../../generated/prisma/client.js";
 import { reviewLikeMapper } from "../../../mappers/reviews/review.like.mapper.js";
 import { notificationService } from "../notifications/notification.service.js";
 import { NotificationActions } from "../../../generated/prisma/enums.js";
@@ -60,22 +63,24 @@ export class ReviewLikeService {
       data,
     });
 
-    const isAllowed = await canSendNotification(
-      review.user_id,
-      data.user_id,
-      "like_added",
-      5, // Cooldown de 5 minutes
-    );
+    if (data.user_id !== review.user_id) {
+      const isAllowed = await canSendNotification(
+        review.user_id,
+        data.user_id,
+        "like_added",
+        5,
+      );
 
-    if (data.user_id !== review.user_id && isAllowed) {
-      notificationService
-        .create({
-          user_id: review.user_id,
-          action: NotificationActions.like_added,
-          related_user_id: data.user_id,
-          review_id: data.review_id,
-        })
-        .catch((err) => console.error("Notification failed:", err));
+      if (isAllowed) {
+        notificationService
+          .create({
+            user_id: review.user_id,
+            action: NotificationActions.like_added,
+            related_user_id: data.user_id,
+            review_id: data.review_id,
+          })
+          .catch((err) => console.error("Notification failed:", err));
+      }
     }
 
     return reviewLikeMapper.toDto(reviewLike);
@@ -153,17 +158,20 @@ export class ReviewLikeService {
     if (!review) {
       throw new BadRequest("The review doesn't exist");
     }
-
-    const likeToDelete: ReviewLikes = await PrismaDb.reviewLikes.delete({
-      where: {
-        user_id_review_id: {
-          user_id: user_id,
-          review_id: review_id,
+    try {
+      const likeToDelete: ReviewLikes = await PrismaDb.reviewLikes.delete({
+        where: {
+          user_id_review_id: {
+            user_id: user_id,
+            review_id: review_id,
+          },
         },
-      },
-    });
+      });
 
-    return reviewLikeMapper.toDto(likeToDelete);
+      return reviewLikeMapper.toDto(likeToDelete);
+    } catch (error) {
+      throw new NotFound("ReviewLike not found or already deleted");
+    }
   }
 }
 

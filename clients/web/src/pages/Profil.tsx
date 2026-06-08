@@ -25,25 +25,18 @@ const formatReviewItem = (
   const content = item.media?.content;
   const isLastFm: boolean = !!content?.album;
 
-  // 1. On part de ce que donne le backend (vrai ou faux)
-  let userHasLiked = !!item.isLiked;
+  let userHasLiked = !!item.isLiked || !!item.review?.isLiked;
 
-  // 2. Si le backend dit false mais qu'on a un currentUserId et des likes disponibles
   if (!userHasLiked && currentUserId) {
-    // On gère le cas où les likes sont sur l'item ou imbriqués dans item.review
     const likesArray = item.likes || item.review?.likes;
 
     if (Array.isArray(likesArray)) {
       userHasLiked = likesArray.some((like: any) => {
-        // Cas A : Le tableau contient directement des chaînes de caractères (ex: ["id1", "id2"])
         if (typeof like === "string" || typeof like === "number") {
           return String(like) === String(currentUserId);
         }
-        // Cas B : Le tableau contient des objets (ex: { user_id: "id1" } ou { userId: "id1" })
         return (
-          String(like?.user_id || "") === String(currentUserId) ||
-          String(like?.userId || "") === String(currentUserId) ||
-          String(like?.id || "") === String(currentUserId)
+          String(like?.user_id || "") === String(currentUserId) 
         );
       });
     }
@@ -53,7 +46,6 @@ const formatReviewItem = (
     id: item.id,
     review_id: item.review_id || item.id,
     media_id: item.media_id,
-    // Affiche le nom de l'auteur de la review s'il est présent, sinon fallback sur le username du profil
     user_name: item.user?.username || username,
     album: isLastFm ? content.album.name : content?.name,
     artist: isLastFm ? content.album.artist : content?.artist,
@@ -66,7 +58,7 @@ const formatReviewItem = (
     content: item.content,
     likes_count: item.likes_count ?? item._count?.likes ?? 0,
     comments_count: item.comments_count ?? item._count?.comments ?? 0,
-    isLiked: userHasLiked, // On applique notre résultat calculé
+    isLiked: userHasLiked,
   };
 };
 
@@ -120,6 +112,9 @@ const Profil: React.FC = () => {
       recentActivity.length === 0 &&
       userProfil?.id
     ) {
+      const token = localStorage.getItem("token");
+      if (token && !userConnected) return;
+
       fetchRecentActivity(0, userProfil.id);
     }
   }, [activeTab, userProfil?.id, userConnected]);
@@ -192,10 +187,13 @@ const Profil: React.FC = () => {
       ]);
       const followersCount =
         resFollowers.data.count ?? (resFollowers.data.data?.length || 0);
-      const followingCount =
+      const fontlowingCount =
         resFollowing.data.count ?? (resFollowing.data.data?.length || 0);
 
-      setFollowCounts({ followers: followersCount, following: followingCount });
+      setFollowCounts({
+        followers: followersCount,
+        following: fontlowingCount,
+      });
     } catch (error: any) {
       console.error("❌ Erreur Follow Counts :", error.response?.status);
     }
@@ -353,7 +351,7 @@ const Profil: React.FC = () => {
     } catch (error: any) {
       console.error("❌ Erreur Activité :", error.response?.status);
     } finally {
-      setLoadingMore(false); 
+      setLoadingMore(false);
     }
   };
 
@@ -401,7 +399,6 @@ const Profil: React.FC = () => {
         ),
       );
     } catch (error) {
-      // En cas d'erreur, on remet l'état précédent
       setRecentActivity(recentActivity);
     } finally {
       isInteracting.current = false;
@@ -434,7 +431,6 @@ const Profil: React.FC = () => {
     }
   };
 
-  // Helper pour formater proprement les URLs d'images de playlists
   const formatPlaylistImage = (imgUrl: string) => {
     if (!imgUrl) return "";
     if (imgUrl.startsWith("data") || imgUrl.startsWith("http")) {
@@ -458,7 +454,6 @@ const Profil: React.FC = () => {
   ];
 
   return (
-    /* CORRECTION ICI : Inversion des classes bg/text pour le mode sombre (Inverser si vous vouliez un site clair par défaut) */
     <div className="min-h-screen bg-[#0f1117] text-slate-200 dark:bg-slate-50 dark:text-gray-900 font-sans transition-colors duration-300">
       <input
         type="file"
@@ -548,9 +543,9 @@ const Profil: React.FC = () => {
                   </button>
 
                   <button
-                      onClick={() => setIsReportModalOpen(true)}
-                      className="p-2 bg-slate-800/80 border border-slate-700 dark:border-gray-200 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
-                      title="Signaler l'utilisateur"
+                    onClick={() => setIsReportModalOpen(true)}
+                    className="p-2 bg-slate-800/80 border border-slate-700 dark:border-gray-200 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
+                    title="Signaler l'utilisateur"
                   >
                     <Flag size={16} />
                   </button>
@@ -692,7 +687,7 @@ const Profil: React.FC = () => {
                 <div className="w-14 h-14 bg-slate-800 dark:bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
                   {playlist.image_url ? (
                     <img
-                      src={formatPlaylistImage(playlist.image_url)} // CORRECTION ICI
+                      src={formatPlaylistImage(playlist.image_url)}
                       alt={playlist.name}
                       className="w-full h-full object-cover"
                     />
@@ -782,46 +777,48 @@ const Profil: React.FC = () => {
             )}
           </div>
         )}
+
         {/* --- MODAL DE SIGNALEMENT --- */}
         {isReportModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-              <div className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 p-6 rounded-xl shadow-2xl w-full max-w-md">
-                <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
-                  Signaler {userProfil?.username}
-                </h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 p-6 rounded-xl shadow-2xl w-full max-w-md">
+              <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
+                Signaler {userProfil?.username}
+              </h3>
 
-                <p className="text-sm text-slate-400 dark:text-gray-600 mb-4">
-                  Merci de nous indiquer pourquoi vous signalez ce profil. Notre équipe examinera votre demande.
-                </p>
+              <p className="text-sm text-slate-400 dark:text-gray-600 mb-4">
+                Merci de nous indiquer pourquoi vous signalez ce profil. Notre
+                équipe examinera votre demande.
+              </p>
 
-                <textarea
-                    value={reportReason}
-                    onChange={(e) => setReportReason(e.target.value)}
-                    placeholder="Raison du signalement (spam, comportement inapproprié...)"
-                    className="w-full h-32 p-3 bg-slate-900/50 dark:bg-gray-50 border border-slate-700 dark:border-gray-300 rounded-lg text-white dark:text-gray-900 placeholder-slate-500 focus:outline-none focus:border-red-500 transition-colors resize-none mb-6"
-                />
+              <textarea
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="Raison du signalement (spam, comportement inapproprié...)"
+                className="w-full h-32 p-3 bg-slate-900/50 dark:bg-gray-50 border border-slate-700 dark:border-gray-300 rounded-lg text-white dark:text-gray-900 placeholder-slate-500 focus:outline-none focus:border-red-500 transition-colors resize-none mb-6"
+              />
 
-                <div className="flex justify-end gap-3">
-                  <button
-                      onClick={() => {
-                        setIsReportModalOpen(false);
-                        setReportReason("");
-                      }}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-300 dark:text-gray-600 hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors"
-                      disabled={isSubmittingReport}
-                  >
-                    Annuler
-                  </button>
-                  <button
-                      onClick={submitReport}
-                      disabled={isSubmittingReport || !reportReason.trim()}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {isSubmittingReport ? "Envoi..." : "Envoyer le signalement"}
-                  </button>
-                </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setIsReportModalOpen(false);
+                    setReportReason("");
+                  }}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-300 dark:text-gray-600 hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors"
+                  disabled={isSubmittingReport}
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={submitReport}
+                  disabled={isSubmittingReport || !reportReason.trim()}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isSubmittingReport ? "Envoi..." : "Envoyer le signalement"}
+                </button>
               </div>
             </div>
+          </div>
         )}
       </main>
     </div>

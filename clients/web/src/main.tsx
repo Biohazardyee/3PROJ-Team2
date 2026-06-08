@@ -4,7 +4,6 @@ import './index.css'
 import App from './App'
 import './i18n';
 
-// On utilise "as HTMLElement" pour garantir à TypeScript que l'élément 'root' existe
 const rootElement = document.getElementById('root') as HTMLElement;
 
 createRoot(rootElement).render(

@@ -247,6 +247,7 @@ export class ReviewService {
       include: {
         media: true,
         user: true, 
+        likes: true,
         _count: { select: { comments: true, likes: true } },
       },
     });

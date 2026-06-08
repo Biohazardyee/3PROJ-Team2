@@ -38,7 +38,7 @@ const AuthRedirectListener: React.FC = () => {
     return () => window.removeEventListener("unauthorized", handleUnauthorized);
   }, [navigate]);
 
-  return null; // Ce composant n'affiche rien
+  return null; 
 };
 
 const App: React.FC = () => {
