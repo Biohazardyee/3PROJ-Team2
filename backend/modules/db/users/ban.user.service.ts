@@ -57,10 +57,6 @@ export class BanUserService {
                     content: data.content,
                 }
             }),
-
-            PrismaDb.users.delete({
-                where: {id: user.id}
-            })
         ]);
 
         return bannedUserMapper.toAddDto(bannedUser);

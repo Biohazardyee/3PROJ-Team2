@@ -40,6 +40,6 @@ export async function checkIfNotBanned(email: string): Promise<void> {
     });
 
     if (banned) {
-        throw new BadRequest(`This account has been banned. Reason: ${banned.content}`);
+        throw new BadRequest(`This account has been banned.`);
     }
 }

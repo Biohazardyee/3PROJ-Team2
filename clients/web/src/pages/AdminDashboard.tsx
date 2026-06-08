@@ -1,236 +1,421 @@
-import React, { useState } from 'react';
-import { 
-  Users, Music, FileText, AlertTriangle, Search, 
-  ShieldAlert, Ban, Eye, Activity
+import React, { useState, useEffect } from 'react';
+import {
+  Users, FileText, AlertTriangle, Search,
+  ShieldAlert, Ban, Eye, Activity, Check, Trash2, Filter
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import apiClient from '../api/client';
+import UserAvatar from "../components/UserAvatar.tsx";
+import StatCard from "../components/StatCard.tsx";
 
 type AdminTab = 'users' | 'reports' | 'analytics';
 
-type AdminStats = {
+interface Report {
+  id: string;
+  reporter_id: string;
+  reporter?: {
+    username: string;
+  };
+  profile_id: string | null;
+  profile?: {
+    username: string;
+  };
+  review_id: string | null;
+  comment_id: string | null;
+  reason: string;
+  reason_type: 'comment' | 'profile' | 'review';
+  is_checked: boolean;
+  created_at: string;
+}
+
+interface BannedUser {
+  id: string;
+  user_id: string;
+  username: string;
+  email: string;
+  content: string; // Raison du bannissement
+  created_at?: string;
+}
+
+interface AdminStats {
   totalUsers: number;
-  albums: number;
+  bannedUsers: number;
   reviews: number;
   reports: number;
 }
 
-// Données statiques à changer
-const STATS: AdminStats = {
-  totalUsers: 12847,
-  albums: 45621,
-  reviews: 89432,
-  reports: 23,
-};
-
-const REPORTS = [
-  {
-    id: 1,
-    reportedBy: '@user123',
-    timeAgo: '2h', // On peut aussi traduire "Il y a 2 heures" via i18n
-    target: '@spammer01',
-    reasonKey: 'reason_inappropriate_language',
-    status: 'pending',
-    type: 'review',
-  },
-  {
-    id: 2,
-    reportedBy: '@user456',
-    timeAgo: '5h',
-    target: '@user789',
-    reasonKey: 'reason_inappropriate_photo',
-    status: 'pending',
-    type: 'profile',
-  }
-];
-
-// Sous composants
-
-const StatCard = ({ icon: Icon, value, label, badge, isUrgent }: any) => (
-  <div className={`bg-[#1a1d26] dark:bg-white border ${isUrgent ? 'border-rose-500/50' : 'border-slate-800 dark:border-gray-200'} rounded-xl p-5 relative overflow-hidden transition-all hover:border-slate-700 dark:hover:border-gray-300 shadow-sm`}>
-    <div className="flex justify-between items-start mb-4">
-      <div className={`${isUrgent ? 'text-rose-500 bg-rose-500/10' : 'text-blue-500 bg-blue-500/10 dark:bg-blue-50'} p-2 rounded-lg`}>
-        <Icon size={20} />
-      </div>
-      <span className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider ${isUrgent ? 'bg-rose-600 text-white' : 'bg-rose-500 text-white'}`}>
-        {badge}
-      </span>
-    </div>
-    <div className="text-3xl font-bold text-white dark:text-gray-900 mb-1">{value.toLocaleString()}</div>
-    <div className="text-slate-500 dark:text-gray-500 text-sm font-medium">{label}</div>
-  </div>
-);
-
-const UserModerationCard = () => {
-  const { t } = useTranslation();
-  return (
-    <div className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl overflow-hidden shadow-xl transition-colors">
-      <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex items-center gap-5">
-          <div className="w-16 h-16 rounded-full bg-[#2a2e3d] dark:bg-gray-100 border border-slate-700 dark:border-gray-200 flex items-center justify-center text-blue-400 dark:text-blue-600 font-bold text-xl shadow-inner">
-            AL
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-white dark:text-gray-900" style={{ fontFamily: "'Orbitron', sans-serif" }}>@alexdj</h3>
-            <p className="text-slate-400 dark:text-gray-600 text-sm mt-1">blablabla</p>
-            <div className="flex gap-4 mt-2 text-xs">
-              <span className="text-slate-500 dark:text-gray-500"><strong className="text-slate-200 dark:text-gray-900">1247</strong> followers</span>
-              <span className="text-slate-500 dark:text-gray-500"><strong className="text-slate-200 dark:text-gray-900">138</strong> albums</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="px-6 py-4 bg-[#161821] dark:bg-gray-50 border-t border-slate-800 dark:border-gray-200 flex flex-wrap gap-3">
-        <button className="flex items-center gap-2 bg-slate-800 dark:bg-white dark:text-gray-700 dark:border dark:border-gray-300 hover:bg-slate-700 dark:hover:bg-gray-100 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all">
-          <Eye size={14} /> {t('view_profile')}
-        </button>
-        <button className="flex items-center gap-2 bg-slate-800 dark:bg-white dark:text-gray-700 dark:border dark:border-gray-300 hover:bg-slate-700 dark:hover:bg-gray-100 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all">
-          <Activity size={14} /> {t('view_activity')}
-        </button>
-        <button className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-lg shadow-rose-500/20 ml-auto">
-          <Ban size={14} /> {t('ban_user')}
-        </button>
-      </div>
-    </div>
-  );
-};
-
-
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<AdminTab>('users');
 
-  // Onglets pour le mapping
+  // Par défaut, on arrive sur la fenêtre des Signalements
+  const [activeTab, setActiveTab] = useState<AdminTab>('reports');
+  const [reports, setReports] = useState<Report[]>([]);
+  const [bannedUsers, setBannedUsers] = useState<BannedUser[]>([]);
+  const [stats, setStats] = useState<AdminStats>({ totalUsers: 0, bannedUsers: 0, reviews: 0, reports: 0 });
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // Filtres de recherche
+  const [reportFilter, setReportFilter] = useState<'all' | 'profile' | 'comment' | 'review'>('all');
+  const [userSearch, setUserSearch] = useState<string>('');
+
+  // Chargement initial des données depuis les contrôleurs
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+
+        const [reportsRes, usersRes, reviewsRes, bansRes] = await Promise.all([
+          apiClient.get('/reports').catch(() => ({ data: { reports: [] } })),
+          apiClient.get('/users').catch(() => ({ data: { users: [] } })),
+          apiClient.get('/reviews').catch(() => ({ data: { reviews: [] } })),
+          apiClient.get('/bans').catch(() => ({ data: { bannedUsers: [] } }))
+        ]);
+
+        // Extraction sécurisée des données (gère le format objet ou le format tableau direct)
+        const fetchedReports = reportsRes.data?.reports || (Array.isArray(reportsRes.data) ? reportsRes.data : []);
+        const fetchedBannedUsers = bansRes.data?.bannedUsers || (Array.isArray(bansRes.data) ? bansRes.data : []);
+
+        const totalUsers = usersRes.data?.users?.length || (Array.isArray(usersRes.data) ? usersRes.data.length : 0);
+        const totalReviews = reviewsRes.data?.reviews?.length || (Array.isArray(reviewsRes.data) ? reviewsRes.data.length : 0);
+
+        setReports(fetchedReports);
+        setBannedUsers(fetchedBannedUsers);
+
+        setStats({
+          totalUsers: totalUsers,
+          bannedUsers: fetchedBannedUsers.length,
+          reviews: totalReviews,
+          reports: fetchedReports.filter((r: Report) => !r.is_checked).length,
+        });
+
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données d'administration :", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // Action : Bannir l'utilisateur ciblé par le signalement
+  const handleBanUserFromReport = async (report: Report) => {
+    const targetUserId = report.profile_id ||
+        window.prompt(t('prompt_target_id', "Ce signalement cible un contenu. Veuillez entrer l'ID de l'utilisateur créateur du contenu à bannir :"));
+
+    if (!targetUserId) return;
+
+    const banReason = window.prompt(
+        t('prompt_ban_reason', "Veuillez saisir le motif du bannissement :"),
+        `${t('prompt_ban_reason_prefix', 'Suite au signalement : ')}${report.reason}`
+    );
+    if (banReason === null) return;
+
+    try {
+      // 1. On ban l'utilisateur sur le backend
+      const res = await apiClient.post('/bans', { user_id: targetUserId, content: banReason });
+
+      // 2. On supprime le signalement (considéré comme traité)
+      await apiClient.delete(`/reports/${report.id}`);
+
+      // 3. Mise à jour des états UI
+      setReports(prev => prev.filter(r => r.id !== report.id));
+      if (res.data) {
+        setBannedUsers(prev => [res.data, ...prev]);
+      }
+
+      setStats(prev => ({
+        ...prev,
+        bannedUsers: prev.bannedUsers + 1,
+        reports: Math.max(0, prev.reports - 1)
+      }));
+
+      alert(t('alert_ban_success', "L'utilisateur a été banni avec succès et le signalement a été clôturé."));
+    } catch (error) {
+      console.error("Erreur lors du bannissement de l'utilisateur :", error);
+      alert(t('alert_ban_error', "Une erreur est survenue lors du bannissement."));
+    }
+  };
+
+  // Action : Débannir un utilisateur (Supprimer sa ligne de la table des bannis)
+  const handleUnbanUser = async (banId: string) => {
+    if (!window.confirm(t('confirm_unban', "Êtes-vous sûr de vouloir débannir cet utilisateur ?"))) return;
+
+    try {
+      await apiClient.delete(`/bans/${banId}`);
+
+      setBannedUsers(prev => prev.filter(b => b.id !== banId));
+      setStats(prev => ({
+        ...prev,
+        bannedUsers: Math.max(0, prev.bannedUsers - 1)
+      }));
+
+      alert(t('alert_unban_success', "L'utilisateur a été débanni avec succès."));
+    } catch (error) {
+      console.error("Erreur lors du débannissement :", error);
+      alert(t('alert_unban_error', "Impossible de débannir l'utilisateur."));
+    }
+  };
+
+  // Action : Rejeter le signalement
+  const handleRejectReport = async (reportId: string) => {
+    if (!window.confirm(t('confirm_reject_report', "Êtes-vous sûr de vouloir rejeter et supprimer ce signalement sans prendre de mesure ?"))) return;
+    try {
+      await apiClient.delete(`/reports/${reportId}`);
+      setReports(prev => prev.filter(r => r.id !== reportId));
+      setStats(prev => ({ ...prev, reports: Math.max(0, prev.reports - 1) }));
+    } catch (error) {
+      console.error("Erreur lors de la suppression du signalement :", error);
+    }
+  };
+
+  // Ordre des onglets modifié : Les signalements apparaissent en premier
   const tabs = [
-    { id: 'users', label: t('tab_users') },
-    { id: 'reports', label: t('tab_reports') },
-    { id: 'analytics', label: t('tab_analytics') }
+    { id: 'reports', label: t('tab_reports', 'Signalements') },
+    { id: 'users', label: t('banned_users_btn', 'Utilisateurs Bannis') },
+    { id: 'analytics', label: t('tab_analytics', 'Analytiques') }
   ] as const;
 
+  const pendingReportsCount = reports.filter(r => !r.is_checked).length;
+
+  // Filtrage des signalements pour l'affichage
+  const displayedReports = reports.filter(report =>
+      reportFilter === 'all' ? true : report.reason_type === reportFilter
+  );
+
+  const displayedBannedUsers = bannedUsers.filter(user => {
+    const searchLower = userSearch.toLowerCase();
+    return (
+        (user.username?.toLowerCase() || '').includes(searchLower) ||
+        (user.email?.toLowerCase() || '').includes(searchLower) ||
+        (user.content?.toLowerCase() || '').includes(searchLower)
+    );
+  });
+
   return (
-    <div className="min-h-screen bg-[#0f1117] dark:bg-slate-50 text-slate-200 dark:text-gray-900 p-6 md:p-10 font-sans transition-colors duration-300">
-      <div className="max-w-6xl mx-auto space-y-8">
-        
-        {/* Top section*/}
-        <header className="flex items-start gap-4">
-          <div className="p-3 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded-xl">
-            <ShieldAlert size={28} />
+      <div className="min-h-screen bg-[#0f1117] dark:bg-slate-50 text-slate-200 dark:text-gray-900 p-6 md:p-10 font-sans transition-colors duration-300">
+        <div className="max-w-6xl mx-auto space-y-8">
+
+          {/* En-tête du Dashboard */}
+          <header className="flex items-start gap-4">
+            <div className="p-3 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded-xl">
+              <ShieldAlert size={28} />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold text-white dark:text-gray-900 tracking-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                {t('admin_dashboard_title', "Panneau d'Administration")}
+              </h1>
+              <p className="text-slate-500 dark:text-gray-600 text-lg mt-1 font-medium">{t('admin_subtitle', 'Gérez les utilisateurs et le contenu')}</p>
+            </div>
+          </header>
+
+          {/* Cartes statistiques */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard icon={Users} value={stats.totalUsers} label={t('stat_users', 'Utilisateurs')} badge={t('badge_total', 'Total')} />
+            <StatCard icon={Ban} value={stats.bannedUsers} label={t('banned_users_btn', 'Utilisateurs Bannis')} badge={t('badge_total', 'Total')} />
+            <StatCard icon={FileText} value={stats.reviews} label={t('stat_reviews', 'Avis')} badge={t('badge_total', 'Total')} />
+            <StatCard icon={AlertTriangle} value={pendingReportsCount} label={t('stat_reports', 'Signalements')} badge={t('badge_urgent', 'Urgent')} isUrgent={pendingReportsCount > 0} />
           </div>
-          <div>
-            <h1 className="text-4xl font-bold text-white dark:text-gray-900 tracking-tight" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-              {t('admin_dashboard_title')}
-            </h1>
-            <p className="text-slate-500 dark:text-gray-600 text-lg mt-1 font-medium">{t('admin_subtitle')}</p>
-          </div>
-        </header>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard icon={Users} value={STATS.totalUsers} label={t('stat_users')} badge={t('badge_total')} />
-          <StatCard icon={Music} value={STATS.albums} label={t('stat_albums')} badge={t('badge_total')} />
-          <StatCard icon={FileText} value={STATS.reviews} label={t('stat_reviews')} badge={t('badge_total')} />
-          <StatCard icon={AlertTriangle} value={STATS.reports} label={t('stat_reports')} badge={t('badge_urgent')} isUrgent={true} />
-        </div>
-
-        {/* Navigation */}
-        <nav className="bg-[#1a1d26]/50 dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-1.5 flex gap-2 shadow-inner">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${
-                activeTab === tab.id 
-                  ? 'bg-[#2a2e3d] dark:bg-gray-100 text-white dark:text-gray-900 shadow-md' 
-                  : 'text-slate-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800/30 dark:hover:bg-gray-50'
-              }`}
-            >
-              {tab.label}
-              {tab.id === 'reports' && (
-                <span className="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full ml-1">23</span>
-              )}
-            </button>
-          ))}
-        </nav>
-
-        {/* Content Area */}
-        <div className="space-y-6">
-          {activeTab === 'users' && (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="relative flex-1 group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-gray-400 group-focus-within:text-blue-500 transition-colors" size={20} />
-                  <input 
-                    type="text" 
-                    placeholder={t('search_placeholder')}
-                    className="w-full bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white dark:text-gray-900 focus:outline-none focus:border-blue-500/50 transition-all shadow-sm"
-                  />
-                </div>
-                <button className="flex items-center justify-center gap-2 bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-400 px-6 py-3.5 rounded-xl text-sm font-bold text-white dark:text-gray-700 transition-all">
-                   <Ban size={18} className="text-slate-400 dark:text-gray-400" /> {t('banned_users_btn')}
+          {/* Barre de navigation des onglets */}
+          <nav className="bg-[#1a1d26]/50 dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-1.5 flex gap-2 shadow-inner">
+            {tabs.map((tab) => (
+                <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${
+                        activeTab === tab.id
+                            ? 'bg-[#2a2e3d] dark:bg-gray-100 text-white dark:text-gray-900 shadow-md'
+                            : 'text-slate-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800/30 dark:hover:bg-gray-50'
+                    }`}
+                >
+                  {tab.label}
+                  {tab.id === 'reports' && pendingReportsCount > 0 && (
+                      <span className="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full ml-1">
+                        {pendingReportsCount}
+                      </span>
+                  )}
                 </button>
-              </div>
-              <UserModerationCard />
-            </div>
-          )}
+            ))}
+          </nav>
 
-          {activeTab === 'reports' && (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              {REPORTS.map((report) => (
-                <div key={report.id} className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-6 shadow-lg border-l-4 border-l-rose-500">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-rose-500/10 text-rose-500 rounded-full">
-                        <AlertTriangle size={20} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-lg font-bold text-white dark:text-gray-900">
-                            {t('report_number', { id: report.id })}
-                          </h3>
-                          <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                            {t(`status_${report.status}`)}
-                          </span>
-                          <span className="bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                            {t(`type_${report.type}`)}
-                          </span>
+          {/* Section d'affichage dynamique */}
+          {loading ? (
+              <div className="text-center py-20 text-slate-400">{t('loading_db_data', 'Chargement des données de la base de données...')}</div>
+          ) : (
+              <div className="space-y-6">
+
+                {/* 1er Onglet : Liste complète des Utilisateurs Bannis */}
+                {activeTab === 'users' && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                      <div className="flex flex-col md:flex-row gap-4">
+                        <div className="relative flex-1 group">
+                          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-gray-400 group-focus-within:text-blue-500 transition-colors" size={20} />
+                          <input
+                              type="text"
+                              value={userSearch}
+                              onChange={(e) => setUserSearch(e.target.value)}
+                              placeholder={t('search_banned_placeholder', 'Rechercher un utilisateur banni (pseudo, email, raison)...')}
+                              className="w-full bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white dark:text-gray-900 focus:outline-none focus:border-blue-500/50 transition-all shadow-sm"
+                          />
                         </div>
-                        <p className="text-slate-500 dark:text-gray-500 text-xs">
-                           {t('reported_by')} <span className="text-slate-300 dark:text-gray-800 font-medium">{report.reportedBy}</span> • {report.timeAgo}
-                        </p>
                       </div>
+
+                      {displayedBannedUsers.length === 0 ? (
+                          <div className="text-center py-12 text-slate-500 bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl">
+                            {t('no_banned_users_found', 'Aucun utilisateur banni trouvé.')}
+                          </div>
+                      ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {displayedBannedUsers.map((banned) => (
+                                <div key={banned.id} className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl overflow-hidden shadow-xl p-6 flex flex-col justify-between gap-4 transition-all border-l-4 border-l-rose-600/70">
+                                  <div>
+                                    <div className="flex items-center gap-4 mb-4">
+                                      <Link
+                                          to={`/profil/${banned.user_id}`}
+                                          className="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 font-bold text-lg hover:opacity-80 transition-opacity cursor-pointer"
+                                          title="Voir le profil"
+                                      >
+                                        <UserAvatar
+                                            userId={banned.user_id}
+                                            username={banned.username}
+                                            sizeClass="w-10 h-10 text-sm"
+                                        />
+                                      </Link>
+                                      <div>
+                                        <Link to={`/profil/${banned.user_id}`} className="hover:underline decoration-blue-500">
+                                          <h3 className="text-lg font-bold text-white dark:text-gray-900 hover:text-blue-500 transition-colors">
+                                            @{banned.username}
+                                          </h3>
+                                        </Link>
+                                        <p className="text-slate-500 dark:text-gray-500 text-xs">{banned.email}</p>
+                                      </div>
+                                    </div>
+                                    <div className="bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl p-4">
+                                      <span className="text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider block mb-1">
+                                        {t('ban_reason_label', 'Raison du bannissement :')}
+                                      </span>
+                                      <p className="text-sm text-slate-300 dark:text-gray-700 italic">"{banned.content}"</p>
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-end border-t border-slate-800 dark:border-gray-100 pt-3 mt-2">
+                                    <button
+                                        onClick={() => handleUnbanUser(banned.id)}
+                                        className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 dark:bg-gray-100 dark:hover:bg-gray-200 text-slate-200 dark:text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-all"
+                                    >
+                                      <Check size={14} className="text-emerald-500" /> {t('unban_user_btn', 'Réhabiliter / Débannir')}
+                                    </button>
+                                  </div>
+                                </div>
+                            ))}
+                          </div>
+                      )}
                     </div>
-                  </div>
+                )}
 
-                  <div className="bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl p-4 mb-6">
-                    <p className="text-sm text-slate-300 dark:text-gray-700 mb-2 font-medium">
-                      <strong className="text-white dark:text-gray-900">{t('target')}:</strong> {report.target}
-                    </p>
-                    <p className="text-sm text-slate-300 dark:text-gray-700 font-medium">
-                      <strong className="text-white dark:text-gray-900">{t('reason')}:</strong> {t(report.reasonKey)}
-                    </p>
-                  </div>
+                {/* 2ème Onglet : Gestion des Signalements */}
+                {activeTab === 'reports' && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                      <div className="flex justify-between items-center bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-xl p-4 shadow-sm">
+                        <div className="flex items-center gap-2 text-white dark:text-gray-900 font-medium">
+                          <Filter size={18} className="text-slate-500 dark:text-gray-500" />
+                          {t('filter_type_label', 'Filtrer par type :')}
+                        </div>
+                        <select
+                            value={reportFilter}
+                            onChange={(e) => setReportFilter(e.target.value as any)}
+                            className="bg-[#0f1117] dark:bg-gray-50 border border-slate-700 dark:border-gray-300 text-white dark:text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none"
+                        >
+                          <option value="all">{t('filter_all_reports', 'Tous les signalements')}</option>
+                          <option value="profile">{t('filter_user_profiles', 'Profils utilisateurs')}</option>
+                          <option value="comment">{t('filter_comments', 'Commentaires')}</option>
+                          <option value="review">{t('filter_reviews', 'Reviews')}</option>
+                        </select>
+                      </div>
 
-                  <div className="flex flex-wrap gap-3">
-                    <button className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm">{t('check_content')}</button>
-                    <button className="bg-slate-800 dark:bg-gray-200 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-300 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all">{t('contact_user')}</button>
-                    <button className="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm">{t('take_action')}</button>
-                    <button className="text-slate-500 dark:text-gray-400 hover:text-white dark:hover:text-gray-900 px-4 py-2 rounded-lg text-xs font-bold transition-all ml-auto">{t('reject')}</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                      {displayedReports.length === 0 ? (
+                          <div className="text-center py-10 text-slate-500 bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl">
+                            {t('no_reports_filtered', 'Aucun signalement trouvé pour ce filtre.')}
+                          </div>
+                      ) : (
+                          displayedReports.map((report) => (
+                              <div key={report.id} className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-6 shadow-lg border-l-4 border-l-rose-500">
+                                <div className="flex justify-between items-start mb-6">
+                                  <div className="flex items-center gap-4">
+                                    <div className="p-3 rounded-full bg-rose-500/10 text-rose-500">
+                                      <AlertTriangle size={20} />
+                                    </div>
+                                    <div>
+                                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                                        <h3 className="text-sm font-mono text-slate-400">
+                                          {t('report_number', { id: report.id.substring(0, 8) })}...
+                                        </h3>
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase bg-rose-500 text-white">
+                                          {t('status_pending', 'En attente')}
+                                        </span>
+                                        <span className="bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                                          {t('type_label', 'Type:')} {report.reason_type === 'profile' ? t('type_profile', 'Profil') : report.reason_type === 'review' ? t('type_review', 'Avis') : t('type_comment', 'Commentaire')}
+                                        </span>
+                                      </div>
+                                      <p className="text-slate-500 dark:text-gray-500 text-xs">
+                                        {t('reported_by', 'Signalé par')}{' '}
+                                        <span className="text-slate-300 dark:text-gray-800 font-medium">
+                                          {report.reporter?.username || `ID: ${report.reporter_id.substring(0,8)}`}
+                                        </span>{' '}
+                                        • {new Date(report.created_at).toLocaleDateString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl p-4 mb-6">
+                                  <p className="text-sm text-slate-300 dark:text-gray-700 mb-2 font-medium">
+                                    <strong className="text-white dark:text-gray-900">{t('target_label', 'Cible :')}</strong>{' '}
+                                    {report.profile?.username ? `@${report.profile.username}` : (report.review_id ? `${t('type_review', 'Review')} (ID: ${report.review_id.substring(0,8)})` : `${t('type_comment', 'Commentaire')} (ID: ${report.comment_id?.substring(0,8)})`)}
+                                  </p>
+                                  <p className="text-sm text-slate-300 dark:text-gray-700 font-medium">
+                                    <strong className="text-white dark:text-gray-900">{t('reason', 'Motif')} :</strong> {report.reason}
+                                  </p>
+                                </div>
+
+                                <div className="flex flex-wrap gap-3">
+                                  <button className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-2">
+                                    <Eye size={14} /> {t('check_targeted_content_btn', 'Vérifier le contenu ciblé')}
+                                  </button>
+
+                                  <button
+                                      onClick={() => handleBanUserFromReport(report)}
+                                      className="bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1 ml-auto"
+                                  >
+                                    <Ban size={14} /> {t('ban_user', "Bannir l'utilisateur")}
+                                  </button>
+
+                                  <button
+                                      onClick={() => handleRejectReport(report.id)}
+                                      className="bg-slate-800 hover:bg-slate-700 dark:bg-gray-200 dark:hover:bg-gray-300 text-slate-300 dark:text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1"
+                                  >
+                                    <Trash2 size={12} /> {t('reject_report_btn', 'Rejeter la demande (Ignorer)')}
+                                  </button>
+                                </div>
+                              </div>
+                          ))
+                      )}
+                    </div>
+                )}
+
+                {/* 3ème Onglet : Analytiques */}
+                {activeTab === 'analytics' && (
+                    <div className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-20 text-center animate-in fade-in duration-300">
+                      <Activity size={48} className="mx-auto text-slate-700 dark:text-gray-300 mb-4 opacity-50" />
+                      <h2 className="text-xl font-bold text-slate-500 dark:text-gray-400">{t('analytics_soon', 'Analyses sera bientôt disponible...')}</h2>
+                    </div>
+                )}
+              </div>
           )}
 
-          {activeTab === 'analytics' && (
-            <div className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-20 text-center animate-in fade-in duration-300">
-              <Activity size={48} className="mx-auto text-slate-700 dark:text-gray-300 mb-4 opacity-50" />
-              <h2 className="text-xl font-bold text-slate-500 dark:text-gray-400">{t('analytics_soon')}</h2>
-            </div>
-          )}
         </div>
-
       </div>
-    </div>
   );
 };
 

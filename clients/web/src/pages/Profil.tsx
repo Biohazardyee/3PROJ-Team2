@@ -96,6 +96,10 @@ const Profil: React.FC = () => {
   const [hasMoreActivity, setHasMoreActivity] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false);
+
   useEffect(() => {
     loadData();
   }, [externalUserId]);
@@ -404,15 +408,29 @@ const Profil: React.FC = () => {
     }
   };
 
-  const handleReportUser = async (): Promise<void> => {
+  const submitReport = async (): Promise<void> => {
+    if (!reportReason.trim()) {
+      alert("Veuillez entrer une raison pour le signalement.");
+      return;
+    }
+
+    setIsSubmittingReport(true);
+
     try {
-      await apiClient.post(`/reports/user`, {
-        target_user_id: userProfil?.id,
-        reporter_user_id: userConnected,
+      await apiClient.post(`/reports/profile`, {
+        reporter_id: userConnected,
+        profile_id: userProfil?.id,
+        reason: reportReason,
+        reason_type: "profile",
       });
       alert("Utilisateur signalé avec succès.");
+      setIsReportModalOpen(false);
+      setReportReason("");
     } catch (error) {
+      console.error("Erreur lors du signalement:", error);
       alert("Erreur lors du signalement.");
+    } finally {
+      setIsSubmittingReport(false);
     }
   };
 
@@ -530,9 +548,9 @@ const Profil: React.FC = () => {
                   </button>
 
                   <button
-                    onClick={handleReportUser}
-                    className="p-2 bg-slate-800/80 border border-slate-700 dark:border-gray-200 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
-                    title="Signaler l'utilisateur"
+                      onClick={() => setIsReportModalOpen(true)}
+                      className="p-2 bg-slate-800/80 border border-slate-700 dark:border-gray-200 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
+                      title="Signaler l'utilisateur"
                   >
                     <Flag size={16} />
                   </button>
@@ -763,6 +781,47 @@ const Profil: React.FC = () => {
               </div>
             )}
           </div>
+        )}
+        {/* --- MODAL DE SIGNALEMENT --- */}
+        {isReportModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+              <div className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 p-6 rounded-xl shadow-2xl w-full max-w-md">
+                <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
+                  Signaler {userProfil?.username}
+                </h3>
+
+                <p className="text-sm text-slate-400 dark:text-gray-600 mb-4">
+                  Merci de nous indiquer pourquoi vous signalez ce profil. Notre équipe examinera votre demande.
+                </p>
+
+                <textarea
+                    value={reportReason}
+                    onChange={(e) => setReportReason(e.target.value)}
+                    placeholder="Raison du signalement (spam, comportement inapproprié...)"
+                    className="w-full h-32 p-3 bg-slate-900/50 dark:bg-gray-50 border border-slate-700 dark:border-gray-300 rounded-lg text-white dark:text-gray-900 placeholder-slate-500 focus:outline-none focus:border-red-500 transition-colors resize-none mb-6"
+                />
+
+                <div className="flex justify-end gap-3">
+                  <button
+                      onClick={() => {
+                        setIsReportModalOpen(false);
+                        setReportReason("");
+                      }}
+                      className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-300 dark:text-gray-600 hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors"
+                      disabled={isSubmittingReport}
+                  >
+                    Annuler
+                  </button>
+                  <button
+                      onClick={submitReport}
+                      disabled={isSubmittingReport || !reportReason.trim()}
+                      className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {isSubmittingReport ? "Envoi..." : "Envoyer le signalement"}
+                  </button>
+                </div>
+              </div>
+            </div>
         )}
       </main>
     </div>

@@ -617,6 +617,38 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
+    const organizeComments = (comments: any[]) => {
+        if (!comments) return [];
+
+        const roots = comments
+            .filter((c) => !c.parent_id)
+            .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+        const replies = comments.filter((c) => c.parent_id);
+        const result: any[] = [];
+
+        // Fonction récursive pour insérer les enfants directement sous leur parent
+        const traverse = (parent: any) => {
+            result.push(parent);
+            const children = replies
+                .filter((c) => String(c.parent_id) === String(parent.id))
+                .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+            children.forEach((child) => traverse(child));
+        };
+
+        roots.forEach((root) => traverse(root));
+
+        const processedIds = new Set(result.map((c) => String(c.id)));
+        comments.forEach((c) => {
+            if (!processedIds.has(String(c.id))) {
+                result.push(c);
+            }
+        });
+
+        return result;
+    };
+
     const getReplyDepth = (reply: any, allComments: any[]): number => {
         if (!reply.parent_id) return 0;
         const parent = allComments.find((c: any) => c.id === reply.parent_id);
@@ -1104,9 +1136,9 @@ const AlbumDetails: React.FC = () => {
 
                                                             {/* Réponses */}
                                                             {expandedReplies.includes(comment.id) && comment.reviewComments && (
-                                                                <div
-                                                                    className="mt-4 border-l-2 border-gray-700 dark:border-gray-300 ml-2 pl-4 flex flex-col gap-2">
-                                                                    {comment.reviewComments.map((reply: any) => {
+                                                                <div className="mt-4 border-l-2 border-gray-700 dark:border-gray-300 ml-2 pl-4 flex flex-col gap-2">
+                                                                    {/* MODIFICATION ICI : On englobe avec organizeComments */}
+                                                                    {organizeComments(comment.reviewComments).map((reply: any) => {
                                                                         const depth = getReplyDepth(reply, comment.reviewComments);
                                                                         const isNested = depth > 0;
                                                                         const parentComment = isNested
@@ -1292,7 +1324,5 @@ const AlbumDetails: React.FC = () => {
         </div>
     );
 };
-
-
 
 export default AlbumDetails;
