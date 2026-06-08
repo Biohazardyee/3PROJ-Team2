@@ -18,8 +18,7 @@ import { io, Socket } from "socket.io-client";
 
 import ChatItem from "../components/ChatItem";
 
-
-const SOCKET_URL: string = process.env.EXPO_PUBLIC_API_URL|| "";
+const SOCKET_URL: string = process.env.EXPO_PUBLIC_API_URL || "";
 
 interface Message {
   id: string;
@@ -31,10 +30,22 @@ interface Message {
 
 interface Conversation {
   id: string;
-  user1_id: string;
-  user2_id: string;
-  user1: { username: string; role: string; profile_picture?: string | null };
-  user2: { username: string; role: string; profile_picture?: string | null };
+  user1_id?: string;
+  user2_id?: string;
+  user1Id?: string;
+  user2Id?: string;
+  user1: {
+    id?: string;
+    username: string;
+    role: string;
+    profile_picture?: string | null;
+  };
+  user2: {
+    id?: string;
+    username: string;
+    role: string;
+    profile_picture?: string | null;
+  };
   messages: Message[];
   _count?: {
     messages: number;
@@ -78,7 +89,7 @@ const Conversations = () => {
     } catch (error: any) {
       console.error("Erreur Fetch Conversations:", error.message);
     } finally {
-      setLoading(false);
+      loading && setLoading(false);
       setRefreshing(false);
     }
   };
@@ -195,9 +206,17 @@ const Conversations = () => {
 
         <View style={styles.chatList}>
           {conversations.map((conv: any) => {
-            const otherUser =
-              conv.user1_id === currentUserId ? conv.user2 : conv.user1;
-            if (!otherUser) return null;
+            const isCurrentUser1 =
+              (conv.user1_id &&
+                String(conv.user1_id) === String(currentUserId)) ||
+              (conv.user1Id &&
+                String(conv.user1Id) === String(currentUserId)) ||
+              (conv.user1?.id &&
+                String(conv.user1.id) === String(currentUserId));
+
+            const otherUser = isCurrentUser1 ? conv.user2 : conv.user1;
+
+            if (!otherUser || !otherUser.username) return null;
 
             const lastMsg =
               conv.messages && conv.messages.length > 0
@@ -366,7 +385,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  // --- BADGE ---
   unreadBadge: {
     backgroundColor: "#4cc9f0",
     minWidth: 22,

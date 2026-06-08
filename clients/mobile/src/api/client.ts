@@ -4,7 +4,7 @@ import { router } from "expo-router";
 
 const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
-  timeout: 30000, // Passez à 30 secondes au lieu de la valeur par défaut
+  timeout: 60000,
 });
 
 apiClient.interceptors.request.use(
