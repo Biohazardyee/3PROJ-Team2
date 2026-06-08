@@ -28,7 +28,6 @@ export async function sendPushNotification(
     const chunks = expo.chunkPushNotifications(messages);
     for (const chunk of chunks) {
       const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-      console.log("Ticket notification envoyé:", ticketChunk);
     }
   } catch (error) {
     console.error("Erreur lors de l'envoi de la notification Push:", error);

@@ -68,7 +68,6 @@ const Home: React.FC = () => {
           })),
         });
 
-        // 🔥 FIX : Gère le retour direct sous forme de tableau ou l'enveloppe { medias: [...] }
         const syncedAlbums =
           syncResponse.data.medias || syncResponse.data || [];
 
@@ -76,9 +75,9 @@ const Home: React.FC = () => {
           finalData = syncedAlbums.map((s: any) => ({
             id: s.id,
             apiId: s.api_id,
-            title: s.name, // 🔥 FIX : Propriété aplatie
-            artist: s.artist, // 🔥 FIX : Propriété aplatie
-            cover: s.cover, // 🔥 FIX : Propriété aplatie
+            title: s.name,
+            artist: s.artist,
+            cover: s.cover,
             rating: s.rating !== undefined ? Number(s.rating) : 0,
             year: s.year || null,
             mbid: s.mbid || null,

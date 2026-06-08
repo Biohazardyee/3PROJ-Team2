@@ -34,7 +34,7 @@ interface BannedUser {
   user_id: string;
   username: string;
   email: string;
-  content: string; // Raison du bannissement
+  content: string; 
   created_at?: string;
 }
 
@@ -70,7 +70,6 @@ const AdminDashboard: React.FC = () => {
           apiClient.get('/bans').catch(() => ({ data: { bannedUsers: [] } }))
         ]);
 
-        // Extraction sécurisée des données (gère le format objet ou le format tableau direct)
         const fetchedReports = reportsRes.data?.reports || (Array.isArray(reportsRes.data) ? reportsRes.data : []);
         const fetchedBannedUsers = bansRes.data?.bannedUsers || (Array.isArray(bansRes.data) ? bansRes.data : []);
 
@@ -97,7 +96,6 @@ const AdminDashboard: React.FC = () => {
     fetchDashboardData();
   }, []);
 
-  // Action : Bannir l'utilisateur ciblé par le signalement
   const handleBanUserFromReport = async (report: Report) => {
     const targetUserId = report.profile_id ||
         window.prompt(t('prompt_target_id', "Ce signalement cible un contenu. Veuillez entrer l'ID de l'utilisateur créateur du contenu à bannir :"));
@@ -111,13 +109,10 @@ const AdminDashboard: React.FC = () => {
     if (banReason === null) return;
 
     try {
-      // 1. On ban l'utilisateur sur le backend
       const res = await apiClient.post('/bans', { user_id: targetUserId, content: banReason });
 
-      // 2. On supprime le signalement (considéré comme traité)
       await apiClient.delete(`/reports/${report.id}`);
 
-      // 3. Mise à jour des états UI
       setReports(prev => prev.filter(r => r.id !== report.id));
       if (res.data) {
         setBannedUsers(prev => [res.data, ...prev]);

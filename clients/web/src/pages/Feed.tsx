@@ -15,7 +15,6 @@ import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import FeedCard, {FeedItem} from "../components/FeedCard";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 type TabType = "all" | "following" | "trending";
 
@@ -39,7 +38,6 @@ interface HasMoreCache {
 
 const ITEMS_PER_PAGE = 10;
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getCurrentUserId(): string | null {
     try {
@@ -52,7 +50,6 @@ function getCurrentUserId(): string | null {
     }
 }
 
-// ─── Sub-components ────────────────────────────────────────────────────────────
 
 const SkeletonCard: React.FC = () => (
     <div
@@ -105,7 +102,6 @@ const EmptyState: React.FC<{ tab: TabType }> = ({tab}) => (
     </div>
 );
 
-// ─── Main Feed Component ───────────────────────────────────────────────────────
 
 const Feed: React.FC = () => {
     const {t} = useTranslation();
@@ -129,7 +125,6 @@ const Feed: React.FC = () => {
     const activeTabRef = useRef<TabType>(activeTab);
     activeTabRef.current = activeTab;
 
-    // ── Fetch ──────────────────────────────────────────────────────────────────
 
     const fetchFeed = useCallback(
         async (targetTab: TabType, currentOffset: number, isLoadMore = false) => {

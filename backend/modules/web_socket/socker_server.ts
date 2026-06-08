@@ -11,6 +11,7 @@ import {
   truncateContent,
 } from "../db/notifications/notification.helper.js";
 import { sendPushNotification } from "../db/notifications/notification.push.js";
+import { notificationService } from "../db/notifications/notification.service.js";
 
 export const initSocket = (server: http.Server) => {
   const io = new Server(server, {
@@ -99,7 +100,6 @@ export const initSocket = (server: http.Server) => {
             data: { is_read: true },
           });
 
-          // CORRIGÉ : Envoi uniforme de "conversation_id" au lieu de "conversationId"
           if (updatedMessages.count > 0) {
             io.to(`user_${conversation.user1_id}`).emit(
               "conversation_marked_read",
@@ -116,7 +116,6 @@ export const initSocket = (server: http.Server) => {
       },
     );
 
-    // AJOUTÉ : Gestionnaire d'événement "mark_as_read" pour enregistrer la lecture en DB en temps réel
     socket.on(
       "mark_as_read",
       async (data: { conversation_id: string }): Promise<void> => {
@@ -221,6 +220,42 @@ export const initSocket = (server: http.Server) => {
             conversation.user1_id === user.id
               ? conversation.user2_id
               : conversation.user1_id;
+
+          const clientsInRoom = io.sockets.adapter.rooms.get(
+            data.conversation_id,
+          );
+          let isRecipientInDiscussion = false;
+
+          if (clientsInRoom) {
+            for (const clientId of clientsInRoom) {
+              const clientSocket = io.sockets.sockets.get(clientId);
+              if (clientSocket && clientSocket.data?.user?.id === recipientId) {
+                isRecipientInDiscussion = true;
+                break;
+              }
+            }
+          }
+
+          if (!isRecipientInDiscussion) {
+            try {
+              const newNotification = await notificationService.create({
+                user_id: recipientId,
+                action: "new_message" as any, 
+                related_user_id: user.id,
+              });
+
+              io.to(`user_${recipientId}`).emit(
+                "notification_received",
+                newNotification,
+              );
+            } catch (notifErr) {
+              console.error(
+                `[Notification Error] Impossible de générer la notification en BDD:`,
+                notifErr,
+              );
+            }
+          }
+
           const recipient = await PrismaDb.users.findUnique({
             where: { id: recipientId },
             select: { expo_push_token: true },

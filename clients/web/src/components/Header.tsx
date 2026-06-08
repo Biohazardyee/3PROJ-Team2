@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import apiClient from "../api/client";
 import { jwtDecode } from "jwt-decode";
 import { NotificationBell } from "./NotificationBell";
-import { useSocket } from "../context/SocketContext"; // Utilisation du contexte
+import { useSocket } from "../context/SocketContext";
 
 type HeaderProps = {
   onMenuClick: () => void;
@@ -12,7 +12,7 @@ type HeaderProps = {
 
 export const Header = ({ onMenuClick }: HeaderProps) => {
   const navigate = useNavigate();
-  const socket = useSocket(); // On récupère la socket unique ici
+  const socket = useSocket();
 
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [profilePic, setProfilePic] = useState<string | null>(null);
@@ -42,7 +42,6 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
     }
   };
 
-  // useCallback pour éviter de recréer la fonction à chaque rendu
   const fetchGlobalUnreadCount = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -66,14 +65,11 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
     }
   }, []);
 
-  // Gestion de la socket via le contexte
   useEffect(() => {
     if (!socket) return;
 
-    // Récupération initiale
     fetchGlobalUnreadCount();
 
-    // Écoute des événements via la socket partagée
     socket.on("update_conversation_list", fetchGlobalUnreadCount);
 
     const handleManualReadUpdate = () => {
@@ -174,5 +170,4 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
   );
 };
 
-
-export default Header; 
+export default Header;

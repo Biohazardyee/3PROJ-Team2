@@ -35,12 +35,12 @@ interface BackendConversation {
   user2?: BackendUser;
   messages?: BackendMessage[];
   _count?: { messages: number };
-  lastMessage?: string;
+  lastMessage?: string | null;
   time?: string;
   unreadCount?: number;
 }
 
-const BACKEND_URL = "https://doe-rational-bobcat.ngrok-free.app";
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 
 const Conversations: React.FC = () => {
   const { t } = useTranslation();
@@ -54,7 +54,6 @@ const Conversations: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loadingConv, setLoadingConv] = useState(true);
 
-  // Rétablissement du socket local pour assurer la connexion
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -64,7 +63,6 @@ const Conversations: React.FC = () => {
     selectedConvIdRef.current = selectedConvId;
   }, [selectedConvId]);
 
-  // Sécurisation stricte de l'interlocuteur
   const getOtherUser = useCallback(
     (conv: BackendConversation) => {
       if (conv.user1 && String(conv.user1.id) === String(userId))
@@ -86,16 +84,12 @@ const Conversations: React.FC = () => {
       const processed = data.map((conv) => {
         const lastMsg =
           conv.messages && conv.messages.length > 0 ? conv.messages[0] : null;
-
-        // Utilisation du compteur de la BDD (résout le bug du rafraîchissement)
         const unreadCount = conv._count?.messages || 0;
 
         return {
           ...conv,
           unreadCount,
-          lastMessage: lastMsg
-            ? lastMsg.content
-            : t("no_messages_yet", "Aucun message"),
+          lastMessage: lastMsg ? lastMsg.content : null, 
           time:
             lastMsg && lastMsg.created_at
               ? new Date(lastMsg.created_at).toLocaleTimeString([], {
@@ -112,9 +106,8 @@ const Conversations: React.FC = () => {
     } finally {
       setLoadingConv(false);
     }
-  }, [userId, t]);
+  }, [userId]);
 
-  // Initialisation User
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -134,7 +127,6 @@ const Conversations: React.FC = () => {
     }
   }, [userId, fetchConversations]);
 
-  // INITIALISATION DU SOCKET - 100% Garanti
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token || !userId) return;
@@ -151,7 +143,6 @@ const Conversations: React.FC = () => {
     };
   }, [userId]);
 
-  // Écoute des événements temps réel
   useEffect(() => {
     if (!socket || !userId) return;
 
@@ -159,20 +150,26 @@ const Conversations: React.FC = () => {
       if (
         String(message.conversation_id) === String(selectedConvIdRef.current)
       ) {
+        const safeMessage = {
+          ...message,
+          id:
+            message.id ||
+            `msg-live-${Date.now()}-${Math.random()}`,
+        };
+
         setMessages((prev) => {
-          if (prev.some((m) => String(m.id) === String(message.id)))
+          if (prev.some((m) => String(m.id) === String(safeMessage.id)))
             return prev;
-          return [...prev, message].sort(
+          return [...prev, safeMessage].sort(
             (a, b) =>
               new Date(a.created_at).getTime() -
               new Date(b.created_at).getTime(),
           );
         });
 
-        // Marque comme lu en temps réel si on est dans la discussion
-        if (String(message.sender_id) !== String(userId)) {
+        if (String(safeMessage.sender_id) !== String(userId)) {
           socket.emit("mark_as_read", {
-            conversation_id: message.conversation_id,
+            conversation_id: safeMessage.conversation_id,
           });
         }
       }
@@ -260,7 +257,13 @@ const Conversations: React.FC = () => {
           `/messages/conversation/${selectedConvId}`,
         );
         const rawMessages = res.data.messages || [];
-        const sortedMessages = rawMessages.sort(
+
+        const formattedMessages = rawMessages.map((m: any) => ({
+          ...m,
+          id: m.id || `msg-api-${Math.random()}-${Date.now()}`,
+        }));
+
+        const sortedMessages = formattedMessages.sort(
           (a: BackendMessage, b: BackendMessage) =>
             new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
         );
@@ -289,12 +292,14 @@ const Conversations: React.FC = () => {
     return conversations.filter((conv) => {
       const otherUser = getOtherUser(conv);
       const lowerQuery = searchQuery.toLowerCase();
+      const displayLastMessage =
+        conv.lastMessage || t("no_messages_yet", "Aucun message");
       return (
         otherUser?.username.toLowerCase().includes(lowerQuery) ||
-        conv.lastMessage?.toLowerCase().includes(lowerQuery)
+        displayLastMessage.toLowerCase().includes(lowerQuery)
       );
     });
-  }, [conversations, searchQuery, getOtherUser]);
+  }, [conversations, searchQuery, getOtherUser, t]);
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedConvId || !socket) return;
@@ -388,7 +393,8 @@ const Conversations: React.FC = () => {
                       <p
                         className={`text-xs truncate flex-1 ${hasUnread ? "font-semibold text-slate-200 dark:text-slate-900" : "text-slate-400 dark:text-slate-600"}`}
                       >
-                        {conv.lastMessage}
+                        {conv.lastMessage ||
+                          t("no_messages_yet", "Aucun message")}
                       </p>
                       {hasUnread && (
                         <span className="bg-blue-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-4 px-1 flex items-center justify-center shadow-sm animate-pulse">

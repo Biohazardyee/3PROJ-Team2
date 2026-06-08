@@ -23,14 +23,11 @@ const AlbumDetails: React.FC = () => {
     const navigate = useNavigate();
     const {t} = useTranslation();
 
-    // Extraction des query parameters passés depuis la page Home
     const urlArtist = searchParams.get("artist") || "";
     const urlAlbum = searchParams.get("album") || "";
     const urlCover = searchParams.get("cover") || "";
     const urlMbid = searchParams.get("mbid") || "";
 
-    // Options de statut adaptées au Web
-// Ces IDs DOIVENT correspondre aux valeurs de votre enum MediaStatus dans le backend
     const STATUT_OPTIONS = [
         {
             id: "listened",
@@ -127,7 +124,6 @@ const AlbumDetails: React.FC = () => {
 
                 const res = await apiClient.get(`/medias/status/${currentUserId}/${mediaIdInDB}`);
 
-                // Votre service retourne "none" si aucun statut n'est trouvé
                 const status = res.data.mediaStatus?.status;
 
                 if (status && status !== "none") {
@@ -149,7 +145,6 @@ const AlbumDetails: React.FC = () => {
         setLoadingPlaylists(true);
         try {
             const res = await apiClient.get(`/playlists/user/${currentUserId}`);
-            // Assurez-vous d'adapter selon la structure de votre réponse API
             setUserPlaylists(res.data.playlists || res.data || []);
         } catch (err) {
             console.error("Erreur chargement playlists:", err);
@@ -351,15 +346,12 @@ const AlbumDetails: React.FC = () => {
         const previousStatus = userStatus;
         const isDeselecting = userStatus === newStatus;
 
-        // 1. Mise à jour optimiste de l'UI
         setUserStatus(isDeselecting ? null : newStatus);
 
         try {
             if (isDeselecting) {
-                // Suppression
                 await apiClient.delete(`/media/status/${currentUserId}/${mediaIdInDB}`);
             } else {
-                // 2. Tentative de POST (Création)
                 try {
                     await apiClient.post(`/medias/status`, {
                         user_id: currentUserId,
@@ -367,18 +359,16 @@ const AlbumDetails: React.FC = () => {
                         status: newStatus,
                     });
                 } catch (err: any) {
-                    // 3. SI le POST échoue avec une erreur 400 (Already exists), on tente le PUT
                     if (err.response?.status === 400) {
                         await apiClient.put(`/medias/status/${currentUserId}/${mediaIdInDB}`, {
                             status: newStatus
                         });
                     } else {
-                        throw err; // C'est une autre erreur, on la laisse remonter
+                        throw err; 
                     }
                 }
             }
         } catch (error: any) {
-            // Rollback en cas d'échec total
             setUserStatus(previousStatus);
             console.error("Erreur critique lors du changement de statut:", error);
             alert("Impossible de mettre à jour le statut.");
@@ -574,7 +564,7 @@ const AlbumDetails: React.FC = () => {
 
         try {
             await apiClient.post(`/reviews/likes/toggle`, {review_id: commentId});
-            fetchReviews(); // Sync avec la vraie donnée serveur
+            fetchReviews(); 
         } catch (err) {
             console.error("Erreur lors de l'action sur le like:", err);
             setLikedCommentIds((prev) => {
@@ -670,7 +660,6 @@ const AlbumDetails: React.FC = () => {
         const replies = comments.filter((c) => c.parent_id);
         const result: any[] = [];
 
-        // Fonction récursive pour insérer les enfants directement sous leur parent
         const traverse = (parent: any) => {
             result.push(parent);
             const children = replies
@@ -696,7 +685,7 @@ const AlbumDetails: React.FC = () => {
         if (!reply.parent_id) return 0;
         const parent = allComments.find((c: any) => c.id === reply.parent_id);
         if (!parent) return 1;
-        return Math.min(getReplyDepth(parent, allComments) + 1, 2); // max 2 crans
+        return Math.min(getReplyDepth(parent, allComments) + 1, 2); 
     };
 
     return (
@@ -966,7 +955,7 @@ const AlbumDetails: React.FC = () => {
                                     ) : (
                                         <div
                                             className="mb-10 bg-blue-500/10 border border-blue-500/20 p-5 rounded-2xl text-center text-sm text-blue-400 font-semibold shadow-inner">
-                                            💡 Vous avez déjà publié un avis pour cet album. Vous
+                                            Vous avez déjà publié un avis pour cet album. Vous
                                             pouvez l'éditer ou le supprimer directement sur votre
                                             commentaire ci-dessous.
                                         </div>

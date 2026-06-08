@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Camera, X, Trash2, Loader2, Eye, EyeOff } from "lucide-react"; // <-- Ajout de Eye et EyeOff
+import { Camera, X, Trash2, Loader2, Eye, EyeOff } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { jwtDecode } from "jwt-decode";
@@ -22,7 +22,6 @@ const CreatePlaylist: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Charger les données de la playlist si on est en édition (depuis la BDD)
   useEffect(() => {
     if (isEditing) {
       const fetchPlaylist = async () => {
@@ -45,7 +44,7 @@ const CreatePlaylist: React.FC = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result as string); // Base64 pour le backend
+        setImage(reader.result as string); 
       };
       reader.readAsDataURL(file);
     }
@@ -67,7 +66,6 @@ const CreatePlaylist: React.FC = () => {
 
       let newPlaylistId = state?.id;
 
-      // 1. Création (ou mise à jour) de la playlist
       if (isEditing) {
         await apiClient.put(`/playlists/${state.id}`, {
           name: name.trim(),
@@ -109,7 +107,6 @@ const CreatePlaylist: React.FC = () => {
         }
       }
 
-      // Redirection finale
       if (returnTo) navigate(returnTo);
       else navigate("/library");
     } catch (e: any) {

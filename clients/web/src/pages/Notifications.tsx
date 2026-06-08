@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom"; // 1. Importation du hook de navigation
+import { useNavigate } from "react-router-dom"; 
 import apiClient from "../api/client";
 
-// Interface calquée sur le modèle backend utilisé par le mobile
+
 export interface AppNotification {
   id: string;
   is_read: boolean;
