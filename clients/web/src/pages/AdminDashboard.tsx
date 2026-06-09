@@ -22,7 +22,13 @@ interface Report {
     username: string;
   };
   review_id: string | null;
+  review?: {
+    user_id: string;
+  };
   comment_id: string | null;
+  comment?: {
+    user_id: string;
+  };
   reason: string;
   reason_type: 'comment' | 'profile' | 'review';
   is_checked: boolean;
@@ -34,7 +40,7 @@ interface BannedUser {
   user_id: string;
   username: string;
   email: string;
-  content: string; 
+  content: string;
   created_at?: string;
 }
 
@@ -97,10 +103,34 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   const handleBanUserFromReport = async (report: Report) => {
-    const targetUserId = report.profile_id ||
-        window.prompt(t('prompt_target_id', "Ce signalement cible un contenu. Veuillez entrer l'ID de l'utilisateur créateur du contenu à bannir :"));
+    // 1. On cherche d'abord si l'ID est directement présent dans l'objet report
+    let targetUserId: string | null | undefined = report.profile_id ||
+        report.review?.user_id || report.comment?.user_id;
 
-    if (!targetUserId) return;
+    // 2. Si on n'a pas l'ID et que c'est une REVIEW, on interroge l'API
+    if (!targetUserId && report.reason_type === 'review' && report.review_id) {
+      try {
+        const reviewRes = await apiClient.get(`/reviews/${report.review_id}`);
+        targetUserId = reviewRes.data?.review?.user_id || reviewRes.data?.user_id;
+      } catch (err) {
+        console.error("Erreur lors de la récupération des détails de la review:", err);
+      }
+    }
+
+    // 3. Si on n'a pas l'ID et que c'est un COMMENTAIRE, on interroge l'API
+    if (!targetUserId && report.reason_type === 'comment' && report.comment_id) {
+      try {
+        const commentRes = await apiClient.get(`/review-comments/${report.comment_id}`);
+        targetUserId = commentRes.data?.reviewComment?.user_id || commentRes.data?.comment?.user_id || commentRes.data?.user_id;
+      } catch (err) {
+        console.error("Erreur lors de la récupération des détails du commentaire:", err);
+      }
+    }
+
+    if (!targetUserId) {
+      alert(t('alert_user_not_found', "Impossible de récupérer automatiquement l'identifiant de l'auteur de ce contenu."));
+      return;
+    }
 
     const banReason = window.prompt(
         t('prompt_ban_reason', "Veuillez saisir le motif du bannissement :"),
@@ -109,22 +139,73 @@ const AdminDashboard: React.FC = () => {
     if (banReason === null) return;
 
     try {
-      const res = await apiClient.post('/bans', { user_id: targetUserId, content: banReason });
+      const relatedReports: Report[] = [];
 
-      await apiClient.delete(`/reports/${report.id}`);
+      await Promise.all(
+          reports.map(async (r) => {
+            if (r.id === report.id || r.profile_id === targetUserId) {
+              relatedReports.push(r);
+              return;
+            }
 
-      setReports(prev => prev.filter(r => r.id !== report.id));
-      if (res.data) {
-        setBannedUsers(prev => [res.data, ...prev]);
-      }
+            if (r.reason_type === 'review' && r.review_id) {
+              let authorId = r.review?.user_id;
+              if (!authorId) {
+                try {
+                  const res = await apiClient.get(`/reviews/${r.review_id}`);
+                  authorId = res.data?.review?.user_id || res.data?.user_id;
+                } catch (err) {
+                  console.warn(`Review ${r.review_id} déjà supprimée ou inaccessible.`);
+                }
+              }
+              if (authorId === targetUserId) relatedReports.push(r);
+              return;
+            }
+
+            if (r.reason_type === 'comment' && r.comment_id) {
+              let authorId = r.comment?.user_id;
+              if (!authorId) {
+                try {
+                  const res = await apiClient.get(`/review-comments/${r.comment_id}`);
+                  authorId = res.data?.reviewComment?.user_id || res.data?.comment?.user_id || res.data?.user_id;
+                } catch (err) {
+                  console.warn(`Commentaire ${r.comment_id} déjà supprimé ou inaccessible.`);
+                }
+              }
+              if (authorId === targetUserId) relatedReports.push(r);
+              return;
+            }
+          })
+      );
+
+      await apiClient.post('/bans', { user_id: targetUserId, content: banReason });
+
+      await Promise.all(
+          relatedReports.map(r =>
+              apiClient.delete(`/reports/${r.id}`).catch(err => console.warn(`Le report ${r.id} est déjà supprimé.`, err))
+          )
+      );
+
+      const [reportsRes, bansRes] = await Promise.all([
+        apiClient.get('/reports').catch(() => ({ data: { reports: [] } })),
+        apiClient.get('/bans').catch(() => ({ data: { bannedUsers: [] } }))
+      ]);
+
+      const fetchedReports = reportsRes.data?.reports || (Array.isArray(reportsRes.data) ? reportsRes.data : []);
+      const fetchedBannedUsers = bansRes.data?.bannedUsers || (Array.isArray(bansRes.data) ? bansRes.data : []);
+
+      setReports(fetchedReports);
+      setBannedUsers(fetchedBannedUsers);
+
+      const pendingCount = fetchedReports.filter((r: Report) => !r.is_checked).length;
 
       setStats(prev => ({
         ...prev,
-        bannedUsers: prev.bannedUsers + 1,
-        reports: Math.max(0, prev.reports - 1)
+        bannedUsers: fetchedBannedUsers.length,
+        reports: pendingCount
       }));
 
-      alert(t('alert_ban_success', "L'utilisateur a été banni avec succès et le signalement a été clôturé."));
+      alert(t('alert_ban_success', "L'utilisateur a été banni avec succès et tous les signalements le concernant ont été clôturés."));
     } catch (error) {
       console.error("Erreur lors du bannissement de l'utilisateur :", error);
       alert(t('alert_ban_error', "Une erreur est survenue lors du bannissement."));
@@ -158,10 +239,12 @@ const AdminDashboard: React.FC = () => {
 
   const handleRejectReport = async (reportId: string) => {
     if (!window.confirm(t('confirm_reject_report', "Êtes-vous sûr de vouloir rejeter et supprimer ce signalement sans prendre de mesure ?"))) return;
+
     try {
       await apiClient.delete(`/reports/${reportId}`);
       setReports(prev => prev.filter(r => r.id !== reportId));
       setStats(prev => ({ ...prev, reports: Math.max(0, prev.reports - 1) }));
+
     } catch (error) {
       console.error("Erreur lors de la suppression du signalement :", error);
     }
@@ -350,7 +433,8 @@ const AdminDashboard: React.FC = () => {
                                           {t('status_pending', 'En attente')}
                                         </span>
                                         <span className="bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                                          {t('type_label', 'Type:')} {report.reason_type === 'profile' ? t('type_profile', 'Profil') : report.reason_type === 'review' ? t('type_review', 'Avis') : t('type_comment', 'Commentaire')}
+                                          {t('type_label', 'Type:')} {report.reason_type === 'profile' ?
+                                            t('type_profile', 'Profil') : report.reason_type === 'review' ? t('type_review', 'Avis') : t('type_comment', 'Commentaire')}
                                         </span>
                                       </div>
                                       <p className="text-slate-500 dark:text-gray-500 text-xs">
@@ -365,25 +449,24 @@ const AdminDashboard: React.FC = () => {
                                 </div>
 
                                 <div className="bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl p-4 mb-6">
-                                <p className="text-sm text-slate-300 dark:text-gray-700 mb-2 font-medium">
-                                  <strong className="text-white dark:text-gray-900">{t('target_label', 'Cible :')}</strong>{' '}
-                                  {report.reason_type === 'profile' ? (
-                                      report.profile?.username
-                                          ? `@${report.profile.username} (ID: ${report.profile_id?.substring(0, 8)})`
-                                          : `${t('type_profile', 'Profil')} (ID: ${report.profile_id?.substring(0, 8)})`
-                                  ) : report.reason_type === 'review' ? (
-                                      `${t('type_review', 'Review')} (ID: ${report.review_id?.substring(0, 8)})`
-                                  ) : (
-                                      `${t('type_comment', 'Commentaire')} (ID: ${report.comment_id?.substring(0, 8)})`
-                                  )}
-                                </p>
-                                <p className="text-sm text-slate-300 dark:text-gray-700 font-medium">
-                                  <strong className="text-white dark:text-gray-900">{t('reason', 'Motif')} :</strong> {report.reason}
-                                </p>
-                              </div>
+                                  <p className="text-sm text-slate-300 dark:text-gray-700 mb-2 font-medium">
+                                    <strong className="text-white dark:text-gray-900">{t('target_label', 'Cible :')}</strong>{' '}
+                                    {report.reason_type === 'profile' ? (
+                                        report.profile?.username
+                                            ? `@${report.profile.username} (ID: ${report.profile_id?.substring(0, 8)})`
+                                            : `${t('type_profile', 'Profil')} (ID: ${report.profile_id?.substring(0, 8)})`
+                                    ) : report.reason_type === 'review' ? (
+                                        `${t('type_review', 'Review')} (ID: ${report.review_id?.substring(0, 8)})`
+                                    ) : (
+                                        `${t('type_comment', 'Commentaire')} (ID: ${report.comment_id?.substring(0, 8)})`
+                                    )}
+                                  </p>
+                                  <p className="text-sm text-slate-300 dark:text-gray-700 font-medium">
+                                    <strong className="text-white dark:text-gray-900">{t('reason', 'Motif')} :</strong> {report.reason}
+                                  </p>
+                                </div>
 
                                 <div className="flex flex-wrap gap-3">
-                                  {/* Le bouton s'affichera UNIQUEMENT si c'est un signalement de profil */}
                                   {report.reason_type === 'profile' && (
                                       <button
                                           onClick={() => handleCheckContent(report)}

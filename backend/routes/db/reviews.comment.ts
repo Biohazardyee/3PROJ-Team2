@@ -8,6 +8,10 @@ router.get('/review/:review_id', (req, res, next) =>
     reviewCommentController.getByReviewId(req, res, next)
 );
 
+router.get('/:id', (req, res, next) =>
+    reviewCommentController.getById(req, res, next)
+);
+
 router.post('/', authGuard, (req, res, next) =>
     reviewCommentController.add(req, res, next)
 );
