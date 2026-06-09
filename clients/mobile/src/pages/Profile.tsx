@@ -59,7 +59,7 @@ const ProfileScreen = () => {
     ? externalUserIdRaw[0]
     : externalUserIdRaw;
 
-  const [activeTab, setActiveTab] = useState("Favorite Albums");
+  const [activeTab, setActiveTab] = useState("Albums favoris");
   const [userProfil, setUserProfil] = useState<any>(null);
   const [userConnected, setUserConnected] = useState<string>("");
   const [playlists, setPlaylists] = useState<any[]>([]);
@@ -78,7 +78,7 @@ const ProfileScreen = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const isInteracting = useRef(false);
 
-  const tabs: string[] = ["Favorite Albums", "Playlists", "Recent Activity"];
+  const tabs: string[] = ["Albums favoris ", "Playlists", "Activités récentes"];
 
   useEffect((): void => {
     loadData();
@@ -86,7 +86,7 @@ const ProfileScreen = () => {
 
   useEffect((): void => {
     if (
-      activeTab === "Recent Activity" &&
+      activeTab === "Activités récentes" &&
       recentActivity.length === 0 &&
       userProfil?.id
     ) {
@@ -321,7 +321,7 @@ const ProfileScreen = () => {
 
       setFavoriteReviews(normalizedData);
     } catch (error: any) {
-      console.error("❌ Erreur Favorite Albums :", error.response?.status);
+      console.error("❌ Erreur Albums favoris  :", error.response?.status);
     }
   };
 
@@ -393,7 +393,7 @@ const ProfileScreen = () => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
     if (
       layoutMeasurement.height + contentOffset.y >= contentSize.height - 100 &&
-      activeTab === "Recent Activity" &&
+      activeTab === "Activités récentes" &&
       hasMoreActivity &&
       !loadingMore &&
       userProfil?.id
@@ -484,11 +484,11 @@ const ProfileScreen = () => {
             <View style={styles.statsRow}>
               <TouchableOpacity style={styles.statItem}>
                 <Text style={styles.statNumber}>{followCounts.followers}</Text>
-                <Text style={styles.statLabel}> Followers</Text>
+                <Text style={styles.statLabel}> Abonnés</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.statItem}>
                 <Text style={styles.statNumber}>{followCounts.following}</Text>
-                <Text style={styles.statLabel}> Following</Text>
+                <Text style={styles.statLabel}> Suivis</Text>
               </TouchableOpacity>
             </View>
 
@@ -498,7 +498,7 @@ const ProfileScreen = () => {
                 onPress={(): void => router.push("/settings")}
               >
                 <Ionicons name="settings-outline" size={18} color="#fff" />
-                <Text style={styles.editButtonText}>Edit Profile</Text>
+                <Text style={styles.editButtonText}>Modifier le profil</Text>
               </TouchableOpacity>
             ) : (
               <View style={{ flexDirection: "row", gap: 10 }}>
@@ -533,7 +533,7 @@ const ProfileScreen = () => {
               </View>
             )}
             <Text style={styles.bio}>
-              {userProfil?.biography || "No biography yet."}
+              {userProfil?.biography || "Pas encore de biographie"}
             </Text>
           </View>
 
@@ -564,7 +564,7 @@ const ProfileScreen = () => {
           </View>
 
           <View style={styles.sectionPadding}>
-            {activeTab === "Favorite Albums" && (
+            {activeTab === "Albums favoris" && (
               <View style={styles.albumGrid}>
                 {favoriteReviews.map((item) => (
                   <View key={item.id} style={styles.cardWrapper}>
@@ -622,7 +622,7 @@ const ProfileScreen = () => {
               </View>
             )}
 
-            {activeTab === "Recent Activity" && (
+            {activeTab === "Activités récentes" && (
               <View style={styles.postsList}>
                 {recentActivity.map((item) => (
                   <View key={item.id} style={styles.card}>
