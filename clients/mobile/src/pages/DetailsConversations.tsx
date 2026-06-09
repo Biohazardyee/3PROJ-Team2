@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 import { io, Socket } from "socket.io-client";
 
@@ -23,6 +24,7 @@ const SOCKET_URL: string | undefined = process.env.EXPO_PUBLIC_API_URL;
 const DetailsConversations = () => {
   const { conversationId, userName } = useLocalSearchParams();
   const router: Router = useRouter();
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -205,7 +207,7 @@ const DetailsConversations = () => {
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
-              placeholder="Écrire un message..."
+              placeholder={t("type_message_placeholder")}
               placeholderTextColor="#55577e"
               value={newMessage}
               onChangeText={setNewMessage}

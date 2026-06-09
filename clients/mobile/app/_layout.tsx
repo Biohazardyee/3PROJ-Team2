@@ -10,6 +10,8 @@ import Footer from "@/src/components/Footer";
 import {ThemeProvider, useTheme} from "../src/context/ThemeContext";
 import {usePushNotifications} from "../src/hook/usePushNotifications";
 import * as Notifications from "expo-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from "../src/i18n";
 
 export default function RootLayout() {
     return (
@@ -43,6 +45,16 @@ function LayoutContent() {
             }
         };
         checkUser();
+    }, []);
+
+    useEffect((): void => {
+        const loadLanguage: () => Promise<void> = async (): Promise<void> => {
+            const savedLang: string | null = await AsyncStorage.getItem("user_language");
+            if (savedLang) {
+                await i18n.changeLanguage(savedLang);
+            }
+        };
+        loadLanguage();
     }, []);
 
     usePushNotifications(userId);

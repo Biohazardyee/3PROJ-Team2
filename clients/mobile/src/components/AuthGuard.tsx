@@ -5,10 +5,12 @@ import {Ionicons} from "@expo/vector-icons";
 import {Router, useRouter} from 'expo-router';
 import {ButtonMobile} from '@/src/components/ButtonMobile';
 import Header from "@/src/components/Header";
+import {useTranslation} from "react-i18next";
 
 
 export default function AutGuard() {
     const router: Router = useRouter();
+    const {t} = useTranslation();
 
     return (
         <View style={styles.container}>
@@ -25,15 +27,15 @@ export default function AutGuard() {
                 </LinearGradient>
 
                 {/* Texte  */}
-                <Text style={styles.title}>Contenu Exclusif</Text>
+                <Text style={styles.title}>{t("exclusive_content")}</Text>
                 <Text style={styles.text}>
-                    Rejoignez Melodia pour accéder à ce contenu.
+                    {t("join_melodia")}
                 </Text>
 
                 {/* boutons */}
                 <View style={styles.buttons}>
                     <ButtonMobile
-                        title="Se connecter"
+                        title={t("login")}
                         onPress={(): void => router.push('/login')}
                     />
 
@@ -50,7 +52,7 @@ export default function AutGuard() {
                             style={styles.outlineGradient}
                         >
                             <View style={styles.innerButton}>
-                                <Text style={styles.registerText}>Créer un compte</Text>
+                                <Text style={styles.registerText}>{t("create_account")}</Text>
                             </View>
                         </LinearGradient>
                     </TouchableOpacity>
@@ -58,7 +60,7 @@ export default function AutGuard() {
 
                 {/* Lien retour */}
                 <TouchableOpacity onPress={(): void => router.back()} style={styles.backButton}>
-                    <Text style={styles.backText}>Plus tard</Text>
+                    <Text style={styles.backText}>{t("later")}</Text>
                 </TouchableOpacity>
 
             </View>

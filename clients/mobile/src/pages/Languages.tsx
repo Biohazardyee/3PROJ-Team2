@@ -4,6 +4,7 @@ import {Ionicons} from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
 import {useTheme} from '../context/ThemeContext';
+import i18n from '../i18n';
 
 const AVAILABLE_LANGUAGES = [
     {code: 'fr', label: 'Français', flag: '🇫🇷'},
@@ -21,6 +22,7 @@ const Languages = () => {
                 const savedLang: string | null = await AsyncStorage.getItem('user_language');
                 if (savedLang) {
                     setSelectedLang(savedLang);
+                    await i18n.changeLanguage(savedLang);
                 }
             } catch (e) {
                 console.error("Erreur chargement langue", e);
@@ -32,6 +34,7 @@ const Languages = () => {
     // 2. Fonction pour changer et sauvegarder la langue
     const changeLanguage = async (langCode: string): Promise<void> => {
         setSelectedLang(langCode);
+        await i18n.changeLanguage(langCode);
         await AsyncStorage.setItem('user_language', langCode);
 
         // Note : Pour traduire toute l'app, il faudra plus tard utiliser un outil comme i18next.

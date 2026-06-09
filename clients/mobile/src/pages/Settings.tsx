@@ -18,6 +18,7 @@ import BackButton from "../components/BackButton";
 import {useTheme} from "../context/ThemeContext";
 import * as SecureStore from "expo-secure-store";
 import {KeyValuePair} from "@react-native-async-storage/async-storage/src/types";
+import {useTranslation} from "react-i18next";
 
 
 type SettingRowProps = {
@@ -91,6 +92,7 @@ const Settings = () => {
     const router: Router = useRouter();
 
     const {isDarkMode, toggleTheme, theme} = useTheme();
+    const {t} = useTranslation();
 
     const [notifications, setNotifications] = useState(true);
 
@@ -155,7 +157,7 @@ const Settings = () => {
             <View style={[styles.header, {backgroundColor: theme.background}]}>
                 <BackButton/>
                 <Text style={[styles.headerTitle, {color: theme.text}]}>
-                    Paramètres
+                    {t("settings_title")}
                 </Text>
                 <View style={{width: 45}}/>
             </View>
@@ -177,7 +179,7 @@ const Settings = () => {
                     <SettingRow
                         theme={theme}
                         icon="moon-outline"
-                        title="Mode Sombre"
+                        title={t("dark_mode")}
                         type="switch"
                         value={isDarkMode}
                         onValueChange={toggleTheme}
@@ -205,7 +207,7 @@ const Settings = () => {
                     <SettingRow
                         theme={theme}
                         icon="shield-checkmark-outline"
-                        title="Confidentialité"
+                        title={t("privacy")}
                         onPress={() => router.push("/privacy")}
                     />
                     <SettingRow
@@ -226,7 +228,7 @@ const Settings = () => {
                     <SettingRow
                         theme={theme}
                         icon="log-out-outline"
-                        title="Se déconnecter"
+                        title={t("btn_logout")}
                         type="action"
                         danger={true}
                         onPress={handleLogout}

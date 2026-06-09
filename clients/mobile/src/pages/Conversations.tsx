@@ -15,6 +15,7 @@ import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import apiClient from "../api/client";
 import { io, Socket } from "socket.io-client";
+import { useTranslation } from "react-i18next";
 
 import ChatItem from "../components/ChatItem";
 
@@ -54,6 +55,7 @@ interface Conversation {
 
 const Conversations = () => {
   const navigation = useNavigation<any>();
+  const { t } = useTranslation();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -195,11 +197,11 @@ const Conversations = () => {
         }
       >
         <View style={styles.titleWrapper}>
-          <Text style={styles.glitchTitleSub}>Messages</Text>
+          <Text style={styles.glitchTitleSub}>{t("messages_title")}</Text>
         </View>
 
         <TextInput
-          placeholder="Rechercher..."
+          placeholder={t("search_conv_placeholder")}
           placeholderTextColor="#666"
           style={styles.searchInput}
         />

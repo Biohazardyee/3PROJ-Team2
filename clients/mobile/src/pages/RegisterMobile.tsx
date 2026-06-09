@@ -19,11 +19,13 @@ import * as SecureStore from "expo-secure-store";
 import * as Linking from "expo-linking";
 import {ParsedURL} from "expo-linking";
 import {WebBrowserAuthSessionResult} from "expo-web-browser";
+import {useTranslation} from "react-i18next";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const RegisterMobile: React.FC = () => {
     const router: Router = useRouter();
+    const {t} = useTranslation();
 
     // State pour les champs du formulaire
     const [email, setEmail] = React.useState("");
@@ -118,12 +120,12 @@ const RegisterMobile: React.FC = () => {
                         source={require("@/assets/images/logo.png")}
                         style={styles.logoImage}
                     />
-                    <Text style={styles.title}>Créer votre compte</Text>
-                    <Text style={styles.subtitle}>Rejoignez la communauté musicale</Text>
+                    <Text style={styles.title}>{t("register_title")}</Text>
+                    <Text style={styles.subtitle}>{t("register_subtitle")}</Text>
                 </View>
 
                 <InputMobile
-                    label="E-mail"
+                    label={t("register_email_label")}
                     placeholder="votre@email.com"
                     icon="mail-outline"
                     value={email}
@@ -132,7 +134,7 @@ const RegisterMobile: React.FC = () => {
                     autoCapitalize="none"
                 />
                 <InputMobile
-                    label="Nom d'utilisateur"
+                    label={t("register_username_label")}
                     placeholder="fan"
                     icon="person-circle-outline"
                     value={username}
@@ -140,7 +142,7 @@ const RegisterMobile: React.FC = () => {
                     autoCapitalize="none"
                 />
                 <InputMobile
-                    label="Mot de passe"
+                    label={t("register_password_label")}
                     placeholder="••••••••"
                     icon="lock-closed-outline"
                     secureTextEntry
@@ -172,7 +174,7 @@ const RegisterMobile: React.FC = () => {
                 </View>
 
                 <ButtonMobile
-                    title={isLoading ? "Création en cours..." : "Créer le compte"}
+                    title={t("register_submit_btn")}
                     style={{marginTop: 10}}
                     onPress={handleRegister}
                     disabled={isLoading}
@@ -180,7 +182,7 @@ const RegisterMobile: React.FC = () => {
 
                 <View style={styles.separator}>
                     <View style={styles.line}/>
-                    <Text style={styles.sepText}>OU</Text>
+                    <Text style={styles.sepText}>{t("register_separator")}</Text>
                     <View style={styles.line}/>
                 </View>
 
@@ -207,7 +209,7 @@ const RegisterMobile: React.FC = () => {
                     style={styles.footer}
                 >
                     <Text style={styles.footerText}>
-                        Déjà un compte ? <Text style={styles.link}>Se connecter</Text>
+                        {t("register_already_account")} <Text style={styles.link}>{t("register_login_link")}</Text>
                     </Text>
                 </TouchableOpacity>
             </ScrollView>

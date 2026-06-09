@@ -14,6 +14,7 @@ import Header from "@/src/components/Header";
 import apiClient from "../api/client";
 import { Router, useRouter } from "expo-router";
 import { getValidSource } from "@/helpers/helpers";
+import { useTranslation } from "react-i18next";
 
 export interface AppNotification {
   id: string;
@@ -41,6 +42,7 @@ export default function Notifications() {
   const [refreshing, setRefreshing] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const router: Router = useRouter();
+  const { t } = useTranslation();
 
   useEffect((): void => {
     const fetchUserId: () => Promise<void> = async (): Promise<void> => {
@@ -151,18 +153,17 @@ export default function Notifications() {
         }
       >
         <View style={styles.TopPage}>
-          <Text style={styles.Title}>Notifications</Text>
+          <Text style={styles.Title}>{t("notifications_title")}</Text>
         </View>
 
         {unreadCount > 0 && (
           <TouchableOpacity onPress={markAllAsRead}>
-            <Text style={styles.markRead}>Marquer tout comme lu</Text>
+            <Text style={styles.markRead}>{t("mark_all_read")}</Text>
           </TouchableOpacity>
         )}
 
         <Text style={styles.unreadText}>
-          {unreadCount} notification{unreadCount > 1 ? "s" : ""} non lue
-          {unreadCount > 1 ? "s" : ""}
+          {t(unreadCount === 1 ? "unread_count_one" : "unread_count_other", { count: unreadCount })}
         </Text>
 
         <View style={styles.tabs}>
@@ -177,7 +178,7 @@ export default function Notifications() {
                   filter === tabName ? styles.activeTabText : styles.tabText
                 }
               >
-                {tabName}
+                {tabName === "Tout" ? t("tab_all") : tabName === "Non lue" ? t("tab_unread") : t("tab_mentions")}
               </Text>
             </TouchableOpacity>
           ))}
@@ -193,7 +194,7 @@ export default function Notifications() {
           <Text
             style={{ color: "#64748b", textAlign: "center", marginTop: 50 }}
           >
-            Aucune notification.
+            {t("no_notifications")}
           </Text>
         ) : (
           filteredNotifications.map((item) => {

@@ -18,9 +18,11 @@ import * as AuthSession from "expo-auth-session";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import apiClient from "../api/client";
 import {WebBrowserAuthSessionResult} from "expo-web-browser";
+import {useTranslation} from "react-i18next";
 
 const LoginMobile: React.FC = () => {
     const router: Router = useRouter();
+    const {t} = useTranslation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -108,11 +110,11 @@ const LoginMobile: React.FC = () => {
                         source={require("@/assets/images/logo.png")}
                         style={styles.logoImage}
                     />
-                    <Text style={styles.title}>Connectez-vous !</Text>
+                    <Text style={styles.title}>{t("login_welcome")}</Text>
                 </View>
 
                 <InputMobile
-                    label="E-mail"
+                    label={t("login_email_label")}
                     placeholder="votre@email.com"
                     icon="mail-outline"
                     value={email}
@@ -121,7 +123,7 @@ const LoginMobile: React.FC = () => {
                     autoCapitalize="none"
                 />
                 <InputMobile
-                    label="Mot de passe"
+                    label={t("login_password_label")}
                     placeholder="••••••••"
                     icon="lock-closed-outline"
                     secureTextEntry
@@ -129,16 +131,16 @@ const LoginMobile: React.FC = () => {
                     onChangeText={setPassword}
                 />
 
-                <Text style={styles.forgot}>Mot de passe oublié ?</Text>
+                <Text style={styles.forgot}>{t("login_forgot_password")}</Text>
                 <ButtonMobile
-                    title="Se connecter"
+                    title={isLoading ? t("login_loading") : t("login_submit_btn")}
                     onPress={handleLogin}
                     disabled={isLoading}
                 />
 
                 <View style={styles.separator}>
                     <View style={styles.line}/>
-                    <Text style={styles.sepText}>OU</Text>
+                    <Text style={styles.sepText}>{t("login_separator")}</Text>
                     <View style={styles.line}/>
                 </View>
 
@@ -168,7 +170,7 @@ const LoginMobile: React.FC = () => {
                     style={styles.footer}
                 >
                     <Text style={styles.footerText}>
-                        Pas encore de compte ? <Text style={styles.link}>S'inscrire</Text>
+                        {t("login_no_account")} <Text style={styles.link}>{t("login_register_link")}</Text>
                     </Text>
                 </TouchableOpacity>
             </ScrollView>

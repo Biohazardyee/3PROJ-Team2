@@ -15,14 +15,16 @@ import Header from "@/src/components/Header";
 import {StatusBar} from "expo-status-bar";
 import AlbumCard from "@/src/components/AlbumCard";
 import apiClient from "../api/client";
+import {useTranslation} from "react-i18next";
 
-const SORT_OPTIONS = [
-    {label: "Titre A-Z", value: "az"},
-    {label: "Mieux notés", value: "rated"},
-    {label: "Plus récents", value: "recent"},
+const SORT_OPTIONS_VALUES = [
+    {value: "az", key: "sort_az"},
+    {value: "rated", key: "sort_rating"},
+    {value: "recent", key: "sort_recent"},
 ];
 
 const Home: React.FC = () => {
+    const {t} = useTranslation();
     const [searchQuery, setSearchQuery] = useState("");
     const [albums, setAlbums] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -156,9 +158,9 @@ const Home: React.FC = () => {
                 contentContainerStyle={styles.scroll}
             >
                 <View style={styles.headerTextContainer}>
-                    <Text style={styles.title}>Explorer</Text>
+                    <Text style={styles.title}>{t("explore_title")}</Text>
                     <Text style={styles.subtitle}>
-                        Trouvez un artiste ou un album spécifique
+                        {t("explore_subtitle")}
                     </Text>
                 </View>
 
@@ -193,7 +195,7 @@ const Home: React.FC = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.label}>Rechercher</Text>
+                    <Text style={styles.label}>{t("search_label")}</Text>
                     <View style={styles.searchBar}>
                         <Ionicons
                             name="search-outline"
@@ -215,7 +217,7 @@ const Home: React.FC = () => {
                         />
                     </View>
 
-                    <Text style={styles.label}>Trier par</Text>
+                    <Text style={styles.label}>{t("sort_label")}</Text>
                     <TouchableOpacity
                         style={styles.dropdown}
                         onPress={(): void => setIsSortOpen(!isSortOpen)}
@@ -271,7 +273,7 @@ const Home: React.FC = () => {
                 </View>
 
                 <Text style={styles.resultsText}>
-                    {albums.length > 0 ? `${albums.length} résultats` : "Aucun résultat"}
+                    {t(albums.length === 1 ? "results_count" : "results_count_plural", {count: albums.length})}
                 </Text>
 
                 <View style={styles.grid}>

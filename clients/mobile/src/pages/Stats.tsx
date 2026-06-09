@@ -16,9 +16,11 @@ import StatCardStats from "../components/StatCardStats";
 import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import * as SecureStore from "expo-secure-store";
+import {useTranslation} from "react-i18next";
 
 const Stats = () => {
     const router: Router = useRouter();
+    const {t} = useTranslation();
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         listened: 0,
@@ -88,12 +90,12 @@ const Stats = () => {
                     contentContainerStyle={styles.scrollContent}
                 >
                     <View style={styles.header}>
-                        <Text style={styles.mainTitle}>Mes statistiques</Text>
+                        <Text style={styles.mainTitle}>{t("stats_title")}</Text>
                     </View>
 
                     <View style={styles.grid}>
                         <StatCardStats
-                            title="Écoutés"
+                            title={t("status_completed")}
                             count={stats.listened.toString()}
                             icon="check-circle-outline"
                             color="#00ffa3"
@@ -105,7 +107,7 @@ const Stats = () => {
                             }
                         />
                         <StatCardStats
-                            title="À écouter plus tard"
+                            title={t("status_listening")}
                             count={stats.later.toString()}
                             icon="playlist-music"
                             color="#3b82f6"
@@ -117,7 +119,7 @@ const Stats = () => {
                             }
                         />
                         <StatCardStats
-                            title="Favoris"
+                            title={t("status_wishlist")}
                             count={stats.favorite.toString()}
                             icon="star"
                             color="#fbbf24"
@@ -129,7 +131,7 @@ const Stats = () => {
                             }
                         />
                         <StatCardStats
-                            title="Je n'aime pas"
+                            title={t("status_dropped")}
                             count={stats.disliked.toString()}
                             icon="close-circle-outline"
                             color="#f43f5e"
@@ -146,7 +148,7 @@ const Stats = () => {
                         <View style={styles.chartHeaderRow}>
                             <Ionicons name="stats-chart" size={20} color="#3b82f6"/>
                             <Text style={styles.chartHeaderText}>
-                                Détail des statistiques
+                                {t("stats_detail_title")}
                             </Text>
                         </View>
                         <View style={styles.pieWrapper}>
@@ -169,10 +171,10 @@ const Stats = () => {
                             )}
                         </View>
                         <View style={styles.legendGrid}>
-                            <Legend item="Écoutés" color="#00ffa3"/>
-                            <Legend item="À écouter" color="#3b82f6"/>
-                            <Legend item="Favoris" color="#fbbf24"/>
-                            <Legend item="Détestés" color="#f43f5e"/>
+                            <Legend item={t("status_completed")} color="#00ffa3"/>
+                            <Legend item={t("status_listening")} color="#3b82f6"/>
+                            <Legend item={t("status_wishlist")} color="#fbbf24"/>
+                            <Legend item={t("status_dropped")} color="#f43f5e"/>
                         </View>
                     </View>
                 </ScrollView>
