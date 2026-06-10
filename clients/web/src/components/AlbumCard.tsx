@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import {NavigateFunction, useNavigate} from "react-router-dom";
 import { Star } from "lucide-react";
 
 type TrendingCardProps = {
@@ -9,7 +9,7 @@ type TrendingCardProps = {
   cover: string;
   rating: number;
   year: number;
-  genre?: string; 
+  genre?: string;
 };
 
 export const AlbumCard: React.FC<TrendingCardProps> = ({
@@ -20,7 +20,7 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
   rating,
   year,
 }) => {
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
 
   return (
     <div
@@ -35,7 +35,7 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
         />
       </div>
 
-      <div className="p-4 flex flex-col flex-grow">
+      <div className="p-4 flex flex-col grow">
         <h3 className="font-bold text-base text-white dark:text-gray-900 truncate mb-1 group-hover:text-indigo-400 transition-colors">
           {title}
         </h3>

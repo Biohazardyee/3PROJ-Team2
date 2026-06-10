@@ -67,9 +67,7 @@ const StatDetails: React.FC = () => {
                 .map((item: any) => {
                     const m = item.media;
                     return {
-                        // L'ID pour l'affichage/navigation (Format Last.fm ou UUID)
                         displayId: m.api_id || m.id,
-                        // L'ID RÉEL de la DB (UUID) pour les requêtes POST/PUT
                         dbId: m.id,
                         album: m.name || m.title || "Titre inconnu",
                         artist: m.artist || "Artiste inconnu",
@@ -78,8 +76,7 @@ const StatDetails: React.FC = () => {
                     };
                 });
 
-            // Dédoublonnage sur le displayId
-            const uniqueMap = new Map();
+            const uniqueMap: Map<any, any> = new Map();
             mappedAlbums.forEach((a: any): void => {
                 if (!uniqueMap.has(a.displayId)) uniqueMap.set(a.displayId, a);
             });

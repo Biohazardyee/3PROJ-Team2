@@ -7,7 +7,6 @@ import {
     Alert,
     ActivityIndicator,
 } from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
 import {LinearGradient} from "expo-linear-gradient";
 import {Ionicons} from "@expo/vector-icons";
 import {Router, useRouter} from "expo-router";
@@ -283,7 +282,7 @@ const styles = StyleSheet.create({
         borderColor: "#334155",
         overflow: "hidden",
         position: "absolute",
-        top: 80, // Ajusté pour être juste sous l'input
+        top: 80,
         left: 0,
         right: 0,
         elevation: 5,
@@ -303,7 +302,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         paddingHorizontal: 30,
-        zIndex: 1, // Pour rester sous les suggestions si besoin
+        zIndex: 1,
     },
     navButton: {
         width: 50,

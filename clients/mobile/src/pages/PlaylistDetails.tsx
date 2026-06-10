@@ -164,13 +164,12 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
     },
 
-    // 🔥 FIX ICI
+
     columnWrapper: {
         gap: GAP,
         marginBottom: 12,
     },
 
-    // 🔥 FIX ICI
     cardWrapper: {
         width: COLUMN_WIDTH,
         flex: 1,

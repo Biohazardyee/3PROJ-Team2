@@ -16,7 +16,6 @@ export default function AutGuard() {
         <View style={styles.container}>
             <Header/>
             <View style={styles.content}>
-                {/* Logo */}
                 <LinearGradient
                     colors={['#6366f1', '#ec4899']}
                     start={{x: 0, y: 0}}
@@ -26,13 +25,12 @@ export default function AutGuard() {
                     <Ionicons name="lock-closed" size={40} color="white"/>
                 </LinearGradient>
 
-                {/* Texte  */}
+
                 <Text style={styles.title}>{t("exclusive_content")}</Text>
                 <Text style={styles.text}>
                     {t("join_melodia")}
                 </Text>
 
-                {/* boutons */}
                 <View style={styles.buttons}>
                     <ButtonMobile
                         title={t("login")}
@@ -58,7 +56,6 @@ export default function AutGuard() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Lien retour */}
                 <TouchableOpacity onPress={(): void => router.back()} style={styles.backButton}>
                     <Text style={styles.backText}>{t("later")}</Text>
                 </TouchableOpacity>

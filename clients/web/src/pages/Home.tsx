@@ -22,7 +22,7 @@ const Home: React.FC = () => {
     setLoading(true);
 
     try {
-      let url =
+      let url: string =
         searchMode === "artist"
           ? `/api/artists/info/top-albums?artist=${encodeURIComponent(query)}&page=${pageNumber}`
           : `/api/search?query=${encodeURIComponent(query)}&page=${pageNumber}`;

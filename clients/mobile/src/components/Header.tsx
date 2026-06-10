@@ -1,28 +1,20 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import {Ionicons} from "@expo/vector-icons";
-import {useRouter, usePathname, Router} from "expo-router";
-import {useFonts} from 'expo-font';
-import {Syncopate_400Regular} from '@expo-google-fonts/syncopate';
-import {Pacifico_400Regular} from '@expo-google-fonts/pacifico';
+import {useRouter, Router} from "expo-router";
+
 
 const Header: React.FC = () => {
-    let [fontsLoaded] = useFonts({
-        Syncopate_400Regular,
-        Pacifico_400Regular
-    });
+
     const router: Router = useRouter();
-    const pathname: string = usePathname();
     return (
         <View style={styles.header}>
             <View style={styles.content}>
-                {/* Logo */}
                 <Image
                     source={require('@/assets/images/logo.png')}
                     style={styles.logoImage}
                 />
 
-                {/* Nom de l'app */}
                 <Text style={styles.name}>Melodia</Text>
             </View>
 

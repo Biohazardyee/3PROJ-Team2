@@ -13,6 +13,30 @@ export interface ReportResponseDto {
     created_at: Date;
 }
 
+export interface Report {
+    id: string;
+    reporter_id: string;
+    reporter?: {
+        username: string;
+    };
+    profile_id: string | null;
+    profile?: {
+        username: string;
+    };
+    review_id: string | null;
+    review?: {
+        user_id: string;
+    };
+    comment_id: string | null;
+    comment?: {
+        user_id: string;
+    };
+    reason: string;
+    reason_type: 'comment' | 'profile' | 'review';
+    is_checked: boolean;
+    created_at: string;
+}
+
 export interface ReportResponseAddDto {
     id: string
     reporter_id: string;

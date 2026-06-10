@@ -27,7 +27,6 @@ const RegisterMobile: React.FC = () => {
     const router: Router = useRouter();
     const {t} = useTranslation();
 
-    // State pour les champs du formulaire
     const [email, setEmail] = React.useState("");
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -53,8 +52,8 @@ const RegisterMobile: React.FC = () => {
             if (result.type === "success" && result.url) {
                 const parsedUrl: ParsedURL = Linking.parse(result.url);
 
-                const token = parsedUrl.queryParams?.token as string;
-                const error = parsedUrl.queryParams?.error as string;
+                const token: string = parsedUrl.queryParams?.token as string;
+                const error: string = parsedUrl.queryParams?.error as string;
 
                 if (error) {
                     Alert.alert(

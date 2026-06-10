@@ -1,33 +1,31 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import {NavigateFunction, useNavigate} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
 
 export default function AuthGuardWeb() {
-    const { t, i18n } = useTranslation();
-    const navigate = useNavigate();
+    const {t, i18n} = useTranslation();
+    const navigate: NavigateFunction = useNavigate();
 
-    const toggleLanguage = () => {
-        const newLang = i18n.language === 'fr' ? 'en' : 'fr';
+    const toggleLanguage = (): void => {
+        const newLang: "fr" | "en" = i18n.language === 'fr' ? 'en' : 'fr';
         i18n.changeLanguage(newLang);
     };
 
     return (
         <div style={styles.container}>
             <div style={styles.content}>
-            {/* Bouton de switch poufr la langue A ENLEVER */}
-            <button onClick={toggleLanguage} style={styles.langSwitch}>
-                {i18n.language === 'fr' ? 'EN 🇬🇧' : 'FR 🇫🇷'}
-            </button>
-                {/* Icône Verrou avec Dégradé */}
+                <button onClick={toggleLanguage} style={styles.langSwitch}>
+                    {i18n.language === 'fr' ? 'EN 🇬🇧' : 'FR 🇫🇷'}
+                </button>
                 <div style={styles.iconContainer}>
-                    <svg 
-                        width="40" 
-                        height="40" 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="white" 
-                        strokeWidth="2" 
-                        strokeLinecap="round" 
+                    <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
                         strokeLinejoin="round"
                     >
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -35,26 +33,21 @@ export default function AuthGuardWeb() {
                     </svg>
                 </div>
 
-                {/* Texte */}
                 <h1 style={styles.title}>{t('exclusive_content')}</h1>
                 <p style={styles.text}>{t('join_melodia')}</p>
 
-                {/* Boutons */}
                 <div style={styles.buttonWrapper}>
-                    {/* Login */}
                     <button style={styles.loginButton} onClick={() => navigate('/login')}>
                         {t('login')}
                     </button>
 
-                    {/* Signup */}
                     <button style={styles.registerButtonOutline} onClick={() => navigate('/register')}>
-                            <div style={styles.innerButton}>
-                                {t('create_account')}
-                            </div>
-                        </button>
-                    </div>
+                        <div style={styles.innerButton}>
+                            {t('create_account')}
+                        </div>
+                    </button>
+                </div>
 
-                {/* Back Button */}
                 <button style={styles.backButton} onClick={() => navigate(-1)}>
                     {t('later')}
                 </button>

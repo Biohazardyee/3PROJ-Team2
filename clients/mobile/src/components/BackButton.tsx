@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet, Platform, ViewStyle} from 'react-native';
+import {TouchableOpacity, StyleSheet, ViewStyle} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {Router, useRouter} from 'expo-router';
 

@@ -43,7 +43,6 @@ export const AuthReviewButton: React.FC<AuthReviewButtonProps> = ({onPress, isLo
 };
 
 const styles = StyleSheet.create({
-    // Style "Verrouillé" (Inspiré de ton AuthGuard)
     guestButton: {
         height: 55,
         borderRadius: 15,

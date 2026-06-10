@@ -11,19 +11,20 @@ import {
     Music,
     Loader2,
 } from "lucide-react";
-import {useNavigate} from "react-router-dom";
+import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
 import apiClient from "../api/client";
+import {AxiosResponse} from "axios";
 
 type TabType = "Profile" | "Privacy" | "Data";
 
-const USERNAME_MAX = 20;
-const BIO_MAX = 150;
+const USERNAME_MAX: number = 20;
+const BIO_MAX: number = 150;
 
 const Settings: React.FC = () => {
     const {t} = useTranslation();
-    const navigate = useNavigate();
+    const navigate: NavigateFunction = useNavigate();
     const [activeTab, setActiveTab] = useState<TabType>("Profile");
 
     const [userId, setUserId] = useState<string>("");
@@ -46,11 +47,11 @@ const Settings: React.FC = () => {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const searchTimeout = useRef<any>(null);
+    const fileInputRef: React.RefObject<HTMLInputElement | null> = useRef<HTMLInputElement>(null);
+    const searchTimeout: React.RefObject<any> = useRef<any>(null);
 
-    useEffect(() => {
-        const loadUserData = async () => {
+    useEffect((): void => {
+        const loadUserData = async (): Promise<void> => {
             try {
                 const token: string | null = localStorage.getItem("token") || localStorage.getItem("userToken");
                 if (!token) return;
@@ -60,14 +61,13 @@ const Settings: React.FC = () => {
 
                 setUserId(decodedId);
 
-                const res = await apiClient.get(`/users/public/${decodedId}`);
+                const res: AxiosResponse = await apiClient.get(`/users/public/${decodedId}`);
                 const user = res.data.user || res.data;
 
                 setUsername(user.username || "");
                 setFavoriteBand(user.favorite_band || "");
                 setBiography(user.biography || "");
 
-                // Formatage de l'image si nécessaire
                 if (user.profile_picture) {
                     const formattedPic = user.profile_picture.startsWith("data:")
                         ? user.profile_picture
@@ -84,7 +84,7 @@ const Settings: React.FC = () => {
         loadUserData();
     }, []);
 
-    const searchArtists = (text: string) => {
+    const searchArtists = (text: string): void => {
         setFavoriteBand(text);
 
         if (searchTimeout.current) clearTimeout(searchTimeout.current);
@@ -93,13 +93,13 @@ const Settings: React.FC = () => {
             setIsSearching(true);
             setShowSuggestions(true);
 
-            searchTimeout.current = setTimeout(async () => {
+            searchTimeout.current = setTimeout(async (): Promise<void> => {
                 try {
-                    const response = await apiClient.get(`/api/search?query=${text}`);
+                    const response: AxiosResponse = await apiClient.get(`/api/search?query=${text}`);
                     const albums = response.data.searchResults?.results?.albummatches?.album || [];
-                    const uniqueArtists = [...new Set(albums.map((a: any) => a.artist))] as string[];
+                    const uniqueArtists: string[] = [...new Set(albums.map((a: any) => a.artist))] as string[];
 
-                    setSuggestions(uniqueArtists.map((name) => ({name})).slice(0, 5));
+                    setSuggestions(uniqueArtists.map((name: string): { name: string } => ({name})).slice(0, 5));
                 } catch (e) {
                     console.error(e);
                 } finally {
@@ -112,13 +112,12 @@ const Settings: React.FC = () => {
         }
     };
 
-    // --- 3. ACTIONS DE SAUVEGARDE & MODIFICATIONS ---
-    const handleSaveProfile = async () => {
+    const handleSaveProfile = async (): Promise<void> => {
         if (!userId) return;
 
         try {
             setLoading(true);
-            const base64ForBackend = profilePicture.includes("base64,")
+            const base64ForBackend: string = profilePicture.includes("base64,")
                 ? profilePicture.split("base64,")[1]
                 : profilePicture;
 
@@ -129,7 +128,7 @@ const Settings: React.FC = () => {
                 profile_picture: base64ForBackend,
             });
 
-            const currentLocalUser = localStorage.getItem("user");
+            const currentLocalUser: string | null = localStorage.getItem("user");
             if (currentLocalUser) {
                 const parsedUser = JSON.parse(currentLocalUser);
                 localStorage.setItem("user", JSON.stringify({
@@ -151,7 +150,7 @@ const Settings: React.FC = () => {
             setLoading(false);
         }
     };
-    const handleUpdatePassword = async () => {
+    const handleUpdatePassword = async (): Promise<void> => {
         if (!oldPassword || !newPassword) {
             alert("Veuillez remplir tous les champs");
             return;
@@ -174,19 +173,18 @@ const Settings: React.FC = () => {
             setLoading(false);
         }
     };
-    // --- 4. GESTION DE L'IMAGE DE PROFIL ---
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const file: File | undefined = e.target.files?.[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
+            const reader: FileReader = new FileReader();
+            reader.onloadend = (): void => {
                 setProfilePicture(reader.result as string);
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const handleDeletePic = (e: React.MouseEvent) => {
+    const handleDeletePic = (e: React.MouseEvent): void => {
         e.stopPropagation();
         setProfilePicture("");
         localStorage.removeItem("user_profile_pic");
@@ -195,7 +193,7 @@ const Settings: React.FC = () => {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = (): void => {
         if (window.confirm(t("logout_confirm"))) {
             localStorage.removeItem("token");
             localStorage.removeItem("userToken");
@@ -240,7 +238,7 @@ const Settings: React.FC = () => {
                 </nav>
 
                 <main
-                    className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-8 shadow-xl transition-colors min-h-[500px]">
+                    className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-8 shadow-xl transition-colors min-h-125">
 
                     {/* --- ONGLET : PROFIL --- */}
                     {activeTab === "Profile" && (
@@ -286,7 +284,7 @@ const Settings: React.FC = () => {
                                         <input
                                             name="username"
                                             value={username}
-                                            onChange={(e) => e.target.value.length <= USERNAME_MAX && setUsername(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => e.target.value.length <= USERNAME_MAX && setUsername(e.target.value)}
                                             className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                         />
                                     </div>
@@ -299,7 +297,7 @@ const Settings: React.FC = () => {
                                         <input
                                             name="favoriteBand"
                                             value={favoriteBand}
-                                            onChange={(e) => searchArtists(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => searchArtists(e.target.value)}
                                             placeholder="Type to search bands..."
                                             className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                         />
@@ -313,11 +311,11 @@ const Settings: React.FC = () => {
                                                         <Loader2 className="animate-spin text-blue-500" size={20}/>
                                                     </div>
                                                 ) : (
-                                                    suggestions.map((item, i) => (
+                                                    suggestions.map((item: { name: string }, i: number) => (
                                                         <button
                                                             key={i}
                                                             type="button"
-                                                            onClick={() => {
+                                                            onClick={(): void => {
                                                                 setFavoriteBand(item.name);
                                                                 setShowSuggestions(false);
                                                             }}
@@ -345,7 +343,7 @@ const Settings: React.FC = () => {
                                         name="biography"
                                         rows={3}
                                         value={biography}
-                                        onChange={(e) => e.target.value.length <= BIO_MAX && setBiography(e.target.value)}
+                                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => e.target.value.length <= BIO_MAX && setBiography(e.target.value)}
                                         className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 resize-none text-white dark:text-gray-900"
                                     />
                                 </div>
@@ -364,13 +362,14 @@ const Settings: React.FC = () => {
                                     {isSaved && (
                                         <span
                                             className="flex items-center gap-1 text-emerald-500 text-sm font-bold animate-pulse">
-                      <CheckCircle size={16}/> {statusMessage}
-                    </span>
+                                            <CheckCircle
+                                                size={16}/> {statusMessage}
+                                        </span>
                                     )}
                                     <button
                                         onClick={handleSaveProfile}
                                         disabled={loading}
-                                        className="flex items-center justify-center min-w-[140px] bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition-all disabled:opacity-50"
+                                        className="flex items-center justify-center min-w-35 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition-all disabled:opacity-50"
                                     >
                                         {loading ? <Loader2 className="animate-spin" size={18}/> : t("btn_save")}
                                     </button>
@@ -388,14 +387,14 @@ const Settings: React.FC = () => {
                                     type="password"
                                     placeholder={t("old_password_placeholder")}
                                     value={oldPassword}
-                                    onChange={(e) => setOldPassword(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOldPassword(e.target.value)}
                                     className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                 />
                                 <input
                                     type="password"
                                     placeholder={t("new_password_placeholder")}
                                     value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
                                     className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                 />
                                 <button

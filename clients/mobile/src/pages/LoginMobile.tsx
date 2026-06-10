@@ -82,8 +82,7 @@ const LoginMobile: React.FC = () => {
 
             try {
                 const decoded: any = jwtDecode(token);
-                // Selon ton backend, l'id est souvent dans 'sub' ou 'id'
-                const userId = decoded.id || decoded.sub;
+                const userId = decoded.id;
 
                 if (userId) {
                     await SecureStore.setItemAsync("userId", String(userId));

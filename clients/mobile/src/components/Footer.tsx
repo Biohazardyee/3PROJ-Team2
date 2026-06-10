@@ -9,7 +9,6 @@ const Footer: React.FC = () => {
 
     return (
         <View style={styles.footer}>
-            {/* Découvrir */}
             <TouchableOpacity onPress={(): void => router.push('/')} style={styles.icon}>
                 <Ionicons
                     name="home-outline"
@@ -18,7 +17,6 @@ const Footer: React.FC = () => {
                 />
             </TouchableOpacity>
 
-            {/* Feed */}
             <TouchableOpacity onPress={(): void => router.push('/feed')} style={styles.icon}>
                 <Ionicons
                     name="rocket-outline"
@@ -27,7 +25,6 @@ const Footer: React.FC = () => {
                 />
             </TouchableOpacity>
 
-            {/* Statistiques */}
             <TouchableOpacity onPress={(): void => router.push('/stats')} style={styles.icon}>
                 <Ionicons
                     name="stats-chart"
@@ -36,7 +33,6 @@ const Footer: React.FC = () => {
                 />
             </TouchableOpacity>
 
-            {/* Library */}
             <TouchableOpacity onPress={(): void => router.push('/library')} style={styles.icon}>
                 <Ionicons
                     name="library-outline"
@@ -45,7 +41,6 @@ const Footer: React.FC = () => {
                 />
             </TouchableOpacity>
 
-            {/* Profil */}
             <TouchableOpacity onPress={(): void => router.push('/profile')} style={styles.icon}>
                 <Ionicons
                     name="person-outline"

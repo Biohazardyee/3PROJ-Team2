@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    useNavigate, NavigateFunction,
 } from "react-router-dom";
-import { LandingPage } from "./pages/LandingPage";
+import {LandingPage} from "./pages/LandingPage";
 import Layout from "./components/Layout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -26,58 +26,58 @@ import AuthRequired from "./pages/AuthRequired.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import AuthCallback from "./pages/AuthCallback.tsx";
 
-const AuthRedirectListener: React.FC = () => {
-  const navigate = useNavigate();
+const AuthRedirectListener: React.FC = (): null => {
+    const navigate: NavigateFunction = useNavigate();
 
-  useEffect(() => {
-    const handleUnauthorized = () => {
-      navigate("/auth-required");
-    };
+    useEffect(() => {
+        const handleUnauthorized = (): void => {
+            navigate("/auth-required");
+        };
+        window.addEventListener("unauthorized", handleUnauthorized);
+        return () => window.removeEventListener("unauthorized", handleUnauthorized);
+    }, [navigate]);
 
-    window.addEventListener("unauthorized", handleUnauthorized);
-    return () => window.removeEventListener("unauthorized", handleUnauthorized);
-  }, [navigate]);
-
-  return null; 
+    return null;
 };
 
 const App: React.FC = () => {
-  return (
-    <Router>
-      <AuthRedirectListener></AuthRedirectListener>
-      <ScrollToTop />
-      <Routes>
-        {/* ROUTES PUBLIQUES (SANS BARRE DE NAVIGATION) */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/auth/callback" element={<AuthCallback />} />
+    return (
+        <Router>
+            <AuthRedirectListener></AuthRedirectListener>
+            <ScrollToTop/>
+            <Routes>
+                {/* ROUTES PUBLIQUES (SANS BARRE DE NAVIGATION) */}
+                <Route path="/" element={<LandingPage/>}/>
+                <Route path="/register" element={<Register/>}/>
+                <Route path="/login" element={<Login/>}/>
+                <Route path="/auth/callback" element={<AuthCallback/>}/>
+                <Route path="/album/:id" element={<AlbumDetails/>}/>
 
-        {/* ROUTES AVEC LAYOUT */}
-        <Route element={<Layout />}>
-          {/* Page accessible même sans connexion (ex: pour voir le message d'erreur) */}
-          <Route path="/auth-required" element={<AuthRequired />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/album/:id" element={<AlbumDetails />} />
+                {/* ROUTES AVEC LAYOUT */}
+                <Route element={<Layout/>}>
+                    {/* Page accessible même sans connexion (ex: pour voir le message d'erreur) */}
+                    <Route path="/auth-required" element={<AuthRequired/>}/>
+                    <Route path="/home" element={<Home/>}/>
 
-          {/* --- DEBUT DES ROUTES PROTEGÉES --- */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/feed" element={<Feed />} />
-            <Route path="/stats" element={<Stats />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/conversations" element={<Conversations />} />
-            <Route path="/profil/:id?" element={<Profil />} />{" "}
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/admindashboard" element={<AdminDashboard />} />
-            <Route path="/create-playlist" element={<CreatePlaylist />} />
-            <Route path="/authguard" element={<AuthGuard />} />
-          </Route>
-          {/* --- FIN DES ROUTES PROTEGÉES --- */}
-        </Route>
-      </Routes>
-    </Router>
-  );
+
+                    {/* --- DEBUT DES ROUTES PROTEGÉES --- */}
+                    <Route element={<ProtectedRoute/>}>
+                        <Route path="/feed" element={<Feed/>}/>
+                        <Route path="/stats" element={<Stats/>}/>
+                        <Route path="/library" element={<Library/>}/>
+                        <Route path="/notifications" element={<Notifications/>}/>
+                        <Route path="/conversations" element={<Conversations/>}/>
+                        <Route path="/profil/:id?" element={<Profil/>}/>{" "}
+                        <Route path="/settings" element={<Settings/>}/>
+                        <Route path="/admindashboard" element={<AdminDashboard/>}/>
+                        <Route path="/create-playlist" element={<CreatePlaylist/>}/>
+                        <Route path="/authguard" element={<AuthGuard/>}/>
+                    </Route>
+                    {/* --- FIN DES ROUTES PROTEGÉES --- */}
+                </Route>
+            </Routes>
+        </Router>
+    );
 };
 
 export default App;

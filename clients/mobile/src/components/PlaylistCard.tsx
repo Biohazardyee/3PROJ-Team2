@@ -4,7 +4,6 @@ import {Ionicons} from '@expo/vector-icons';
 
 const {width} = Dimensions.get('window');
 
-// Définition des types pour les props du composant
 type PlaylistCardProps = {
     title: string;
     count: number;

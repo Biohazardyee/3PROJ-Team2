@@ -1,7 +1,6 @@
 import React, {createContext, useContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// 1. Définition des palettes de couleurs (Sombre et Clair)
 export const Colors = {
     dark: {
         background: '#1C1C28',

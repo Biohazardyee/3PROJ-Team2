@@ -9,13 +9,14 @@ import {
 } from "react-icons/fa";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import { useNavigate } from "react-router-dom";
+import {NavigateFunction, useNavigate} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import apiClient from "../api/client.ts";
+import {AxiosResponse} from "axios";
 
 const Register: React.FC = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
   const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
@@ -36,8 +37,8 @@ const Register: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleBandSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleBandSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const value: string = e.target.value;
     setFormData((prev) => ({ ...prev, favorite_band: value }));
 
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
@@ -46,9 +47,9 @@ const Register: React.FC = () => {
       setIsSearching(true);
       setShowSuggestions(true);
 
-      searchTimeout.current = setTimeout(async () => {
+      searchTimeout.current = setTimeout(async (): Promise<void> => {
         try {
-          const response = await apiClient.get(`/api/search?query=${value}`);
+          const response: AxiosResponse = await apiClient.get(`/api/search?query=${value}`);
           const albums =
             response.data.searchResults?.results?.albummatches?.album || [];
 
@@ -56,7 +57,7 @@ const Register: React.FC = () => {
             ...new Set(albums.map((item: any) => item.artist)),
           ] as string[];
 
-          setSuggestions(uniqueArtists.map((name) => ({ name })).slice(0, 5));
+          setSuggestions(uniqueArtists.map((name: string) => ({ name })).slice(0, 5));
         } catch (error) {
           console.error("Erreur lors de la recherche de l'artiste :", error);
         } finally {
@@ -69,7 +70,7 @@ const Register: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -87,7 +88,7 @@ const Register: React.FC = () => {
     }
 
     try {
-      const response = await apiClient.post("/users/signin", {
+      const response: AxiosResponse = await apiClient.post("/users/signin", {
         email: formData.email,
         username: formData.username,
         password: formData.password,
@@ -199,10 +200,10 @@ const Register: React.FC = () => {
                     Recherche en cours...
                   </div>
                 ) : suggestions.length > 0 ? (
-                  suggestions.map((item, index) => (
+                  suggestions.map((item: {name: string}, index: number) => (
                     <div
                       key={index}
-                      onClick={() => {
+                      onClick={(): void => {
                         setFormData((prev) => ({
                           ...prev,
                           favorite_band: item.name,

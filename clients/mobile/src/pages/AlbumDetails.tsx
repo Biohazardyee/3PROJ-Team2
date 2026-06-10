@@ -47,14 +47,13 @@ const AlbumDetails = () => {
     const [selectedPlaylists, setSelectedPlaylists] = useState<string[]>([]);
     const [userReview, setUserReview] = useState<any | null>(null);
     const [deletingReview, setDeletingReview] = useState(false);
-    const [reportTarget, setReportTarget] = useState<any | null>(null);
-    const [reportReason, setReportReason] = useState("");
+
 
 
     const mediaId = id || albumData?.id || albumData?.mediaId;
 
-    useEffect(() => {
-        const initUser = async () => {
+    useEffect((): void => {
+        const initUser = async (): Promise<void> => {
             try {
                 const token: string | null =
                     await SecureStore.getItemAsync("userToken");
@@ -70,8 +69,8 @@ const AlbumDetails = () => {
         fetchAlbumDetails();
     }, [id, mbid]);
 
-    useEffect(() => {
-        const fetchCurrentStatus = async () => {
+    useEffect((): void => {
+        const fetchCurrentStatus = async (): Promise<void> => {
             if (currentUserId && albumData?.db_id) {
                 try {
                     const res = await apiClient.get(
@@ -89,7 +88,7 @@ const AlbumDetails = () => {
     }, [currentUserId, albumData?.db_id]);
 
     useFocusEffect(
-        useCallback(() => {
+        useCallback((): void => {
             fetchReviews();
 
             if (activeTab === "Similar" && similarAlbums.length === 0) {
@@ -98,7 +97,7 @@ const AlbumDetails = () => {
         }, [activeTab, artist, album, mediaId, currentUserId]),
     );
 
-    const fetchUserPlaylists = async () => {
+    const fetchUserPlaylists = async (): Promise<void> => {
         if (!currentUserId || !mediaId) {
             return;
         }
@@ -126,17 +125,17 @@ const AlbumDetails = () => {
         }
     };
 
-    useEffect(() => {
+    useEffect((): void => {
         if (currentUserId && mediaId) {
             fetchUserPlaylists();
         }
     }, [currentUserId, mediaId]);
 
-    useEffect(() => {
+    useEffect((): void => {
         if (showPlaylistSelector) fetchUserPlaylists();
     }, [showPlaylistSelector]);
 
-    const handleAddToPlaylists = async () => {
+    const handleAddToPlaylists = async (): Promise<void> => {
         if (!mediaId) return;
 
         try {
@@ -157,7 +156,7 @@ const AlbumDetails = () => {
                 (id: any): boolean => !selectedPlaylists.includes(id),
             );
 
-            const promises = [
+            const promises: any[] = [
                 ...toAdd.map((id: any) =>
                     apiClient.post("/playlist-items", {
                         playlist_id: id,
@@ -175,13 +174,13 @@ const AlbumDetails = () => {
 
             Alert.alert("Succès", "Vos playlists ont été mises à jour.");
             setShowPlaylistSelector(false);
-            fetchUserPlaylists();
+            await fetchUserPlaylists();
         } catch (err: any) {
             Alert.alert("Erreur", "Impossible de mettre à jour les playlists.");
         }
     };
 
-    const fetchAlbumDetails = async () => {
+    const fetchAlbumDetails = async (): Promise<void> => {
         try {
             setLoading(true);
             let finalData = null;
@@ -208,7 +207,7 @@ const AlbumDetails = () => {
 
                 const cleanArtist: string = String(artist).trim();
                 const cleanAlbum: string = String(album).trim();
-                const fallbackId = `album:${cleanArtist}:${cleanAlbum}`;
+                const fallbackId: string = `album:${cleanArtist}:${cleanAlbum}`;
 
                 try {
                     const syncRes = await apiClient.post("/medias/sync-search", {
@@ -240,7 +239,7 @@ const AlbumDetails = () => {
 
     const mediaIdInDB = albumData?.db_id || (id?.includes("-") ? id : null);
 
-    const fetchReviews = async () => {
+    const fetchReviews = async (): Promise<void> => {
         try {
             setLoadingReviews(true);
 
@@ -291,7 +290,7 @@ const AlbumDetails = () => {
         }
     };
 
-    const fetchSimilar = async () => {
+    const fetchSimilar = async (): Promise<void> => {
         try {
             setLoadingSimilar(true);
             const res = await apiClient.get("/api/albums/similar", {
@@ -308,7 +307,7 @@ const AlbumDetails = () => {
         }
     };
 
-    const handleDeleteReview = async (reviewId: string) => {
+    const handleDeleteReview = async (reviewId: string): Promise<void> => {
         Alert.alert(
             "Supprimer l'avis",
             "Voulez-vous vraiment supprimer votre avis ?",
@@ -320,13 +319,13 @@ const AlbumDetails = () => {
                 {
                     text: "Supprimer",
                     style: "destructive",
-                    onPress: async () => {
+                    onPress: async (): Promise<void> => {
                         try {
                             setDeletingReview(true);
 
                             await apiClient.delete(`/reviews/${reviewId}`);
 
-                            setReviews((prev) => prev.filter((rev) => rev.id !== reviewId));
+                            setReviews((prev: any[]) => prev.filter((rev): boolean => rev.id !== reviewId));
 
                             setUserReview(null);
 
@@ -344,7 +343,7 @@ const AlbumDetails = () => {
         );
     };
 
-    const handleStatusChange = async (newStatus: string) => {
+    const handleStatusChange = async (newStatus: string): Promise<void> => {
         if (!currentUserId) return Alert.alert("Connexion requise", "...");
 
         if (!mediaIdInDB) {
@@ -377,7 +376,7 @@ const AlbumDetails = () => {
         }
     };
 
-    const handleToggleLike = async (reviewId: string) => {
+    const handleToggleLike = async (reviewId: string): Promise<void> => {
         if (!currentUserId)
             return Alert.alert(
                 "Connexion requise",
@@ -407,14 +406,10 @@ const AlbumDetails = () => {
                 user_id: currentUserId,
             });
         } catch (error) {
-            fetchReviews();
+            await fetchReviews();
         }
     };
 
-    const handleOpenReport = (review: any) => {
-        setReportTarget(review);
-        setReportReason("");
-    };
 
     const averageRating: number =
         reviews.length > 0
@@ -435,13 +430,11 @@ const AlbumDetails = () => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
-                {/* Cover Section */}
                 <View style={styles.imageContainer}>
                     <Image source={getValidSource(cover)} style={styles.coverImage}/>
                 </View>
 
                 <View style={styles.paddingContent}>
-                    {/* Tags */}
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -467,10 +460,9 @@ const AlbumDetails = () => {
                         {albumData.album?.artist || albumData.artist}
                     </Text>
 
-                    {/* Rating */}
                     <View style={styles.ratingRow}>
                         <View style={styles.starsRow}>
-                            {[1, 2, 3, 4, 5].map((s) => (
+                            {[1, 2, 3, 4, 5].map((s: number) => (
                                 <Ionicons
                                     key={s}
                                     name={
@@ -485,7 +477,6 @@ const AlbumDetails = () => {
                         <Text style={styles.ratingCount}>({reviews.length} avis)</Text>
                     </View>
 
-                    {/* Actions Grid */}
                     <View style={styles.actionButtons}>
                         <View style={styles.grid}>
                             <StatCard
@@ -528,7 +519,6 @@ const AlbumDetails = () => {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Bio Section */}
                     <View style={styles.aboutSection}>
                         <Text style={styles.sectionTitle}>À propos</Text>
                         <Text style={styles.aboutText}>
@@ -541,7 +531,6 @@ const AlbumDetails = () => {
                     </View>
                 </View>
 
-                {/* Tabs Menu */}
                 <View style={styles.tabsContainer}>
                     {(["Reviews", "Similar"] as TabType[]).map((tab) => (
                         <TouchableOpacity
@@ -561,14 +550,13 @@ const AlbumDetails = () => {
                     ))}
                 </View>
 
-                {/* Tab Content */}
                 <View style={styles.tabContent}>
                     {activeTab === "Reviews" ? (
                         <View style={{paddingBottom: 20}}>
                             <View style={{alignItems: "center", marginVertical: 15}}>
                                 <AuthReviewButton
                                     isLoggedIn={!!currentUserId}
-                                    onPress={() => {
+                                    onPress={(): void => {
                                         if (userReview) {
                                             return Alert.alert(
                                                 "Avis déjà publié",
@@ -601,10 +589,8 @@ const AlbumDetails = () => {
                                 reviews.map((rev) => {
                                     return (
                                         <View key={rev.id} style={styles.reviewCard}>
-                                            {/* HEADER */}
                                             <View style={styles.reviewHeader}>
                                                 <View style={styles.userInfo}>
-                                                    {/* Vérification et affichage de l'image de l'utilisateur */}
                                                     {rev.user?.avatar ||
                                                     rev.user?.image ||
                                                     rev.user?.profilePicture ? (
@@ -627,7 +613,7 @@ const AlbumDetails = () => {
 
                                                     <TouchableOpacity
                                                         disabled={!rev.user?.id}
-                                                        onPress={() => {
+                                                        onPress={(): void => {
                                                             const userId = rev.user_id;
 
                                                             if (!userId) return;
@@ -644,9 +630,8 @@ const AlbumDetails = () => {
                                                     </TouchableOpacity>
                                                 </View>
 
-                                                {/* STARS */}
                                                 <View style={styles.starsRow}>
-                                                    {[1, 2, 3, 4, 5].map((s) => (
+                                                    {[1, 2, 3, 4, 5].map((s: number) => (
                                                         <Ionicons
                                                             key={s}
                                                             name={s <= rev.rating ? "star" : "star-outline"}
@@ -657,13 +642,11 @@ const AlbumDetails = () => {
                                                 </View>
                                             </View>
 
-                                            {/* CONTENT */}
                                             <Text style={styles.reviewTitleText}>{rev.title}</Text>
                                             <Text style={styles.reviewContentText}>
                                                 {rev.content}
                                             </Text>
 
-                                            {/* FOOTER */}
                                             <View style={styles.reviewFooter}>
                                                 <View style={styles.reviewActionsLeft}>
                                                     <TouchableOpacity
@@ -673,7 +656,7 @@ const AlbumDetails = () => {
                                                         <Ionicons
                                                             name={
                                                                 rev.likes?.some(
-                                                                    (l: any) => l.user_id === currentUserId,
+                                                                    (l: any): boolean => l.user_id === currentUserId,
                                                                 )
                                                                     ? "heart"
                                                                     : "heart-outline"
@@ -681,7 +664,7 @@ const AlbumDetails = () => {
                                                             size={18}
                                                             color={
                                                                 rev.likes?.some(
-                                                                    (l: any) => l.user_id === currentUserId,
+                                                                    (l: any): boolean => l.user_id === currentUserId,
                                                                 )
                                                                     ? "#ec4899"
                                                                     : "#94a3b8"
@@ -781,7 +764,7 @@ const AlbumDetails = () => {
                             {loadingSimilar ? (
                                 <ActivityIndicator color="#ec4899"/>
                             ) : (
-                                similarAlbums.map((item: any, idx) => (
+                                similarAlbums.map((item: any, idx: number) => (
                                     <TouchableOpacity
                                         key={idx}
                                         style={styles.similarCard}
@@ -813,7 +796,6 @@ const AlbumDetails = () => {
                 </View>
             </ScrollView>
 
-            {/* MODAL PLAYLIST */}
             <Modal
                 visible={showPlaylistSelector}
                 transparent={true}
@@ -837,7 +819,7 @@ const AlbumDetails = () => {
                         ) : (
                             <ScrollView style={styles.modalScroll}>
                                 {userPlaylists.map((pl) => {
-                                    const isSelected = selectedPlaylists.includes(pl.id);
+                                    const isSelected: boolean = selectedPlaylists.includes(pl.id);
                                     return (
                                         <TouchableOpacity
                                             key={pl.id}
@@ -846,9 +828,9 @@ const AlbumDetails = () => {
                                                 isSelected && styles.playlistItemActive,
                                             ]}
                                             onPress={() =>
-                                                setSelectedPlaylists((prev) =>
+                                                setSelectedPlaylists((prev: string[]): string[] =>
                                                     isSelected
-                                                        ? prev.filter((id) => id !== pl.id)
+                                                        ? prev.filter((id: string): boolean => id !== pl.id)
                                                         : [...prev, pl.id],
                                                 )
                                             }
@@ -876,7 +858,7 @@ const AlbumDetails = () => {
                                 })}
                                 <TouchableOpacity
                                     style={styles.createPlaylistBtn}
-                                    onPress={() => {
+                                    onPress={(): void => {
                                         setShowPlaylistSelector(false);
                                         router.push("/createplaylist");
                                     }}

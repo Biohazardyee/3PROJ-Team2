@@ -5,6 +5,7 @@ import { Button } from "../components/Button";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import apiClient from "../api/client";
+import {AxiosResponse} from "axios";
 
 const Login: React.FC = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -23,13 +24,13 @@ const Login: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await apiClient.post("/users/login", {
+      const response: AxiosResponse<any, any> = await apiClient.post("/users/login", {
         email: formData.email,
         password: formData.password,
       });
@@ -53,7 +54,7 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleOAuthLogin = (provider: "google" | "discord") => {
+  const handleOAuthLogin = (provider: "google" | "discord"): void => {
     window.location.href = `${API_URL}/api/oauth/auth/${provider}?platform=web`;
   };
 

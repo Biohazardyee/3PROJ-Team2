@@ -22,9 +22,9 @@ const CreatePlaylist: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  useEffect((): void => {
     if (isEditing) {
-      const fetchPlaylist = async () => {
+      const fetchPlaylist = async (): Promise<void> => {
         try {
           const res = await apiClient.get(`/playlists/${state.id}`);
           const pl = res.data.playlist;
@@ -39,23 +39,23 @@ const CreatePlaylist: React.FC = () => {
     }
   }, [isEditing, state?.id]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file: File | undefined = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      const reader: FileReader = new FileReader();
+      reader.onloadend = (): void => {
         setImage(reader.result as string); 
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (): Promise<void> => {
     if (!name.trim()) return;
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
+      const token: string | null = localStorage.getItem("token");
       if (!token) throw new Error("Non authentifié");
       const decoded: any = jwtDecode(token);
       const userId = decoded.id || decoded.userId;
@@ -132,7 +132,7 @@ const CreatePlaylist: React.FC = () => {
         <div className="w-12"></div>
       </div>
 
-      <div className="flex flex-col items-center flex-grow pt-16 px-6">
+      <div className="flex flex-col items-center grow pt-16 px-6">
         <div
           className="w-56 h-56 bg-slate-900 border-2 border-slate-800 border-dashed rounded-xl overflow-hidden flex flex-col justify-center items-center cursor-pointer mb-12 shadow-lg"
           onClick={() => fileInputRef.current?.click()}
@@ -145,7 +145,7 @@ const CreatePlaylist: React.FC = () => {
                 className="w-full h-full object-cover"
               />
               <button
-                onClick={(e) => {
+                onClick={(e): void => {
                   e.stopPropagation();
                   setImage(null);
                 }}
@@ -180,10 +180,9 @@ const CreatePlaylist: React.FC = () => {
           className="w-full max-w-md bg-transparent border-b-2 border-slate-700 focus:border-blue-500 text-white text-3xl text-center py-3 mb-8 outline-none font-bold"
         />
 
-        {/* --- BLOC TOGGLE VISIBILITÉ (SIMILAIRE AU MOBILE) --- */}
         <button
           type="button"
-          onClick={() => setIsPublic((prev) => !prev)}
+          onClick={() => setIsPublic((prev: boolean) => !prev)}
           className="w-full max-w-md flex justify-between items-center bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl px-5 py-4 mb-12 transition-all group select-none text-left"
         >
           <div className="flex flex-col">

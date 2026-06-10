@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {NavigateFunction, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {
     FaCheckCircle,
@@ -15,18 +15,19 @@ import { Edit3, Heart, Loader2, MessageCircle, Trash2, Flag } from "lucide-react
 import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import UserAvatar from "../components/UserAvatar";
+import {AxiosResponse} from "axios";
 type TabType = "Commentaires" | "Albums";
 
 const AlbumDetails: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
+    const navigate: NavigateFunction = useNavigate();
     const {t} = useTranslation();
 
-    const urlArtist = searchParams.get("artist") || "";
-    const urlAlbum = searchParams.get("album") || "";
-    const urlCover = searchParams.get("cover") || "";
-    const urlMbid = searchParams.get("mbid") || "";
+    const urlArtist: string = searchParams.get("artist") || "";
+    const urlAlbum: string = searchParams.get("album") || "";
+    const urlCover: string = searchParams.get("cover") || "";
+    const urlMbid: string = searchParams.get("mbid") || "";
 
     const STATUT_OPTIONS = [
         {
@@ -102,7 +103,7 @@ const AlbumDetails: React.FC = () => {
     const [isSubmittingReport, setIsSubmittingReport] = useState(false);
     const [reportingCommentId, setReportingCommentId] = useState<string | null>(null);
 
-    const token = localStorage.getItem("token");
+    const token: string | null = localStorage.getItem("token");
     let currentUserId: string | null = null;
     if (token) {
         try {
@@ -116,14 +117,12 @@ const AlbumDetails: React.FC = () => {
 
     const mediaIdInDB = albumData?.db_id || (id?.includes("-") ? id : null);
 
-    useEffect(() => {
-        const fetchUserStatus = async () => {
+    useEffect((): void => {
+        const fetchUserStatus = async (): Promise<void> => {
             if (!currentUserId || !mediaIdInDB) return;
 
             try {
-
-                const res = await apiClient.get(`/medias/status/${currentUserId}/${mediaIdInDB}`);
-
+                const res: AxiosResponse<any, any> = await apiClient.get(`/medias/status/${currentUserId}/${mediaIdInDB}`);
                 const status = res.data.mediaStatus?.status;
 
                 if (status && status !== "none") {
@@ -140,11 +139,11 @@ const AlbumDetails: React.FC = () => {
         fetchUserStatus();
     }, [currentUserId, mediaIdInDB]);
 
-    const fetchUserPlaylists = async () => {
+    const fetchUserPlaylists = async (): Promise<void> => {
         if (!currentUserId) return;
         setLoadingPlaylists(true);
         try {
-            const res = await apiClient.get(`/playlists/user/${currentUserId}`);
+            const res: AxiosResponse<any, any> = await apiClient.get(`/playlists/user/${currentUserId}`);
             setUserPlaylists(res.data.playlists || res.data || []);
         } catch (err) {
             console.error("Erreur chargement playlists:", err);
@@ -153,13 +152,13 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    useEffect(() => {
+    useEffect((): void => {
         if (isPlaylistModalOpen) {
             fetchUserPlaylists();
         }
     }, [isPlaylistModalOpen]);
 
-    const handleSendReport = async () => {
+    const handleSendReport = async (): Promise<void> => {
         if (!reportReason.trim() || !currentUserId) return;
 
         setIsSubmittingReport(true);
@@ -192,7 +191,7 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    const handleAddToPlaylist = async (playlistId: string) => {
+    const handleAddToPlaylist = async (playlistId: string): Promise<void> => {
         if (!mediaIdInDB) return;
 
         try {
@@ -208,7 +207,7 @@ const AlbumDetails: React.FC = () => {
             alert("Impossible d'ajouter à la playlist.");
         }
     };
-    const isMyComment = (comment: any) => {
+    const isMyComment = (comment: any): boolean => {
         if (!currentUserId || !comment) return false;
 
         const cUserId =
@@ -222,21 +221,20 @@ const AlbumDetails: React.FC = () => {
         return String(cUserId).toLowerCase() === String(currentUserId).toLowerCase();
     };
 
-    const hasAlreadyReviewed = commentsList.some((comment) =>
+    const hasAlreadyReviewed: boolean = commentsList.some((comment) =>
         isMyComment(comment),
     );
 
-
-    useEffect(() => {
-        const fetchAlbumData = async () => {
+    useEffect((): void => {
+        const fetchAlbumData = async (): Promise<void> => {
             setLoading(true);
             let finalData = null;
 
-            const isLocalId = id && id.includes("-") && !id.startsWith("reco-");
+            const isLocalId: boolean | "" | undefined = id && id.includes("-") && !id.startsWith("reco-");
 
             if (isLocalId) {
                 try {
-                    const res = await apiClient.get(`/medias/${id}`);
+                    const res: AxiosResponse<any, any> = await apiClient.get(`/medias/${id}`);
                     const media = res.data.media || res.data;
                     if (media) {
                         finalData = {
@@ -254,7 +252,7 @@ const AlbumDetails: React.FC = () => {
             }
             if (!finalData && urlArtist && urlAlbum) {
                 try {
-                    const res = await apiClient.get("/api/albums/info", {
+                    const res: AxiosResponse<any, any> = await apiClient.get("/api/albums/info", {
                         params: {artist: urlArtist, album: urlAlbum, mbid: urlMbid},
                     });
                     const externalInfo = res.data.albumInfo || {};
@@ -270,7 +268,7 @@ const AlbumDetails: React.FC = () => {
                     };
 
                     try {
-                        const syncRes = await apiClient.post("/medias/sync-search", {
+                        const syncRes: AxiosResponse<any, any> = await apiClient.post("/medias/sync-search", {
                             albums: [{
                                 api_id: urlMbid || `album:${urlArtist.trim()}:${urlAlbum.trim()}`,
                                 name: urlAlbum.trim(),
@@ -301,7 +299,7 @@ const AlbumDetails: React.FC = () => {
 
             if (currentUserId && finalData?.db_id) {
                 try {
-                    const statusRes = await apiClient.get(`/medias/status/${currentUserId}/${finalData.db_id}`);
+                    const statusRes: AxiosResponse<any, any> = await apiClient.get(`/medias/status/${currentUserId}/${finalData.db_id}`);
                     const status = statusRes.data.mediaStatus?.status;
                     setUserStatus(status && status !== "none" ? status : null);
                 } catch (err) {
@@ -316,12 +314,12 @@ const AlbumDetails: React.FC = () => {
             fetchAlbumData();
         }
     }, [id, urlArtist, urlAlbum, urlMbid, urlCover, currentUserId]);
-    const fetchSimilar = async () => {
+    const fetchSimilar = async (): Promise<void> => {
         if (!urlArtist || !urlAlbum) return;
 
         setLoadingSimilar(true);
         try {
-            const res = await apiClient.get("/api/albums/similar", {
+            const res: AxiosResponse<any, any> = await apiClient.get("/api/albums/similar", {
                 params: {
                     artist: urlArtist,
                     album: urlAlbum
@@ -340,11 +338,11 @@ const AlbumDetails: React.FC = () => {
     }, [urlArtist, urlAlbum]);
 
 
-    const handleStatusChange = async (newStatus: string) => {
+    const handleStatusChange = async (newStatus: string): Promise<void> => {
         if (!currentUserId || !mediaIdInDB) return;
 
-        const previousStatus = userStatus;
-        const isDeselecting = userStatus === newStatus;
+        const previousStatus: string | null = userStatus;
+        const isDeselecting: boolean = userStatus === newStatus;
 
         setUserStatus(isDeselecting ? null : newStatus);
 
@@ -375,30 +373,30 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    const fetchReviews = async () => {
+    const fetchReviews = async (): Promise<void> => {
         try {
             setLoadingReviews(true);
-            const res = await apiClient.get("/reviews");
+            const res: AxiosResponse<any, any> = await apiClient.get("/reviews");
             const allReviews = res.data.reviews || res.data || [];
 
-            const targetArtist = String(urlArtist || albumData?.artist || "").toLowerCase().trim();
-            const targetAlbum = String(urlAlbum || albumData?.name || "").toLowerCase().trim();
+            const targetArtist: string = String(urlArtist || albumData?.artist || "").toLowerCase().trim();
+            const targetAlbum: string = String(urlAlbum || albumData?.name || "").toLowerCase().trim();
 
-            const filtered = allReviews.filter((rev: any) => {
+            const filtered = allReviews.filter((rev: any): boolean => {
                 const media = rev.media;
                 if (!media) return false;
-                const revArtist = String(media.content?.artist || media.artist || "").toLowerCase().trim();
-                const revAlbum = String(media.content?.name || media.name || "").toLowerCase().trim();
+                const revArtist: string = String(media.content?.artist || media.artist || "").toLowerCase().trim();
+                const revAlbum: string = String(media.content?.name || media.name || "").toLowerCase().trim();
                 return revArtist === targetArtist && revAlbum === targetAlbum;
             });
 
-            const reviewsWithComments = await Promise.all(
-                filtered.map(async (rev: any) => {
+            const reviewsWithComments: any[] = await Promise.all(
+                filtered.map(async (rev: any): Promise<any> => {
                     try {
-                        const commentsRes = await apiClient.get(`/review-comments/review/${rev.id}`);
+                        const commentsRes: AxiosResponse<any, any> = await apiClient.get(`/review-comments/review/${rev.id}`);
                         const allComments = commentsRes.data.comments || commentsRes.data || [];
 
-                        const sorted = [...allComments].sort(
+                        const sorted: any[] = [...allComments].sort(
                             (a: any, b: any) =>
                                 new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
                         );
@@ -413,10 +411,10 @@ const AlbumDetails: React.FC = () => {
             setCommentsList(reviewsWithComments);
 
             if (currentUserId) {
-                const liked = new Set<string | number>();
+                const liked: Set<string | number> = new Set<string | number>();
                 reviewsWithComments.forEach((rev: any) => {
                     const hasLiked = rev.likes?.some(
-                        (like: any) =>
+                        (like: any): boolean =>
                             String(like.user_id || like.userId || like.user?.id) === String(currentUserId)
                     );
                     if (hasLiked) liked.add(rev.id);
@@ -430,7 +428,7 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    useEffect(() => {
+    useEffect((): void => {
         if (albumData) {
             fetchReviews();
         }
@@ -462,12 +460,12 @@ const AlbumDetails: React.FC = () => {
         );
     }
 
-    const isFormInvalid =
+    const isFormInvalid: boolean =
         userRating === 0 || commentTitle.trim() === "" || commentText.trim() === "";
-    const isEditInvalid =
+    const isEditInvalid: boolean =
         editRating === 0 || editTitle.trim() === "" || editText.trim() === "";
 
-    const submitMainComment = async () => {
+    const submitMainComment = async (): Promise<void> => {
         if (isFormInvalid || hasAlreadyReviewed) return;
         if (!mediaIdInDB) return;
 
@@ -508,7 +506,7 @@ const AlbumDetails: React.FC = () => {
         setEditRating(0);
     };
 
-    const saveEdit = async (commentId: number | string) => {
+    const saveEdit = async (commentId: number | string): Promise<void> => {
         if (isEditInvalid) return;
         try {
             await apiClient.put(`/reviews/${commentId}`, {
@@ -524,7 +522,7 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    const deleteComment = async (commentId: number | string) => {
+    const deleteComment = async (commentId: number | string): Promise<void> => {
         if (
             window.confirm(
                 t("delete_confirm") || "Voulez-vous vraiment supprimer cet avis ?",
@@ -540,7 +538,7 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    const deleteReply = async (replyId: number | string) => {
+    const deleteReply = async (replyId: number | string): Promise<void> => {
         if (!window.confirm("Voulez-vous vraiment supprimer ce commentaire ?")) return;
         try {
             await apiClient.delete(`/review-comments/${replyId}`);
@@ -551,9 +549,9 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    const handleToggleLike = async (commentId: number | string) => {
-        setLikedCommentIds((prev) => {
-            const next = new Set(prev);
+    const handleToggleLike = async (commentId: number | string): Promise<void> => {
+        setLikedCommentIds((prev: Set<string | number>) => {
+            const next: Set<string | number> = new Set(prev);
             if (next.has(commentId)) {
                 next.delete(commentId);
             } else {
@@ -567,8 +565,8 @@ const AlbumDetails: React.FC = () => {
             fetchReviews(); 
         } catch (err) {
             console.error("Erreur lors de l'action sur le like:", err);
-            setLikedCommentIds((prev) => {
-                const next = new Set(prev);
+            setLikedCommentIds((prev: Set<string | number>) => {
+                const next: Set<string | number> = new Set(prev);
                 if (next.has(commentId)) {
                     next.delete(commentId);
                 } else {
@@ -579,20 +577,20 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    const toggleReplies = (commentId: number | string) => {
-        setExpandedReplies((prev) =>
+    const toggleReplies = (commentId: number | string): void => {
+        setExpandedReplies((prev: any[]): any[] =>
             prev.includes(commentId)
-                ? prev.filter((uid) => uid !== commentId)
+                ? prev.filter((uid): boolean => uid !== commentId)
                 : [...prev, commentId],
         );
     };
 
-    const submitReply = async (reviewId: number | string, parentCommentId?: number | string) => {
-        const key = parentCommentId ?? reviewId;
-        const text = replyInputs[String(key)];
+    const submitReply = async (reviewId: number | string, parentCommentId?: number | string): Promise<void> => {
+        const key: string | number = parentCommentId ?? reviewId;
+        const text: string = replyInputs[String(key)];
         if (!text || !text.trim()) return;
 
-        const tempId = `temp-${Date.now()}`;
+        const tempId: string = `temp-${Date.now()}`;
         const tempReply = {
             id: tempId,
             content: text.trim(),
@@ -602,8 +600,8 @@ const AlbumDetails: React.FC = () => {
             user: { username: "Moi", id: currentUserId }
         };
 
-        setCommentsList((prev) =>
-            prev.map((review) => {
+        setCommentsList((prev: any[]) =>
+            prev.map((review): any => {
                 if (review.id === reviewId) {
                     return {
                         ...review,
@@ -617,10 +615,10 @@ const AlbumDetails: React.FC = () => {
         setReplyInputs((prev) => ({ ...prev, [String(key)]: "" }));
         setActiveReplyId(null);
         setActiveNestedReplyId(null);
-        setExpandedReplies((prev) => (prev.includes(reviewId) ? prev : [...prev, reviewId]));
+        setExpandedReplies((prev: any[]): any[] => (prev.includes(reviewId) ? prev : [...prev, reviewId]));
 
         try {
-            const response = await apiClient.post(`/review-comments`, {
+            const response: AxiosResponse<any, any> = await apiClient.post(`/review-comments`, {
                 review_id: reviewId,
                 ...(parentCommentId && parentCommentId !== reviewId ? { parent_id: parentCommentId } : {}),
                 content: text.trim(),
@@ -628,8 +626,8 @@ const AlbumDetails: React.FC = () => {
 
             const saved = response.data?.reviewComment || response.data;
 
-            setCommentsList((prev) =>
-                prev.map((review) => {
+            setCommentsList((prev: any[]) =>
+                prev.map((review): any => {
                     if (review.id === reviewId) {
                         return {
                             ...review,
@@ -650,20 +648,20 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    const organizeComments = (comments: any[]) => {
+    const organizeComments = (comments: any[]): any[] => {
         if (!comments) return [];
 
-        const roots = comments
+        const roots: any[] = comments
             .filter((c) => !c.parent_id)
             .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
-        const replies = comments.filter((c) => c.parent_id);
+        const replies: any[] = comments.filter((c) => c.parent_id);
         const result: any[] = [];
 
-        const traverse = (parent: any) => {
+        const traverse = (parent: any): void => {
             result.push(parent);
-            const children = replies
-                .filter((c) => String(c.parent_id) === String(parent.id))
+            const children: any[] = replies
+                .filter((c): boolean => String(c.parent_id) === String(parent.id))
                 .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
             children.forEach((child) => traverse(child));
@@ -671,7 +669,7 @@ const AlbumDetails: React.FC = () => {
 
         roots.forEach((root) => traverse(root));
 
-        const processedIds = new Set(result.map((c) => String(c.id)));
+        const processedIds: Set<string> = new Set(result.map((c) => String(c.id)));
         comments.forEach((c) => {
             if (!processedIds.has(String(c.id))) {
                 result.push(c);
@@ -842,8 +840,8 @@ const AlbumDetails: React.FC = () => {
                                                     <span className={`${option.color}`}>{option.icon}</span>
                                                     <span
                                                         className="text-sm font-bold text-gray-200 dark:text-gray-700 uppercase">
-                            {option.label}
-                        </span>
+                                                        {option.label}
+                                                    </span>
                                                 </button>
                                             ))}
                                         </div>
@@ -1152,7 +1150,6 @@ const AlbumDetails: React.FC = () => {
                                                             </div>
 
                                                             {/* Champ de saisie interactif pour les réponses */}
-                                                            {/* Input réponse — réponse directe à la review, pas à un commentaire */}
                                                             {activeReplyId === comment.id && (
                                                                 <div className="mt-4 pt-4 border-t border-gray-800/50 dark:border-gray-200">
                                                                     <div className="flex items-center gap-2">
@@ -1219,21 +1216,21 @@ const AlbumDetails: React.FC = () => {
                                                                                             <div className="min-w-0">
                                                                                                 <div
                                                                                                     className="flex items-center gap-2 flex-wrap mb-1">
-                                                                                    <span
-                                                                                        className="font-bold text-blue-400 text-xs">
-                                                                                      {reply.user?.username || "Anonyme"}
-                                                                                    </span>
+                                                                                                    <span
+                                                                                                        className="font-bold text-blue-400 text-xs">
+                                                                                                      {reply.user?.username || "Anonyme"}
+                                                                                                    </span>
                                                                                                     {/* ✅ Mention @parent si réponse imbriquée */}
                                                                                                     {parentComment && (
                                                                                                         <span
                                                                                                             className="text-xs bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">
-                                                                                        @{parentComment.user?.username || "Anonyme"}
-                                                                                      </span>
+                                                                                                        @{parentComment.user?.username || "Anonyme"}
+                                                                                                      </span>
                                                                                                     )}
                                                                                                     <span
                                                                                                         className="text-gray-600 dark:text-gray-400 text-[11px]">
-                                                                                  {new Date(reply.created_at || Date.now()).toLocaleDateString()}
-                                                                                </span>
+                                                                                                      {new Date(reply.created_at || Date.now()).toLocaleDateString()}
+                                                                                                    </span>
                                                                                                 </div>
                                                                                                 <p className="text-gray-300 dark:text-gray-600 leading-snug">
                                                                                                     {reply.content}
@@ -1289,10 +1286,10 @@ const AlbumDetails: React.FC = () => {
                                                                                                     autoFocus
                                                                                                     placeholder={`Répondre à ${reply.user?.username || "Anonyme"}...`}
                                                                                                     value={replyInputs[String(reply.id)] || ""}
-                                                                                                    onChange={(e) =>
+                                                                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                                                                         setReplyInputs({ ...replyInputs, [String(reply.id)]: e.target.value })
                                                                                                     }
-                                                                                                    onKeyDown={(e) => {
+                                                                                                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
                                                                                                         if (e.key === "Enter") {
                                                                                                             submitReply(comment.id, reply.id);
                                                                                                         }
@@ -1343,12 +1340,12 @@ const AlbumDetails: React.FC = () => {
                                                 <div
                                                     key={idx}
                                                     className="cursor-pointer hover:opacity-80 transition-opacity"
-                                                    onClick={() => {
+                                                    onClick={(): void => {
                                                         const artistName = item.artist?.name || item.artist || "";
                                                         const albumName = item.name || "";
                                                         const coverUrl = item.image?.[3]?.["#text"] || item.image?.[2]?.["#text"] || "";
                                                         const albumId = item.mbid || item.api_id || item.media_id || `album:${artistName}:${albumName}`;
-                                                        const params = new URLSearchParams({
+                                                        const params: string = new URLSearchParams({
                                                             artist: artistName,
                                                             album: albumName,
                                                             cover: coverUrl,
@@ -1398,7 +1395,7 @@ const AlbumDetails: React.FC = () => {
 
                                 <textarea
                                     value={reportReason}
-                                    onChange={(e) => setReportReason(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReportReason(e.target.value)}
                                     placeholder={t("report_placeholder", "Raison du signalement (ex: propos injurieux, spam...)")}
                                     className="w-full bg-[#161b2c] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 rounded-xl p-4 text-sm text-white dark:text-gray-900 focus:outline-none focus:border-rose-500 min-h-[120px] resize-none"
                                     autoFocus
@@ -1406,7 +1403,7 @@ const AlbumDetails: React.FC = () => {
 
                                 <div className="flex gap-3 mt-6">
                                     <button
-                                        onClick={() => {
+                                        onClick={(): void => {
                                             setIsReportModalOpen(false);
                                             setReportReason("");
                                         }}

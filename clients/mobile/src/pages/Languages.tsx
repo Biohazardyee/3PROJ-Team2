@@ -31,14 +31,10 @@ const Languages = () => {
         loadLanguage();
     }, []);
 
-    // 2. Fonction pour changer et sauvegarder la langue
     const changeLanguage = async (langCode: string): Promise<void> => {
         setSelectedLang(langCode);
         await i18n.changeLanguage(langCode);
         await AsyncStorage.setItem('user_language', langCode);
-
-        // Note : Pour traduire toute l'app, il faudra plus tard utiliser un outil comme i18next.
-        // Pour l'instant, on sauvegarde le choix de l'utilisateur.
     };
 
     return (
@@ -61,7 +57,6 @@ const Languages = () => {
                                 style={[
                                     styles.languageRow,
                                     {borderBottomColor: theme.border},
-                                    // On enlève la bordure du dernier élément
                                     index === AVAILABLE_LANGUAGES.length - 1 && {borderBottomWidth: 0}
                                 ]}
                                 onPress={(): Promise<void> => changeLanguage(lang.code)}
@@ -69,8 +64,6 @@ const Languages = () => {
                             >
                                 <Text style={styles.flag}>{lang.flag}</Text>
                                 <Text style={[styles.languageName, {color: theme.text}]}>{lang.label}</Text>
-
-                                {/* Icône de validation (Check) si c'est la langue sélectionnée */}
                                 {isSelected && (
                                     <Ionicons name="checkmark-circle" size={24} color={theme.accent}/>
                                 )}
@@ -104,7 +97,7 @@ const styles = StyleSheet.create({
     content: {flex: 1, padding: 20},
     card: {
         borderRadius: 15,
-        overflow: 'hidden', // Pour que les bords des boutons ne dépassent pas
+        overflow: 'hidden',
     },
     languageRow: {
         flexDirection: 'row',

@@ -257,12 +257,8 @@ const Feed: React.FC = () => {
     // ── Navigation ─────────────────────────────────────────────────────────────
 
     const handleNavigateToAlbum = (item: FeedItem) => {
-        // 1. Inspectez la console (F12) pour voir la structure de l'objet
         console.log("Clic sur item :", item);
 
-        // 2. Essayez de trouver l'ID.
-        // Peut-être que votre API renvoie l'ID dans une autre propriété,
-        // par exemple "item.id" ou "item.review_id" ?
         const albumId = item.media_id || item.api_id || item.id;
 
         if (!albumId) {
@@ -322,7 +318,7 @@ const Feed: React.FC = () => {
                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1C1C28] dark:bg-white border border-gray-800 dark:border-gray-200 text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:border-gray-700 transition-all text-sm disabled:opacity-50"
                 >
                     <RefreshCw size={15} className={isRefreshing ? "animate-spin" : ""}/>
-                    Actualiser
+                    {t("refresh")}
                 </button>
             </div>
 

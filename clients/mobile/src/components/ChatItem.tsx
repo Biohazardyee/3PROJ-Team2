@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 const ChatItem = ({
   id,
@@ -24,7 +24,6 @@ const ChatItem = ({
       style={[styles.chatItem, unread > 0 && styles.chatItemUnread]}
       onPress={onPress}
     >
-      {/* Conteneur Avatar */}
       <View
         style={[
           styles.avatarCircle,

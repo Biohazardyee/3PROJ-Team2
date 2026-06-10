@@ -11,7 +11,6 @@ const AuthRequired: React.FC = () => {
         <div className="min-h-screen flex items-center justify-center bg-[#13131a] dark:bg-slate-50 p-6 transition-colors duration-300">
             <div className="max-w-md w-full text-center space-y-8 animate-in fade-in zoom-in duration-500">
 
-                {/* Icône centrale avec lueur */}
                 <div className="relative mx-auto w-24 h-24">
                     <div className="absolute inset-0 bg-blue-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
                     <div className="relative bg-[#1c1c28] dark:bg-white border border-gray-800 dark:border-gray-200 rounded-3xl w-24 h-24 flex items-center justify-center shadow-2xl">
@@ -32,7 +31,6 @@ const AuthRequired: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Boutons d'action */}
                 <div className="flex flex-col gap-4 pt-4 px-6">
                     <button
                         onClick={() => navigate('/login')}
@@ -51,15 +49,6 @@ const AuthRequired: React.FC = () => {
                             {t('create_account')}
                         </span>
                     </button>
-                </div>
-
-                {/* Avatars décoratifs */}
-                <div className="pt-12 flex justify-center gap-3 opacity-40">
-                    {['AL', 'BE', 'MO'].map((initials) => (
-                        <div key={initials} className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold bg-gray-800 text-gray-400 dark:bg-gray-200 dark:text-gray-600">
-                            {initials}
-                        </div>
-                    ))}
                 </div>
             </div>
         </div>
