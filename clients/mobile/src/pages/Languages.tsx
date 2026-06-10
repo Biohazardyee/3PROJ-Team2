@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, Platform, StatusBar, TouchableOpacity} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {Ionicons} from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackButton from '../components/BackButton';
@@ -10,9 +11,12 @@ const AVAILABLE_LANGUAGES = [
     {code: 'fr', label: 'Français', flag: '🇫🇷'},
     {code: 'en', label: 'English', flag: '🇬🇧'},
     {code: 'es', label: 'Español', flag: '🇪🇸'},
+    {code: 'de', label: 'Deutsch', flag: '🇩🇪'},
+    {code: 'it', label: 'Italiano', flag: '🇮🇹'},
 ];
 
 const Languages = () => {
+    const {t} = useTranslation();
     const {theme} = useTheme();
     const [selectedLang, setSelectedLang] = useState('fr');
 
@@ -41,7 +45,7 @@ const Languages = () => {
         <View style={[styles.container, {backgroundColor: theme.background}]}>
             <View style={styles.header}>
                 <BackButton/>
-                <Text style={[styles.headerTitle, {color: theme.text}]}>Langue</Text>
+                <Text style={[styles.headerTitle, {color: theme.text}]}>{t('language_title')}</Text>
                 <View style={{width: 45}}/>
             </View>
 
@@ -74,9 +78,9 @@ const Languages = () => {
                 </View>
 
                 <Text style={[styles.infoText, {color: theme.subText}]}>
-                    Actuellement, les données sont configurées pour s'afficher en : {
-                    AVAILABLE_LANGUAGES.find(l => l.code === selectedLang)?.label
-                }
+                    {t('language_currently', {
+                        language: AVAILABLE_LANGUAGES.find((l) => l.code === selectedLang)?.label,
+                    })}
                 </Text>
             </View>
         </View>

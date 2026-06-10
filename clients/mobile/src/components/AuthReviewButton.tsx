@@ -3,6 +3,7 @@ import {TouchableOpacity, Text, StyleSheet, View} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {Ionicons} from "@expo/vector-icons";
 import {Router, useRouter} from 'expo-router';
+import {useTranslation} from 'react-i18next';
 
 interface AuthReviewButtonProps {
     onPress: () => void;
@@ -11,6 +12,7 @@ interface AuthReviewButtonProps {
 
 export const AuthReviewButton: React.FC<AuthReviewButtonProps> = ({onPress, isLoggedIn}: AuthReviewButtonProps) => {
     const router: Router = useRouter();
+    const {t} = useTranslation();
 
     if (!isLoggedIn) {
         return (
@@ -27,7 +29,7 @@ export const AuthReviewButton: React.FC<AuthReviewButtonProps> = ({onPress, isLo
                 >
                     <View style={styles.innerContainer}>
                         <Ionicons name="lock-closed" size={18} color="#ec4899" style={{marginRight: 10}}/>
-                        <Text style={styles.guestText}>Connectez-vous pour donner votre avis</Text>
+                        <Text style={styles.guestText}>{t('review_login_prompt')}</Text>
                     </View>
                 </LinearGradient>
             </TouchableOpacity>
@@ -37,7 +39,7 @@ export const AuthReviewButton: React.FC<AuthReviewButtonProps> = ({onPress, isLo
     return (
         <TouchableOpacity style={styles.authButton} onPress={onPress}>
             <Ionicons name="create-outline" size={20} color="white" style={{marginRight: 10}}/>
-            <Text style={styles.authText}>Poster un avis sur cet album</Text>
+            <Text style={styles.authText}>{t('review_post_button')}</Text>
         </TouchableOpacity>
     );
 };

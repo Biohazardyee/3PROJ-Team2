@@ -12,6 +12,7 @@ import {
     FlatList,
 } from "react-native";
 import {Ionicons} from "@expo/vector-icons";
+import {useTranslation} from "react-i18next";
 import {useRouter, useFocusEffect, Router} from "expo-router";
 import Header from "@/src/components/Header";
 import apiClient from "../api/client";
@@ -43,6 +44,7 @@ interface HasMoreCache {
 const ITEMS_PER_PAGE: number = 10;
 
 const Feed = () => {
+    const {t} = useTranslation();
     const router: Router = useRouter();
     const [activeFilter, setActiveFilter] = useState<Filter>("Review");
     const [searchQuery, setSearchQuery] = useState("");
@@ -181,7 +183,7 @@ const Feed = () => {
 
     const handleLike = async (id: string): Promise<void> => {
         if (!currentUserId) {
-            Alert.alert("Connexion requise", "Tu dois être connecté pour liker.");
+            Alert.alert(t("auth_required"), t("feed_like_login_required"));
             return;
         }
 
@@ -232,7 +234,7 @@ const Feed = () => {
         } catch (error) {
             console.error("Erreur toggle like:", error);
             await fetchFeed(activeFilter, 0, false);
-            Alert.alert("Erreur", "Impossible de mettre à jour le like.");
+            Alert.alert(t("error"), t("feed_like_update_error"));
         } finally {
             isInteracting.current = false;
         }
@@ -298,15 +300,15 @@ const Feed = () => {
                         )}
                         <View>
                             <Text style={styles.userName}>
-                                {item.user_name || "Recommandation"}
+                                {item.user_name || t("recommendation_label")}
                                 <Text style={styles.actionText}>
                                     {item.type === "review"
-                                        ? " a écrit une review"
-                                        : " Nouvel album"}
+                                        ? t("action_wrote_review")
+                                        : t("action_new_album")}
                                 </Text>
                             </Text>
                             <Text style={styles.timeText}>
-                                {item.type === "recommendation" ? "SUGGESTION IA" : "RÉCENT"}
+                                {item.type === "recommendation" ? t("feed_ai_suggestion") : t("feed_recent")}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -431,7 +433,7 @@ const Feed = () => {
                                     {color: item.hasReviewed ? "#10b981" : "#ec4899"},
                                 ]}
                             >
-                                {item.hasReviewed ? "Déjà noté" : "Écrire une review"}
+                                {item.hasReviewed ? t("already_reviewed") : t("write_review")}
                             </Text>
                         </TouchableOpacity>
                     )}
@@ -479,9 +481,9 @@ const Feed = () => {
                     ListHeaderComponent={
                         <>
                             <View style={styles.headerSection}>
-                                <Text style={styles.title}>Votre fil</Text>
+                                <Text style={styles.title}>{t("feed_title")}</Text>
                                 <Text style={styles.subtitle}>
-                                    Découvrez de nouvelles pépites !
+                                    {t("feed_subtitle")}
                                 </Text>
                             </View>
 
@@ -494,7 +496,7 @@ const Feed = () => {
                                 />
                                 <TextInput
                                     style={styles.searchInput}
-                                    placeholder="Rechercher un album..."
+                                    placeholder={t("search_feed_placeholder")}
                                     placeholderTextColor="#6b7280"
                                     value={searchQuery}
                                     onChangeText={setSearchQuery}
@@ -503,19 +505,19 @@ const Feed = () => {
 
                             <View style={styles.filterTabs}>
                                 <FilterButton
-                                    label="Reviews"
+                                    label={t("tab_activities")}
                                     active={activeFilter === "Review"}
                                     icon="grid-outline"
                                     onPress={(): void => setActiveFilter("Review")}
                                 />
                                 <FilterButton
-                                    label="Amis"
+                                    label={t("tab_following")}
                                     active={activeFilter === "Abonnement"}
                                     icon="people-outline"
                                     onPress={(): void => setActiveFilter("Abonnement")}
                                 />
                                 <FilterButton
-                                    label="Découverte"
+                                    label={t("tab_discovery")}
                                     active={activeFilter === "Tendances"}
                                     icon="sparkles-outline"
                                     onPress={(): void => setActiveFilter("Tendances")}

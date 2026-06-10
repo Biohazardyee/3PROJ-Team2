@@ -2,38 +2,39 @@ import React from 'react';
 import {View, Text, StyleSheet, Platform, StatusBar, ScrollView} from 'react-native';
 import BackButton from '../components/BackButton';
 import {useTheme} from '../context/ThemeContext';
+import {useTranslation} from 'react-i18next';
 
 const Privacy = () => {
     const {theme} = useTheme();
+    const {t} = useTranslation();
 
     return (
         <View style={[styles.container, {backgroundColor: theme.background}]}>
             <View style={styles.header}>
                 <BackButton/>
-                <Text style={[styles.headerTitle, {color: theme.text}]}>Confidentialité</Text>
+                <Text style={[styles.headerTitle, {color: theme.text}]}>{t('privacy_header')}</Text>
                 <View style={{width: 45}}/>
             </View>
 
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                 <View style={[styles.card, {backgroundColor: theme.card}]}>
-                    <Text style={[styles.sectionTitle, {color: theme.text}]}>1. Collecte des données</Text>
+                    <Text style={[styles.sectionTitle, {color: theme.text}]}>{t('privacy_section_1_title')}</Text>
                     <Text style={[styles.paragraph, {color: theme.subText}]}>
-                        Toutes vos playlists et préférences sont stockées localement sur votre appareil. Nous ne
-                        collectons, ne vendons et ne partageons aucune de vos données musicales personnelles avec des
-                        tiers.
+                        {t('privacy_section_1_text')}
                     </Text>
 
-                    <Text style={[styles.sectionTitle, {color: theme.text, marginTop: 20}]}>2. Utilisation de
-                        l'application</Text>
+                    <Text style={[styles.sectionTitle, {color: theme.text, marginTop: 20}]}>
+                        {t('privacy_section_2_title')}
+                    </Text>
                     <Text style={[styles.paragraph, {color: theme.subText}]}>
-                        Les permissions demandées par l'application (comme l'accès au stockage ou au partage) servent
-                        uniquement à vous permettre d'exporter vos propres données de sauvegarde.
+                        {t('privacy_section_2_text')}
                     </Text>
 
-                    <Text style={[styles.sectionTitle, {color: theme.text, marginTop: 20}]}>3. Sécurité</Text>
+                    <Text style={[styles.sectionTitle, {color: theme.text, marginTop: 20}]}>
+                        {t('privacy_section_3_title')}
+                    </Text>
                     <Text style={[styles.paragraph, {color: theme.subText}]}>
-                        Puisque vos données ne quittent pas votre téléphone, leur sécurité dépend de la sécurité globale
-                        de votre appareil (code PIN, Face ID, etc.).
+                        {t('privacy_section_3_text')}
                     </Text>
                 </View>
             </ScrollView>

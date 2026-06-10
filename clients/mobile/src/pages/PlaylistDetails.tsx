@@ -15,6 +15,7 @@ import {Ionicons} from "@expo/vector-icons";
 import BackButton from "../components/BackButton";
 import apiClient from "../api/client";
 import AlbumCard from "@/src/components/AlbumCard";
+import {useTranslation} from "react-i18next";
 
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
 
@@ -23,6 +24,7 @@ const GAP = 6;
 const COLUMN_WIDTH: number = (SCREEN_WIDTH - PADDING_HORIZONTAL * 2 - GAP) / 2;
 
 const PlaylistDetails = () => {
+    const { t } = useTranslation();
     const {id, title} = useLocalSearchParams();
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ const PlaylistDetails = () => {
             const res = await apiClient.get(`/playlist-items/playlist/${id}`);
             setItems(res.data.playlistItems || []);
         } catch (e) {
-            Alert.alert("Erreur", "Impossible de charger le contenu.");
+            Alert.alert(t("error"), t("playlist_save_error"));
         } finally {
             setLoading(false);
         }
@@ -44,17 +46,17 @@ const PlaylistDetails = () => {
     }, [id]);
 
     const removeItem = (playlistItemId: string, mediaTitle: string): void => {
-        Alert.alert("Supprimer", `Retirer "${mediaTitle}" ?`, [
-            {text: "Annuler", style: "cancel"},
+        Alert.alert(t("delete"), `${t("modify")} "${mediaTitle}" ?`, [
+            {text: t("cancel"), style: "cancel"},
             {
-                text: "Retirer",
+                text: t("delete"),
                 style: "destructive",
                 onPress: async (): Promise<void> => {
                     try {
                         await apiClient.delete(`/playlist-items/${playlistItemId}`);
                         setItems((prev) => prev.filter((i): boolean => i.id !== playlistItemId));
                     } catch {
-                        Alert.alert("Erreur", "Action impossible.");
+                        Alert.alert(t("error"), t("playlist_delete_error"));
                     }
                 },
             },

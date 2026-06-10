@@ -113,10 +113,10 @@ const Settings = () => {
 
 
     const handleLogout: () => void = (): void => {
-        Alert.alert("Déconnexion", "Êtes-vous sûr de vouloir vous déconnecter ?", [
-            {text: "Annuler", style: "cancel"},
+        Alert.alert(t("btn_logout"), t("logout_confirm"), [
+            {text: t("cancel"), style: "cancel"},
             {
-                text: "Se déconnecter",
+                text: t("btn_logout"),
                 style: "destructive",
                 onPress: async (): Promise<void> => {
                     await SecureStore.deleteItemAsync("userToken");
@@ -139,18 +139,18 @@ const Settings = () => {
             </View>
 
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                <Text style={styles.sectionTitle}>Mon Compte</Text>
+                <Text style={styles.sectionTitle}>{t("settings_section_account")}</Text>
                 <View style={[styles.section, {backgroundColor: theme.card}]}>
                     <SettingRow
                         theme={theme}
                         icon="person-outline"
-                        title="Modifier le profil"
+                        title={t("settings_edit_profile")}
                         subtitle="Nom, Email, Mot de passe"
                         onPress={() => router.push("/updateProfile")}
                     />
                 </View>
 
-                <Text style={styles.sectionTitle}>Préférences</Text>
+                <Text style={styles.sectionTitle}>{t("settings_section_preferences")}</Text>
                 <View style={[styles.section, {backgroundColor: theme.card}]}>
                     <SettingRow
                         theme={theme}
@@ -163,8 +163,8 @@ const Settings = () => {
                     <SettingRow
                         theme={theme}
                         icon="notifications-outline"
-                        title="Notifications"
-                        subtitle="Nouveautés et alertes"
+                        title={t("settings_notifications")}
+                        subtitle={t("settings_notifications_subtitle")}
                         type="switch"
                         value={notifications}
                         onValueChange={toggleNotifications}
@@ -172,13 +172,13 @@ const Settings = () => {
                     <SettingRow
                         theme={theme}
                         icon="language-outline"
-                        title="Langue"
-                        subtitle="Français"
+                        title={t("settings_language")}
+                        subtitle={t("settings_language_subtitle")}
                         onPress={() => router.push("/languages")}
                     />
                 </View>
 
-                <Text style={styles.sectionTitle}>Données & Sécurité</Text>
+                <Text style={styles.sectionTitle}>{t("settings_section_data_security")}</Text>
                 <View style={[styles.section, {backgroundColor: theme.card}]}>
                     <SettingRow
                         theme={theme}
@@ -189,7 +189,7 @@ const Settings = () => {
                     <SettingRow
                         theme={theme}
                         icon="download-outline"
-                        title="Exporter mes données"
+                        title={t("settings_export_data")}
                         type="action"
                     />
                 </View>

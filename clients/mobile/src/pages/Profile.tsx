@@ -25,6 +25,7 @@ import Header from "@/src/components/Header";
 import {AuthGuardWrapper} from "../components/AuthGuardMapper";
 import apiClient from "../api/client";
 import ReportUserButton from "../components/reports/ReportUserButton";
+import {useTranslation} from "react-i18next";
 
 const formatReviewItem = (item: any, username: string) => {
     const content = item.media?.content;
@@ -46,11 +47,12 @@ const formatReviewItem = (item: any, username: string) => {
         content: item.content,
         likes_count: item._count?.likes || 0,
         comments_count: item._count?.comments || 0,
-        isLiked: item.likes && item.likes.length > 0,
+        isLiked: item.likes && (item.likes || []).length > 0,
     };
 };
 
 const ProfileScreen = () => {
+    const { t } = useTranslation();
     const router: Router = useRouter();
     const params: UnknownOutputParams = useLocalSearchParams();
     const externalUserIdRaw: string | string[] = params.id;
@@ -59,7 +61,7 @@ const ProfileScreen = () => {
         ? externalUserIdRaw[0]
         : externalUserIdRaw;
 
-    const [activeTab, setActiveTab] = useState("Albums favoris");
+    const [activeTab, setActiveTab] = useState(t("tab_favorite_albums"));
     const [userProfil, setUserProfil] = useState<any>(null);
     const [userConnected, setUserConnected] = useState<string>("");
     const [playlists, setPlaylists] = useState<any[]>([]);
@@ -78,7 +80,7 @@ const ProfileScreen = () => {
     const [loadingMore, setLoadingMore] = useState(false);
     const isInteracting = useRef(false);
 
-    const tabs: string[] = ["Albums favoris ", "Playlists", "Activités récentes"];
+    const tabs: string[] = [t("tab_favorite_albums"), t("tab_playlists"), t("tab_recent_activity")];
 
     useEffect((): void => {
         loadData();
@@ -86,8 +88,8 @@ const ProfileScreen = () => {
 
     useEffect((): void => {
         if (
-            activeTab === "Activités récentes" &&
-            recentActivity.length === 0 &&
+            activeTab === t("tab_recent_activity") &&
+            (recentActivity || []).length === 0 &&
             userProfil?.id
         ) {
             fetchRecentActivity(0, userProfil.id);
@@ -220,7 +222,7 @@ const ProfileScreen = () => {
             await fetchFollowCounts(userProfil.id);
         } catch (error) {
             console.error("Erreur Follow/Unfollow:", error);
-            Alert.alert("Erreur", "Impossible de mettre à jour le follow.");
+            Alert.alert(t("error"), t("profile_follow_error"));
             setIsFollowing(previousStatus);
             setFollowCounts((prev) => ({...prev, followers: previousFollowers}));
         } finally {
@@ -253,8 +255,8 @@ const ProfileScreen = () => {
             await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permissionResult.granted) {
             Alert.alert(
-                "Permission requise",
-                "Vous devez autoriser l'accès à vos photos pour modifier votre profil.",
+                t("permission_denied"),
+                t("permission_required"),
             );
             return;
         }
@@ -283,10 +285,10 @@ const ProfileScreen = () => {
                 profile_picture: base64Image,
             });
 
-            Alert.alert("Succès", "Votre photo de profil a été mise à jour !");
+            Alert.alert(t("success"), t("profile_photo_update_success"));
         } catch (error) {
             console.error("Erreur upload image:", error);
-            Alert.alert("Erreur", "Impossible de mettre à jour la photo de profil.");
+            Alert.alert(t("error"), t("profile_photo_update_error"));
             await fetchProfile(userConnected);
         }
     };
@@ -356,7 +358,7 @@ const ProfileScreen = () => {
     ): Promise<void> => {
         if (!userConnected || isInteracting.current) return;
         isInteracting.current = true;
-        const itemIndex: number = recentActivity.findIndex(
+        const itemIndex: number = (recentActivity || []).findIndex(
             (f): boolean => f.id === id,
         );
         if (itemIndex === -1) {
@@ -394,7 +396,7 @@ const ProfileScreen = () => {
         const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
         if (
             layoutMeasurement.height + contentOffset.y >= contentSize.height - 100 &&
-            activeTab === "Activités récentes" &&
+            activeTab === t("tab_recent_activity") &&
             hasMoreActivity &&
             !loadingMore &&
             userProfil?.id
@@ -483,11 +485,11 @@ const ProfileScreen = () => {
                         <View style={styles.statsRow}>
                             <TouchableOpacity style={styles.statItem}>
                                 <Text style={styles.statNumber}>{followCounts.followers}</Text>
-                                <Text style={styles.statLabel}> Abonnés</Text>
+                                <Text style={styles.statLabel}> {t("profile_followers")}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.statItem}>
                                 <Text style={styles.statNumber}>{followCounts.following}</Text>
-                                <Text style={styles.statLabel}> Suivis</Text>
+                                <Text style={styles.statLabel}> {t("profile_following")}</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -497,7 +499,7 @@ const ProfileScreen = () => {
                                 onPress={(): void => router.push("/settings")}
                             >
                                 <Ionicons name="settings-outline" size={18} color="#fff"/>
-                                <Text style={styles.editButtonText}>Modifier le profil</Text>
+                                <Text style={styles.editButtonText}>{t("profile_edit_btn")}</Text>
                             </TouchableOpacity>
                         ) : (
                             <View style={{flexDirection: "row", gap: 10}}>
@@ -519,7 +521,7 @@ const ProfileScreen = () => {
                                         color="#fff"
                                     />
                                     <Text style={styles.editButtonText}>
-                                        {isFollowing ? "Following" : "Follow"}
+                                        {isFollowing ? t("following_button") : t("follow_button")}
                                     </Text>
                                 </TouchableOpacity>
 
@@ -532,7 +534,7 @@ const ProfileScreen = () => {
                             </View>
                         )}
                         <Text style={styles.bio}>
-                            {userProfil?.biography || "Pas encore de biographie"}
+                            {userProfil?.biography || t("profile_no_bio")}
                         </Text>
                     </View>
 
@@ -553,8 +555,8 @@ const ProfileScreen = () => {
                                             activeTab === tab && styles.tabTextActive,
                                         ]}
                                     >
-                                        {tab === "Playlists"
-                                            ? `Playlists (${playlists.length})`
+                                        {tab === t("tab_playlists")
+                                            ? `${t("tab_playlists")} (${(playlists || []).length})`
                                             : tab}
                                     </Text>
                                 </TouchableOpacity>
@@ -563,9 +565,9 @@ const ProfileScreen = () => {
                     </View>
 
                     <View style={styles.sectionPadding}>
-                        {activeTab === "Albums favoris" && (
+                        {activeTab === t("tab_favorite_albums") && (
                             <View style={styles.albumGrid}>
-                                {favoriteReviews.map((item) => (
+                                {(favoriteReviews || []).map((item) => (
                                     <View key={item.id} style={styles.cardWrapper}>
                                         <AlbumCard
                                             id={item.media_id}
@@ -579,9 +581,9 @@ const ProfileScreen = () => {
                             </View>
                         )}
 
-                        {activeTab === "Playlists" && (
+                        {activeTab === t("tab_playlists") && (
                             <View style={styles.playlistList}>
-                                {playlists.map((playlist) => (
+                                {(playlists || []).map((playlist) => (
                                     <TouchableOpacity
                                         key={playlist.id}
                                         style={styles.playlistItem}
@@ -613,7 +615,7 @@ const ProfileScreen = () => {
                                         <View style={{flex: 1}}>
                                             <Text style={styles.playlistName}>{playlist.name} </Text>
                                             {String(playlist.is_public) === "false" && (
-                                                <Text style={styles.privateLabel}>Privée</Text>
+                                                <Text style={styles.privateLabel}>{t("playlist_private")}</Text>
                                             )}
                                         </View>
                                     </TouchableOpacity>
@@ -621,13 +623,13 @@ const ProfileScreen = () => {
                             </View>
                         )}
 
-                        {activeTab === "Activités récentes" && (
+                        {activeTab === t("tab_recent_activity") && (
                             <View style={styles.postsList}>
-                                {recentActivity.map((item) => (
+                                {(recentActivity || []).map((item) => (
                                     <View key={item.id} style={styles.card}>
                                         <Text style={styles.cardUserName}>
                                             {item.user_name}{" "}
-                                            <Text style={styles.actionText}>a évalué un album</Text>
+                                            <Text style={styles.actionText}>{t("activity_reviewed_album")}</Text>
                                         </Text>
 
                                         <TouchableOpacity

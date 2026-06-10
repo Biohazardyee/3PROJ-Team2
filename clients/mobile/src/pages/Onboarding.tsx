@@ -14,31 +14,36 @@ import apiClient from "../api/client";
 import {InputMobile} from "../components/InputMobile";
 import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
+import {useTranslation} from "react-i18next";
+
+const { t } = useTranslation();
 
 const slides = [
-    {
-        id: 1,
-        title: "Bienvenue",
-        text: "Découvrez la meilleure musique du moment sur SUPCONTENT.",
-    },
-    {
-        id: 2,
-        title: "Partagez",
-        text: "Commentez et notez vos albums préférés avec la communauté.",
-    },
-    {
-        id: 3,
-        title: "Profitez",
-        text: "Créez vos playlists et emportez votre musique partout.",
-    },
-    {
-        id: 4,
-        title: "Dernière étape",
-        text: "Quel est votre artiste ou groupe préféré ?",
-    },
-];
+    
+        {
+            id: 1,
+            title: t("onboarding_title_1"),
+            text: t("onboarding_text_1"),
+        },
+        {
+            id: 2,
+            title: t("onboarding_title_2"),
+            text: t("onboarding_text_2"),
+        },
+        {
+            id: 3,
+            title: t("onboarding_title_3"),
+            text: t("onboarding_text_3"),
+        },
+        {
+            id: 4,
+            title: t("onboarding_title_4"),
+            text: t("onboarding_text_4"),
+        },
+    ];
 
 export default function Onboarding() {
+    
     const [currentIndex, setCurrentIndex] = useState(0);
     const [favorite_band, setFavoriteBand] = useState("");
     const [suggestions, setSuggestions] = useState<any[]>([]);

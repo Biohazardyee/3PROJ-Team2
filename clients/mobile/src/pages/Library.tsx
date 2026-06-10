@@ -1,4 +1,5 @@
 import React, {useState, useCallback} from "react";
+import {useTranslation} from "react-i18next";
 import {Router, useFocusEffect} from "expo-router";
 import {
     View,
@@ -31,6 +32,7 @@ type Playlist = {
 const {width} = Dimensions.get("window");
 
 const Library: React.FC = () => {
+    const {t} = useTranslation();
     const router: Router = useRouter();
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [loading, setLoading] = useState(true);
@@ -81,16 +83,16 @@ const Library: React.FC = () => {
             setPlaylists((current: Playlist[]): Playlist[] =>
                 current.filter((p: Playlist): boolean => p.id !== id),
             );
-            Alert.alert("Succès", "Playlist supprimée.");
+            Alert.alert(t("success"), t("playlist_deleted_success"));
         } catch (error) {
-            Alert.alert("Erreur", "La suppression a échoué.");
+            Alert.alert(t("error"), t("playlist_delete_error"));
         }
     };
 
     const showOptions: (item: Playlist) => void = (item: Playlist): void => {
-        Alert.alert(item.title, "Options de la playlist", [
+        Alert.alert(item.title, t("playlist_options_title"), [
             {
-                text: "Modifier",
+                text: t("modify"),
                 onPress: (): void =>
                     router.push({
                         pathname: "/createplaylist",
@@ -103,15 +105,15 @@ const Library: React.FC = () => {
                     }),
             },
             {
-                text: "Supprimer",
+                text: t("delete"),
                 style: "destructive",
                 onPress: (): void =>
-                    Alert.alert("Supprimer", "Confirmer la suppression ?", [
-                        {text: "Annuler", style: "cancel"},
-                        {text: "Supprimer", onPress: () => deletePlaylist(item.id)},
+                    Alert.alert(t("delete"), t("delete_playlist_confirm"), [
+                        {text: t("cancel"), style: "cancel"},
+                        {text: t("delete"), onPress: () => deletePlaylist(item.id)},
                     ]),
             },
-            {text: "Annuler", style: "cancel"},
+            {text: t("cancel"), style: "cancel"},
         ]);
     };
 
@@ -132,7 +134,7 @@ const Library: React.FC = () => {
                         <View style={styles.iconCircle}>
                             <Ionicons name="add" size={32} color="#ec4899"/>
                         </View>
-                        <Text style={styles.createLabelInner}>Nouvelle Playlist</Text>
+                        <Text style={styles.createLabelInner}>{t("new_playlist")}</Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -179,10 +181,10 @@ const Library: React.FC = () => {
                         renderItem={renderItem}
                         ListHeaderComponent={
                             <View style={styles.headerTextContainer}>
-                                <Text style={styles.title}>Ma Bibliothèque</Text>
+                                <Text style={styles.title}>{t("my_playlists_title")}</Text>
                                 <View style={styles.badge}>
                                     <Text style={styles.subtitle}>
-                                        {playlists.length} Playlists créées
+                                        {playlists.length} {t("library_playlists_created")}
                                     </Text>
                                 </View>
                             </View>

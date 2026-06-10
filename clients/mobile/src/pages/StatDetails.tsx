@@ -13,38 +13,41 @@ import AlbumCard from "@/src/components/AlbumCard";
 import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
-
-const TYPE_CONFIG: any = {
-    listened: {
-        title: "Écoutés",
-        subtitle: "Albums terminés",
-        icon: "check-circle-outline",
-        color: "#00ffa3",
-    },
-    later: {
-        title: "À écouter",
-        subtitle: "Liste d'attente",
-        icon: "playlist-music",
-        color: "#3b82f6",
-    },
-    favorite: {
-        title: "Favoris",
-        subtitle: "Vos préférés",
-        icon: "star",
-        color: "#fbbf24",
-    },
-    disliked: {
-        title: "Je n'aime pas",
-        subtitle: "Moins aimés",
-        icon: "close-circle-outline",
-        color: "#f43f5e",
-    },
-};
+import {useTranslation} from "react-i18next";
 
 const StatDetails: React.FC = () => {
+    const { t } = useTranslation();
     const {type} = useLocalSearchParams();
     const [albums, setAlbums] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Configuration des types basée sur les clés de traduction i18n
+    const TYPE_CONFIG: any = {
+        listened: {
+            title: t("status_completed"),
+            subtitle: t("stats_detail_title"),
+            icon: "check-circle-outline",
+            color: "#00ffa3",
+        },
+        later: {
+            title: t("status_listening"),
+            subtitle: t("stats_detail_title"),
+            icon: "playlist-music",
+            color: "#3b82f6",
+        },
+        favorite: {
+            title: t("status_wishlist"),
+            subtitle: t("stats_detail_title"),
+            icon: "star",
+            color: "#fbbf24",
+        },
+        disliked: {
+            title: t("status_dropped"),
+            subtitle: t("stats_detail_title"),
+            icon: "close-circle-outline",
+            color: "#f43f5e",
+        },
+    };
 
     const config = TYPE_CONFIG[type as string] || TYPE_CONFIG.listened;
 
@@ -69,7 +72,7 @@ const StatDetails: React.FC = () => {
                     return {
                         displayId: m.api_id || m.id,
                         dbId: m.id,
-                        album: m.name || m.title || "Titre inconnu",
+                        album: m.name || m.title || t("album_not_found"),
                         artist: m.artist || "Artiste inconnu",
                         rating: m.rating || 0,
                         cover: m.cover || m.cover_url || "https://via.placeholder.com/150",

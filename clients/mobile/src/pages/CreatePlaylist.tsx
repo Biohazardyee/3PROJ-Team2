@@ -20,10 +20,12 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
+import {useTranslation} from "react-i18next";
 import apiClient from "../api/client";
 import * as FileSystem from "expo-file-system/legacy";
 
 const CreatePlaylist = () => {
+    const {t} = useTranslation();
     const router: Router = useRouter();
     const params: UnknownOutputParams = useLocalSearchParams();
 
@@ -83,7 +85,7 @@ const CreatePlaylist = () => {
 
             const token: string | null = await SecureStore.getItemAsync("userToken");
             if (!token) {
-                Alert.alert("Erreur", "Session expirée.");
+                Alert.alert(t("error"), t("session_expired"));
                 return;
             }
             const decoded: any = jwtDecode(token);
@@ -120,18 +122,18 @@ const CreatePlaylist = () => {
                     updateData.image_url = base64Image;
                 }
                 await apiClient.put(`/playlists/${params.id}`, updateData);
-                Alert.alert("Succès", "Playlist mise à jour !");
+                Alert.alert(t("success"), t("playlist_update_success"));
             } else {
                 await apiClient.post("/playlists", playlistData);
-                Alert.alert("Succès", "Playlist créée !");
+                Alert.alert(t("success"), t("playlist_create_success"));
             }
 
             router.replace("/library");
         } catch (e: any) {
             console.error("Erreur sauvegarde playlist:", e);
             Alert.alert(
-                "Erreur",
-                e.response?.data?.message || "Impossible d'enregistrer la playlist.",
+                t("error"),
+                e.response?.data?.message || t("playlist_save_error"),
             );
         } finally {
             setLoading(false);
@@ -145,7 +147,7 @@ const CreatePlaylist = () => {
                     <Ionicons name="close" size={28} color="white"/>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>
-                    {isEditing ? "Modifier la playlist" : "Nouvelle playlist"}
+                    {isEditing ? t("edit_playlist") : t("new_playlist")}
                 </Text>
                 <View style={{width: 28}}/>
             </View>
@@ -157,14 +159,14 @@ const CreatePlaylist = () => {
                     ) : (
                         <View style={styles.imagePlaceholder}>
                             <Ionicons name="camera" size={40} color="#888"/>
-                            <Text style={styles.imageText}>Ajouter une cover</Text>
+                            <Text style={styles.imageText}>{t("add_cover")}</Text>
                         </View>
                     )}
                 </TouchableOpacity>
 
                 <TextInput
                     style={styles.input}
-                    placeholder="Nom de la playlist"
+                    placeholder={t("playlist_name_placeholder")}
                     placeholderTextColor="#555"
                     value={name}
                     onChangeText={setName}
@@ -176,7 +178,7 @@ const CreatePlaylist = () => {
                     onPress={() => setIsPublic((prev: boolean) => !prev)}
                 >
                     <Text style={styles.switchText}>
-                        {isPublic ? "Playlist publique" : "Playlist privée"}
+                        {isPublic ? t("playlist_public") : t("playlist_private")}
                     </Text>
 
                     <Ionicons
@@ -195,7 +197,7 @@ const CreatePlaylist = () => {
                         <ActivityIndicator color="white"/>
                     ) : (
                         <Text style={styles.btnText}>
-                            {isEditing ? "ENREGISTRER LES MODIFS" : "CRÉER LA PLAYLIST"}
+                            {isEditing ? t("save_changes_btn") : t("create_playlist_btn")}
                         </Text>
                     )}
                 </TouchableOpacity>

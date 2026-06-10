@@ -3,6 +3,7 @@ import {ActivityIndicator, View} from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import AutGuard from '../components/AuthGuard';
 
+
 export const AuthGuardWrapper = ({children}: { children: React.ReactNode }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);

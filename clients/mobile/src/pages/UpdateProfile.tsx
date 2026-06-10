@@ -17,8 +17,10 @@ import {Ionicons} from "@expo/vector-icons";
 import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
+import {useTranslation} from "react-i18next";
 
 const UpdateProfile = () => {
+    const { t } = useTranslation();
     const [username, setUsername] = useState("");
     const [favoriteBand, setFavoriteBand] = useState("");
     const [biography, setBiography] = useState("");
@@ -93,7 +95,7 @@ const UpdateProfile = () => {
     const pickImage = async (): Promise<void> => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permission.granted) {
-            Alert.alert("Permission refusée", "Accès aux images requis");
+            Alert.alert(t("permission_denied"), t("permission_required"));
             return;
         }
 
@@ -123,10 +125,10 @@ const UpdateProfile = () => {
                 profile_picture: profilePicture,
             });
 
-            Alert.alert("Succès", "Profil mis à jour");
+            Alert.alert(t("success"), t("profile_update_success"));
         } catch (err) {
             console.error(err);
-            Alert.alert("Erreur", "Impossible de mettre à jour le profil");
+            Alert.alert(t("error"), t("profile_update_error"));
         } finally {
             setLoading(false);
         }
@@ -159,8 +161,8 @@ const UpdateProfile = () => {
         <ScrollView style={styles.container}>
             <BackButton/>
 
-            <Text style={styles.title}>Modifier le profil</Text>
-            <Text style={styles.subtitle}>Personnalise tes informations</Text>
+            <Text style={styles.title}>{t("settings_edit_profile")}</Text>
+            <Text style={styles.subtitle}>{t("settings_subtitle")}</Text>
 
             <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
                 {renderAvatar()}
@@ -171,7 +173,7 @@ const UpdateProfile = () => {
 
             <View style={styles.card}>
                 <Text style={styles.label}>
-                    Username ({username.length}/{USERNAME_MAX})
+                    {t("label_username")} ({(username || "").length}/{USERNAME_MAX})
                 </Text>
                 <TextInput
                     style={styles.input}
@@ -181,19 +183,20 @@ const UpdateProfile = () => {
                     }
                 />
 
-                <Text style={styles.label}>Favorite band</Text>
+                <Text style={styles.label}>{t("label_favorite_band")}</Text>
 
                 <TextInput
                     style={styles.input}
                     value={favoriteBand}
                     onChangeText={searchArtists}
+                    placeholder={t("placeholder_favorite_band")}
                     placeholderTextColor="#666"
                 />
 
                 {showSuggestions && (
                     <View style={styles.suggestions}>
                         {isSearching ? (
-                            <ActivityIndicator color="#4A90E2"/>
+                            <ActivityIndicator color="#4A90E2" style={{ padding: 12 }}/>
                         ) : (
                             suggestions.map((item, i: number) => (
                                 <TouchableOpacity
@@ -215,13 +218,15 @@ const UpdateProfile = () => {
                 )}
 
                 <Text style={styles.label}>
-                    Biography ({biography.length}/{BIO_MAX})
+                    {t("label_bio")} ({(biography || "").length}/{BIO_MAX})
                 </Text>
 
                 <TextInput
                     style={[styles.input, styles.textArea]}
                     value={biography}
                     onChangeText={(text: string) => text.length <= BIO_MAX && setBiography(text)}
+                    placeholder={t("placeholder_biography")}
+                    placeholderTextColor="#666"
                     multiline
                 />
             </View>
@@ -234,7 +239,7 @@ const UpdateProfile = () => {
                 {loading ? (
                     <ActivityIndicator color="white"/>
                 ) : (
-                    <Text style={styles.buttonText}>Sauvegarder</Text>
+                    <Text style={styles.buttonText}>{t("btn_save")}</Text>
                 )}
             </TouchableOpacity>
         </ScrollView>

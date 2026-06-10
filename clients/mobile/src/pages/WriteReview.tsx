@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {
     StyleSheet,
     View,
@@ -15,8 +15,10 @@ import Header from "@/src/components/Header";
 import {Router, useLocalSearchParams, useRouter} from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import apiClient from "../api/client";
+import {useTranslation} from "react-i18next";
 
 const WriteReview = () => {
+    const { t } = useTranslation();
     const router: Router = useRouter();
 
     const {id, title, artist, cover, reviewId, editMode} =
@@ -40,7 +42,7 @@ const WriteReview = () => {
                 setReview(reviewData.content);
             } catch (err) {
                 console.error("Erreur fetch review:", err);
-                Alert.alert("Erreur", "Impossible de charger l'avis.");
+                Alert.alert(t("error"), t("review_load_error"));
             }
         };
 
@@ -49,7 +51,7 @@ const WriteReview = () => {
 
     const handlePublish = async (): Promise<void> => {
         if (rating === 0 || reviewTitle.trim() === "" || review.trim() === "") {
-            Alert.alert("Oups !", "Merci de remplir tous les champs.");
+            Alert.alert("Oups !", t("review_fill_fields"));
             return;
         }
 
@@ -59,7 +61,7 @@ const WriteReview = () => {
             const userId: string | null = await SecureStore.getItemAsync("userId");
 
             if (!userId) {
-                Alert.alert("Erreur", "Session expirée.");
+                Alert.alert(t("error"), t("review_session_expired"));
                 return;
             }
 
@@ -74,20 +76,20 @@ const WriteReview = () => {
             if (editMode === "true" && reviewId) {
                 await apiClient.put(`/reviews/${reviewId}`, payload);
 
-                Alert.alert("Succès", "Votre avis a été modifié !");
+                Alert.alert(t("success"), t("review_update_success"));
                 router.back();
                 return;
             }
 
             await apiClient.post("/reviews", payload);
 
-            Alert.alert("Succès", "Votre avis a été publié !");
+            Alert.alert(t("success"), t("review_publish_success"));
             router.back();
         } catch (error: any) {
             console.error(error);
 
-            const msg = error.response?.data?.message || "Erreur";
-            Alert.alert("Erreur", msg);
+            const msg = error.response?.data?.message || t("error");
+            Alert.alert(t("error"), msg);
         } finally {
             setLoading(false);
         }
@@ -121,8 +123,8 @@ const WriteReview = () => {
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
                 <View style={styles.headerRow}>
                     <View>
-                        <Text style={styles.title}>Écrire votre avis</Text>
-                        <Text style={styles.subtitle}>Partage ton avis sur cet album</Text>
+                        <Text style={styles.title}>{t("write_comment")}</Text>
+                        <Text style={styles.subtitle}>{t("placeholder_comment")}</Text>
                     </View>
                 </View>
 
@@ -144,13 +146,13 @@ const WriteReview = () => {
                 </View>
 
                 <View style={styles.formContainer}>
-                    <Text style={styles.label}>Ta note *</Text>
+                    <Text style={styles.label}>{t("rating")} *</Text>
                     {renderStars()}
 
-                    <Text style={styles.label}>Titre de l'avis *</Text>
+                    <Text style={styles.label}>{t("review_title_label")}</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Un titre pour ton avis..."
+                        placeholder={t("review_title_placeholder")}
                         placeholderTextColor="#666"
                         value={reviewTitle}
                         onChangeText={setReviewTitle}
@@ -158,13 +160,13 @@ const WriteReview = () => {
                         editable={!loading}
                     />
                     <Text style={styles.charCount}>
-                        {reviewTitle.length} / 100 caractères
+                        {(reviewTitle || "").length} / 100 caractères
                     </Text>
 
-                    <Text style={styles.label}>Ton avis *</Text>
+                    <Text style={styles.label}>{t("review_content_label")}</Text>
                     <TextInput
                         style={[styles.input, styles.textArea]}
-                        placeholder="Partage tes réflexions détaillées sur cet album..."
+                        placeholder={t("review_content_placeholder")}
                         placeholderTextColor="#666"
                         multiline
                         numberOfLines={6}
@@ -180,7 +182,7 @@ const WriteReview = () => {
                         onPress={() => router.back()}
                         disabled={loading}
                     >
-                        <Text style={styles.cancelText}>Annuler</Text>
+                        <Text style={styles.cancelText}>{t("cancel")}</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -199,7 +201,7 @@ const WriteReview = () => {
                                     style={{marginRight: 8}}
                                 />
                                 <Text style={styles.publishText}>
-                                    {editMode === "true" ? "Modifier l'avis" : "Publier l'avis"}
+                                    {editMode === "true" ? t("review_edit_button") : t("review_publish_button")}
                                 </Text>
                             </>
                         )}
