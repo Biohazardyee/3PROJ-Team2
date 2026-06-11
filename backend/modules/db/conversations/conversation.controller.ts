@@ -6,7 +6,7 @@ import {ConversationService, conversationService} from './conversation.service.j
 import {
     ConversationAddDto,
     ConversationAddResponseDto, ConversationResponseDeleteDto,
-    ConversationResponseDto
+    ConversationResponseDto, UserConversationResponseDto
 } from "../../../types/conversations/conversations.dto.js";
 
 class ConversationController extends Controller {
@@ -82,7 +82,7 @@ class ConversationController extends Controller {
                 throw new BadRequest('User ID is required');
             }
             
-            const conversations = await this.service.getUserConversations(userId);
+            const conversations: UserConversationResponseDto[] = await this.service.getUserConversations(userId);
 
             res.status(200).json({
                 message: 'User conversations retrieved successfully',

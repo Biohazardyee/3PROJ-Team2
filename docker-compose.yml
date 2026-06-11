@@ -10,6 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
+    networks:
+      - melodia-network
 
   api:
     image: api:latest
@@ -23,6 +25,35 @@ services:
       - "3000:3000"
     depends_on:
       - db
+    networks:
+      - melodia-network
+
+  frontend:
+    image: melodia-frontend:latest
+    restart: always
+    env_file:
+      - ./clients/web/.env
+    build:
+      context: ./clients/web/
+      dockerfile: Dockerfile
+    networks:
+      - melodia-network
+
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - melodia-network
 
 volumes:
   postgres_data:
+
+networks:
+  melodia-network:
+    driver: bridge

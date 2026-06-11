@@ -12,7 +12,7 @@ router.get('/info/tags/:mbid', function (req, res, next: NextFunction): void {
 });
 
 router.get('/similar', function (req, res, next: NextFunction): void {
-    albumController.albumGetSimilar(req, res,next)
+    albumController.albumGetSimilar(req, res, next)
 });
 
 

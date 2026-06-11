@@ -19,8 +19,8 @@ router.post("/", authGuard, function (req: Request, res: Response, next: NextFun
 })
 
 router.get('/user/:userId', authGuard, function (req: Request, res: Response, next: NextFunction): void {
-    conversationController.getUserConversation(req, res, next);
-}
+        conversationController.getUserConversation(req, res, next);
+    }
 );
 
 router.delete("/:id", authGuard, checkResourceOwnerOrAdmin('conversations'), function (req: Request, res: Response, next: NextFunction): void {

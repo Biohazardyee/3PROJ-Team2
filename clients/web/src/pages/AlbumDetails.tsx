@@ -11,11 +11,12 @@ import {
     FaStar,
     FaTimesCircle,
 } from "react-icons/fa";
-import { Edit3, Heart, Loader2, MessageCircle, Trash2, Flag } from "lucide-react";
+import {Edit3, Heart, Loader2, MessageCircle, Trash2, Flag} from "lucide-react";
 import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import UserAvatar from "../components/UserAvatar";
 import {AxiosResponse} from "axios";
+
 type TabType = "Commentaires" | "Albums";
 
 const AlbumDetails: React.FC = () => {
@@ -28,6 +29,8 @@ const AlbumDetails: React.FC = () => {
     const urlAlbum: string = searchParams.get("album") || "";
     const urlCover: string = searchParams.get("cover") || "";
     const urlMbid: string = searchParams.get("mbid") || "";
+
+    const PLACEHOLDER_IMAGE = "/melodia_placeholder.png";
 
     const STATUT_OPTIONS = [
         {
@@ -158,6 +161,12 @@ const AlbumDetails: React.FC = () => {
         }
     }, [isPlaylistModalOpen]);
 
+    useEffect((): void => {
+        if (mediaIdInDB) {
+            fetchReviews();
+        }
+    }, [mediaIdInDB]);
+
     const handleSendReport = async (): Promise<void> => {
         if (!reportReason.trim() || !currentUserId) return;
 
@@ -234,13 +243,13 @@ const AlbumDetails: React.FC = () => {
 
             if (isLocalId) {
                 try {
-                    const res: AxiosResponse<any, any> = await apiClient.get(`/medias/${id}`);
+                    const res: AxiosResponse = await apiClient.get(`/medias/${id}`);
                     const media = res.data.media || res.data;
                     if (media) {
                         finalData = {
                             name: media.name,
                             artist: media.artist,
-                            cover: media.cover,
+                            cover: media.cover || PLACEHOLDER_IMAGE,
                             rating: media.rating ?? 0,
                             mbid: media.mbid,
                             db_id: media.id,
@@ -362,7 +371,7 @@ const AlbumDetails: React.FC = () => {
                             status: newStatus
                         });
                     } else {
-                        throw err; 
+                        throw err;
                     }
                 }
             }
@@ -373,31 +382,21 @@ const AlbumDetails: React.FC = () => {
         }
     };
 
-    const fetchReviews = async (): Promise<void> => {
+    const fetchReviews: () => Promise<void> = async (): Promise<void> => {
+        if (!mediaIdInDB) return;
         try {
             setLoadingReviews(true);
-            const res: AxiosResponse<any, any> = await apiClient.get("/reviews");
-            const allReviews = res.data.reviews || res.data || [];
-
-            const targetArtist: string = String(urlArtist || albumData?.artist || "").toLowerCase().trim();
-            const targetAlbum: string = String(urlAlbum || albumData?.name || "").toLowerCase().trim();
-
-            const filtered = allReviews.filter((rev: any): boolean => {
-                const media = rev.media;
-                if (!media) return false;
-                const revArtist: string = String(media.content?.artist || media.artist || "").toLowerCase().trim();
-                const revAlbum: string = String(media.content?.name || media.name || "").toLowerCase().trim();
-                return revArtist === targetArtist && revAlbum === targetAlbum;
-            });
-
+            const res: AxiosResponse<any, any> = await apiClient.get(`/reviews/media/${mediaIdInDB}`);
+            const mediaReviews = res.data.reviews || [];
             const reviewsWithComments: any[] = await Promise.all(
-                filtered.map(async (rev: any): Promise<any> => {
+                mediaReviews.map(async (rev: any): Promise<any> => {
                     try {
                         const commentsRes: AxiosResponse<any, any> = await apiClient.get(`/review-comments/review/${rev.id}`);
+
                         const allComments = commentsRes.data.comments || commentsRes.data || [];
 
                         const sorted: any[] = [...allComments].sort(
-                            (a: any, b: any) =>
+                            (a: any, b: any): number =>
                                 new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
                         );
 
@@ -407,32 +406,28 @@ const AlbumDetails: React.FC = () => {
                     }
                 })
             );
-
             setCommentsList(reviewsWithComments);
 
             if (currentUserId) {
                 const liked: Set<string | number> = new Set<string | number>();
                 reviewsWithComments.forEach((rev: any) => {
-                    const hasLiked = rev.likes?.some(
-                        (like: any): boolean =>
-                            String(like.user_id || like.userId || like.user?.id) === String(currentUserId)
-                    );
-                    if (hasLiked) liked.add(rev.id);
+                    const userHasLiked = rev.isLiked || (Array.isArray(rev.likes) && rev.likes.some((like: any) => {
+                        const uid = like?.user_id || like?.userId || like?.id || like;
+                        return String(uid).toLowerCase() === String(currentUserId).toLowerCase();
+                    }));
+
+                    if (userHasLiked) {
+                        liked.add(rev.id);
+                    }
                 });
                 setLikedCommentIds(liked);
             }
         } catch (err) {
-            console.error("Erreur récupération des avis:", err);
+            console.error("Erreur récupération des avis par média:", err);
         } finally {
             setLoadingReviews(false);
         }
     };
-
-    useEffect((): void => {
-        if (albumData) {
-            fetchReviews();
-        }
-    }, [albumData]);
 
     if (loading) {
         return (
@@ -476,19 +471,32 @@ const AlbumDetails: React.FC = () => {
         }
 
         try {
-            await apiClient.post("/reviews", {
+            const res = await apiClient.post("/reviews", {
                 user_id: currentUserId,
                 media_id: mediaIdInDB,
                 title: commentTitle.trim(),
                 content: commentText.trim(),
                 rating: userRating,
             });
+
+            const newReview = res.data.review || res.data;
+
+            const formattedReview = {
+                ...newReview,
+                reviewComments: [],
+                likes: [],
+                user: newReview.user || { id: currentUserId, username: "Moi" }
+            };
+
+            setCommentsList((prev) => [formattedReview, ...prev]);
+
             setCommentTitle("");
             setCommentText("");
             setUserRating(0);
-            fetchReviews();
+
         } catch (err) {
             console.error("Erreur lors de la publication de l'avis:", err);
+            alert("Impossible de publier l'avis. Veuillez réessayer.");
         }
     };
 
@@ -508,17 +516,29 @@ const AlbumDetails: React.FC = () => {
 
     const saveEdit = async (commentId: number | string): Promise<void> => {
         if (isEditInvalid) return;
+
+        setCommentsList((prev) => prev.map(comment =>
+            comment.id === commentId
+                ? { ...comment, title: editTitle.trim(), content: editText.trim(), rating: editRating }
+                : comment
+        ));
+
+        const currentEditTitle = editTitle;
+        const currentEditText = editText;
+        const currentEditRating = editRating;
+
+        cancelEditing();
+
         try {
             await apiClient.put(`/reviews/${commentId}`, {
-                title: editTitle.trim(),
-                content: editText.trim(),
-                rating: editRating,
+                title: currentEditTitle.trim(),
+                content: currentEditText.trim(),
+                rating: currentEditRating,
             });
-            cancelEditing();
-            fetchReviews();
         } catch (err) {
             console.error("Erreur lors de la modification de l'avis:", err);
             alert("Impossible de modifier l'avis.");
+            fetchReviews();
         }
     };
 
@@ -528,28 +548,60 @@ const AlbumDetails: React.FC = () => {
                 t("delete_confirm") || "Voulez-vous vraiment supprimer cet avis ?",
             )
         ) {
+            setCommentsList((prev) => prev.filter((comment) => comment.id !== commentId));
             try {
                 await apiClient.delete(`/reviews/${commentId}`);
-                fetchReviews();
             } catch (err) {
                 console.error("Erreur lors de la suppression de l'avis:", err);
                 alert("Impossible de supprimer cet avis.");
+                fetchReviews();
             }
         }
     };
 
     const deleteReply = async (replyId: number | string): Promise<void> => {
         if (!window.confirm("Voulez-vous vraiment supprimer ce commentaire ?")) return;
+
+        setCommentsList((prev) =>
+            prev.map((review) => {
+                if (!review.reviewComments) return review;
+
+                const idsToDelete = new Set<string | number>([replyId]);
+                let hasNewIds = true;
+
+                while (hasNewIds) {
+                    hasNewIds = false;
+                    review.reviewComments.forEach((c: any) => {
+                        if (c.parent_id && idsToDelete.has(c.parent_id) && !idsToDelete.has(c.id)) {
+                            idsToDelete.add(c.id);
+                            hasNewIds = true;
+                        }
+                    });
+                }
+
+                return {
+                    ...review,
+                    reviewComments: review.reviewComments.filter(
+                        (c: any) => !idsToDelete.has(c.id)
+                    ),
+                };
+            })
+        );
+
         try {
             await apiClient.delete(`/review-comments/${replyId}`);
-            fetchReviews();
         } catch (err) {
             console.error("Erreur lors de la suppression du commentaire:", err);
             alert("Impossible de supprimer ce commentaire.");
+            fetchReviews();
         }
     };
 
     const handleToggleLike = async (commentId: number | string): Promise<void> => {
+        if (!currentUserId) return;
+
+        const isCurrentlyLiked = likedCommentIds.has(commentId);
+
         setLikedCommentIds((prev: Set<string | number>) => {
             const next: Set<string | number> = new Set(prev);
             if (next.has(commentId)) {
@@ -560,11 +612,34 @@ const AlbumDetails: React.FC = () => {
             return next;
         });
 
+        setCommentsList((prevList) =>
+            prevList.map((comment) => {
+                if (comment.id === commentId) {
+                    const currentLikes = comment.likes || [];
+                    let newLikes;
+
+                    if (isCurrentlyLiked) {
+                        newLikes = currentLikes.filter((like: any) => {
+                            const uid = like.user_id || like.userId || like.id || like;
+                            return String(uid) !== String(currentUserId);
+                        });
+                        if (newLikes.length === currentLikes.length && currentLikes.length > 0) {
+                            newLikes = currentLikes.slice(0, -1);
+                        }
+                    } else {
+                        newLikes = [...currentLikes, { user_id: currentUserId }];
+                    }
+                    return { ...comment, likes: newLikes };
+                }
+                return comment;
+            })
+        );
+
         try {
-            await apiClient.post(`/reviews/likes/toggle`, {review_id: commentId});
-            fetchReviews(); 
+            await apiClient.post(`/reviews/likes/toggle`, { review_id: commentId });
         } catch (err) {
             console.error("Erreur lors de l'action sur le like:", err);
+
             setLikedCommentIds((prev: Set<string | number>) => {
                 const next: Set<string | number> = new Set(prev);
                 if (next.has(commentId)) {
@@ -574,6 +649,28 @@ const AlbumDetails: React.FC = () => {
                 }
                 return next;
             });
+
+            setCommentsList((prevList) =>
+                prevList.map((comment) => {
+                    if (comment.id === commentId) {
+                        const currentLikes = comment.likes || [];
+                        let newLikes;
+                        if (!isCurrentlyLiked) {
+                            newLikes = currentLikes.filter((like: any) => {
+                                const uid = like.user_id || like.userId || like.id || like;
+                                return String(uid) !== String(currentUserId);
+                            });
+                            if (newLikes.length === currentLikes.length && currentLikes.length > 0) {
+                                newLikes = currentLikes.slice(0, -1);
+                            }
+                        } else {
+                            newLikes = [...currentLikes, { user_id: currentUserId }];
+                        }
+                        return { ...comment, likes: newLikes };
+                    }
+                    return comment;
+                })
+            );
         }
     };
 
@@ -597,7 +694,7 @@ const AlbumDetails: React.FC = () => {
             user_id: currentUserId,
             parent_id: parentCommentId && parentCommentId !== reviewId ? parentCommentId : null,
             created_at: new Date().toISOString(),
-            user: { username: "Moi", id: currentUserId }
+            user: {username: "Moi", id: currentUserId}
         };
 
         setCommentsList((prev: any[]) =>
@@ -612,7 +709,7 @@ const AlbumDetails: React.FC = () => {
             })
         );
 
-        setReplyInputs((prev) => ({ ...prev, [String(key)]: "" }));
+        setReplyInputs((prev) => ({...prev, [String(key)]: ""}));
         setActiveReplyId(null);
         setActiveNestedReplyId(null);
         setExpandedReplies((prev: any[]): any[] => (prev.includes(reviewId) ? prev : [...prev, reviewId]));
@@ -620,7 +717,7 @@ const AlbumDetails: React.FC = () => {
         try {
             const response: AxiosResponse<any, any> = await apiClient.post(`/review-comments`, {
                 review_id: reviewId,
-                ...(parentCommentId && parentCommentId !== reviewId ? { parent_id: parentCommentId } : {}),
+                ...(parentCommentId && parentCommentId !== reviewId ? {parent_id: parentCommentId} : {}),
                 content: text.trim(),
             });
 
@@ -633,7 +730,7 @@ const AlbumDetails: React.FC = () => {
                             ...review,
                             reviewComments: review.reviewComments.map((c: any) =>
                                 c.id === tempId
-                                    ? { ...c, id: saved.id || tempId, created_at: saved.created_at || c.created_at }
+                                    ? {...c, id: saved.id || tempId, created_at: saved.created_at || c.created_at}
                                     : c
                             )
                         };
@@ -683,7 +780,7 @@ const AlbumDetails: React.FC = () => {
         if (!reply.parent_id) return 0;
         const parent = allComments.find((c: any) => c.id === reply.parent_id);
         if (!parent) return 1;
-        return Math.min(getReplyDepth(parent, allComments) + 1, 2); 
+        return Math.min(getReplyDepth(parent, allComments) + 1, 2);
     };
 
     return (
@@ -1023,7 +1120,8 @@ const AlbumDetails: React.FC = () => {
                                                     ) : (
                                                         <>
                                                             {/* Actions directes */}
-                                                            <div className="absolute top-6 right-6 flex items-center gap-2">
+                                                            <div
+                                                                className="absolute top-6 right-6 flex items-center gap-2">
                                                                 {isMyComment(comment) ? (
                                                                     <>
                                                                         {/* Bouton Modifier */}
@@ -1151,15 +1249,19 @@ const AlbumDetails: React.FC = () => {
 
                                                             {/* Champ de saisie interactif pour les réponses */}
                                                             {activeReplyId === comment.id && (
-                                                                <div className="mt-4 pt-4 border-t border-gray-800/50 dark:border-gray-200">
+                                                                <div
+                                                                    className="mt-4 pt-4 border-t border-gray-800/50 dark:border-gray-200">
                                                                     <div className="flex items-center gap-2">
                                                                         <input
                                                                             type="text"
                                                                             autoFocus
-                                                                            placeholder={t("reply_to", { user: comment.user?.username || "Anonyme" })}
+                                                                            placeholder={t("reply_to", {user: comment.user?.username || "Anonyme"})}
                                                                             value={replyInputs[String(comment.id)] || ""}
                                                                             onChange={(e) =>
-                                                                                setReplyInputs({ ...replyInputs, [String(comment.id)]: e.target.value })
+                                                                                setReplyInputs({
+                                                                                    ...replyInputs,
+                                                                                    [String(comment.id)]: e.target.value
+                                                                                })
                                                                             }
                                                                             onKeyDown={(e) => e.key === "Enter" && submitReply(comment.id)}
                                                                             className="flex-1 bg-[#1a1b26] dark:bg-gray-50 border border-gray-800 dark:border-gray-200 p-2.5 text-sm rounded-xl focus:outline-none focus:border-blue-500"
@@ -1168,7 +1270,7 @@ const AlbumDetails: React.FC = () => {
                                                                             onClick={() => submitReply(comment.id)}
                                                                             className="flex items-center justify-center w-10 h-10 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors shrink-0"
                                                                         >
-                                                                            <FaPaperPlane size={13} />
+                                                                            <FaPaperPlane size={13}/>
                                                                         </button>
                                                                         <button
                                                                             onClick={() => setActiveReplyId(null)}
@@ -1182,7 +1284,8 @@ const AlbumDetails: React.FC = () => {
 
                                                             {/* Réponses */}
                                                             {expandedReplies.includes(comment.id) && comment.reviewComments && (
-                                                                <div className="mt-4 border-l-2 border-gray-700 dark:border-gray-300 ml-2 pl-4 flex flex-col gap-2">
+                                                                <div
+                                                                    className="mt-4 border-l-2 border-gray-700 dark:border-gray-300 ml-2 pl-4 flex flex-col gap-2">
                                                                     {/* MODIFICATION ICI : On englobe avec organizeComments */}
                                                                     {organizeComments(comment.reviewComments).map((reply: any) => {
                                                                         const depth = getReplyDepth(reply, comment.reviewComments);
@@ -1279,15 +1382,20 @@ const AlbumDetails: React.FC = () => {
 
                                                                                     {/* Input réponse imbriquée */}
                                                                                     {activeNestedReplyId === reply.id && (
-                                                                                        <div className={`mt-2 ${depth === 1 ? "ml-[3.75rem]" : depth === 2 ? "ml-[5.25rem]" : "ml-9"}`}>
-                                                                                            <div className="flex items-center gap-2">
+                                                                                        <div
+                                                                                            className={`mt-2 ${depth === 1 ? "ml-[3.75rem]" : depth === 2 ? "ml-[5.25rem]" : "ml-9"}`}>
+                                                                                            <div
+                                                                                                className="flex items-center gap-2">
                                                                                                 <input
                                                                                                     type="text"
                                                                                                     autoFocus
                                                                                                     placeholder={`Répondre à ${reply.user?.username || "Anonyme"}...`}
                                                                                                     value={replyInputs[String(reply.id)] || ""}
                                                                                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                                                                                        setReplyInputs({ ...replyInputs, [String(reply.id)]: e.target.value })
+                                                                                                        setReplyInputs({
+                                                                                                            ...replyInputs,
+                                                                                                            [String(reply.id)]: e.target.value
+                                                                                                        })
                                                                                                     }
                                                                                                     onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
                                                                                                         if (e.key === "Enter") {
@@ -1300,7 +1408,8 @@ const AlbumDetails: React.FC = () => {
                                                                                                     onClick={() => submitReply(comment.id, reply.id)}
                                                                                                     className="flex items-center justify-center w-9 h-9 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors shrink-0"
                                                                                                 >
-                                                                                                    <FaPaperPlane size={11} />
+                                                                                                    <FaPaperPlane
+                                                                                                        size={11}/>
                                                                                                 </button>
                                                                                                 <button
                                                                                                     onClick={() => setActiveNestedReplyId(null)}
@@ -1381,11 +1490,13 @@ const AlbumDetails: React.FC = () => {
                 </div>
                 {/* Modal de Signalement */}
                 {isReportModalOpen && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-                        <div className="bg-[#1a1b26] dark:bg-white w-full max-w-md rounded-2xl border border-gray-800 dark:border-gray-200 shadow-2xl overflow-hidden">
+                    <div
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div
+                            className="bg-[#1a1b26] dark:bg-white w-full max-w-md rounded-2xl border border-gray-800 dark:border-gray-200 shadow-2xl overflow-hidden">
                             <div className="p-6">
                                 <div className="flex items-center gap-3 text-rose-500 mb-4">
-                                    <Flag size={24} />
+                                    <Flag size={24}/>
                                     <h3 className="text-xl font-bold">{t("report_title", "Signaler un contenu")}</h3>
                                 </div>
 
@@ -1417,7 +1528,7 @@ const AlbumDetails: React.FC = () => {
                                         className="flex-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 disabled:hover:bg-rose-600 text-white px-4 py-3 rounded-xl font-bold transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
                                     >
                                         {isSubmittingReport ? (
-                                            <Loader2 size={18} className="animate-spin" />
+                                            <Loader2 size={18} className="animate-spin"/>
                                         ) : (
                                             t("confirm_report", "Envoyer le signalement")
                                         )}

@@ -1,8 +1,8 @@
-import { PrismaDb } from '../../../config/database.js';
+import {PrismaDb} from '../../../config/database.js';
 
 export const getThreadByReview = async (reviewId: string, userId: string) => {
     const comments = await PrismaDb.reviewComments.findMany({
-        where: { review_id: reviewId },
+        where: {review_id: reviewId},
         include: {
             user: {
                 select: {
@@ -33,7 +33,10 @@ export const getThreadByReview = async (reviewId: string, userId: string) => {
     }));
 };
 
-export async function toggleLike(commentId: string, userId: string): Promise<{ isLiked: boolean; likes_count: number }> {
+export async function toggleLike(commentId: string, userId: string): Promise<{
+    isLiked: boolean;
+    likes_count: number
+}> {
     const existingLike = await PrismaDb.commentLikes.findUnique({
         where: {
             user_id_comment_id: {
@@ -61,8 +64,8 @@ export async function toggleLike(commentId: string, userId: string): Promise<{ i
         });
     }
 
-    const likesCount = await PrismaDb.commentLikes.count({
-        where: { comment_id: commentId },
+    const likesCount: number = await PrismaDb.commentLikes.count({
+        where: {comment_id: commentId},
     });
 
     return {

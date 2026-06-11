@@ -21,7 +21,6 @@ const StatDetails: React.FC = () => {
     const [albums, setAlbums] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Configuration des types basée sur les clés de traduction i18n
     const TYPE_CONFIG: any = {
         listened: {
             title: t("status_completed"),

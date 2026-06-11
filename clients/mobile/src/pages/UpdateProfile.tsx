@@ -20,7 +20,7 @@ import {jwtDecode} from "jwt-decode";
 import {useTranslation} from "react-i18next";
 
 const UpdateProfile = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const [username, setUsername] = useState("");
     const [favoriteBand, setFavoriteBand] = useState("");
     const [biography, setBiography] = useState("");
@@ -36,7 +36,7 @@ const UpdateProfile = () => {
     const USERNAME_MAX: number = 20;
     const BIO_MAX: number = 150;
 
-    const searchArtists = (text: string): void => {
+    const searchArtists: (text: string) => void = (text: string): void => {
         setFavoriteBand(text);
 
         if (searchTimeout.current) clearTimeout(searchTimeout.current);
@@ -69,7 +69,7 @@ const UpdateProfile = () => {
     };
 
     useEffect((): void => {
-        const loadUser = async (): Promise<void> => {
+        const loadUser: () => Promise<void> = async (): Promise<void> => {
             try {
                 const token: string | null = await SecureStore.getItemAsync("userToken");
                 if (!token) return;
@@ -92,7 +92,7 @@ const UpdateProfile = () => {
         loadUser();
     }, []);
 
-    const pickImage = async (): Promise<void> => {
+    const pickImage: () => Promise<void> = async (): Promise<void> => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permission.granted) {
             Alert.alert(t("permission_denied"), t("permission_required"));
@@ -114,7 +114,7 @@ const UpdateProfile = () => {
         }
     };
 
-    const handleSave = async (): Promise<void> => {
+    const handleSave: () => Promise<void> = async (): Promise<void> => {
         try {
             setLoading(true);
 
@@ -178,7 +178,7 @@ const UpdateProfile = () => {
                 <TextInput
                     style={styles.input}
                     value={username}
-                    onChangeText={(text: string) =>
+                    onChangeText={(text: string): false | void =>
                         text.length <= USERNAME_MAX && setUsername(text)
                     }
                 />
@@ -196,7 +196,7 @@ const UpdateProfile = () => {
                 {showSuggestions && (
                     <View style={styles.suggestions}>
                         {isSearching ? (
-                            <ActivityIndicator color="#4A90E2" style={{ padding: 12 }}/>
+                            <ActivityIndicator color="#4A90E2" style={{padding: 12}}/>
                         ) : (
                             suggestions.map((item, i: number) => (
                                 <TouchableOpacity

@@ -23,6 +23,7 @@ import StatCard from "@/src/components/StatCard";
 import {AuthReviewButton} from "../components/AuthReviewButton";
 import apiClient from "../api/client";
 import {getValidSource} from "@/helpers/helpers";
+import {AxiosResponse} from "axios";
 
 const {width} = Dimensions.get("window");
 
@@ -48,12 +49,11 @@ const AlbumDetails = () => {
     const [userReview, setUserReview] = useState<any | null>(null);
     const [deletingReview, setDeletingReview] = useState(false);
 
-
-
     const mediaId = id || albumData?.id || albumData?.mediaId;
+    const mediaIdInDB = albumData?.db_id || (id?.includes("-") ? id : null);
 
     useEffect((): void => {
-        const initUser = async (): Promise<void> => {
+        const initUser: () => Promise<void> = async (): Promise<void> => {
             try {
                 const token: string | null =
                     await SecureStore.getItemAsync("userToken");
@@ -70,7 +70,7 @@ const AlbumDetails = () => {
     }, [id, mbid]);
 
     useEffect((): void => {
-        const fetchCurrentStatus = async (): Promise<void> => {
+        const fetchCurrentStatus: () => Promise<void> = async (): Promise<void> => {
             if (currentUserId && albumData?.db_id) {
                 try {
                     const res = await apiClient.get(
@@ -89,28 +89,30 @@ const AlbumDetails = () => {
 
     useFocusEffect(
         useCallback((): void => {
-            fetchReviews();
+            if (mediaIdInDB) {
+                fetchReviews();
+            }
 
             if (activeTab === "Similar" && similarAlbums.length === 0) {
                 fetchSimilar();
             }
-        }, [activeTab, artist, album, mediaId, currentUserId]),
+        }, [activeTab, artist, album, mediaIdInDB, currentUserId]),
     );
 
-    const fetchUserPlaylists = async (): Promise<void> => {
+    const fetchUserPlaylists: () => Promise<void> = async (): Promise<void> => {
         if (!currentUserId || !mediaId) {
             return;
         }
 
         try {
             setLoadingPlaylists(true);
-            const res = await apiClient.get(`/playlists/user/${currentUserId}`);
+            const res: AxiosResponse = await apiClient.get(`/playlists/user/${currentUserId}`);
             const playlists = res.data.playlists || [];
             setUserPlaylists(playlists);
 
             const alreadyIn = playlists
                 .filter((pl: any) => {
-                    return pl.items?.some((item: any) => {
+                    return pl.items?.some((item: any): true | undefined => {
                         const match: boolean = String(item.media_id) === String(mediaId);
                         if (match) return match;
                     });
@@ -135,7 +137,7 @@ const AlbumDetails = () => {
         if (showPlaylistSelector) fetchUserPlaylists();
     }, [showPlaylistSelector]);
 
-    const handleAddToPlaylists = async (): Promise<void> => {
+    const handleAddToPlaylists: () => Promise<void> = async (): Promise<void> => {
         if (!mediaId) return;
 
         try {
@@ -180,7 +182,7 @@ const AlbumDetails = () => {
         }
     };
 
-    const fetchAlbumDetails = async (): Promise<void> => {
+    const fetchAlbumDetails: () => Promise<void> = async (): Promise<void> => {
         try {
             setLoading(true);
             let finalData = null;
@@ -237,60 +239,32 @@ const AlbumDetails = () => {
         }
     };
 
-    const mediaIdInDB = albumData?.db_id || (id?.includes("-") ? id : null);
 
-    const fetchReviews = async (): Promise<void> => {
+    const fetchReviews: () => Promise<void> = async (): Promise<void> => {
+
+        if (!mediaIdInDB) return;
+
         try {
             setLoadingReviews(true);
 
-            const res = await apiClient.get("/reviews");
-            const allReviews = res.data.reviews || res.data || [];
+            const res = await apiClient.get(`/reviews/media/${mediaIdInDB}`);
+            const mediaReviews = res.data.reviews || res.data || [];
 
-            const targetArtist: string = String(artist || "")
-                .toLowerCase()
-                .trim();
+            setReviews(mediaReviews);
 
-            const targetAlbum: string = String(album || "")
-                .toLowerCase()
-                .trim();
-
-            const filtered = allReviews.filter((rev: any): boolean => {
-                const media = rev.media;
-                if (!media) return false;
-
-                const revArtist: string = String(
-                    media.content?.album?.artist ||
-                    media.content?.artist ||
-                    media.artist ||
-                    "",
-                )
-                    .toLowerCase()
-                    .trim();
-
-                const revAlbum: string = String(
-                    media.content?.album?.name || media.content?.name || media.name || "",
-                )
-                    .toLowerCase()
-                    .trim();
-
-                return revArtist === targetArtist && revAlbum === targetAlbum;
-            });
-
-            setReviews(filtered);
-
-            const ownReview = filtered.find(
+            const ownReview = mediaReviews.find(
                 (rev: any): boolean => rev.user_id === currentUserId,
             );
 
             setUserReview(ownReview || null);
         } catch (err) {
-            console.error("Erreur avis:", err);
+            console.error("Erreur récupération des avis par média (mobile):", err);
         } finally {
             setLoadingReviews(false);
         }
     };
 
-    const fetchSimilar = async (): Promise<void> => {
+    const fetchSimilar: () => Promise<void> = async (): Promise<void> => {
         try {
             setLoadingSimilar(true);
             const res = await apiClient.get("/api/albums/similar", {
@@ -307,7 +281,7 @@ const AlbumDetails = () => {
         }
     };
 
-    const handleDeleteReview = async (reviewId: string): Promise<void> => {
+    const handleDeleteReview: (reviewId: string) => Promise<void> = async (reviewId: string): Promise<void> => {
         Alert.alert(
             "Supprimer l'avis",
             "Voulez-vous vraiment supprimer votre avis ?",
@@ -343,7 +317,7 @@ const AlbumDetails = () => {
         );
     };
 
-    const handleStatusChange = async (newStatus: string): Promise<void> => {
+    const handleStatusChange: (newStatus: string) => Promise<void> = async (newStatus: string): Promise<void> => {
         if (!currentUserId) return Alert.alert("Connexion requise", "...");
 
         if (!mediaIdInDB) {
@@ -376,7 +350,7 @@ const AlbumDetails = () => {
         }
     };
 
-    const handleToggleLike = async (reviewId: string): Promise<void> => {
+    const handleToggleLike: (reviewId: string) => Promise<void> = async (reviewId: string): Promise<void> => {
         if (!currentUserId)
             return Alert.alert(
                 "Connexion requise",
@@ -409,7 +383,6 @@ const AlbumDetails = () => {
             await fetchReviews();
         }
     };
-
 
     const averageRating: number =
         reviews.length > 0
@@ -484,34 +457,34 @@ const AlbumDetails = () => {
                                 icon="check-circle-outline"
                                 color="#00ffa3"
                                 checked={userStatus === "listened"}
-                                onPress={() => handleStatusChange("listened")}
+                                onPress={(): Promise<void> => handleStatusChange("listened")}
                             />
                             <StatCard
                                 title="Plus tard"
                                 icon="playlist-music"
                                 color="#4747ff"
                                 checked={userStatus === "later"}
-                                onPress={() => handleStatusChange("later")}
+                                onPress={(): Promise<void> => handleStatusChange("later")}
                             />
                             <StatCard
                                 title="Favori"
                                 icon="star"
                                 color="#fbbf24"
                                 checked={userStatus === "favorite"}
-                                onPress={() => handleStatusChange("favorite")}
+                                onPress={(): Promise<void> => handleStatusChange("favorite")}
                             />
                             <StatCard
                                 title="Dislike"
                                 icon="close-circle-outline"
                                 color="#f43f5e"
                                 checked={userStatus === "disliked"}
-                                onPress={() => handleStatusChange("disliked")}
+                                onPress={(): Promise<void> => handleStatusChange("disliked")}
                             />
                         </View>
 
                         <TouchableOpacity
                             style={styles.primaryButton}
-                            onPress={() => setShowPlaylistSelector(true)}
+                            onPress={(): void => setShowPlaylistSelector(true)}
                         >
                             <Text style={styles.primaryButtonText}>
                                 Ajouter à une playlist
@@ -536,7 +509,7 @@ const AlbumDetails = () => {
                         <TouchableOpacity
                             key={tab}
                             style={[styles.tab, activeTab === tab && styles.activeTab]}
-                            onPress={() => setActiveTab(tab)}
+                            onPress={(): void => setActiveTab(tab)}
                         >
                             <Text
                                 style={[
@@ -651,7 +624,7 @@ const AlbumDetails = () => {
                                                 <View style={styles.reviewActionsLeft}>
                                                     <TouchableOpacity
                                                         style={styles.actionIconBtn}
-                                                        onPress={() => handleToggleLike(rev.id)}
+                                                        onPress={(): Promise<void> => handleToggleLike(rev.id)}
                                                     >
                                                         <Ionicons
                                                             name={
@@ -677,7 +650,7 @@ const AlbumDetails = () => {
 
                                                     <TouchableOpacity
                                                         style={styles.actionIconBtn}
-                                                        onPress={() =>
+                                                        onPress={(): void =>
                                                             router.push(`/review/${rev.id}/comments`)
                                                         }
                                                     >
@@ -696,7 +669,7 @@ const AlbumDetails = () => {
                                                     <View style={styles.ownerActions}>
                                                         <TouchableOpacity
                                                             style={styles.ownerActionBtn}
-                                                            onPress={() =>
+                                                            onPress={(): void =>
                                                                 router.push({
                                                                     pathname: "/writereview",
                                                                     params: {
@@ -723,7 +696,7 @@ const AlbumDetails = () => {
                                                         <TouchableOpacity
                                                             style={styles.ownerActionBtn}
                                                             disabled={deletingReview}
-                                                            onPress={() => handleDeleteReview(rev.id)}
+                                                            onPress={(): Promise<void> => handleDeleteReview(rev.id)}
                                                         >
                                                             <Ionicons
                                                                 name="trash-outline"
@@ -768,7 +741,7 @@ const AlbumDetails = () => {
                                     <TouchableOpacity
                                         key={idx}
                                         style={styles.similarCard}
-                                        onPress={() =>
+                                        onPress={(): void =>
                                             router.push({
                                                 pathname: "/albumdetails",
                                                 params: {
@@ -800,16 +773,16 @@ const AlbumDetails = () => {
                 visible={showPlaylistSelector}
                 transparent={true}
                 animationType="fade"
-                onRequestClose={() => setShowPlaylistSelector(false)}
+                onRequestClose={(): void => setShowPlaylistSelector(false)}
             >
                 <Pressable
                     style={styles.modalOverlay}
-                    onPress={() => setShowPlaylistSelector(false)}
+                    onPress={(): void => setShowPlaylistSelector(false)}
                 >
                     <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>Ajouter à une playlist</Text>
-                            <TouchableOpacity onPress={() => setShowPlaylistSelector(false)}>
+                            <TouchableOpacity onPress={(): void => setShowPlaylistSelector(false)}>
                                 <Ionicons name="close" size={24} color="#94a3b8"/>
                             </TouchableOpacity>
                         </View>
@@ -827,7 +800,7 @@ const AlbumDetails = () => {
                                                 styles.playlistItem,
                                                 isSelected && styles.playlistItemActive,
                                             ]}
-                                            onPress={() =>
+                                            onPress={(): void =>
                                                 setSelectedPlaylists((prev: string[]): string[] =>
                                                     isSelected
                                                         ? prev.filter((id: string): boolean => id !== pl.id)

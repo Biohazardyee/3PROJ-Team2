@@ -18,7 +18,7 @@ import apiClient from "../api/client";
 import {useTranslation} from "react-i18next";
 
 const WriteReview = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const router: Router = useRouter();
 
     const {id, title, artist, cover, reviewId, editMode} =
@@ -30,7 +30,7 @@ const WriteReview = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect((): void => {
-        const fetchReviewIfEdit = async (): Promise<void> => {
+        const fetchReviewIfEdit: () => Promise<void> = async (): Promise<void> => {
             if (!reviewId) return;
 
             try {
@@ -49,7 +49,7 @@ const WriteReview = () => {
         fetchReviewIfEdit();
     }, [reviewId]);
 
-    const handlePublish = async (): Promise<void> => {
+    const handlePublish: () => Promise<void> = async (): Promise<void> => {
         if (rating === 0 || reviewTitle.trim() === "" || review.trim() === "") {
             Alert.alert("Oups !", t("review_fill_fields"));
             return;
@@ -179,7 +179,7 @@ const WriteReview = () => {
                 <View style={styles.buttonRow}>
                     <TouchableOpacity
                         style={styles.cancelButton}
-                        onPress={() => router.back()}
+                        onPress={(): void => router.back()}
                         disabled={loading}
                     >
                         <Text style={styles.cancelText}>{t("cancel")}</Text>

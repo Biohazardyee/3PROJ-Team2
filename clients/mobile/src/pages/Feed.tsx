@@ -77,7 +77,7 @@ const Feed = () => {
     const activeFilterRef = useRef<Filter>(activeFilter);
 
     useEffect((): void => {
-        const getUserId = async (): Promise<void> => {
+        const getUserId: () => Promise<void> = async (): Promise<void> => {
             try {
                 const token: string | null =
                     await SecureStore.getItemAsync("userToken");
@@ -181,7 +181,7 @@ const Feed = () => {
         }
     };
 
-    const handleLike = async (id: string): Promise<void> => {
+    const handleLike: (id: string) => Promise<void> = async (id: string): Promise<void> => {
         if (!currentUserId) {
             Alert.alert(t("auth_required"), t("feed_like_login_required"));
             return;
@@ -240,12 +240,12 @@ const Feed = () => {
         }
     };
 
-    const onRefresh = (): void => {
+    const onRefresh: () => void = (): void => {
         setIsRefreshing(true);
         fetchFeed(activeFilter, 0, false);
     };
 
-    const loadMoreData = (): void => {
+    const loadMoreData: () => void = (): void => {
         if (isLoadingMore || !hasMoreCache[activeFilter]) return;
         const nextOffset: number = pagesCache[activeFilter];
         fetchFeed(activeFilter, nextOffset, true);
@@ -377,7 +377,7 @@ const Feed = () => {
                         <>
                             <TouchableOpacity
                                 style={styles.actionButton}
-                                onPress={() => handleLike(item.id)}
+                                onPress={(): Promise<void> => handleLike(item.id)}
                             >
                                 <Ionicons
                                     name={liked ? "heart" : "heart-outline"}

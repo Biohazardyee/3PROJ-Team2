@@ -1,7 +1,7 @@
-import express, { NextFunction, Router, Response, Request } from 'express';
+import express, {NextFunction, Router, Response, Request} from 'express';
 import userBanController from '../../modules/db/users/ban.user.controller.js';
-import { checkAdmin } from "../../middlewares/checkAdmin.js";
-import { authGuard } from "../../middlewares/auth.js";
+import {checkAdmin} from "../../middlewares/checkAdmin.js";
+import {authGuard} from "../../middlewares/auth.js";
 
 var router: Router = express.Router();
 

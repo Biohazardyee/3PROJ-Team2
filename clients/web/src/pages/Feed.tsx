@@ -200,7 +200,6 @@ const Feed: React.FC = () => {
         return () => observer.disconnect();
     }, [fetchFeed, isLoadingMore, hasMoreCache, pagesCache]);
 
-    // ── Like ───────────────────────────────────────────────────────────────────
 
     const handleLike = useCallback(
         async (id: string) => {
@@ -254,7 +253,7 @@ const Feed: React.FC = () => {
         [currentUserId, feedsCache, likingId]
     );
 
-    // ── Navigation ─────────────────────────────────────────────────────────────
+
 
     const handleNavigateToAlbum = (item: FeedItem) => {
         console.log("Clic sur item :", item);
@@ -280,7 +279,6 @@ const Feed: React.FC = () => {
         navigate(`/profil/${userId}`);
     };
 
-    // ── Filter ─────────────────────────────────────────────────────────────────
 
     const displayedItems = (feedsCache[activeTab] || []).filter((item) => {
         if (!item) return false;
@@ -294,7 +292,6 @@ const Feed: React.FC = () => {
         );
     });
 
-    // ─── Render ────────────────────────────────────────────────────────────────
 
     return (
         <div

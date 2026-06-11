@@ -52,7 +52,7 @@ const formatReviewItem = (item: any, username: string) => {
 };
 
 const ProfileScreen = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const router: Router = useRouter();
     const params: UnknownOutputParams = useLocalSearchParams();
     const externalUserIdRaw: string | string[] = params.id;
@@ -248,7 +248,7 @@ const ProfileScreen = () => {
         }
     };
 
-    const handleProfilePicturePress = async (): Promise<void> => {
+    const handleProfilePicturePress: () => Promise<void> = async (): Promise<void> => {
         if (!isOwnProfile) return;
 
         const permissionResult =

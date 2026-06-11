@@ -34,7 +34,7 @@ const DetailsConversations = () => {
     const socketRef = useRef<Socket | null>(null);
 
     useEffect((): void => {
-        const getUserId = async (): Promise<void> => {
+        const getUserId: () => Promise<void> = async (): Promise<void> => {
             try {
                 const token: string | null = await SecureStore.getItemAsync("userToken");
                 if (token) {
@@ -48,7 +48,7 @@ const DetailsConversations = () => {
         getUserId();
     }, []);
 
-    const fetchMessages = async (): Promise<void> => {
+    const fetchMessages: () => Promise<void> = async (): Promise<void> => {
         if (!conversationId) return;
         try {
             const response = await apiClient.get(
@@ -74,10 +74,10 @@ const DetailsConversations = () => {
         if (conversationId && currentUserId) fetchMessages();
     }, [conversationId, currentUserId]);
 
-    useEffect(() => {
+    useEffect((): (() => void) | undefined => {
         if (!conversationId || !currentUserId) return;
 
-        const setupSocket = async (): Promise<void> => {
+        const setupSocket: () => Promise<void> = async (): Promise<void> => {
             const token: string | null = await SecureStore.getItemAsync("userToken");
 
             socketRef.current = io(SOCKET_URL!, {
@@ -118,7 +118,7 @@ const DetailsConversations = () => {
         };
     }, [conversationId, currentUserId]);
 
-    const sendMessage = async (): Promise<void> => {
+    const sendMessage: () => Promise<void> = async (): Promise<void> => {
         if (!newMessage.trim()) return;
 
         if (!socketRef.current || !socketRef.current.connected) {
@@ -172,7 +172,7 @@ const DetailsConversations = () => {
             <StatusBar barStyle="light-content"/>
             <View style={styles.header}>
                 <TouchableOpacity
-                    onPress={() => router.back()}
+                    onPress={(): void => router.back()}
                     style={styles.iconButton}
                 >
                     <Ionicons name="chevron-back" size={28} color="#4cc9f0"/>

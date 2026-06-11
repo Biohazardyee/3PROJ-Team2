@@ -146,14 +146,14 @@ const LoginMobile: React.FC = () => {
                 <View style={styles.socialMedia}>
                     <ButtonMobile
                         variant="social"
-                        onPress={() => handleOAuthLogin("google")}
+                        onPress={(): Promise<void> => handleOAuthLogin("google")}
                     >
                         <Ionicons name="logo-google" size={24} color="#FFF"/>
                     </ButtonMobile>
 
                     <ButtonMobile
                         variant="social"
-                        onPress={() => handleOAuthLogin("discord")}
+                        onPress={(): Promise<void> => handleOAuthLogin("discord")}
                         style={{marginHorizontal: 10}}
                     >
                         <Ionicons name="logo-discord" size={24} color="#FFF"/>
@@ -165,7 +165,7 @@ const LoginMobile: React.FC = () => {
                 </View>
 
                 <TouchableOpacity
-                    onPress={() => router.push("/register")}
+                    onPress={(): void => router.push("/register")}
                     style={styles.footer}
                 >
                     <Text style={styles.footerText}>

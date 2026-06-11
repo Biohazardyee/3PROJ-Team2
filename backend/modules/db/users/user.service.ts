@@ -13,9 +13,7 @@ import {
     checkIfNotBanned,
 } from "./user.helper.js";
 import {
-    AuthProvider,
     Prisma,
-    Roles,
 } from "../../../generated/prisma/client.js";
 import bcrypt from "bcrypt";
 import {
@@ -191,14 +189,14 @@ export class UserService {
         ];
 
         const invalidFields: SelectableUserField[] = fields.filter(
-            (field) => !allowedFields.includes(field),
+            (field): boolean => !allowedFields.includes(field),
         );
         if (invalidFields.length > 0) {
             throw new BadRequest(`Invalid fields: ${invalidFields.join(", ")}`);
         }
 
         const select: Prisma.UsersSelect = {};
-        fields.forEach((field) => {
+        fields.forEach((field): void => {
             select[field] = true;
         });
 
@@ -276,14 +274,14 @@ export class UserService {
         ];
 
         const invalidFields: SelectableUserField[] = fields.filter(
-            (field) => !allowedFields.includes(field),
+            (field): boolean => !allowedFields.includes(field),
         );
         if (invalidFields.length > 0) {
             throw new BadRequest(`Invalid fields: ${invalidFields.join(", ")}`);
         }
 
         const select: Prisma.UsersSelect = {};
-        fields.forEach((field) => {
+        fields.forEach((field: SelectableUserField): void => {
             select[field] = true;
         });
 

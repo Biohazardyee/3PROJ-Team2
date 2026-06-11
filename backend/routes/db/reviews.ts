@@ -7,7 +7,6 @@ import {checkResourceOwnerOrAdmin} from "../../middlewares/checkResourceOwnerOrA
 
 const router: Router = express.Router();
 
-
 router.post('/likes', authGuard, (req, res, next) => {
     ReviewLikeController.add(req, res, next);
 });
@@ -33,6 +32,9 @@ router.get('/', (req, res, next) => {
     ReviewController.getAll(req, res, next);
 });
 
+router.get('/media/:id', (req, res, next) => {
+    ReviewController.getReviewsByMedia(req, res, next);
+})
 
 router.get('/:id', (req, res, next) => {
     ReviewController.getById(req, res, next);

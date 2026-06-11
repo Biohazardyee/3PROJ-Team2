@@ -10,7 +10,7 @@ import {userMapper} from "../../../mappers/users/user.mapper.js";
 
 import type {
     SelectableUserField,
-    PartialUserResponseDto,
+    PartialUserResponseDto, UserPublicDto,
 } from "../../../types/users/user.dto.js";
 
 import {
@@ -44,7 +44,7 @@ class UserController extends Controller {
             if (
                 !registrationData.email ||
                 !registrationData.username ||
-                !registrationData.password 
+                !registrationData.password
             ) {
                 throw new BadRequest(
                     "Email, username, password & favorite band are required",
@@ -147,10 +147,7 @@ class UserController extends Controller {
         }
     }
 
-    /**
-     * GET /users/fields?fields=id,username,biography
-     * Récupère tous les utilisateurs avec seulement les champs spécifiés
-     */
+
     async getAllWithFields(
         req: Request,
         res: Response,
@@ -202,10 +199,7 @@ class UserController extends Controller {
         }
     }
 
-    /**
-     * GET /users/:id/fields?fields=id,username,email
-     * Récupère un utilisateur avec seulement les champs spécifiés
-     */
+
     async getByIdWithFields(
         req: Request,
         res: Response,
@@ -228,8 +222,8 @@ class UserController extends Controller {
 
             const fields = fieldsParam
                 .split(",")
-                .map((field) => field.trim())
-                .filter((field) => field.length > 0) as SelectableUserField[];
+                .map((field: string): string => field.trim())
+                .filter((field: string): boolean => field.length > 0) as SelectableUserField[];
 
             if (fields.length === 0) {
                 throw new BadRequest("At least one field must be specified");
@@ -326,11 +320,11 @@ class UserController extends Controller {
         }
     }
 
-    async getPublicProfile(req: Request, res: Response, next: NextFunction) {
+    async getPublicProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {id} = req.params;
 
-            const user = await this.service.getProfile(id);
+            const user: UserPublicDto = await this.service.getProfile(id);
 
             res.status(200).json(user);
         } catch (err) {
@@ -344,7 +338,7 @@ class UserController extends Controller {
         next: NextFunction,
     ): Promise<void> {
         try {
-            const userId = (req as any).user?.id;
+            const userId: any = (req as any).user?.id;
             if (!userId) {
                 throw new Unauthorized("User not authenticated");
             }
@@ -356,7 +350,7 @@ class UserController extends Controller {
                 profile_picture: req.body.profile_picture,
             };
 
-            const user = await this.service.updateProfile(userId, updateData);
+            const user: UserResponseDto = await this.service.updateProfile(userId, updateData);
 
             res.status(200).json({
                 message: "Profile updated successfully",
@@ -367,10 +361,9 @@ class UserController extends Controller {
         }
     }
 
-    async updatePushToken(req: Request, res: Response, next: NextFunction) {
+    async updatePushToken(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const {user_id, token} = req.body;
-            // Optionnel : vérifier que l'id du token correspond à req.user.id pour la sécurité
             await userService.updatePushToken(user_id, token);
             res.status(200).json({message: "Push token updated successfully"});
         } catch (error) {

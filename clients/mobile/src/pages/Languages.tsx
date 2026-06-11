@@ -35,7 +35,7 @@ const Languages = () => {
         loadLanguage();
     }, []);
 
-    const changeLanguage = async (langCode: string): Promise<void> => {
+    const changeLanguage: (langCode: string) => Promise<void> = async (langCode: string): Promise<void> => {
         setSelectedLang(langCode);
         await i18n.changeLanguage(langCode);
         await AsyncStorage.setItem('user_language', langCode);
@@ -53,7 +53,7 @@ const Languages = () => {
                 <View style={[styles.card, {backgroundColor: theme.card}]}>
 
                     {AVAILABLE_LANGUAGES.map((lang: { code: string, label: string, flag: string }, index: number) => {
-                        const isSelected = selectedLang === lang.code;
+                        const isSelected: boolean = selectedLang === lang.code;
 
                         return (
                             <TouchableOpacity
@@ -79,7 +79,7 @@ const Languages = () => {
 
                 <Text style={[styles.infoText, {color: theme.subText}]}>
                     {t('language_currently', {
-                        language: AVAILABLE_LANGUAGES.find((l) => l.code === selectedLang)?.label,
+                        language: AVAILABLE_LANGUAGES.find((l): boolean => l.code === selectedLang)?.label,
                     })}
                 </Text>
             </View>

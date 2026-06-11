@@ -1,10 +1,6 @@
 import {PrismaDb} from "../../../config/database.js";
-import {NotFound, BadRequest} from "../../../utils/errors.js";
-import {
-    isEmptyString,
-    isValidBoolean,
-    isValidStringLength,
-} from "../../../utils/helpers.js";
+import {BadRequest, NotFound} from "../../../utils/errors.js";
+import {isEmptyString, isValidBoolean, isValidStringLength,} from "../../../utils/helpers.js";
 import {
     PlaylistAddDto,
     PlaylistResponseAddDto,
@@ -13,9 +9,8 @@ import {
     PlaylistResponseUpdateDto,
     PlaylistUpdateDto,
 } from "../../../types/playlists/playlist.dto.js";
-import {Playlists, Reports, Users} from "../../../generated/prisma/client.js";
+import {Playlists, Prisma, Users} from "../../../generated/prisma/client.js";
 import {playlistMapper} from "../../../mappers/playlists/playlist.mapper.js";
-import {Prisma} from "../../../generated/prisma/client.js";
 
 export class PlaylistService {
     async create(data: PlaylistAddDto): Promise<PlaylistResponseAddDto> {
@@ -39,13 +34,11 @@ export class PlaylistService {
         let imageData: any = null;
 
         if (data.image_url && data.image_url.trim() !== "") {
-            const base64Data = data.image_url.includes("base64,")
+            const base64Data: string = data.image_url.includes("base64,")
                 ? data.image_url.split("base64,")[1]
                 : data.image_url;
 
-            const buffer = Buffer.from(base64Data, "base64");
-
-            imageData = buffer;
+            imageData = Buffer.from(base64Data, "base64");
         }
 
         const user: Users | null = await PrismaDb.users.findUnique({
@@ -207,11 +200,11 @@ export class PlaylistService {
             if (data.image_url === null) {
                 updateData.image_url = null;
             } else {
-                const base64Data = data.image_url.replace(
+                const base64Data: string = data.image_url.replace(
                     /^data:image\/\w+;base64,/,
                     "",
                 );
-                const buffer = Buffer.from(base64Data, "base64");
+                const buffer: Buffer<ArrayBuffer> = Buffer.from(base64Data, "base64");
 
                 updateData.image_url = Uint8Array.from(buffer);
             }

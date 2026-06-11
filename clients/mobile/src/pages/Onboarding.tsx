@@ -16,38 +16,38 @@ import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
 import {useTranslation} from "react-i18next";
 
-const { t } = useTranslation();
+const {t} = useTranslation();
 
 const slides = [
-    
-        {
-            id: 1,
-            title: t("onboarding_title_1"),
-            text: t("onboarding_text_1"),
-        },
-        {
-            id: 2,
-            title: t("onboarding_title_2"),
-            text: t("onboarding_text_2"),
-        },
-        {
-            id: 3,
-            title: t("onboarding_title_3"),
-            text: t("onboarding_text_3"),
-        },
-        {
-            id: 4,
-            title: t("onboarding_title_4"),
-            text: t("onboarding_text_4"),
-        },
-    ];
+
+    {
+        id: 1,
+        title: t("onboarding_title_1"),
+        text: t("onboarding_text_1"),
+    },
+    {
+        id: 2,
+        title: t("onboarding_title_2"),
+        text: t("onboarding_text_2"),
+    },
+    {
+        id: 3,
+        title: t("onboarding_title_3"),
+        text: t("onboarding_text_3"),
+    },
+    {
+        id: 4,
+        title: t("onboarding_title_4"),
+        text: t("onboarding_text_4"),
+    },
+];
 
 export default function Onboarding() {
-    
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [favorite_band, setFavoriteBand] = useState("");
     const [suggestions, setSuggestions] = useState<any[]>([]);
-    const [showSuggestions, setShowSuggestions] = useState(false); // <-- Déclaration manquante ajoutée
+    const [showSuggestions, setShowSuggestions] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);

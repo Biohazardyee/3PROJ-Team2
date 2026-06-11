@@ -5,8 +5,8 @@ import axios, {
 } from "axios";
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/",
-  timeout: 10000,
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: 60000,
 });
 
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {

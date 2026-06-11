@@ -140,7 +140,7 @@ const Home: React.FC = () => {
         }
     };
 
-    const applySort = (data: any[], sortValue: string): void => {
+    const applySort: (data: any[], sortValue: string) => void = (data: any[], sortValue: string): void => {
         let sorted: any[] = [...data];
         if (sortValue === "az") {
             sorted.sort((a, b) => (a.album || "").localeCompare(b.album || ""));

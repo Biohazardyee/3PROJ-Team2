@@ -1,11 +1,9 @@
 import passport from 'passport';
-import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as DiscordStrategy } from 'passport-discord';
 import dotenv from 'dotenv';
 import { userService } from '../modules/db/users/user.service.js';
 import { AuthProvider } from '../generated/prisma/enums.js';
-import type {OAuthUserDto, UserResponseDto} from '../types/users/user.dto.js';
 
 dotenv.config();
 

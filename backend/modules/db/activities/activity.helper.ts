@@ -1,6 +1,4 @@
-import { PrismaDb } from "../../../config/database.js";
 import {
-  ActivityWithRelationsDto,
   FeedItem,
 } from "../../../types/activities/activities.dto.js";
 
@@ -10,7 +8,7 @@ export const getImageUrl = (images: any[]) => {
   if (!images || !images.length) return placeholder_img;
 
   const img =
-    images.find((i) => i.size === "extralarge") || images[images.length - 1];
+    images.find((i): boolean => i.size === "extralarge") || images[images.length - 1];
 
   const url = img["#text"];
   if (url && url.includes("2a96cbd8b46e4423")) return placeholder_img;
@@ -18,7 +16,7 @@ export const getImageUrl = (images: any[]) => {
   return url || placeholder_img;
 };
 
-export const formatBinaryToImage = (data: any) => {
+export const formatBinaryToImage = (data: any): string | null => {
   if (!data) return null;
 
   if (typeof data === "string") return data;
@@ -34,22 +32,11 @@ export const formatBinaryToImage = (data: any) => {
   return null;
 };
 
-export const getAverageRating = async (mediaId: string): Promise<number> => {
-  const aggregate = await PrismaDb.reviews.aggregate({
-    where: { media_id: mediaId },
-    _avg: { rating: true },
-  });
-
-  return aggregate._avg.rating
-    ? Math.round(aggregate._avg.rating * 10) / 10
-    : 0;
-};
-
 const extractLastFmImage = (imageArray: any) => {
   if (!Array.isArray(imageArray)) return null;
 
   const image =
-    imageArray.find((i: any) => i.size === "extralarge") ||
+    imageArray.find((i: any): boolean => i.size === "extralarge") ||
     imageArray[imageArray.length - 1];
 
   const url = image ? image["#text"] : null;
@@ -68,7 +55,7 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
 
   const rawUserImage = user?.profile_picture || user?.image;
 
-  const formattedUserImage = formatBinaryToImage(rawUserImage);
+  const formattedUserImage: string | null = formatBinaryToImage(rawUserImage);
 
   let foundCover = null;
 
@@ -87,7 +74,7 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
       ? foundCover
       : media?.cover_url || review?.media?.cover_url || "";
 
-  const isReview = act.action === "review_created";
+  const isReview: boolean = act.action === "review_created";
 
   return {
     id: act.id,

@@ -277,7 +277,7 @@ const Conversations: React.FC = () => {
     }, [selectedConvId]);
 
     useEffect((): void => {
-        messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
+        messagesEndRef.current?.scrollIntoView({behavior: "smooth", block: "nearest"});
     }, [messages]);
 
     const selectedConversation: BackendConversation | undefined = useMemo(() => {
@@ -317,7 +317,7 @@ const Conversations: React.FC = () => {
 
     return (
         <div
-            className="flex h-screen bg-[#0f1117] dark:bg-slate-50 text-slate-200 dark:text-slate-900 overflow-hidden font-sans transition-colors duration-300">
+            className="flex h-[calc(100vh-70px)] bg-[#0f1117] dark:bg-slate-50 text-slate-200 dark:text-slate-900 overflow-hidden font-sans transition-colors duration-300">
             <aside
                 className={`w-full md:w-80 lg:w-96 border-r border-slate-800 dark:border-slate-200 flex flex-col ${selectedConvId ? "hidden md:flex" : "flex"}`}
             >

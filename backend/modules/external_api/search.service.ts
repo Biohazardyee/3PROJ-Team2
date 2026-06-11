@@ -34,10 +34,9 @@ export class SearchService {
 
         const albums = searchResults.results.albummatches.album;
 
-        // Stocker chaque album individuellement
         await Promise.all(
             albums.map((album: any) => {
-                const api_id = album.mbid
+                const api_id: string = album.mbid
                     ? `album:${album.mbid}`
                     : `album:${album.artist}:${album.name}`;
 

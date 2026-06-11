@@ -1,6 +1,6 @@
-import { PrismaDb } from "../../../config/database.js";
-import { Users } from "../../../generated/prisma/client.js";
-import { BadRequest } from "../../../utils/errors.js";
+import {PrismaDb} from "../../../config/database.js";
+import {Users} from "../../../generated/prisma/client.js";
+import {BadRequest} from "../../../utils/errors.js";
 
 const EMAIL_REGEX =
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,7 +27,7 @@ export async function generateUniqueUsername(baseUsername: string): Promise<stri
     while (true) {
         const testUsername: string = suffix === 0 ? username : `${username}${suffix}`;
         const exists: Users | null = await PrismaDb.users.findUnique({
-            where: { username: testUsername }
+            where: {username: testUsername}
         });
         if (!exists) return testUsername;
         suffix++;
@@ -35,8 +35,8 @@ export async function generateUniqueUsername(baseUsername: string): Promise<stri
 }
 
 export async function checkIfNotBanned(email: string): Promise<void> {
-    const banned = await PrismaDb.bannedUsers.findFirst({ 
-        where: { email: email.trim().toLowerCase() }
+    const banned = await PrismaDb.bannedUsers.findFirst({
+        where: {email: email.trim().toLowerCase()}
     });
 
     if (banned) {

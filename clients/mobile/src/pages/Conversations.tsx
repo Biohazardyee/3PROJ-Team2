@@ -64,7 +64,7 @@ const Conversations = () => {
     const activeConversationIdRef = useRef<string | null>(null);
 
     useEffect((): void => {
-        const getUserId = async (): Promise<void> => {
+        const getUserId: () => Promise<void> = async (): Promise<void> => {
             try {
                 const token: string | null =
                     await SecureStore.getItemAsync("userToken");
@@ -80,7 +80,7 @@ const Conversations = () => {
         getUserId();
     }, []);
 
-    const fetchConversations = async (): Promise<void> => {
+    const fetchConversations: () => Promise<void> = async (): Promise<void> => {
         if (!currentUserId) return;
         try {
             const response = await apiClient.get(
@@ -104,10 +104,10 @@ const Conversations = () => {
         }, [currentUserId]),
     );
 
-    useEffect(() => {
+    useEffect((): (() => void) | undefined => {
         if (!currentUserId) return;
 
-        const setupSocket = async (): Promise<void> => {
+        const setupSocket: () => Promise<void> = async (): Promise<void> => {
             const token: string | null = await SecureStore.getItemAsync("userToken");
             if (!token) return;
 
@@ -140,7 +140,7 @@ const Conversations = () => {
                             },
                         };
 
-                        return newConvs.sort((a: Conversation, b: Conversation) => {
+                        return newConvs.sort((a: Conversation, b: Conversation): number => {
                             const dateA: number = a.messages[0]
                                 ? new Date(a.messages[0].created_at).getTime()
                                 : 0;
@@ -169,7 +169,7 @@ const Conversations = () => {
         };
     }, [currentUserId]);
 
-    const onRefresh = useCallback((): void => {
+    const onRefresh: () => void = useCallback((): void => {
         setRefreshing(true);
         fetchConversations();
     }, [currentUserId]);

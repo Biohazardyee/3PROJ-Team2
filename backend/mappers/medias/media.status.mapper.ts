@@ -1,12 +1,8 @@
-import type { UserMediaStatus } from "../../generated/prisma/browser.js";
 import { BaseMapper } from "../base.mapper.js";
 import { MediaStatusResponseDto } from "../../types/medias/media.status.dto.js";
-import { mediaMapper } from "./media.mapper.js"; // Importe le mapper de média
+import { mediaMapper } from "./media.mapper.js";
 
 export class MediaStatusMapper extends BaseMapper<any, MediaStatusResponseDto> {
-  // src/mappers/medias/media.status.mapper.ts
-
-  // src/mappers/medias/media.status.mapper.ts
 
   protected mapOne(userMediaStatus: any): MediaStatusResponseDto {
     return {

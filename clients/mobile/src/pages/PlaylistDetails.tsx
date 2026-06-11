@@ -24,7 +24,7 @@ const GAP = 6;
 const COLUMN_WIDTH: number = (SCREEN_WIDTH - PADDING_HORIZONTAL * 2 - GAP) / 2;
 
 const PlaylistDetails = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const {id, title} = useLocalSearchParams();
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);

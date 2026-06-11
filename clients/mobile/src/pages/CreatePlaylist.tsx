@@ -33,13 +33,13 @@ const CreatePlaylist = () => {
     const [image, setImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    const isEditing = params.isEditing === "true";
-    const isPublicParam = params.is_public === "true";
+    const isEditing: boolean = params.isEditing === "true";
+    const isPublicParam: boolean = params.is_public === "true";
 
     const [isPublic, setIsPublic] = useState<boolean>(isPublicParam);
 
 
-    const pickImage = async (): Promise<void> => {
+    const pickImage: () => Promise<void> = async (): Promise<void> => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images"],
             allowsEditing: true,
@@ -53,7 +53,7 @@ const CreatePlaylist = () => {
     };
 
     useEffect((): void => {
-        const loadPlaylist = async (): Promise<void> => {
+        const loadPlaylist: () => Promise<void> = async (): Promise<void> => {
             if (!isEditing || !params.id) return;
 
             try {
@@ -77,7 +77,7 @@ const CreatePlaylist = () => {
         }
     }, []);
 
-    const handleSave = async (): Promise<void> => {
+    const handleSave: () => Promise<void> = async (): Promise<void> => {
         if (!name.trim()) return;
 
         try {
@@ -143,7 +143,7 @@ const CreatePlaylist = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}>
+                <TouchableOpacity onPress={(): void => router.back()}>
                     <Ionicons name="close" size={28} color="white"/>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>
@@ -175,7 +175,7 @@ const CreatePlaylist = () => {
 
                 <TouchableOpacity
                     style={styles.switchRow}
-                    onPress={() => setIsPublic((prev: boolean) => !prev)}
+                    onPress={(): void => setIsPublic((prev: boolean): boolean => !prev)}
                 >
                     <Text style={styles.switchText}>
                         {isPublic ? t("playlist_public") : t("playlist_private")}

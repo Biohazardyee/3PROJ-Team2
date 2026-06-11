@@ -36,14 +36,13 @@ export class AlbumService {
 
         if (!mediaRecord || mediaRecord.expires_at <= new Date()) {
             console.log("Appel API LastFM (Cache expiré ou inexistant)");
-            const response = await fetch(url);
+            const response: Response = await fetch(url);
             const albumInfo: any = await response.json();
 
             if (albumInfo.error) {
                 throw new NotFound(albumInfo.message || 'Album not found');
             }
 
-            // L'upsert renvoie l'enregistrement complet (avec l'ID)
             mediaRecord = await PrismaDb.medias.upsert({
                 where: { api_id },
                 update: {
@@ -73,7 +72,6 @@ export class AlbumService {
 
         const api_id = `album:tags:${mbid}`;
 
-        // Vérifier le cache
         const cached = await PrismaDb.medias.findFirst({
             where: {
                 api_id,
@@ -99,7 +97,6 @@ export class AlbumService {
             throw new NotFound(tagsInfo.message || 'Tags not found for the album');
         }
 
-        // Mettre en cache
         await PrismaDb.medias.upsert({
             where: { api_id },
             update: {
@@ -127,13 +124,13 @@ export class AlbumService {
 
         try {
 
-            const artistRes = await fetch(`${URL}?method=artist.getsimilar&artist=${encodeURIComponent(artist)}&api_key=${API_KEY}&limit=6&format=json`);
+            const artistRes: Response = await fetch(`${URL}?method=artist.getsimilar&artist=${encodeURIComponent(artist)}&api_key=${API_KEY}&limit=6&format=json`);
             const artistData: any = await artistRes.json();
-            const similarArtists = artistData.similarartists?.artist || [];
+            const similarArtists: any = artistData.similarartists?.artist || [];
 
 
-            const albumPromises = similarArtists.map(async (similarArtist: any) => {
-                const topRes = await fetch(`${URL}?method=artist.gettopalbums&artist=${encodeURIComponent(similarArtist.name)}&api_key=${API_KEY}&limit=1&format=json`);
+            const albumPromises: any = similarArtists.map(async (similarArtist: any) => {
+                const topRes: Response = await fetch(`${URL}?method=artist.gettopalbums&artist=${encodeURIComponent(similarArtist.name)}&api_key=${API_KEY}&limit=1&format=json`);
                 const topData: any = await topRes.json();
                 const basicAlbum = topData.topalbums?.album?.[0];
 
@@ -142,8 +139,7 @@ export class AlbumService {
                 const hasImage = basicAlbum.image?.some((img: any) => img["#text"] && img["#text"] !== "");
 
                 if (!hasImage) {
-                    // On fetch les infos complètes de l'album pour récupérer la cover
-                    const fullInfoRes = await fetch(`${URL}?method=album.getinfo&api_key=${API_KEY}&artist=${encodeURIComponent(similarArtist.name)}&album=${encodeURIComponent(basicAlbum.name)}&format=json`);
+                    const fullInfoRes: Response = await fetch(`${URL}?method=album.getinfo&api_key=${API_KEY}&artist=${encodeURIComponent(similarArtist.name)}&album=${encodeURIComponent(basicAlbum.name)}&format=json`);
                     const fullInfoData: any = await fullInfoRes.json();
                     return fullInfoData.album || basicAlbum;
                 }

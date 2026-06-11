@@ -5,7 +5,7 @@ import { BadRequest, Forbidden, NotFound } from '../utils/errors.js';
 export async function checkPlaylistOwner(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const loggedUser = req.user;
-        const playlistItemId = req.params.id;
+        const playlistItemId: string = req.params.id;
 
         if (!loggedUser) throw new BadRequest("User not authenticated");
         if (!playlistItemId) throw new BadRequest("Item ID is required");

@@ -1,13 +1,13 @@
-import type { Request, Response, NextFunction } from 'express';
-import { Controller } from '../../controller.js';
-import { BadRequest } from '../../../utils/errors.js';
-import { ReviewCommentService, reviewCommentService } from './review.comment.service.js';
+import type {Request, Response, NextFunction} from 'express';
+import {Controller} from '../../controller.js';
+import {BadRequest} from '../../../utils/errors.js';
+import {ReviewCommentService, reviewCommentService} from './review.comment.service.js';
 import {
     ReviewCommentAddDto,
     ReviewCommentResponseDto,
     ReviewCommentUpdateDto
 } from "../../../types/reviews/review.comment.dto.js";
-import { getThreadByReview, toggleLike } from './review.comment.helper.js';
+import {getThreadByReview, toggleLike} from './review.comment.helper.js';
 
 class ReviewCommentController extends Controller {
 
@@ -18,7 +18,6 @@ class ReviewCommentController extends Controller {
     async add(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const createData: ReviewCommentAddDto = {
-                // ON RÉCUPÈRE L'ID DEPUIS LE TOKEN (req.user), PAS DEPUIS LE BODY
                 user_id: (req as any).user?.id || req.body.user_id,
                 review_id: req.body.review_id,
                 content: req.body.content,
@@ -72,10 +71,10 @@ class ReviewCommentController extends Controller {
 
     async getByReviewId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const reviewId = req.params.review_id;
-            const userId = (req as any).user?.id; 
+            const reviewId: string = req.params.review_id;
+            const userId = (req as any).user?.id;
 
-            const comments = await getThreadByReview(reviewId, userId);
+            const comments: any[] = await getThreadByReview(reviewId, userId);
 
             res.status(200).json({
                 message: 'Comments retrieved successfully',
@@ -88,7 +87,7 @@ class ReviewCommentController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const id = req.params.id;
+            const id: string = req.params.id;
 
             if (!id) {
                 throw new BadRequest('ID is required');
@@ -135,7 +134,7 @@ class ReviewCommentController extends Controller {
 
     async toggleLike(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const commentId = req.params.id;
+            const commentId: string = req.params.id;
             const userId = (req as any).user?.id;
 
             if (!commentId) throw new BadRequest("Comment ID is required");

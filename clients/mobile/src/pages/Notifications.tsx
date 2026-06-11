@@ -99,20 +99,20 @@ export default function Notifications() {
         }
     };
 
-    const unreadCount = useMemo(
-        () => notifications.filter((n) => !n.is_read).length,
+    const unreadCount: number = useMemo(
+        (): number => notifications.filter((n: AppNotification): boolean => !n.is_read).length,
         [notifications],
     );
 
-    const filteredNotifications = useMemo(() => {
+    const filteredNotifications: AppNotification[] = useMemo((): AppNotification[] => {
         if (filter === "Tout") return notifications;
-        if (filter === "Non lue") return notifications.filter((n) => !n.is_read);
+        if (filter === "Non lue") return notifications.filter((n: AppNotification): boolean => !n.is_read);
         if (filter === "Mentions")
-            return notifications.filter((n) => n.action === "mention");
+            return notifications.filter((n: AppNotification): boolean => n.action === "mention");
         return notifications;
     }, [notifications, filter]);
 
-    const handleNotificationPress = async (
+    const handleNotificationPress: (notification: AppNotification) => Promise<void> = async (
         notification: AppNotification,
     ): Promise<void> => {
         if (!notification.is_read) {
@@ -171,7 +171,7 @@ export default function Notifications() {
                         <TouchableOpacity
                             key={tabName}
                             style={[styles.tab, filter === tabName && styles.activeTab]}
-                            onPress={() => setFilter(tabName)}
+                            onPress={(): void => setFilter(tabName)}
                         >
                             <Text
                                 style={
@@ -197,12 +197,12 @@ export default function Notifications() {
                         {t("no_notifications")}
                     </Text>
                 ) : (
-                    filteredNotifications.map((item) => {
-                        const displayUser =
+                    filteredNotifications.map((item: AppNotification) => {
+                        const displayUser: string =
                             item.related_user?.username || item.sender?.username || "Système";
-                        const userInitial = displayUser.charAt(0).toUpperCase();
+                        const userInitial: string = displayUser.charAt(0).toUpperCase();
 
-                        const userProfilePic =
+                        const userProfilePic: string | undefined =
                             item.related_user?.profile_image || item.sender?.profile_image;
 
                         const imageSource = getValidSource(userProfilePic);
@@ -210,7 +210,7 @@ export default function Notifications() {
                         return (
                             <TouchableOpacity
                                 key={item.id}
-                                onPress={() => handleNotificationPress(item)}
+                                onPress={(): Promise<void> => handleNotificationPress(item)}
                                 activeOpacity={0.7}
                                 style={[
                                     styles.notificationCard,

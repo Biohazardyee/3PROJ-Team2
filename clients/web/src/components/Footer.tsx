@@ -10,7 +10,7 @@ export const Footer: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="w-15 bg-linear-to-tr from-transparent to-transparent rounded-lg flex items-center justify-center relative">
               <img 
-                src="/public/logo.png" 
+                src="../../public/logo.png"
                 alt="Logo Melodia" 
                 className="absolute w-13 h-13" 
               />

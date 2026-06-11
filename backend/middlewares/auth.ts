@@ -19,7 +19,7 @@ export function authGuard(req: Request, _res: Response, next: NextFunction): voi
 
     try {
 
-        const secret = process.env.JWT_SECRET;
+        const secret: string | undefined = process.env.JWT_SECRET;
 
         if (!secret) {
             console.error("ERREUR FATALE: JWT_SECRET n'est pas chargé.");

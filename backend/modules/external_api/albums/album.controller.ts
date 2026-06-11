@@ -14,7 +14,7 @@ export class AlbumController {
                 throw new BadRequest('You must provide either mbid OR artist + album');
             }
 
-            const albumInfo = await this.service.getAlbumInfo({
+            const albumInfo: any = await this.service.getAlbumInfo({
                 mbid: mbid ? String(mbid) : "",
                 artist: artist ? String(artist) : "",
                 album: album ? String(album) : "",

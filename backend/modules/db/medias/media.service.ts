@@ -11,7 +11,7 @@ import {mediaMapper} from "../../../mappers/medias/media.mapper.js";
 import {Prisma} from "../../../generated/prisma/client.js";
 
 export class MediaService {
-    async create(data: MediaCreateDto) {
+    async create(data: MediaCreateDto): Promise<MediaResponseDto> {
         if (isEmptyString(data.api_id)) {
             throw new BadRequest("API ID cannot be empty");
         }
@@ -68,7 +68,7 @@ export class MediaService {
             _avg: {rating: true},
         });
 
-        const avgRating = ratings._avg?.rating || 0;
+        const avgRating: number = ratings._avg?.rating || 0;
 
         return mediaMapper.toDto({
             ...media,
@@ -148,7 +148,7 @@ export class MediaService {
             return mediaMapper.toDtoList(fallbackMedias as any);
         }
 
-        const mediaIds: string[] = trendingGroups.map((group) => group.media_id);
+        const mediaIds: string[] = trendingGroups.map((group): string => group.media_id);
 
         const medias = await PrismaDb.medias.findMany({
             where: {
@@ -198,41 +198,13 @@ export class MediaService {
         return mediaMapper.toDto(deletedMedia);
     }
 
-    async getByApiIds(apiIds: string[]): Promise<MediaResponseDto[]> {
-        if (!Array.isArray(apiIds) || apiIds.length === 0) {
-            return [];
-        }
-
-        const medias = await PrismaDb.medias.findMany({
-            where: {api_id: {in: apiIds}},
-        });
-
-        if (medias.length === 0) return [];
-
-        const ratings = await PrismaDb.reviews.groupBy({
-            by: ["media_id"],
-            _avg: {rating: true},
-            where: {media_id: {in: medias.map((m) => m.id)}},
-        });
-
-        const mediasWithRatings = medias.map((media) => {
-            const avgData = ratings.find((r) => r.media_id === media.id);
-            return {
-                ...media,
-                rating: Math.round((avgData?._avg?.rating || 0) * 10) / 10,
-            };
-        });
-
-        return mediaMapper.toDtoList(mediasWithRatings as any);
-    }
-
     async syncSearchResults(albums: any[]): Promise<MediaResponseDto[]> {
         if (!Array.isArray(albums) || albums.length === 0) {
             throw new BadRequest("'albums' array is required");
         }
 
         return await Promise.all(
-            albums.map(async (album: any) => {
+            albums.map(async (album: any): Promise<MediaResponseDto> => {
                 const {api_id, name, artist, cover, mbid} = album;
 
                 const fallbackId = `album:${artist}:${name}`;
@@ -262,7 +234,7 @@ export class MediaService {
                     _avg: {rating: true},
                 });
 
-                const avgRating = ratings._avg?.rating || 0;
+                const avgRating: number = ratings._avg?.rating || 0;
 
                 return mediaMapper.toDto({
                     ...media,

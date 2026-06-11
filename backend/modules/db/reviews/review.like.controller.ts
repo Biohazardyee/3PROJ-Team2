@@ -1,9 +1,9 @@
-import type { Request, Response, NextFunction } from 'express';
-import { PrismaDb } from '../../../config/database.js';
-import { Controller } from '../../controller.js';
-import { BadRequest } from '../../../utils/errors.js';
-import { ReviewLikeService, reviewLikeService } from './review.like.service.js';
-import { ReviewLikeAddDto, ReviewLikeResponseDto } from "../../../types/reviews/review.like.dto.js";
+import type {Request, Response, NextFunction} from 'express';
+import {PrismaDb} from '../../../config/database.js';
+import {Controller} from '../../controller.js';
+import {BadRequest} from '../../../utils/errors.js';
+import {ReviewLikeService, reviewLikeService} from './review.like.service.js';
+import {ReviewLikeAddDto, ReviewLikeResponseDto} from "../../../types/reviews/review.like.dto.js";
 
 class ReviewLikeController extends Controller {
 
@@ -45,12 +45,12 @@ class ReviewLikeController extends Controller {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
             const userId = (req as any).user?.id;
 
-            const review = await this.service.getById(id, userId);
+            const review: ReviewLikeResponseDto = await this.service.getById(id, userId);
 
             res.status(200).json({
                 message: 'Review retrieved successfully',
@@ -84,7 +84,7 @@ class ReviewLikeController extends Controller {
 
     async toggleLike(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { review_id } = req.body;
+            const {review_id} = req.body;
             const user_id = (req as any).user?.id;
 
             if (!user_id) {
@@ -96,17 +96,17 @@ class ReviewLikeController extends Controller {
             }
 
             const existingLike = await PrismaDb.reviewLikes.findUnique({
-                where: { user_id_review_id: { user_id, review_id } }
+                where: {user_id_review_id: {user_id, review_id}}
             });
 
             if (existingLike) {
                 await this.service.delete(review_id, user_id);
-                const likesCount = await PrismaDb.reviewLikes.count({ where: { review_id } });
-                res.status(200).json({ message: 'Like removed', isLiked: false, likes_count: likesCount });
+                const likesCount: number = await PrismaDb.reviewLikes.count({where: {review_id}});
+                res.status(200).json({message: 'Like removed', isLiked: false, likes_count: likesCount});
             } else {
-                await this.service.create({ user_id, review_id });
-                const likesCount = await PrismaDb.reviewLikes.count({ where: { review_id } });
-                res.status(201).json({ message: 'Like added', isLiked: true, likes_count: likesCount });
+                await this.service.create({user_id, review_id});
+                const likesCount: number = await PrismaDb.reviewLikes.count({where: {review_id}});
+                res.status(201).json({message: 'Like added', isLiked: true, likes_count: likesCount});
             }
         } catch (error) {
             next(error);

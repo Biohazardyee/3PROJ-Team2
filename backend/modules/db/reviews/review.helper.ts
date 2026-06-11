@@ -1,4 +1,4 @@
-import { Prisma } from "../../../generated/prisma/browser.js";
+import {Prisma} from "../../../generated/prisma/browser.js";
 
 export function isValidFloatRating(value: any): boolean {
     return (
@@ -9,24 +9,20 @@ export function isValidFloatRating(value: any): boolean {
     );
 }
 
-export function normalizeRating(value: number): number {
-    return Math.round(value * 10) / 10;
-}
+export async function updateMediaAverageRating(tx: Prisma.TransactionClient, mediaId: string): Promise<void> {
 
-export async function updateMediaAverageRating(tx: Prisma.TransactionClient, mediaId: string) {
-  
-    const allReviews = await tx.reviews.findMany({
-        where: { media_id: mediaId },
-        select: { rating: true }
+    const allReviews: { rating: number }[] = await tx.reviews.findMany({
+        where: {media_id: mediaId},
+        select: {rating: true}
     });
 
-    const averageRating = allReviews.length > 0
-        ? allReviews.reduce((acc, rev) => acc + rev.rating, 0) / allReviews.length
+    const averageRating: number = allReviews.length > 0
+        ? allReviews.reduce((acc: number, rev: { rating: number }): number => acc + rev.rating, 0) / allReviews.length
         : 0;
 
-   
+
     await tx.medias.update({
-        where: { id: mediaId },
-        data: { rating: averageRating }
+        where: {id: mediaId},
+        data: {rating: averageRating}
     });
 }

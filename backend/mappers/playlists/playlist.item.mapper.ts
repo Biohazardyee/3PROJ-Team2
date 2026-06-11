@@ -6,9 +6,7 @@ class PlaylistItemMapper extends BaseMapper<
   PlaylistItems,
   PlaylistItemResponseDto
 > {
-  /**
-   * Implémentation de la méthode abstraite
-   */
+
   protected mapOne(item: any): PlaylistItemResponseDto {
     return {
       id: item.id,

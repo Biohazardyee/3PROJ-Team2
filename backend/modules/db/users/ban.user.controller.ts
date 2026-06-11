@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import { BadRequest } from '../../../utils/errors.js';
-import { BanUserService, banUserService } from './ban.user.service.js';
-import { Controller } from "../../controller.js";
+import type {Request, Response, NextFunction} from 'express';
+import {BadRequest} from '../../../utils/errors.js';
+import {BanUserService, banUserService} from './ban.user.service.js';
+import {Controller} from "../../controller.js";
 import {
     BannedUserAddDto,
     BannedUserDeleteDto,
@@ -73,7 +73,7 @@ class UserBanController extends Controller {
 
             const bodyKeys: string[] = Object.keys(req.body);
 
-            const invalidKeys: string[] = bodyKeys.filter((key: string):boolean => !allowedFields.includes(key as keyof BannedUserUpdateDto));
+            const invalidKeys: string[] = bodyKeys.filter((key: string): boolean => !allowedFields.includes(key as keyof BannedUserUpdateDto));
 
             if (invalidKeys.length > 0) {
                 throw new BadRequest('Only content can be updated');

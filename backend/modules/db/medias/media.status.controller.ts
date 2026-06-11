@@ -84,13 +84,13 @@ class MediaStatusController extends Controller {
         next: NextFunction,
     ): Promise<void> {
         try {
-            const user_id = req.params.user_id;
+            const user_id: string = req.params.user_id;
 
             if (!user_id) {
                 throw new BadRequest("User_id is required");
             }
 
-            const mediasStatus = await this.service.getByUserId(user_id);
+            const mediasStatus: MediaStatusResponseDto[] = await this.service.getByUserId(user_id);
 
             res.status(200).json({
                 message: "User media statuses retrieved successfully",
@@ -103,8 +103,8 @@ class MediaStatusController extends Controller {
 
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const user_id = req.params.user_id;
-            const media_id = req.params.media_id;
+            const user_id: string = req.params.user_id;
+            const media_id: string = req.params.media_id;
 
             if (!req.body.status) {
                 throw new BadRequest("Status is required for update");
@@ -114,7 +114,7 @@ class MediaStatusController extends Controller {
                 status: req.body.status
             };
 
-            const mediaStatus = await this.service.update(user_id, media_id, updateData);
+            const mediaStatus: MediaStatusResponseDto = await this.service.update(user_id, media_id, updateData);
 
             res.status(200).json({
                 message: "Media status updated successfully",

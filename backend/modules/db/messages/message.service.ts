@@ -1,190 +1,190 @@
-import { PrismaDb } from "../../../config/database.js";
-import { BadRequest, NotFound } from "../../../utils/errors.js";
+import {PrismaDb} from "../../../config/database.js";
+import {BadRequest, NotFound} from "../../../utils/errors.js";
 import {
-  isEmptyString,
-  isValidBoolean,
-  isValidStringLength,
+    isEmptyString,
+    isValidBoolean,
+    isValidStringLength,
 } from "../../../utils/helpers.js";
 import {
-  MessageAddDto,
-  MessageAddResponseDto,
-  MessageDeleteResponseDto,
-  MessageResponseDto,
-  MessageUpdateDto,
+    MessageAddDto,
+    MessageAddResponseDto,
+    MessageDeleteResponseDto,
+    MessageResponseDto,
+    MessageUpdateDto,
 } from "../../../types/messages/messages.dto.js";
 import {
-  Conversations,
-  Users,
-  Prisma,
-  Messages,
+    Conversations,
+    Users,
+    Prisma,
+    Messages,
 } from "../../../generated/prisma/client.js";
-import { messagesMapper } from "../../../mappers/messages/messages.mapper.js";
+import {messagesMapper} from "../../../mappers/messages/messages.mapper.js";
 
 export class MessageService {
-  async create(data: MessageAddDto): Promise<MessageAddResponseDto> {
-    if (isEmptyString(data.conversation_id)) {
-      throw new BadRequest("ConversationID cannot be empty");
+    async create(data: MessageAddDto): Promise<MessageAddResponseDto> {
+        if (isEmptyString(data.conversation_id)) {
+            throw new BadRequest("ConversationID cannot be empty");
+        }
+
+        if (isEmptyString(data.sender_id)) {
+            throw new BadRequest("SenderID cannot be empty");
+        }
+
+        if (isEmptyString(data.content)) {
+            throw new BadRequest("Conversation content cannot be empty");
+        }
+
+        const conversation: Conversations | null =
+            await PrismaDb.conversations.findUnique({
+                where: {
+                    id: data.conversation_id,
+                },
+            });
+
+        if (!conversation) {
+            throw new BadRequest("Conversation not found");
+        }
+
+        const sender: Users | null = await PrismaDb.users.findUnique({
+            where: {
+                id: data.sender_id,
+            },
+        });
+
+        if (!sender) {
+            throw new BadRequest("Sender not found");
+        }
+
+        const createData: Prisma.MessagesUncheckedCreateInput = {
+            conversation_id: data.conversation_id,
+            sender_id: data.sender_id,
+            content: data.content,
+        };
+
+        const message: Messages = await PrismaDb.messages.create({
+            data: createData,
+        });
+
+        return messagesMapper.toAddDto(message);
     }
 
-    if (isEmptyString(data.sender_id)) {
-      throw new BadRequest("SenderID cannot be empty");
+    async getAll(): Promise<MessageResponseDto[]> {
+        const messages: Messages[] = await PrismaDb.messages.findMany({
+            orderBy: {
+                created_at: "desc",
+            },
+        });
+
+        return messagesMapper.toDtoList(messages);
     }
 
-    if (isEmptyString(data.content)) {
-      throw new BadRequest("Conversation content cannot be empty");
+    async getById(id: string): Promise<MessageResponseDto> {
+        if (isEmptyString(id)) {
+            throw new BadRequest("Message id is required");
+        }
+
+        const message: Messages | null = await PrismaDb.messages.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (!message) {
+            throw new NotFound("Report not found");
+        }
+
+        return messagesMapper.toDto(message);
     }
 
-    const conversation: Conversations | null =
-      await PrismaDb.conversations.findUnique({
-        where: {
-          id: data.conversation_id,
-        },
-      });
+    async getByConversationId(
+        conversationId: string,
+    ): Promise<MessageResponseDto[]> {
+        if (isEmptyString(conversationId)) {
+            throw new BadRequest("Conversation ID is required");
+        }
 
-    if (!conversation) {
-      throw new BadRequest("Conversation not found");
+        const messages = await PrismaDb.messages.findMany({
+            where: {
+                conversation_id: conversationId,
+            },
+            orderBy: {
+                created_at: "desc",
+            },
+        });
+
+        return messagesMapper.toDtoList(messages);
     }
 
-    const sender: Users | null = await PrismaDb.users.findUnique({
-      where: {
-        id: data.sender_id,
-      },
-    });
+    async update(
+        id: string,
+        data: MessageUpdateDto,
+    ): Promise<MessageResponseDto> {
+        if (isEmptyString(id)) {
+            throw new BadRequest("Message id cannot be empty");
+        }
 
-    if (!sender) {
-      throw new BadRequest("Sender not found");
+        const message: Messages | null = await PrismaDb.messages.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (!message) {
+            throw new NotFound("Message not found");
+        }
+
+        const updateData: Prisma.MessagesUpdateInput = {};
+
+        if (data.content !== undefined) {
+            if (isEmptyString(data.content)) {
+                throw new BadRequest("Content cannot be empty");
+            }
+            if (!isValidStringLength(data.content, 1000)) {
+                throw new BadRequest("Content cannot be much than 1000 characters");
+            }
+            updateData.content = data.content;
+        }
+
+        if (data.is_read) {
+            if (!isValidBoolean(data.is_read)) {
+                throw new BadRequest("is_read must be a boolean");
+            }
+            updateData.is_read = data.is_read;
+        }
+
+        const messageToUpdate: Messages = await PrismaDb.messages.update({
+            where: {
+                id,
+            },
+            data: updateData,
+        });
+
+        return messagesMapper.toDto(messageToUpdate);
     }
 
-    const createData: Prisma.MessagesUncheckedCreateInput = {
-      conversation_id: data.conversation_id,
-      sender_id: data.sender_id,
-      content: data.content,
-    };
+    async delete(id: string): Promise<MessageDeleteResponseDto> {
+        if (isEmptyString(id)) {
+            throw new BadRequest("Message id cannot be empty");
+        }
 
-    const message: Messages = await PrismaDb.messages.create({
-      data: createData,
-    });
+        const message: Messages | null = await PrismaDb.messages.findUnique({
+            where: {
+                id,
+            },
+        });
 
-    return messagesMapper.toAddDto(message);
-  }
+        if (!message) {
+            throw new NotFound("Message not found");
+        }
 
-  async getAll(): Promise<MessageResponseDto[]> {
-    const messages: Messages[] = await PrismaDb.messages.findMany({
-      orderBy: {
-        created_at: "desc",
-      },
-    });
+        const messageToDelete: Messages = await PrismaDb.messages.delete({
+            where: {
+                id,
+            },
+        });
 
-    return messagesMapper.toDtoList(messages);
-  }
-
-  async getById(id: string): Promise<MessageResponseDto> {
-    if (isEmptyString(id)) {
-      throw new BadRequest("Message id is required");
+        return messagesMapper.toDeleteDto(messageToDelete);
     }
-
-    const message: Messages | null = await PrismaDb.messages.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!message) {
-      throw new NotFound("Report not found");
-    }
-
-    return messagesMapper.toDto(message);
-  }
-
-  async getByConversationId(
-    conversationId: string,
-  ): Promise<MessageResponseDto[]> {
-    if (isEmptyString(conversationId)) {
-      throw new BadRequest("Conversation ID is required");
-    }
-
-    const messages = await PrismaDb.messages.findMany({
-      where: {
-        conversation_id: conversationId,
-      },
-      orderBy: {
-        created_at: "desc",
-      },
-    });
-
-    return messagesMapper.toDtoList(messages);
-  }
-
-  async update(
-    id: string,
-    data: MessageUpdateDto,
-  ): Promise<MessageResponseDto> {
-    if (isEmptyString(id)) {
-      throw new BadRequest("Message id cannot be empty");
-    }
-
-    const message: Messages | null = await PrismaDb.messages.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!message) {
-      throw new NotFound("Message not found");
-    }
-
-    const updateData: Prisma.MessagesUpdateInput = {};
-
-    if (data.content !== undefined) {
-      if (isEmptyString(data.content)) {
-        throw new BadRequest("Content cannot be empty");
-      }
-      if (!isValidStringLength(data.content, 1000)) {
-        throw new BadRequest("Content cannot be much than 1000 characters");
-      }
-      updateData.content = data.content;
-    }
-
-    if (data.is_read) {
-      if (!isValidBoolean(data.is_read)) {
-        throw new BadRequest("is_read must be a boolean");
-      }
-      updateData.is_read = data.is_read;
-    }
-
-    const messageToUpdate: Messages = await PrismaDb.messages.update({
-      where: {
-        id,
-      },
-      data: updateData,
-    });
-
-    return messagesMapper.toDto(messageToUpdate);
-  }
-
-  async delete(id: string): Promise<MessageDeleteResponseDto> {
-    if (isEmptyString(id)) {
-      throw new BadRequest("Message id cannot be empty");
-    }
-
-    const message: Messages | null = await PrismaDb.messages.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!message) {
-      throw new NotFound("Message not found");
-    }
-
-    const messageToDelete: Messages = await PrismaDb.messages.delete({
-      where: {
-        id,
-      },
-    });
-
-    return messagesMapper.toDeleteDto(messageToDelete);
-  }
 }
 
 export const messageService = new MessageService();

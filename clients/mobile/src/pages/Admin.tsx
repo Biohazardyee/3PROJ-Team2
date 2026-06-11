@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput} from 'react-native';
 import Header from "@/src/components/Header";
-import { Ionicons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
+import {Ionicons} from '@expo/vector-icons';
+import {useTranslation} from 'react-i18next';
 
 type TabType = 'Users' | 'Reports' | 'Analytics';
 
 const AdminDashboard = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const [activeTab, setActiveTab] = useState<TabType>('Users');
 
     return (
         <View style={styles.page}>
-            <Header />
+            <Header/>
             <View style={styles.container}>
                 <View style={styles.topSection}>
                     <View style={styles.shieldIcon}>
-                        <Ionicons name="shield-half-outline" size={40} color="#d71717" />
+                        <Ionicons name="shield-half-outline" size={40} color="#d71717"/>
                     </View>
                     <View>
                         <Text style={styles.Title}>{t('admin_dashboard_title')}</Text>
@@ -26,30 +26,30 @@ const AdminDashboard = () => {
 
                 {/* STATS CARDS (Aperçu rapide) */}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.statsScroll}>
-                    <StatCard label={t('admin_total_users')} value="12 847" color="#ad46ff" />
-                    <StatCard label={t('admin_active_users')} value="8 923" color="#ad46ff" />
-                    <StatCard label={t('admin_albums')} value="45 621" color="#ad46ff" />
+                    <StatCard label={t('admin_total_users')} value="12 847" color="#ad46ff"/>
+                    <StatCard label={t('admin_active_users')} value="8 923" color="#ad46ff"/>
+                    <StatCard label={t('admin_albums')} value="45 621" color="#ad46ff"/>
                 </ScrollView>
 
                 {/* NAVBAR TABS */}
                 <View style={styles.navBar}>
-                    <TabButton 
-                        label={t('tab_users')} 
+                    <TabButton
+                        label={t('tab_users')}
                         active={activeTab === 'Users'}
-                        onPress={() => setActiveTab('Users')} 
+                        onPress={() => setActiveTab('Users')}
                     />
-                    <TabButton 
-                        label={t('tab_reports')} 
-                        badge="23" 
+                    <TabButton
+                        label={t('tab_reports')}
+                        badge="23"
                         active={activeTab === 'Reports'}
-                        onPress={() => setActiveTab('Reports')} 
+                        onPress={() => setActiveTab('Reports')}
                     />
                 </View>
 
                 {/* CONTENT AREA */}
                 <ScrollView style={styles.content}>
-                    {activeTab === 'Users' && <UsersView />}
-                    {activeTab === 'Reports' && <ReportsView />}
+                    {activeTab === 'Users' && <UsersView/>}
+                    {activeTab === 'Reports' && <ReportsView/>}
                 </ScrollView>
 
             </View>
@@ -57,11 +57,11 @@ const AdminDashboard = () => {
     );
 };
 
-const StatCard = ({ label, value, color }: { label: string, value: string, color: string }) => {
-    const { t } = useTranslation();
+const StatCard = ({label, value, color}: { label: string, value: string, color: string }) => {
+    const {t} = useTranslation();
     return (
         <View style={styles.statCard}>
-            <View style={[styles.badge, { backgroundColor: color }]}>
+            <View style={[styles.badge, {backgroundColor: color}]}>
                 <Text style={styles.badgeText}>{t('badge_total')}</Text>
             </View>
             <Text style={styles.statValue}>{value}</Text>
@@ -70,7 +70,7 @@ const StatCard = ({ label, value, color }: { label: string, value: string, color
     );
 };
 
-const TabButton = ({ label, active, onPress, badge }: any) => (
+const TabButton = ({label, active, onPress, badge}: any) => (
     <TouchableOpacity onPress={onPress} style={[styles.tabButton, active && styles.tabButtonActive]}>
         <Text style={[styles.tabText, active && styles.tabTextActive]}>{label}</Text>
         {badge && <View style={styles.tabBadge}><Text style={styles.tabBadgeText}>{badge}</Text></View>}
@@ -78,7 +78,7 @@ const TabButton = ({ label, active, onPress, badge }: any) => (
 );
 
 const UsersView = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     return (
         <View>
             <View style={styles.searchRow}>
@@ -88,25 +88,26 @@ const UsersView = () => {
                     placeholderTextColor="#666"
                 />
                 <TouchableOpacity style={styles.bannedBtn}>
-                    <Text style={{ color: '#fff', fontSize: 12 }}>{t('banned_users_btn')}</Text>
+                    <Text style={{color: '#fff', fontSize: 12}}>{t('banned_users_btn')}</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.userCard}>
                 <View style={styles.userInfo}>
-                    <View style={styles.avatar}><Text style={{ color: '#fff' }}>AL</Text></View>
+                    <View style={styles.avatar}><Text style={{color: '#fff'}}>AL</Text></View>
                     <View>
                         <Text style={styles.userName}>@alexdj</Text>
                         <Text style={styles.userBio}>Electronic music enthusiast</Text>
-                        <Text style={styles.userStats}>1247 {t('admin_followers').toLowerCase()} • 138 {t('stat_albums').toLowerCase()}</Text>
+                        <Text style={styles.userStats}>1247 {t('admin_followers').toLowerCase()} •
+                            138 {t('stat_albums').toLowerCase()}</Text>
                     </View>
                 </View>
                 <View style={styles.cardActions}>
                     <TouchableOpacity style={styles.btnSecondary}>
-                        <Text style={{ color: '#fff' }}>{t('view_profile')}</Text>
+                        <Text style={{color: '#fff'}}>{t('view_profile')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnDanger}>
-                        <Text style={{ color: '#fff' }}>{t('ban_user')}</Text>
+                        <Text style={{color: '#fff'}}>{t('ban_user')}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -115,28 +116,28 @@ const UsersView = () => {
 };
 
 const ReportsView = () => {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     return (
         <View>
             <View style={styles.reportCard}>
                 <View style={styles.reportHeader}>
-                    <Text style={styles.reportTitle}>{t('report_number', { id: '1' })}</Text>
+                    <Text style={styles.reportTitle}>{t('report_number', {id: '1'})}</Text>
                     <View style={styles.pendingBadge}>
-                        <Text style={{ color: '#fff', fontSize: 10 }}>{t('status_pending')}</Text>
+                        <Text style={{color: '#fff', fontSize: 10}}>{t('status_pending')}</Text>
                     </View>
                 </View>
                 <Text style={styles.reportDetail}>
-                    {t('target')}: <Text style={{ color: '#4cc9f0' }}>@spammer01</Text>
+                    {t('target')}: <Text style={{color: '#4cc9f0'}}>@spammer01</Text>
                 </Text>
                 <Text style={styles.reportDetail}>
-                    {t('admin_report_reason', { reason: t('reason_inappropriate_language') })}
+                    {t('admin_report_reason', {reason: t('reason_inappropriate_language')})}
                 </Text>
                 <View style={styles.cardActions}>
                     <TouchableOpacity style={styles.btnPrimary}>
-                        <Text style={{ color: '#fff' }}>{t('check_content')}</Text>
+                        <Text style={{color: '#fff'}}>{t('check_content')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnDanger}>
-                        <Text style={{ color: '#fff' }}>{t('take_action')}</Text>
+                        <Text style={{color: '#fff'}}>{t('take_action')}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -365,7 +366,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         alignItems: 'center'
     },
-    content: { flex: 1 }
+    content: {flex: 1}
 });
 
 export default AdminDashboard;

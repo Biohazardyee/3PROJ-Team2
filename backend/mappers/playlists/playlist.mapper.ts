@@ -16,9 +16,6 @@ class PlaylistMapper extends BaseMapper<Playlists, PlaylistResponseDto> {
      * Implémentation de la méthode abstraite
      */
 
-    // Dans votre classe PlaylistMapper
-// Dans src/mappers/playlists/playlist.mapper.ts
-
     protected mapOne(playlist: any): PlaylistResponseDto {
         return {
             id: playlist.id,
@@ -32,7 +29,7 @@ class PlaylistMapper extends BaseMapper<Playlists, PlaylistResponseDto> {
             updated_at: playlist.updated_at,
 
             items: playlist.items ? playlist.items.map((item: any) => {
-                // 1. Parsing sécurisé
+
                 let content = item.media?.content;
                 if (typeof content === 'string') {
                     try {
@@ -58,12 +55,12 @@ class PlaylistMapper extends BaseMapper<Playlists, PlaylistResponseDto> {
                 return {
                     id: item.id,
                     media_id: item.media_id,
-                    rating: ratingValue, // Défini maintenant
+                    rating: ratingValue,
                     media: item.media ? {
                         id: item.media.id,
                         title: title,
                         cover: cover || '',
-                        rating: ratingValue // On l'assigne aussi ici pour votre frontend
+                        rating: ratingValue
                     } : undefined
                 };
             }) : [],
@@ -108,7 +105,7 @@ class PlaylistMapper extends BaseMapper<Playlists, PlaylistResponseDto> {
         if (dto.items) {
             dto.items = dto.items.map(item => ({
                 ...item,
-                rating: reviewMap.get(item.media_id) || 0 // Récupère la note user ou 0
+                rating: reviewMap.get(item.media_id) || 0
             }));
         }
         return dto;

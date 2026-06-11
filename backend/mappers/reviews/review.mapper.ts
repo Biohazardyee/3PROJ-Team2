@@ -116,7 +116,6 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
         ? {
             id: r.user.id,
             username: r.user.username,
-            // CORRECTION ICI
             image: r.user.profile_picture
               ? `data:image/jpeg;base64,${Buffer.from(r.user.profile_picture).toString("base64")}`
               : null,
@@ -142,7 +141,6 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
         ? {
             id: review.user.id,
             username: review.user.username,
-            // CORRECTION ICI
             image: review.user.profile_picture
               ? `data:image/jpeg;base64,${Buffer.from(review.user.profile_picture).toString("base64")}`
               : null,
@@ -173,7 +171,7 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
   }
 
   toReviewWithMediaDtoList(reviews: any[]): ReviewWithMediaDto[] {
-    return reviews.map((r) => this.toReviewWithMediaDto(r));
+    return reviews.map((r):ReviewWithMediaDto => this.toReviewWithMediaDto(r));
   }
 }
 

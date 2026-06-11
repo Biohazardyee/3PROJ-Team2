@@ -127,30 +127,6 @@ class MediaController extends Controller {
             next(error);
         }
     }
-
-    async getBulkRatings(
-        req: Request,
-        res: Response,
-        next: NextFunction,
-    ): Promise<void> {
-        try {
-            const {ids} = req.body;
-
-            if (!ids || !Array.isArray(ids)) {
-                throw new BadRequest("A field 'ids' (array of strings) is required");
-            }
-
-            const medias: MediaResponseDto[] = await this.service.getByApiIds(ids);
-
-            res.status(200).json({
-                message: "Bulk ratings retrieved successfully",
-                medias,
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
-
     async syncSearchResults(
         req: Request,
         res: Response,
@@ -163,7 +139,7 @@ class MediaController extends Controller {
                 throw new BadRequest("A field 'albums' (array of objects) is required");
             }
 
-            const syncedAlbums = await this.service.syncSearchResults(albums);
+            const syncedAlbums: MediaResponseDto[] = await this.service.syncSearchResults(albums);
 
             res.status(200).json({
                 message: "Albums synchronized successfully",

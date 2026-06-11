@@ -128,11 +128,11 @@ class ActivityController extends Controller {
 
     async getGlobalFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const limit = parseInt(req.query.limit as string) || 10;
-            const offset = parseInt(req.query.offset as string) || 0;
+            const limit: number = parseInt(req.query.limit as string) || 10;
+            const offset: number = parseInt(req.query.offset as string) || 0;
             const current_user_id = req.query.current_user_id as string;
 
-            const feed = await this.service.getGlobalFeed(limit, offset, current_user_id);
+            const feed: FeedItem[] = await this.service.getGlobalFeed(limit, offset, current_user_id);
             res.status(200).json({
                 message: 'Global feed retrieved', feed
             });
@@ -141,11 +141,11 @@ class ActivityController extends Controller {
 
     async getDiscoveryFeed(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const user_id = req.params.id;
+            const user_id: string = req.params.id;
 
-            const limit = parseInt(req.query.limit as string) || 10;
+            const limit: number = parseInt(req.query.limit as string) || 10;
 
-            const feed = await this.service.getDiscoveryFeed(user_id, limit);
+            const feed: FeedItem[] = await this.service.getDiscoveryFeed(user_id, limit);
             res.status(200).json({
                 message: 'Discovery feed retrieved', feed
             });
