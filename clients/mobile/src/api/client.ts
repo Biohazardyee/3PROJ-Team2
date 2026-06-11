@@ -26,7 +26,14 @@ apiClient.interceptors.response.use(
   async (error): Promise<never> => {
     if (error.response?.status === 401) {
       await SecureStore.deleteItemAsync("userToken");
-      router.replace("/login"); // mieux que push
+
+      setTimeout(() => {
+        try {
+          router.replace("/login");
+        } catch (navError) {
+          console.error("Échec de la redirection automatique 401:", navError);
+        }
+      }, 0);
     }
     return Promise.reject(error);
   },
