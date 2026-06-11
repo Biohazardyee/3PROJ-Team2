@@ -1,11 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite' // Doit être présent
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [
     react(),
-    tailwindcss(), // Doit être présent
+    tailwindcss(),
   ],
+  server: {
+    allowedHosts: ['melodia.cloud', 'www.melodia.cloud'],
+  },
 })
 

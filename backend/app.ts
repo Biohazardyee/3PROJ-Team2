@@ -4,7 +4,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import cors from 'cors';
+import cors from "cors";
 
 // DB Endpoints
 import userRouter from "./routes/db/users.js";
@@ -50,11 +50,27 @@ app.set("view engine", "ejs");
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://melodia.cloud",
+  "https://www.melodia.cloud",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Bloqué par CORS - Origine non autorisée"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 
