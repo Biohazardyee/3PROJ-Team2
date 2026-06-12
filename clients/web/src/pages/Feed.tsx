@@ -15,7 +15,6 @@ import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import FeedCard, {FeedItem} from "../components/FeedCard";
 
-
 type TabType = "all" | "following" | "trending";
 
 interface FeedsCache {

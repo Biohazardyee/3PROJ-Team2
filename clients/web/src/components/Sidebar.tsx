@@ -186,7 +186,7 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
                         onClick={toggleTheme}
                         className="flex items-center gap-4 w-full p-3 rounded-xl transition-colors text-gray-400 hover:text-white hover:bg-[#2A2A38]/50 dark:text-gray-500 dark:hover:bg-gray-100 dark:hover:text-gray-900"
                     >
-                        {theme === 'dark' ? (
+                        {theme === 'light' ? (
                             <>
                                 <Sun size={20} className="text-yellow-400"/>
                                 <span className="font-semibold text-sm">{t('light_mode')}</span>

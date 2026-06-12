@@ -102,7 +102,7 @@ export const Header = ({onMenuClick}: HeaderProps) => {
             <div className="flex items-center z-10">
                 <button
                     onClick={onMenuClick}
-                    className="text-gray-400 dark:text-gray-600 hover:text-white dark:hover:text-gray-900 transition-colors"
+                    className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 transition-colors"
                 >
                     <Menu size={28}/>
                 </button>
@@ -125,7 +125,7 @@ export const Header = ({onMenuClick}: HeaderProps) => {
         </span>
             </div>
 
-            <div className="flex items-center gap-6 text-gray-300 dark:text-gray-600 z-10">
+            <div className="flex items-center gap-6 text-gray-300 dark:text-gray-500 z-10">
                 {isLoggedIn ? (
                     <>
                         <button
@@ -140,10 +140,12 @@ export const Header = ({onMenuClick}: HeaderProps) => {
                 </span>
                             )}
                         </button>
+
                         <NotificationBell/>
+
                         <button
                             onClick={() => navigate("/profil")}
-                            className="w-10 h-10 rounded-full border-2 border-indigo-500/30 overflow-hidden bg-slate-800 flex items-center justify-center"
+                            className="w-10 h-10 rounded-full border-2 border-indigo-500/30 overflow-hidden bg-slate-800 dark:bg-indigo-50 flex items-center justify-center transition-colors"
                         >
                             {profilePic ? (
                                 <img
@@ -152,7 +154,7 @@ export const Header = ({onMenuClick}: HeaderProps) => {
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
-                                <span className="text-xs font-bold text-indigo-300">ME</span>
+                                <span className="text-xs font-bold text-indigo-300 dark:text-indigo-600">ME</span>
                             )}
                         </button>
                     </>

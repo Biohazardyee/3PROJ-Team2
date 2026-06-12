@@ -52,6 +52,8 @@ const NotificationCard: React.FC<{
     onClick: () => void;
     onAvatarClick: (e: React.MouseEvent) => void;
 }> = ({notification, onClick, onAvatarClick}) => {
+    const {t} = useTranslation(); // ✅ Ajout pour la traduction locale dans la carte
+
     const displayUser: string =
         notification.related_user?.username ||
         notification.sender?.username ||
@@ -60,6 +62,23 @@ const NotificationCard: React.FC<{
     const userProfilePic: string | undefined =
         notification.related_user?.profile_image ||
         notification.sender?.profile_image;
+
+    // ✅ Génération et traduction dynamique de la phrase
+    const getNotificationText = (): string => {
+        // Clé générée dynamiquement (ex: notification_action_review_added)
+        const translationKey = `notification_action_${notification.action}`;
+
+        // On tente de traduire en fournissant le username pour l'injection i18n
+        const translated = t(translationKey, { username: displayUser });
+
+        // Si la traduction n'existe pas (clé renvoyée identique à la clé fournie),
+        // on se rabat sur le content bdd ou l'action brute.
+        if (translated === translationKey) {
+            return notification.content || notification.action;
+        }
+
+        return translated;
+    };
 
     return (
         <div
@@ -90,12 +109,10 @@ const NotificationCard: React.FC<{
 
                 <div className="flex flex-col">
                     <div className="text-slate-100 dark:text-gray-900 text-[15px] leading-relaxed">
-            <span className="font-bold text-white dark:text-gray-900 tracking-wide">
-              {displayUser}
-            </span>{" "}
-                        <span className="text-slate-300 dark:text-gray-600">
-              {notification.content || notification.action}
-            </span>
+                        {/* ✅ Remplacement par la fonction i18n unifiée */}
+                        <span className="text-slate-200 dark:text-gray-700">
+                            {getNotificationText()}
+                        </span>
                     </div>
                     <p className="text-slate-500 dark:text-gray-400 text-sm mt-1">
                         {new Date(notification.created_at).toLocaleDateString()}
@@ -210,13 +227,13 @@ const Notifications: React.FC = () => {
         if (activeTab === "Non lues")
             return notifications.filter((n: AppNotification) => !n.is_read);
         if (activeTab === "Mentions")
-            return notifications.filter((n: AppNotification): boolean => n.action === "mention");
+            return notifications.filter((n: AppNotification): boolean => n.action === "mention" || n.action === "recommendation");
         return notifications;
     }, [notifications, activeTab]);
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+            <div className="min-h-screen flex items-center justify-center bg-slate-950 dark:bg-slate-50 text-white dark:text-gray-900 transition-colors duration-300">
                 <Loader2 className="animate-spin" size={48}/>
             </div>
         );

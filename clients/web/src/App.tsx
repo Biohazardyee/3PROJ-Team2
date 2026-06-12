@@ -24,6 +24,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import AuthGuard from "./components/AuthGuard";
 import AuthRequired from "./pages/AuthRequired.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import AdminRoute from "./components/AdminRoute.tsx"; // ✅ 1. Importation du nouveau guard admin
 import AuthCallback from "./pages/AuthCallback.tsx";
 
 const AuthRedirectListener: React.FC = (): null => {
@@ -59,8 +60,7 @@ const App: React.FC = () => {
                     <Route path="/auth-required" element={<AuthRequired/>}/>
                     <Route path="/home" element={<Home/>}/>
 
-
-                    {/* --- DEBUT DES ROUTES PROTEGÉES --- */}
+                    {/* --- DEBUT DES ROUTES PROTEGÉES (Utilisateurs connectés) --- */}
                     <Route element={<ProtectedRoute/>}>
                         <Route path="/feed" element={<Feed/>}/>
                         <Route path="/stats" element={<Stats/>}/>
@@ -69,9 +69,13 @@ const App: React.FC = () => {
                         <Route path="/conversations" element={<Conversations/>}/>
                         <Route path="/profil/:id?" element={<Profil/>}/>{" "}
                         <Route path="/settings" element={<Settings/>}/>
-                        <Route path="/admindashboard" element={<AdminDashboard/>}/>
                         <Route path="/create-playlist" element={<CreatePlaylist/>}/>
                         <Route path="/authguard" element={<AuthGuard/>}/>
+
+                        {/* --- ROUTES RÉSERVÉES UNIQUEMENT AUX ADMINS --- */}
+                        <Route element={<AdminRoute />}>
+                            <Route path="/admindashboard" element={<AdminDashboard/>}/>
+                        </Route>
                     </Route>
                     {/* --- FIN DES ROUTES PROTEGÉES --- */}
                 </Route>

@@ -14,7 +14,7 @@ services:
       - melodia-network
 
   api:
-    image: api:latest
+    image: melodia-api:latest
     restart: always
     env_file:
       - ./backend/.env

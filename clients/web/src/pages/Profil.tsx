@@ -12,6 +12,8 @@ import {
     Music,
     ArrowLeft,
     MoreVertical,
+    Star,
+    MessageSquare,
 } from "lucide-react";
 import {NavigateFunction, useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
@@ -61,6 +63,14 @@ const formatReviewItem = (
         comments_count: item.comments_count ?? item._count?.comments ?? 0,
         isLiked: userHasLiked,
     };
+};
+
+const getRatingColors = (rating: number) => {
+    if (rating >= 4.5) return { bg: "bg-emerald-500/10", text: "text-emerald-600 dark:text-emerald-500", border: "border-emerald-500/20", fill: "#10b981" };
+    if (rating >= 3.5) return { bg: "bg-blue-500/10", text: "text-blue-600 dark:text-blue-500", border: "border-blue-500/20", fill: "#3b82f6" };
+    if (rating >= 2.5) return { bg: "bg-amber-500/10", text: "text-amber-600 dark:text-amber-500", border: "border-amber-500/20", fill: "#f59e0b" };
+    if (rating >= 1.5) return { bg: "bg-orange-500/10", text: "text-orange-600 dark:text-orange-500", border: "border-orange-500/20", fill: "#f97316" };
+    return { bg: "bg-rose-500/10", text: "text-rose-600 dark:text-rose-500", border: "border-rose-500/20", fill: "#f43f5e" };
 };
 
 const Profil: React.FC = () => {
@@ -474,7 +484,7 @@ const Profil: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#0f1117] flex items-center justify-center">
+            <div className="min-h-screen bg-[#0f1117] dark:bg-slate-50 flex items-center justify-center transition-colors duration-300">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
             </div>
         );
@@ -836,56 +846,94 @@ const Profil: React.FC = () => {
                         )}
 
                         {activeTab === "activity" && (
-                            <div className="space-y-4 max-w-2xl mx-auto">
-                                {recentActivity.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 p-4 rounded-xl shadow-sm"
-                                    >
-                                        <div className="text-sm text-slate-300 dark:text-gray-700 mb-2 font-medium">
-                                            <span className="font-bold text-white dark:text-gray-900">
-                                                {item.user_name}
-                                            </span>{" "}
-                                            a évalué un album
-                                        </div>
+                            <div className="space-y-4 w-full">
+                                {recentActivity.map((item) => {
+                                    const ratingColors = getRatingColors(item.rating);
 
+                                    return (
                                         <div
-                                            onClick={() => navigate(`/album/${item.media_id}`)}
-                                            className="flex items-center gap-3 bg-slate-900/40 dark:bg-gray-50 border border-slate-800/50 dark:border-gray-100 p-2 rounded-lg cursor-pointer hover:bg-slate-900/80 dark:hover:bg-gray-100 transition-all mb-3"
+                                            key={item.id}
+                                            className="bg-[#1a1d26] dark:bg-white border border-slate-800/80 dark:border-gray-200 p-6 rounded-2xl shadow-md flex gap-5 md:gap-6 transition-all hover:border-slate-700/50 group"
                                         >
-                                            <img
-                                                src={item.cover}
-                                                alt={item.album}
-                                                className="w-12 h-12 rounded object-cover shrink-0"
-                                            />
-                                            <div className="min-w-0">
-                                                <div
-                                                    className="text-sm font-semibold text-white dark:text-gray-900 truncate">
-                                                    {item.album}
+                                            <div
+                                                onClick={() => navigate(`/album/${item.media_id}`)}
+                                                className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-xl overflow-hidden shrink-0 shadow-lg cursor-pointer relative border border-slate-800/60 dark:border-gray-100"
+                                            >
+                                                <img
+                                                    src={item.cover}
+                                                    alt={item.album}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                />
+                                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <Music size={20} className="text-white opacity-80" />
                                                 </div>
-                                                <div className="text-xs text-slate-400 dark:text-gray-500 truncate">
-                                                    {item.artist}
+                                            </div>
+
+                                            <div className="flex-1 flex flex-col justify-between min-w-0">
+                                                <div>
+                                                    <div className="flex items-start justify-between gap-2 mb-1">
+                                                        <div className="text-sm md:text-base min-w-0">
+                                                            <span className="font-bold text-white dark:text-gray-900 truncate block sm:inline">
+                                                                {item.user_name}
+                                                            </span>
+                                                            <span className="text-slate-400 dark:text-gray-500 sm:ml-1.5 text-xs sm:text-sm">
+                                                                a évalué l'album
+                                                            </span>
+                                                            <span
+                                                                onClick={() => navigate(`/album/${item.media_id}`)}
+                                                                className="font-semibold text-indigo-400 dark:text-indigo-600 hover:underline sm:ml-1.5 cursor-pointer truncate block sm:inline"
+                                                            >
+                                                                {item.album}
+                                                            </span>
+                                                            <span className="text-slate-500 dark:text-gray-400 text-xs md:text-sm block sm:ml-1.5 sm:inline">
+                                                                par {item.artist}
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Badge de Note dynamique */}
+                                                        {item.rating > 0 && (
+                                                            <div className={`flex items-center gap-1 ${ratingColors.bg} ${ratingColors.text} px-3 py-1 rounded-full text-xs md:text-sm font-bold border ${ratingColors.border} shrink-0 shadow-sm`}>
+                                                                <Star size={14} fill={ratingColors.fill} className={ratingColors.text} />
+                                                                <span>{item.rating}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {item.content && (
+                                                        <div className="relative bg-slate-900/40 dark:bg-gray-50 p-4 rounded-xl border border-slate-800/40 dark:border-gray-100/80 my-2">
+                                                            <p className="text-slate-300 dark:text-gray-600 text-sm md:text-base leading-relaxed italic">
+                                                                "{item.content}"
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="flex items-center gap-5 mt-2 pt-2 border-t border-slate-800/40 dark:border-gray-100/60">
+                                                    <button
+                                                        onClick={() => handleLike(item.id)}
+                                                        className={`flex items-center gap-1.5 text-xs md:text-sm font-semibold transition-colors ${
+                                                            item.isLiked
+                                                                ? "text-pink-500"
+                                                                : "text-slate-400 hover:text-pink-500 dark:text-gray-500 dark:hover:text-pink-600"
+                                                        }`}
+                                                    >
+                                                        <Heart
+                                                            size={15}
+                                                            fill={item.isLiked ? "#ec4899" : "none"}
+                                                            className={item.isLiked ? "text-pink-500" : ""}
+                                                        />
+                                                        <span>{item.likes_count} {item.likes_count > 1 ? "j'aime" : "j'aime"}</span>
+                                                    </button>
+
+                                                    <div className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 dark:text-gray-400 font-medium">
+                                                        <MessageSquare size={15} />
+                                                        <span>{item.comments_count} {item.comments_count > 1 ? "commentaires" : "commentaire"}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <p className="text-slate-300 dark:text-gray-600 text-sm mb-3 leading-relaxed">
-                                            {item.content}
-                                        </p>
-
-                                        <button
-                                            onClick={() => handleLike(item.id)}
-                                            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-pink-500 font-semibold transition-colors"
-                                        >
-                                            <Heart
-                                                size={16}
-                                                fill={item.isLiked ? "#ec4899" : "none"}
-                                                className={item.isLiked ? "text-pink-500" : ""}
-                                            />
-                                            <span>{item.likes_count}</span>
-                                        </button>
-                                    </div>
-                                ))}
+                                    );
+                                })}
 
                                 {hasMoreActivity && (
                                     <div className="text-center pt-4">

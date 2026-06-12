@@ -11,6 +11,7 @@ import {jwtDecode} from "jwt-decode";
 import {io, Socket} from "socket.io-client";
 import {useNavigate} from "react-router-dom";
 import apiClient from "../api/client";
+import UserAvatar from "../components/UserAvatar";
 
 interface BackendUser {
     id: string;
@@ -490,16 +491,25 @@ const Conversations: React.FC = () => {
                                 return (
                                     <div
                                         key={msg.id}
-                                        className={`max-w-[80%] flex flex-col ${isMe ? "self-end items-end" : "self-start items-start"}`}
+                                        className={`max-w-[80%] flex items-start gap-2 ${isMe ? "self-end" : "self-start"}`}
                                     >
-                                        <div
-                                            className={`px-4 py-2.5 rounded-2xl text-sm ${isMe ? "bg-blue-600 text-white rounded-tr-none shadow-md" : "bg-[#1a1d26] dark:bg-slate-100 text-slate-200 dark:text-gray-800 border border-slate-800 dark:border-slate-200 rounded-tl-none"}`}
-                                        >
-                                            {msg.content}
+                                        {!isMe && (
+                                            <UserAvatar
+                                                userId={activeChatUser?.id}
+                                                username={activeChatUser?.username}
+                                                sizeClass="w-7 h-7 text-[10px] mt-0.5"
+                                            />
+                                        )}
+                                        <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                                            <div
+                                                className={`px-4 py-2.5 rounded-2xl text-sm ${isMe ? "bg-blue-600 text-white rounded-tr-none shadow-md" : "bg-[#1a1d26] dark:bg-slate-100 text-slate-200 dark:text-gray-800 border border-slate-800 dark:border-slate-200 rounded-tl-none"}`}
+                                            >
+                                                {msg.content}
+                                            </div>
+                                            <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 px-1">
+                                                {messageTime}
+                                            </span>
                                         </div>
-                                        <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 px-1">
-                      {messageTime}
-                    </span>
                                     </div>
                                 );
                             })}

@@ -432,7 +432,7 @@ const AlbumDetails: React.FC = () => {
     if (loading) {
         return (
             <div
-                className="min-h-screen bg-[#0f111a] dark:bg-slate-50 flex items-center justify-center text-white dark:text-gray-900">
+                className="min-h-screen bg-[#0f1117] dark:bg-slate-50 text-white dark:text-gray-900 flex items-center justify-center">
                 <Loader2 className="animate-spin text-pink-500" size={48}/>
             </div>
         );
@@ -785,7 +785,7 @@ const AlbumDetails: React.FC = () => {
 
     return (
         <div
-            className="min-h-screen bg-[#0f111a] dark:bg-slate-50 text-white dark:text-gray-900 font-sans pb-20 transition-colors duration-300">
+            className="min-h-screen bg-[#0f1117] dark:bg-slate-50 text-white dark:text-gray-900 font-sans pb-20 transition-colors duration-300">
             {isPlaylistModalOpen && (
                 <>
                     <div
@@ -1120,25 +1120,24 @@ const AlbumDetails: React.FC = () => {
                                                     ) : (
                                                         <>
                                                             {/* Actions directes */}
-                                                            <div
-                                                                className="absolute top-6 right-6 flex items-center gap-2">
+                                                            <div className="absolute top-6 right-6 flex items-center gap-2">
                                                                 {isMyComment(comment) ? (
                                                                     <>
                                                                         {/* Bouton Modifier */}
                                                                         <button
                                                                             onClick={() => startEditing(comment)}
-                                                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-blue-400 bg-slate-800/40 hover:bg-blue-500/10 rounded-lg transition-all border border-slate-700/50 hover:border-blue-500/20"
+                                                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 dark:text-slate-600 hover:text-blue-400 dark:hover:text-blue-600 bg-slate-800/40 dark:bg-slate-100 hover:bg-blue-500/10 dark:hover:bg-blue-50 rounded-lg transition-all border border-slate-700/50 dark:border-slate-300 hover:border-blue-500/20 dark:hover:border-blue-300"
                                                                         >
-                                                                            <Edit3 size={13}/>
+                                                                            <Edit3 size={13} />
                                                                             <span>{t("modify")}</span>
                                                                         </button>
 
                                                                         {/* Bouton Supprimer */}
                                                                         <button
                                                                             onClick={() => deleteComment(comment.id)}
-                                                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-rose-500 bg-slate-800/40 hover:bg-rose-500/10 rounded-lg transition-all border border-slate-700/50 hover:border-rose-500/20"
+                                                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 dark:text-rose-600 hover:text-rose-500 dark:hover:text-rose-700 bg-slate-800/40 dark:bg-rose-50 hover:bg-rose-500/10 dark:hover:bg-rose-100 rounded-lg transition-all border border-slate-700/50 dark:border-rose-200 hover:border-rose-500/20 dark:hover:border-rose-300"
                                                                         >
-                                                                            <Trash2 size={13}/>
+                                                                            <Trash2 size={13} />
                                                                             <span>{t("delete")}</span>
                                                                         </button>
                                                                     </>
@@ -1149,10 +1148,10 @@ const AlbumDetails: React.FC = () => {
                                                                             setReportingReviewId(comment.id);
                                                                             setIsReportModalOpen(true);
                                                                         }}
-                                                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-rose-500 bg-slate-800/40 hover:bg-rose-500/10 rounded-lg transition-all border border-slate-700/50 hover:border-rose-500/20"
+                                                                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-600 bg-slate-800/40 dark:bg-slate-100 hover:bg-rose-500/10 dark:hover:bg-rose-50 rounded-lg transition-all border border-slate-700/50 dark:border-slate-300 hover:border-rose-500/20 dark:hover:border-rose-300"
                                                                         title={t("report_review", "Signaler cet avis")}
                                                                     >
-                                                                        <Flag size={13}/>
+                                                                        <Flag size={13} />
                                                                         <span>{t("report", "Signaler")}</span>
                                                                     </button>
                                                                 )}
@@ -1341,26 +1340,25 @@ const AlbumDetails: React.FC = () => {
                                                                                             </div>
                                                                                         </div>
 
-                                                                                        <div
-                                                                                            className="flex items-center gap-2 shrink-0 mt-0.5">
+                                                                                        <div className="flex items-center gap-2 shrink-0 mt-0.5">
                                                                                             <button
                                                                                                 onClick={() =>
                                                                                                     setActiveNestedReplyId(
                                                                                                         activeNestedReplyId === reply.id ? null : reply.id
                                                                                                     )
                                                                                                 }
-                                                                                                className="text-xs text-blue-500 hover:text-blue-400"
+                                                                                                className="text-xs text-blue-500 dark:text-blue-600 hover:text-blue-400 dark:hover:text-blue-700"
                                                                                             >
                                                                                                 {t("reply")}
                                                                                             </button>
 
-                                                                                            {/* ✅ Si c'est mon commentaire : Supprimer, sinon : Signaler */}
+                                                                                            {/* Si c'est mon commentaire : Supprimer, sinon : Signaler */}
                                                                                             {isMyComment(reply) ? (
                                                                                                 <button
                                                                                                     onClick={() => deleteReply(reply.id)}
-                                                                                                    className="flex items-center gap-1 text-xs text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600 px-2 py-1 rounded-lg transition-colors border border-rose-500/20"
+                                                                                                    className="flex items-center gap-1 text-xs text-rose-400 dark:text-rose-600 hover:text-white dark:hover:text-white bg-rose-500/10 dark:bg-rose-100 hover:bg-rose-600 dark:hover:bg-rose-500 px-2 py-1 rounded-lg transition-colors border border-rose-500/20 dark:border-rose-300"
                                                                                                 >
-                                                                                                    <Trash2 size={11}/>
+                                                                                                    <Trash2 size={11} />
                                                                                                     {t("delete") || "Supprimer"}
                                                                                                 </button>
                                                                                             ) : (
@@ -1370,10 +1368,10 @@ const AlbumDetails: React.FC = () => {
                                                                                                         setReportingReviewId(null);
                                                                                                         setIsReportModalOpen(true);
                                                                                                     }}
-                                                                                                    className="flex items-center gap-1 text-xs text-slate-500 hover:text-rose-500 transition-colors"
+                                                                                                    className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-600 transition-colors"
                                                                                                     title={t("report_comment", "Signaler ce commentaire")}
                                                                                                 >
-                                                                                                    <Flag size={11}/>
+                                                                                                    <Flag size={11} />
                                                                                                     <span>{t("report", "Signaler")}</span>
                                                                                                 </button>
                                                                                             )}
@@ -1469,10 +1467,10 @@ const AlbumDetails: React.FC = () => {
                                                         alt={item.name}
                                                         className="w-full aspect-square object-cover rounded-lg"
                                                     />
-                                                    <p className="text-sm mt-2 font-medium text-white truncate">
+                                                    <p className="text-sm mt-2 font-medium text-white dark:text-slate-900 truncate">
                                                         {item.name}
                                                     </p>
-                                                    <p className="text-xs text-gray-400 truncate">
+                                                    <p className="text-xs text-gray-400 dark:text-slate-500 truncate">
                                                         {item.artist.name}
                                                     </p>
                                                 </div>
