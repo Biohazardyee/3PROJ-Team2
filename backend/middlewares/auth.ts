@@ -2,7 +2,21 @@ import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Unauthorized } from '../utils/errors.js';
 
+export function optionalAuthGuard(req: Request, _res: Response, next: NextFunction): void {
+    const authHeader: string | undefined = req.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return next();
 
+    const token: string = authHeader.split(' ')[1].replace(/#.*$/, '').trim();
+    if (!token) return next();
+
+    try {
+        const secret: string | undefined = process.env.JWT_SECRET;
+        if (secret) (req as any).user = jwt.verify(token, secret);
+    } catch (_) {
+        // token invalide ou expiré : on continue sans user
+    }
+    next();
+}
 
 export function authGuard(req: Request, _res: Response, next: NextFunction): void {
     const authHeader: string | undefined = req.get('Authorization');

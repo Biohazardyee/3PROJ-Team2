@@ -15,6 +15,7 @@ import {jwtDecode} from "jwt-decode";
 import apiClient from "../api/client";
 import {io, Socket} from "socket.io-client";
 import {useTranslation} from "react-i18next";
+import {useTheme} from "../context/ThemeContext";
 
 import ChatItem from "../components/ChatItem";
 
@@ -55,6 +56,7 @@ interface Conversation {
 const Conversations = () => {
     const navigation = useNavigation<any>();
     const {t} = useTranslation();
+    const {theme} = useTheme();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -86,7 +88,13 @@ const Conversations = () => {
             const response = await apiClient.get(
                 `/conversations/user/${currentUserId}`,
             );
-            setConversations(response.data.conversations || []);
+            const data: Conversation[] = response.data.conversations || [];
+            const sorted = data.sort((a, b) => {
+                const tA = a.messages[0] ? new Date(a.messages[0].created_at).getTime() : 0;
+                const tB = b.messages[0] ? new Date(b.messages[0].created_at).getTime() : 0;
+                return tB - tA;
+            });
+            setConversations(sorted);
         } catch (error: any) {
             console.error("Erreur Fetch Conversations:", error.message);
         } finally {
@@ -176,14 +184,14 @@ const Conversations = () => {
 
     if (loading) {
         return (
-            <View style={[styles.safeArea, {justifyContent: "center"}]}>
+            <View style={[styles.safeArea, {backgroundColor: theme.background, justifyContent: "center"}]}>
                 <ActivityIndicator size="large" color="#4cc9f0"/>
             </View>
         );
     }
 
     return (
-        <View style={styles.safeArea}>
+        <View style={[styles.safeArea, {backgroundColor: theme.background}]}>
             <Header/>
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
@@ -196,13 +204,17 @@ const Conversations = () => {
                 }
             >
                 <View style={styles.titleWrapper}>
-                    <Text style={styles.glitchTitleSub}>{t("messages_title")}</Text>
+                    <Text style={[styles.glitchTitleSub, {color: theme.text}]}>{t("messages_title")}</Text>
                 </View>
 
                 <TextInput
                     placeholder={t("search_conv_placeholder")}
-                    placeholderTextColor="#666"
-                    style={styles.searchInput}
+                    placeholderTextColor={theme.placeholder}
+                    style={[styles.searchInput, {
+                        backgroundColor: theme.surface,
+                        borderColor: theme.border,
+                        color: theme.text,
+                    }]}
                 />
 
                 <View style={styles.chatList}>
@@ -240,10 +252,11 @@ const Conversations = () => {
                                 key={conv.id}
                                 id={conv.id}
                                 name={otherUser.username}
-                                msg={lastMsg?.content || "Commencez la discussion..."}
+                                msg={lastMsg?.content || t("msg_start_conversation")}
                                 time={formattedTime}
                                 unread={conv._count?.messages || 0}
                                 initials={otherUser.username.substring(0, 2).toUpperCase()}
+                                image={otherUser.profile_picture || ""}
                                 isSystem={otherUser.role === "ADMIN"}
                                 onPress={async (): Promise<void> => {
                                     activeConversationIdRef.current = conv.id;
@@ -266,6 +279,7 @@ const Conversations = () => {
                                     navigation.navigate("detailsConversations", {
                                         conversationId: conv.id,
                                         userName: otherUser.username,
+                                        userProfilePic: otherUser.profile_picture || "",
                                     });
                                 }}
                             />
@@ -280,7 +294,6 @@ const Conversations = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: "#0b0c14",
     },
     scrollContent: {
         paddingHorizontal: 16,
@@ -293,21 +306,17 @@ const styles = StyleSheet.create({
         borderLeftColor: "#4cc9f0",
     },
     glitchTitleSub: {
-        color: "#fff",
         fontSize: 28,
         fontWeight: "900",
         textTransform: "uppercase",
         letterSpacing: 2,
     },
     searchInput: {
-        backgroundColor: "#16172b",
         borderRadius: 20,
         padding: 18,
-        color: "#fff",
         fontSize: 16,
         marginBottom: 30,
         borderWidth: 1,
-        borderColor: "#2d2e4a",
         shadowColor: "#000",
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.3,

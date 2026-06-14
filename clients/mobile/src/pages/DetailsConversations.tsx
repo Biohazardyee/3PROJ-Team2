@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import {
     View,
     Text,
+    Image,
     StyleSheet,
     FlatList,
     TextInput,
@@ -16,22 +17,45 @@ import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
 import {useTranslation} from "react-i18next";
-
 import {io, Socket} from "socket.io-client";
+import {useTheme} from "../context/ThemeContext";
 
 const SOCKET_URL: string | undefined = process.env.EXPO_PUBLIC_API_URL;
 
 const DetailsConversations = () => {
-    const {conversationId, userName} = useLocalSearchParams();
+    const {conversationId, userName, userProfilePic} = useLocalSearchParams();
     const router: Router = useRouter();
     const {t} = useTranslation();
+    const {theme, isDarkMode} = useTheme();
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(true);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const [avatarError, setAvatarError] = useState(false);
 
     const flatListRef = useRef<FlatList>(null);
     const socketRef = useRef<Socket | null>(null);
+
+    const profilePicUri = typeof userProfilePic === "string" && userProfilePic ? userProfilePic : null;
+    const senderInitial = (userName as string)?.substring(0, 1).toUpperCase() || "?";
+
+    const GAP_MINUTES = 30;
+
+    const formatSeparatorDate = (dateStr: string): string => {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const time = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+        if (date.toDateString() === now.toDateString()) return `${t("today")}, ${time}`;
+        if (date.toDateString() === yesterday.toDateString()) return `${t("yesterday")}, ${time}`;
+        return `${date.toLocaleDateString()}, ${time}`;
+    };
+
+    const shouldShowSeparator = (olderDateStr: string, newerDateStr: string): boolean => {
+        const gap = new Date(newerDateStr).getTime() - new Date(olderDateStr).getTime();
+        return gap >= GAP_MINUTES * 60 * 1000;
+    };
 
     useEffect((): void => {
         const getUserId: () => Promise<void> = async (): Promise<void> => {
@@ -134,28 +158,54 @@ const DetailsConversations = () => {
         setNewMessage("");
     };
 
-    const renderMessage = ({item}: { item: any; index: number }) => {
+    const renderMessage = ({item, index}: { item: any, index: number }) => {
         const isMine: boolean = item.sender_id === currentUserId;
+        const olderMsg = messages[index + 1];
+        const showSeparator: boolean =
+            index === messages.length - 1 ||
+            (!!olderMsg && shouldShowSeparator(olderMsg.created_at, item.created_at));
         return (
-            <View
-                style={[
-                    styles.messageRow,
-                    isMine ? styles.myMessageRow : styles.theirMessageRow,
-                ]}
-            >
+            <View>
+                {showSeparator && (
+                    <View style={styles.timeSeparator}>
+                        <Text style={[styles.timeSeparatorText, {color: theme.subText, backgroundColor: theme.surface}]}>
+                            {formatSeparatorDate(item.created_at)}
+                        </Text>
+                    </View>
+                )}
+            <View style={[styles.messageRow, isMine ? styles.myMessageRow : styles.theirMessageRow]}>
+                {!isMine && (
+                    <View style={[styles.senderAvatar, {backgroundColor: theme.surface}]}>
+                        {profilePicUri && !avatarError ? (
+                            <Image
+                                source={{uri: profilePicUri}}
+                                style={styles.senderAvatarImg}
+                                onError={() => setAvatarError(true)}
+                            />
+                        ) : (
+                            <Text style={styles.senderAvatarText}>{senderInitial}</Text>
+                        )}
+                    </View>
+                )}
                 <View
-                    style={[styles.bubble, isMine ? styles.myBubble : styles.theirBubble]}
+                    style={[
+                        styles.bubble,
+                        isMine ? styles.myBubble : [styles.theirBubble, {backgroundColor: theme.card, borderColor: theme.border}],
+                    ]}
                 >
                     <Text
                         style={[
                             styles.messageText,
-                            isMine ? styles.myText : styles.theirText,
+                            isMine ? styles.myText : [styles.theirText, {color: theme.text}],
                         ]}
                     >
                         {item.content}
                     </Text>
                     <Text
-                        style={[styles.timeText, isMine ? styles.myTime : styles.theirTime]}
+                        style={[
+                            styles.timeText,
+                            isMine ? styles.myTime : [styles.theirTime, {color: theme.subText}],
+                        ]}
                     >
                         {new Date(item.created_at).toLocaleTimeString([], {
                             hour: "2-digit",
@@ -164,13 +214,17 @@ const DetailsConversations = () => {
                     </Text>
                 </View>
             </View>
+            </View>
         );
     };
 
     return (
-        <View style={styles.container}>
-            <StatusBar barStyle="light-content"/>
-            <View style={styles.header}>
+        <KeyboardAvoidingView
+            style={[styles.container, {backgroundColor: theme.background}]}
+            behavior="padding"
+        >
+            <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"}/>
+            <View style={[styles.header, {backgroundColor: theme.background, borderColor: theme.border}]}>
                 <TouchableOpacity
                     onPress={(): void => router.back()}
                     style={styles.iconButton}
@@ -178,20 +232,32 @@ const DetailsConversations = () => {
                     <Ionicons name="chevron-back" size={28} color="#4cc9f0"/>
                 </TouchableOpacity>
                 <View style={styles.headerCenter}>
-                    <View style={styles.headerAvatar}>
-                        <Text style={styles.avatarText}>
-                            {(userName as string)?.substring(0, 1).toUpperCase()}
-                        </Text>
+                    <View style={[styles.headerAvatar, {backgroundColor: theme.surface}]}>
+                        {profilePicUri && !avatarError ? (
+                            <Image
+                                source={{uri: profilePicUri}}
+                                style={styles.headerAvatarImg}
+                                onError={() => setAvatarError(true)}
+                            />
+                        ) : (
+                            <Text style={styles.avatarText}>{senderInitial}</Text>
+                        )}
                     </View>
-                    <Text style={styles.headerTitle}>{userName}</Text>
+                    <Text style={[styles.headerTitle, {color: theme.text}]}>{userName}</Text>
                 </View>
                 <View style={{width: 40}}/>
             </View>
 
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={{flex: 1}}
-            >
+            {messages.length === 0 ? (
+                <View style={styles.emptyState}>
+                    <View style={[styles.emptyIconWrapper, {backgroundColor: theme.surface}]}>
+                        <Ionicons name="chatbubble-ellipses-outline" size={32} color={theme.subText}/>
+                    </View>
+                    <Text style={[styles.emptyStateText, {color: theme.subText}]}>
+                        {t("conv_no_messages")}
+                    </Text>
+                </View>
+            ) : (
                 <FlatList
                     ref={flatListRef}
                     data={messages}
@@ -200,46 +266,45 @@ const DetailsConversations = () => {
                     inverted
                     contentContainerStyle={styles.listContent}
                     showsVerticalScrollIndicator={false}
+                    style={{flex: 1}}
                 />
+            )}
 
-                <View style={styles.inputWrapper}>
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={t("type_message_placeholder")}
-                            placeholderTextColor="#55577e"
-                            value={newMessage}
-                            onChangeText={setNewMessage}
-                            multiline
-                        />
-                        <TouchableOpacity
-                            style={[
-                                styles.sendButton,
-                                !newMessage.trim() && styles.sendDisabled,
-                            ]}
-                            onPress={sendMessage}
-                            disabled={!newMessage.trim()}
-                        >
-                            <Ionicons name="send" size={18} color="#000"/>
-                        </TouchableOpacity>
-                    </View>
+            <View style={[styles.inputWrapper, {backgroundColor: theme.background}]}>
+                <View style={[styles.inputContainer, {backgroundColor: theme.surface, borderColor: theme.border}]}>
+                    <TextInput
+                        style={[styles.input, {color: theme.text}]}
+                        placeholder={t("type_message_placeholder")}
+                        placeholderTextColor={theme.placeholder}
+                        value={newMessage}
+                        onChangeText={setNewMessage}
+                        multiline
+                    />
+                    <TouchableOpacity
+                        style={[
+                            styles.sendButton,
+                            !newMessage.trim() && [styles.sendDisabled, {backgroundColor: theme.surface}],
+                        ]}
+                        onPress={sendMessage}
+                        disabled={!newMessage.trim()}
+                    >
+                        <Ionicons name="send" size={18} color="#000"/>
+                    </TouchableOpacity>
                 </View>
-            </KeyboardAvoidingView>
-        </View>
+            </View>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: "#0b0c14"},
+    container: {flex: 1},
 
     header: {
         flexDirection: "row",
         alignItems: "center",
         paddingVertical: 20,
         paddingHorizontal: 16,
-        backgroundColor: "#0b0c14",
         borderBottomWidth: 1,
-        borderColor: "#1e1f33",
         shadowColor: "#000",
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.3,
@@ -256,14 +321,18 @@ const styles = StyleSheet.create({
         width: 36,
         height: 36,
         borderRadius: 18,
-        backgroundColor: "#2d2e4a",
         justifyContent: "center",
         alignItems: "center",
         marginRight: 10,
+        overflow: "hidden",
+    },
+    headerAvatarImg: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
     },
     avatarText: {color: "#fff", fontWeight: "bold"},
     headerTitle: {
-        color: "#fff",
         fontSize: 18,
         fontWeight: "800",
         letterSpacing: 0.5,
@@ -271,12 +340,33 @@ const styles = StyleSheet.create({
     iconButton: {padding: 5},
 
     listContent: {paddingHorizontal: 16, paddingVertical: 20},
-    messageRow: {flexDirection: "row", width: "100%", marginVertical: 6},
+    messageRow: {flexDirection: "row", width: "100%", marginVertical: 6, alignItems: "flex-end"},
     myMessageRow: {justifyContent: "flex-end"},
     theirMessageRow: {justifyContent: "flex-start"},
 
+    senderAvatar: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight: 8,
+        overflow: "hidden",
+        flexShrink: 0,
+    },
+    senderAvatarImg: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+    },
+    senderAvatarText: {
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 13,
+    },
+
     bubble: {
-        maxWidth: "80%",
+        maxWidth: "75%",
         paddingHorizontal: 16,
         paddingVertical: 12,
         borderRadius: 20,
@@ -289,31 +379,27 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
     },
     theirBubble: {
-        backgroundColor: "#16172b",
         borderBottomLeftRadius: 4,
         borderWidth: 1,
-        borderColor: "#1e1f33",
     },
     messageText: {fontSize: 16, lineHeight: 22},
     myText: {color: "#000", fontWeight: "500"},
-    theirText: {color: "#fff"},
+    theirText: {},
 
     timeText: {fontSize: 10, marginTop: 4, opacity: 0.7},
     myTime: {color: "rgba(0,0,0,0.6)", alignSelf: "flex-end"},
-    theirTime: {color: "#8a8db0", alignSelf: "flex-start"},
+    theirTime: {alignSelf: "flex-start"},
 
-    inputWrapper: {padding: 15, backgroundColor: "#0b0c14"},
+    inputWrapper: {padding: 15},
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#16172b",
         borderRadius: 25,
         paddingHorizontal: 15,
         paddingVertical: 8,
         borderWidth: 1,
-        borderColor: "#2d2e4a",
     },
-    input: {flex: 1, color: "#fff", fontSize: 16, paddingHorizontal: 10},
+    input: {flex: 1, fontSize: 16, paddingHorizontal: 10},
     sendButton: {
         backgroundColor: "#4cc9f0",
         width: 40,
@@ -322,7 +408,39 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    sendDisabled: {backgroundColor: "#2d2e4a", opacity: 0.5},
+    sendDisabled: {opacity: 0.5},
+
+    emptyState: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 16,
+        paddingHorizontal: 40,
+    },
+    emptyIconWrapper: {
+        width: 72,
+        height: 72,
+        borderRadius: 36,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    emptyStateText: {
+        fontSize: 14,
+        textAlign: "center",
+        lineHeight: 20,
+    },
+    timeSeparator: {
+        alignItems: "center",
+        marginVertical: 12,
+    },
+    timeSeparatorText: {
+        fontSize: 11,
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 12,
+        overflow: "hidden",
+        textAlign: "center",
+    },
 });
 
 export default DetailsConversations;

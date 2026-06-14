@@ -25,6 +25,17 @@ const AlbumDetails: React.FC = () => {
     const navigate: NavigateFunction = useNavigate();
     const {t} = useTranslation();
 
+    const formatReviewDate = (dateStr: string | undefined): string => {
+        const date = new Date(dateStr || Date.now());
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const time = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+        if (date.toDateString() === now.toDateString()) return `${t("today")} · ${time}`;
+        if (date.toDateString() === yesterday.toDateString()) return `${t("yesterday")} · ${time}`;
+        return date.toLocaleDateString();
+    };
+
     const urlArtist: string = searchParams.get("artist") || "";
     const urlAlbum: string = searchParams.get("album") || "";
     const urlCover: string = searchParams.get("cover") || "";
@@ -120,6 +131,14 @@ const AlbumDetails: React.FC = () => {
 
     const mediaIdInDB = albumData?.db_id || (id?.includes("-") ? id : null);
 
+    const requireAuth = (): boolean => {
+        if (!currentUserId) {
+            navigate("/login");
+            return false;
+        }
+        return true;
+    };
+
     useEffect((): void => {
         const fetchUserStatus = async (): Promise<void> => {
             if (!currentUserId || !mediaIdInDB) return;
@@ -168,7 +187,8 @@ const AlbumDetails: React.FC = () => {
     }, [mediaIdInDB]);
 
     const handleSendReport = async (): Promise<void> => {
-        if (!reportReason.trim() || !currentUserId) return;
+        if (!reportReason.trim()) return;
+        if (!requireAuth()) return;
 
         setIsSubmittingReport(true);
         try {
@@ -201,6 +221,7 @@ const AlbumDetails: React.FC = () => {
     };
 
     const handleAddToPlaylist = async (playlistId: string): Promise<void> => {
+        if (!requireAuth()) return;
         if (!mediaIdInDB) return;
 
         try {
@@ -348,7 +369,8 @@ const AlbumDetails: React.FC = () => {
 
 
     const handleStatusChange = async (newStatus: string): Promise<void> => {
-        if (!currentUserId || !mediaIdInDB) return;
+        if (!requireAuth()) return;
+        if (!mediaIdInDB) return;
 
         const previousStatus: string | null = userStatus;
         const isDeselecting: boolean = userStatus === newStatus;
@@ -598,7 +620,7 @@ const AlbumDetails: React.FC = () => {
     };
 
     const handleToggleLike = async (commentId: number | string): Promise<void> => {
-        if (!currentUserId) return;
+        if (!requireAuth()) return;
 
         const isCurrentlyLiked = likedCommentIds.has(commentId);
 
@@ -683,6 +705,7 @@ const AlbumDetails: React.FC = () => {
     };
 
     const submitReply = async (reviewId: number | string, parentCommentId?: number | string): Promise<void> => {
+        if (!requireAuth()) return;
         const key: string | number = parentCommentId ?? reviewId;
         const text: string = replyInputs[String(key)];
         if (!text || !text.trim()) return;
@@ -888,7 +911,7 @@ const AlbumDetails: React.FC = () => {
 
                         <div className="flex flex-wrap gap-3 items-center">
                             <button
-                                onClick={() => setIsPlaylistModalOpen(true)}
+                                onClick={() => { if (!requireAuth()) return; setIsPlaylistModalOpen(true); }}
                                 className="bg-[#1a1b26] dark:bg-white border border-gray-700 dark:border-gray-200 p-4 rounded-xl text-white dark:text-gray-900"
                             >
                                 <FaPlus/>
@@ -1050,9 +1073,7 @@ const AlbumDetails: React.FC = () => {
                                     ) : (
                                         <div
                                             className="mb-10 bg-blue-500/10 border border-blue-500/20 p-5 rounded-2xl text-center text-sm text-blue-400 font-semibold shadow-inner">
-                                            Vous avez déjà publié un avis pour cet album. Vous
-                                            pouvez l'éditer ou le supprimer directement sur votre
-                                            commentaire ci-dessous.
+                                            {t("review_already_wrote")}
                                         </div>
                                     )}
 
@@ -1193,7 +1214,7 @@ const AlbumDetails: React.FC = () => {
                                                                             </div>
                                                                         </div>
                                                                         <p className="text-xs text-gray-500 font-medium">
-                                                                            {new Date(comment.created_at || Date.now()).toLocaleDateString()}
+                                                                            {formatReviewDate(comment.created_at)}
                                                                         </p>
                                                                     </div>
                                                                 </div>
@@ -1331,7 +1352,7 @@ const AlbumDetails: React.FC = () => {
                                                                                                     )}
                                                                                                     <span
                                                                                                         className="text-gray-600 dark:text-gray-400 text-[11px]">
-                                                                                                      {new Date(reply.created_at || Date.now()).toLocaleDateString()}
+                                                                                                      {formatReviewDate(reply.created_at)}
                                                                                                     </span>
                                                                                                 </div>
                                                                                                 <p className="text-gray-300 dark:text-gray-600 leading-snug">

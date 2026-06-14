@@ -16,6 +16,7 @@ import BackButton from "../components/BackButton";
 import apiClient from "../api/client";
 import AlbumCard from "@/src/components/AlbumCard";
 import {useTranslation} from "react-i18next";
+import {useTheme} from "../context/ThemeContext";
 
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
 
@@ -25,6 +26,7 @@ const COLUMN_WIDTH: number = (SCREEN_WIDTH - PADDING_HORIZONTAL * 2 - GAP) / 2;
 
 const PlaylistDetails = () => {
     const {t} = useTranslation();
+    const {theme} = useTheme();
     const {id, title} = useLocalSearchParams();
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -71,7 +73,7 @@ const PlaylistDetails = () => {
             <View style={styles.cardWrapper}>
                 <TouchableOpacity
                     style={{flex: 1}}
-                    onLongPress={(): void => removeItem(item.id, content?.name || "élément")}
+                    onLongPress={(): void => removeItem(item.id, content?.name || t("text_element"))}
                     activeOpacity={0.8}
                 >
                     <AlbumCard
@@ -85,7 +87,7 @@ const PlaylistDetails = () => {
 
                 <TouchableOpacity
                     style={styles.moreButton}
-                    onPress={(): void => removeItem(item.id, content?.name || "élément")}
+                    onPress={(): void => removeItem(item.id, content?.name || t("text_element"))}
                 >
                     <Ionicons name="ellipsis-vertical" size={14} color="white"/>
                 </TouchableOpacity>
@@ -94,12 +96,12 @@ const PlaylistDetails = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: theme.background}]}>
             <StatusBar barStyle="light-content"/>
 
             <View style={styles.header}>
                 <BackButton/>
-                <Text style={styles.headerTitle} numberOfLines={1}>
+                <Text style={[styles.headerTitle, {color: theme.text}]} numberOfLines={1}>
                     {title}
                 </Text>
                 <View style={{width: 45}}/>
@@ -127,7 +129,6 @@ const PlaylistDetails = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#1C1C28",
     },
 
     card: {
@@ -154,7 +155,6 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
-        color: "white",
         fontSize: 22,
         fontWeight: "bold",
         flex: 1,

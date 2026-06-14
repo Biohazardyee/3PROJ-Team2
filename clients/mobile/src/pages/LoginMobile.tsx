@@ -19,10 +19,12 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import apiClient from "../api/client";
 import {WebBrowserAuthSessionResult} from "expo-web-browser";
 import {useTranslation} from "react-i18next";
+import {useTheme} from "../context/ThemeContext";
 
 const LoginMobile: React.FC = () => {
     const router: Router = useRouter();
     const {t} = useTranslation();
+    const {theme} = useTheme();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -59,13 +61,13 @@ const LoginMobile: React.FC = () => {
             }
         } catch (error) {
             console.error("Erreur OAuth Login:", error);
-            Alert.alert("Erreur", "La connexion a échoué.");
+            Alert.alert(t("error"), t("login_error_connection"));
         }
     };
 
     const handleLogin: () => Promise<void> = async (): Promise<void> => {
         if (!email || !password) {
-            Alert.alert("Erreur", "Veuillez remplir tous les champs.");
+            Alert.alert(t("error"), t("login_fill_fields"));
             return;
         }
 
@@ -90,31 +92,31 @@ const LoginMobile: React.FC = () => {
             } catch (decodeError) {
                 console.error("Erreur décodage token:", decodeError);
             }
-            Alert.alert("Succès", "Connexion réussie !");
+            Alert.alert(t("success"), t("login_success_message"));
             router.replace("/");
         } catch (error: any) {
             const message =
-                error.response?.data?.message || "Identifiants incorrects";
-            Alert.alert("Erreur", message);
+                error.response?.data?.message || t("login_error_connection");
+            Alert.alert(t("error"), message);
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: theme.background}]}>
             <ScrollView contentContainerStyle={styles.scroll}>
                 <View style={styles.header}>
                     <Image
                         source={require("@/assets/images/logo.png")}
                         style={styles.logoImage}
                     />
-                    <Text style={styles.title}>{t("login_welcome")}</Text>
+                    <Text style={[styles.title, {color: theme.text}]}>{t("login_welcome")}</Text>
                 </View>
 
                 <InputMobile
                     label={t("login_email_label")}
-                    placeholder="votre@email.com"
+                    placeholder={t("placeholder_email")}
                     icon="mail-outline"
                     value={email}
                     onChangeText={setEmail}
@@ -123,7 +125,7 @@ const LoginMobile: React.FC = () => {
                 />
                 <InputMobile
                     label={t("login_password_label")}
-                    placeholder="••••••••"
+                    placeholder={t("placeholder_password")}
                     icon="lock-closed-outline"
                     secureTextEntry
                     value={password}
@@ -138,9 +140,9 @@ const LoginMobile: React.FC = () => {
                 />
 
                 <View style={styles.separator}>
-                    <View style={styles.line}/>
-                    <Text style={styles.sepText}>{t("login_separator")}</Text>
-                    <View style={styles.line}/>
+                    <View style={[styles.line, {backgroundColor: theme.separator}]}/>
+                    <Text style={[styles.sepText, {color: theme.subText}]}>{t("login_separator")}</Text>
+                    <View style={[styles.line, {backgroundColor: theme.separator}]}/>
                 </View>
 
                 <View style={styles.socialMedia}>
@@ -148,19 +150,15 @@ const LoginMobile: React.FC = () => {
                         variant="social"
                         onPress={(): Promise<void> => handleOAuthLogin("google")}
                     >
-                        <Ionicons name="logo-google" size={24} color="#FFF"/>
+                        <Ionicons name="logo-google" size={24} color={theme.text}/>
                     </ButtonMobile>
 
                     <ButtonMobile
                         variant="social"
                         onPress={(): Promise<void> => handleOAuthLogin("discord")}
-                        style={{marginHorizontal: 10}}
+                        style={{marginLeft: 12}}
                     >
-                        <Ionicons name="logo-discord" size={24} color="#FFF"/>
-                    </ButtonMobile>
-
-                    <ButtonMobile variant="social">
-                        <Ionicons name="logo-facebook" size={24} color="#FFF"/>
+                        <Ionicons name="logo-discord" size={24} color={theme.text}/>
                     </ButtonMobile>
                 </View>
 
@@ -168,7 +166,7 @@ const LoginMobile: React.FC = () => {
                     onPress={(): void => router.push("/register")}
                     style={styles.footer}
                 >
-                    <Text style={styles.footerText}>
+                    <Text style={[styles.footerText, {color: theme.subText}]}>
                         {t("login_no_account")} <Text style={styles.link}>{t("login_register_link")}</Text>
                     </Text>
                 </TouchableOpacity>
@@ -180,80 +178,55 @@ const LoginMobile: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#1C1C28",
     },
-
     scroll: {
         padding: 25,
         marginTop: 30,
     },
-
     header: {
         alignItems: "center",
     },
-
     logoImage: {
         width: 80,
         height: 80,
     },
-
     title: {
-        color: "#FFF",
         fontSize: 28,
         marginBottom: 20,
         fontWeight: "bold",
         textAlign: "center",
     },
-
-    subtitle: {
-        color: "#888",
-        fontSize: 16,
-        marginTop: 5,
-        marginBottom: 30,
-    },
-
     forgot: {
         color: "#3b82f6",
         textAlign: "right",
         marginBottom: 25,
     },
-
     footer: {
         alignItems: "center",
         marginTop: 20,
     },
-
     footerText: {
-        color: "#888",
         marginBottom: 20,
     },
-
     link: {
         color: "#3b82f6",
         fontWeight: "bold",
     },
-
     separator: {
         flexDirection: "row",
         alignItems: "center",
         marginVertical: 25,
     },
-
     line: {
         flex: 1,
         height: 1,
-        backgroundColor: "#333",
     },
-
     sepText: {
-        color: "#555",
         marginHorizontal: 10,
         fontSize: 12,
     },
-
     socialMedia: {
         flexDirection: "row",
-        justifyContent: "space-between",
     },
 });
 

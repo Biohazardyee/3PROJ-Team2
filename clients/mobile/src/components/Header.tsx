@@ -2,13 +2,15 @@ import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import {Ionicons} from "@expo/vector-icons";
 import {useRouter, Router} from "expo-router";
+import {useTheme} from '../context/ThemeContext';
 
 
 const Header: React.FC = () => {
 
     const router: Router = useRouter();
+    const {theme} = useTheme();
     return (
-        <View style={styles.header}>
+        <View style={[styles.header, {backgroundColor: theme.background}]}>
             <View style={styles.content}>
                 <Image
                     source={require('@/assets/images/logo.png')}
@@ -23,7 +25,7 @@ const Header: React.FC = () => {
                     <Ionicons
                         name="notifications-outline"
                         size={26}
-                        color="white"
+                        color={theme.text}
                     />
                 </TouchableOpacity>
 
@@ -31,7 +33,7 @@ const Header: React.FC = () => {
                     <Ionicons
                         name="paper-plane-outline"
                         size={26}
-                        color="white"
+                        color={theme.text}
                     />
                 </TouchableOpacity>
             </View>
@@ -44,7 +46,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#1C1C28',
         paddingHorizontal: 20,
         paddingTop: 10,
         paddingBottom: 15,

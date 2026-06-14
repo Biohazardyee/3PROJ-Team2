@@ -120,6 +120,7 @@ const Settings = () => {
                 style: "destructive",
                 onPress: async (): Promise<void> => {
                     await SecureStore.deleteItemAsync("userToken");
+                    await SecureStore.deleteItemAsync("userId");
                     router.replace("/");
                 },
             },
@@ -139,18 +140,18 @@ const Settings = () => {
             </View>
 
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                <Text style={styles.sectionTitle}>{t("settings_section_account")}</Text>
+                <Text style={[styles.sectionTitle, {color: theme.subText}]}>{t("settings_section_account")}</Text>
                 <View style={[styles.section, {backgroundColor: theme.card}]}>
                     <SettingRow
                         theme={theme}
                         icon="person-outline"
                         title={t("settings_edit_profile")}
-                        subtitle="Nom, Email, Mot de passe"
+                        subtitle={t("settings_edit_profile_subtitle")}
                         onPress={() => router.push("/updateProfile")}
                     />
                 </View>
 
-                <Text style={styles.sectionTitle}>{t("settings_section_preferences")}</Text>
+                <Text style={[styles.sectionTitle, {color: theme.subText}]}>{t("settings_section_preferences")}</Text>
                 <View style={[styles.section, {backgroundColor: theme.card}]}>
                     <SettingRow
                         theme={theme}
@@ -178,7 +179,7 @@ const Settings = () => {
                     />
                 </View>
 
-                <Text style={styles.sectionTitle}>{t("settings_section_data_security")}</Text>
+                <Text style={[styles.sectionTitle, {color: theme.subText}]}>{t("settings_section_data_security")}</Text>
                 <View style={[styles.section, {backgroundColor: theme.card}]}>
                     <SettingRow
                         theme={theme}
@@ -210,7 +211,7 @@ const Settings = () => {
                     />
                 </View>
 
-                <Text style={styles.versionText}>Version 1.0.0</Text>
+                <Text style={[styles.versionText, {color: theme.subText}]}>{t("app_version")}</Text>
             </ScrollView>
         </View>
     );
@@ -234,7 +235,6 @@ const styles = StyleSheet.create({
     },
     content: {flex: 1, paddingHorizontal: 20},
     sectionTitle: {
-        color: "#888",
         fontSize: 14,
         fontWeight: "bold",
         textTransform: "uppercase",
@@ -262,7 +262,6 @@ const styles = StyleSheet.create({
     rowTitle: {fontSize: 16, fontWeight: "500"},
     rowSubtitle: {fontSize: 13, marginTop: 2},
     versionText: {
-        color: "#555",
         textAlign: "center",
         marginTop: 40,
         marginBottom: 40,

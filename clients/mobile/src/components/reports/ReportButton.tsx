@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {TouchableOpacity} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
+import {useRouter} from "expo-router";
 import ReportModal from "./ReportModal";
 import {useReport} from "../../hook/useReport";
 
@@ -12,6 +13,7 @@ type Props = {
 
 export default function ReportButton({userId, targetId, type}: Props) {
     const [open, setOpen] = useState(false);
+    const router = useRouter();
     const {sendReport, loading} = useReport(userId);
 
     const handleSubmit = async (reason: string): Promise<void> => {
@@ -28,7 +30,7 @@ export default function ReportButton({userId, targetId, type}: Props) {
 
     return (
         <>
-            <TouchableOpacity onPress={() => setOpen(true)}>
+            <TouchableOpacity onPress={() => { if (!userId) { router.push("/restriction"); return; } setOpen(true); }}>
                 <Ionicons name="flag-outline" size={18} color="#94a3b8"/>
             </TouchableOpacity>
 

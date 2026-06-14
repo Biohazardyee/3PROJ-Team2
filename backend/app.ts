@@ -67,12 +67,10 @@ app.use(
         callback(new Error("Bloqué par CORS - Origine non autorisée"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   }),
 );
-
-app.use(express.json());
 
 // front-end routes
 
@@ -101,6 +99,7 @@ app.use("/api/search", searchRouter);
 app.use("/api/oauth", oauthRouter);
 
 // catch 404 and forward to error handler
+
 app.use(function (req, res, next: NextFunction): void {
   next(createError(404));
 });

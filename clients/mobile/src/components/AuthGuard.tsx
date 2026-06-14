@@ -6,14 +6,15 @@ import {Router, useRouter} from 'expo-router';
 import {ButtonMobile} from '@/src/components/ButtonMobile';
 import Header from "@/src/components/Header";
 import {useTranslation} from "react-i18next";
-
+import {useTheme} from "@/src/context/ThemeContext";
 
 export default function AutGuard() {
     const router: Router = useRouter();
     const {t} = useTranslation();
+    const {theme} = useTheme();
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: theme.background}]}>
             <Header/>
             <View style={styles.content}>
                 <LinearGradient
@@ -25,9 +26,8 @@ export default function AutGuard() {
                     <Ionicons name="lock-closed" size={40} color="white"/>
                 </LinearGradient>
 
-
-                <Text style={styles.title}>{t("exclusive_content")}</Text>
-                <Text style={styles.text}>
+                <Text style={[styles.title, {color: theme.text}]}>{t("exclusive_content")}</Text>
+                <Text style={[styles.text, {color: theme.subText}]}>
                     {t("join_melodia")}
                 </Text>
 
@@ -49,17 +49,16 @@ export default function AutGuard() {
                             end={{x: 1, y: 1}}
                             style={styles.outlineGradient}
                         >
-                            <View style={styles.innerButton}>
-                                <Text style={styles.registerText}>{t("create_account")}</Text>
+                            <View style={[styles.innerButton, {backgroundColor: theme.background}]}>
+                                <Text style={[styles.registerText, {color: theme.text}]}>{t("create_account")}</Text>
                             </View>
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity onPress={(): void => router.back()} style={styles.backButton}>
-                    <Text style={styles.backText}>{t("later")}</Text>
+                    <Text style={[styles.backText, {color: theme.subText}]}>{t("later")}</Text>
                 </TouchableOpacity>
-
             </View>
         </View>
     );
@@ -68,7 +67,6 @@ export default function AutGuard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#1C1C28',
     },
     content: {
         flex: 1,
@@ -85,13 +83,11 @@ const styles = StyleSheet.create({
         marginBottom: 25,
     },
     title: {
-        color: '#FFF',
         fontSize: 28,
         fontWeight: 'bold',
         textAlign: 'center',
     },
     text: {
-        color: '#888',
         fontSize: 16,
         textAlign: 'center',
         marginTop: 15,
@@ -116,13 +112,11 @@ const styles = StyleSheet.create({
     },
     innerButton: {
         flex: 1,
-        backgroundColor: '#13131a',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },
     registerText: {
-        color: '#FFF',
         fontSize: 16,
         fontWeight: 'bold',
     },
@@ -130,7 +124,6 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     backText: {
-        color: '#555',
         fontSize: 14,
         textDecorationLine: 'underline',
     },

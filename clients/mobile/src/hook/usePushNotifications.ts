@@ -1,6 +1,7 @@
 import {useEffect} from 'react';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import * as SecureStore from 'expo-secure-store';
 import apiClient from '../api/client';
 
 export const usePushNotifications: (userId: string | null) => void = (userId: string | null): void => {
@@ -9,6 +10,9 @@ export const usePushNotifications: (userId: string | null) => void = (userId: st
 
         const register: () => Promise<void> = async (): Promise<void> => {
             if (!Device.isDevice) return;
+
+            const userToken: string | null = await SecureStore.getItemAsync("userToken");
+            if (!userToken) return;
 
             const {status: existingStatus} = await Notifications.getPermissionsAsync();
             let finalStatus = existingStatus;

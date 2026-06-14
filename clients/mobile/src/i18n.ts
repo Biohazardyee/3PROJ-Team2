@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { getLocales } from 'expo-localization';
+import * as SecureStore from 'expo-secure-store';
 
 const resources = {
   fr: {
@@ -80,6 +81,7 @@ const resources = {
       "released_in": "Sorti en {{year}}",
       "description_title": "Description",
       "change_status": "Changer le statut",
+      "status_update_error": "Impossible de mettre à jour le statut. Veuillez réessayer.",
       "add_to_playlist": "Ajouter à une playlist",
       "no_playlist": "Aucune playlist disponible.",
       "create_playlist": "Créer une playlist",
@@ -97,6 +99,13 @@ const resources = {
       "publish_btn": "Publier le commentaire",
       "review_login_prompt": "Connectez-vous pour donner votre avis",
       "review_post_button": "Poster un avis sur cet album",
+      "report_title": "Signaler",
+      "report_spam": "Spam",
+      "report_hate": "Contenu haineux",
+      "report_inappropriate": "Inapproprié",
+      "report_other": "Autre",
+      "report_sending": "Envoi...",
+      "report_send": "Envoyer",
       "review_already_published_title": "Avis déjà publié",
       "review_already_published_text": "Vous avez déjà publié un avis pour cet album.",
       "review_wait_title": "Patience",
@@ -132,6 +141,7 @@ const resources = {
       "search_conv_placeholder": "Rechercher une conversation...",
       "no_conv_found": "Aucun message ou contact trouvé.",
       "type_message_placeholder": "Écrire un message...",
+      "conv_no_messages": "Dites bonjour et lancez la discussion !",
       "select_conv_title": "Sélectionner une conversation",
       "yesterday": "Hier",
       "monday": "Lundi",
@@ -179,6 +189,11 @@ const resources = {
       "cancel_btn": "Annuler",
       "comment_placeholder": "Commenter cet avis...",
       "no_post_found": "Aucune publication trouvée.",
+      "time_just_now": "À l'instant",
+      "time_mins_ago": "Il y a {{count}} min",
+      "time_hours_ago": "Il y a {{count}}h",
+      "time_days_ago": "Il y a {{count}}j",
+      "time_months_ago": "Il y a {{count}} mois",
 
       //Home
       "explore_title": "Explorer",
@@ -186,6 +201,7 @@ const resources = {
       "search_label": "Rechercher",
       "sort_label": "Trier par",
       "sort_popular": "Les plus populaires",
+      "sort_az": "Titre A-Z",
       "sort_recent": "Dernières sorties",
       "sort_rating": "Les mieux notés",
       "filter_btn": "Filtrer",
@@ -242,6 +258,9 @@ const resources = {
       "delete_playlist_confirm": "Supprimer cette playlist ?",
       "playlist_default_desc": "Vos listes de lecture personnalisées.",
       "no_albums_in_playlist": "Aucun titre pour le moment dans cette playlist.",
+      "track_singular": "titre",
+      "track_plural": "titres",
+      "empty_playlists_list": "Aucune playlist pour le moment.",
       "my_playlists_title": "Mes playlists",
       "my_playlists_subtitle": "Vos listes de lecture personnalisées",
       "create_playlist_card": "Créer une playlist",
@@ -271,9 +290,13 @@ const resources = {
       "tab_unread": "Non lues",
       "tab_mentions": "Mentions",
       "no_notifications": "Aucune notification à afficher ici.",
+      "notif_earlier": "Précédentes",
       "action_liked_review": "a aimé votre avis sur \"{{album}}\"",
       "action_commented_review": "a commenté votre avis",
       "action_started_following": "a commencé à vous suivre",
+      "action_like_added": "a aimé votre avis",
+      "action_recommendation": "vous recommande un album",
+      "action_new_message": "vous a envoyé un message",
 
       //Profil
       "profile_edit_btn": "Modifier le profil",
@@ -286,6 +309,14 @@ const resources = {
       "follow_button": "Follow",
       "following_button": "Following",
       "activity_reviewed_album": "a évalué un album",
+      "activity_rated": "a noté",
+      "activity_by": "par",
+      "like_singular": "like",
+      "like_plural": "likes",
+      "comment_singular": "commentaire",
+      "comment_plural": "commentaires",
+      "profile_no_activity": "Aucune activité récente",
+      "load_more": "Voir plus",
       "profile_member_since": "Membre depuis Janvier 2023",
       "profile_followers": "Abonnés",
       "profile_following": "Abonnements",
@@ -372,6 +403,53 @@ const resources = {
       "stats_detail_title": "Détail des statistiques",
       "stats_no_data": "Aucune donnée disponible.",
       "no_album_category": "Aucun album dans cette catégorie pour le moment.",
+
+      // Commun
+      "placeholder_email": "votre@email.com",
+      "placeholder_password": "••••••••",
+      "text_unknown_artist": "Artiste inconnu",
+      "text_unknown_album": "Album inconnu",
+      "user_system": "Système",
+      "settings_edit_profile_subtitle": "Nom, Email, Mot de passe",
+      "app_version": "Version 1.0.0",
+      "btn_confirm": "Confirmer",
+      "error_oops": "Oups !",
+      "char_limit_100": " / 100 caractères",
+      "text_element": "élément",
+
+      // Album Details
+      "tab_reviews": "Avis",
+      "section_about": "À propos",
+      "text_no_biography": "Aucune biographie disponible.",
+      "msg_be_first_reviewer": "Soyez le premier à donner votre avis !",
+      "error_review_already_published_msg": "Vous avez déjà publié un avis pour cet album.",
+      "msg_please_wait": "Patience",
+      "msg_album_syncing": "L'album se synchronise...",
+      "msg_playlists_updated": "Vos playlists ont été mises à jour.",
+      "error_update_playlists": "Impossible de mettre à jour les playlists.",
+      "error_load_details": "Impossible de charger les détails.",
+      "error_members_only": "L'action est réservée aux membres.",
+      "msg_review_deleted": "Votre avis a été supprimé.",
+      "error_delete_review": "Impossible de supprimer l'avis.",
+
+      // Feed
+      "badge_your_rating": "VOTRE NOTE",
+
+      // Conversations
+      "msg_start_conversation": "Commencez la discussion...",
+
+      // Library
+      "msg_loading_music": "Chargement de votre musique...",
+
+      // Discussion
+      "page_discussion": "Discussion",
+      "msg_be_first_to_reply": "Soyez le premier à répondre !",
+      "msg_editing_message": "Modification de votre message",
+      "msg_reply_to_review": "Réponse au message de base",
+      "placeholder_write_message": "Écrivez votre message...",
+      "confirm_delete_comment": "Voulez-vous supprimer ce commentaire ?",
+      "error_save_comment": "Impossible d'enregistrer votre message.",
+      "error_like_update": "Impossible de mettre à jour le like.",
     }
   },
 
@@ -452,6 +530,7 @@ const resources = {
       "released_in": "Released in {{year}}",
       "description_title": "Description",
       "change_status": "Change status",
+      "status_update_error": "Unable to update status. Please try again.",
       "add_to_playlist": "Add to playlist",
       "no_playlist": "No playlist available.",
       "create_playlist": "Create playlist",
@@ -486,6 +565,7 @@ const resources = {
       "search_conv_placeholder": "Search conversation...",
       "no_conv_found": "No message or contact found.",
       "type_message_placeholder": "Type a message...",
+      "conv_no_messages": "Say hello and start the conversation!",
       "select_conv_title": "Select a conversation",
       "yesterday": "Yesterday",
       "monday": "Monday",
@@ -521,6 +601,15 @@ const resources = {
       "action_new_album": " New album",
       "already_reviewed": "Already reviewed",
       "write_review": "Write a review",
+      "review_login_prompt": "Log in to give your review",
+      "review_post_button": "Post a review for this album",
+      "report_title": "Report",
+      "report_spam": "Spam",
+      "report_hate": "Hate speech",
+      "report_inappropriate": "Inappropriate",
+      "report_other": "Other",
+      "report_sending": "Sending...",
+      "report_send": "Send",
       "feed_like_login_required": "You must be logged in to like.",
       "feed_like_update_error": "Unable to update the like.",
       "auth_required": "Login required",
@@ -533,12 +622,18 @@ const resources = {
       "cancel_btn": "Cancel",
       "comment_placeholder": "Comment on this review...",
       "no_post_found": "No post found.",
+      "time_just_now": "Just now",
+      "time_mins_ago": "{{count}} min ago",
+      "time_hours_ago": "{{count}}h ago",
+      "time_days_ago": "{{count}}d ago",
+      "time_months_ago": "{{count}} months ago",
 
       // Home
       "explore_title": "Explore",
       "explore_subtitle": "Discover your next favorite album",
       "search_label": "Search",
       "sort_label": "Sort by",
+      "sort_az": "Title A-Z",
       "sort_popular": "Most popular",
       "sort_recent": "Latest releases",
       "sort_rating": "Top rated",
@@ -596,6 +691,9 @@ const resources = {
       "delete_playlist_confirm": "Delete this playlist?",
       "playlist_default_desc": "Your personalized playlists.",
       "no_albums_in_playlist": "No tracks in this playlist yet.",
+      "track_singular": "track",
+      "track_plural": "tracks",
+      "empty_playlists_list": "No playlists yet.",
       "my_playlists_title": "My playlists",
       "my_playlists_subtitle": "Your personalized playlists",
       "create_playlist_card": "Create a playlist",
@@ -625,9 +723,13 @@ const resources = {
       "tab_unread": "Unread",
       "tab_mentions": "Mentions",
       "no_notifications": "No notifications to display here.",
+      "notif_earlier": "Earlier",
       "action_liked_review": "liked your review on \"{{album}}\"",
       "action_commented_review": "commented on your review",
       "action_started_following": "started following you",
+      "action_like_added": "liked your review",
+      "action_recommendation": "recommends an album to you",
+      "action_new_message": "sent you a message",
 
       // Profil
       "profile_edit_btn": "Edit profile",
@@ -640,6 +742,14 @@ const resources = {
       "follow_button": "Follow",
       "following_button": "Following",
       "activity_reviewed_album": "reviewed an album",
+      "activity_rated": "rated",
+      "activity_by": "by",
+      "like_singular": "like",
+      "like_plural": "likes",
+      "comment_singular": "comment",
+      "comment_plural": "comments",
+      "profile_no_activity": "No recent activity",
+      "load_more": "Load more",
       "profile_member_since": "Member since January 2023",
       "profile_followers": "Followers",
       "profile_following": "Following",
@@ -726,6 +836,53 @@ const resources = {
       "stats_detail_title": "Statistical details",
       "stats_no_data": "No data available.",
       "no_album_category": "No albums in this category yet.",
+
+      // Common
+      "placeholder_email": "your@email.com",
+      "placeholder_password": "••••••••",
+      "text_unknown_artist": "Unknown artist",
+      "text_unknown_album": "Unknown album",
+      "user_system": "System",
+      "settings_edit_profile_subtitle": "Name, Email, Password",
+      "app_version": "Version 1.0.0",
+      "btn_confirm": "Confirm",
+      "error_oops": "Oops!",
+      "char_limit_100": " / 100 characters",
+      "text_element": "item",
+
+      // Album Details
+      "tab_reviews": "Reviews",
+      "section_about": "About",
+      "text_no_biography": "No biography available.",
+      "msg_be_first_reviewer": "Be the first to give your review!",
+      "error_review_already_published_msg": "You have already published a review for this album.",
+      "msg_please_wait": "Please wait",
+      "msg_album_syncing": "The album is syncing...",
+      "msg_playlists_updated": "Your playlists have been updated.",
+      "error_update_playlists": "Unable to update playlists.",
+      "error_load_details": "Unable to load details.",
+      "error_members_only": "This action is reserved for members.",
+      "msg_review_deleted": "Your review has been deleted.",
+      "error_delete_review": "Unable to delete the review.",
+
+      // Feed
+      "badge_your_rating": "YOUR RATING",
+
+      // Conversations
+      "msg_start_conversation": "Start the conversation...",
+
+      // Library
+      "msg_loading_music": "Loading your music...",
+
+      // Discussion
+      "page_discussion": "Discussion",
+      "msg_be_first_to_reply": "Be the first to reply!",
+      "msg_editing_message": "Editing your message",
+      "msg_reply_to_review": "Reply to original message",
+      "placeholder_write_message": "Write your message...",
+      "confirm_delete_comment": "Do you want to delete this comment?",
+      "error_save_comment": "Unable to save your message.",
+      "error_like_update": "Unable to update the like.",
     }
   },
 
@@ -806,6 +963,7 @@ const resources = {
       "released_in": "Erschienen {{year}}",
       "description_title": "Beschreibung",
       "change_status": "Status ändern",
+      "status_update_error": "Status konnte nicht aktualisiert werden. Bitte versuche es erneut.",
       "add_to_playlist": "Zur Playlist hinzufügen",
       "no_playlist": "Keine Playlists verfügbar.",
       "create_playlist": "Playlist erstellen",
@@ -840,6 +998,7 @@ const resources = {
       "search_conv_placeholder": "Konversation suchen...",
       "no_conv_found": "Keine Nachricht oder Kontakt gefunden.",
       "type_message_placeholder": "Nachricht schreiben...",
+      "conv_no_messages": "Sag Hallo und beginne das Gespräch!",
       "select_conv_title": "Konversation wählen",
       "yesterday": "Gestern",
       "monday": "Montag",
@@ -875,6 +1034,15 @@ const resources = {
       "action_new_album": " Neues Album",
       "already_reviewed": "Bereits bewertet",
       "write_review": "Rezension schreiben",
+      "review_login_prompt": "Anmelden, um eine Bewertung abzugeben",
+      "review_post_button": "Bewertung für dieses Album schreiben",
+      "report_title": "Melden",
+      "report_spam": "Spam",
+      "report_hate": "Hassrede",
+      "report_inappropriate": "Unangemessen",
+      "report_other": "Sonstiges",
+      "report_sending": "Senden...",
+      "report_send": "Senden",
       "feed_like_login_required": "Sie müssen angemeldet sein, um zu liken.",
       "feed_like_update_error": "Like konnte nicht aktualisiert werden.",
       "auth_required": "Anmeldung erforderlich",
@@ -887,12 +1055,18 @@ const resources = {
       "cancel_btn": "Abbrechen",
       "comment_placeholder": "Rezension kommentieren...",
       "no_post_found": "Keine Beiträge gefunden.",
+      "time_just_now": "Gerade eben",
+      "time_mins_ago": "Vor {{count}} Min",
+      "time_hours_ago": "Vor {{count}} Std",
+      "time_days_ago": "Vor {{count}} Tg",
+      "time_months_ago": "Vor {{count}} Monaten",
 
       // Home
       "explore_title": "Entdecken",
       "explore_subtitle": "Finde dein nächstes Lieblingsalbum",
       "search_label": "Suche",
       "sort_label": "Sortieren nach",
+      "sort_az": "Titel A-Z",
       "sort_popular": "Beliebteste",
       "sort_recent": "Neueste",
       "sort_rating": "Beste Bewertungen",
@@ -950,6 +1124,9 @@ const resources = {
       "delete_playlist_confirm": "Playlist löschen?",
       "playlist_default_desc": "Deine personalisierten Listen.",
       "no_albums_in_playlist": "Noch keine Titel in dieser Playlist.",
+      "track_singular": "Titel",
+      "track_plural": "Titel",
+      "empty_playlists_list": "Noch keine Playlists.",
       "my_playlists_title": "Meine Playlists",
       "my_playlists_subtitle": "Deine persönlichen Listen",
       "create_playlist_card": "Playlist erstellen",
@@ -979,9 +1156,13 @@ const resources = {
       "tab_unread": "Ungelesen",
       "tab_mentions": "Erwähnungen",
       "no_notifications": "Keine Benachrichtigungen vorhanden.",
+      "notif_earlier": "Früher",
       "action_liked_review": "hat deine Rezension zu \"{{album}}\" geliked",
       "action_commented_review": "hat deine Rezension kommentiert",
       "action_started_following": "folgt dir jetzt",
+      "action_like_added": "hat deine Rezension gemocht",
+      "action_recommendation": "empfiehlt dir ein Album",
+      "action_new_message": "hat dir eine Nachricht gesendet",
 
       // Profil
       "profile_edit_btn": "Profil bearbeiten",
@@ -994,6 +1175,14 @@ const resources = {
       "follow_button": "Folgen",
       "following_button": "Gefolgt",
       "activity_reviewed_album": "hat ein Album bewertet",
+      "activity_rated": "hat bewertet",
+      "activity_by": "von",
+      "like_singular": "Like",
+      "like_plural": "Likes",
+      "comment_singular": "Kommentar",
+      "comment_plural": "Kommentare",
+      "profile_no_activity": "Keine Aktivitäten",
+      "load_more": "Mehr laden",
       "profile_member_since": "Mitglied seit Januar 2023",
       "profile_followers": "Follower",
       "profile_following": "Folge ich",
@@ -1080,6 +1269,53 @@ const resources = {
       "stats_detail_title": "Statistik-Details",
       "stats_no_data": "Keine Daten verfügbar.",
       "no_album_category": "Noch keine Alben in dieser Kategorie.",
+
+      // Allgemein
+      "placeholder_email": "ihre@email.com",
+      "placeholder_password": "••••••••",
+      "text_unknown_artist": "Unbekannter Künstler",
+      "text_unknown_album": "Unbekanntes Album",
+      "user_system": "System",
+      "settings_edit_profile_subtitle": "Name, E-Mail, Passwort",
+      "app_version": "Version 1.0.0",
+      "btn_confirm": "Bestätigen",
+      "error_oops": "Hoppla!",
+      "char_limit_100": " / 100 Zeichen",
+      "text_element": "Element",
+
+      // Album Details
+      "tab_reviews": "Bewertungen",
+      "section_about": "Über",
+      "text_no_biography": "Keine Biografie verfügbar.",
+      "msg_be_first_reviewer": "Sei der Erste, der eine Bewertung abgibt!",
+      "error_review_already_published_msg": "Du hast bereits eine Bewertung für dieses Album veröffentlicht.",
+      "msg_please_wait": "Bitte warten",
+      "msg_album_syncing": "Das Album wird synchronisiert...",
+      "msg_playlists_updated": "Deine Playlists wurden aktualisiert.",
+      "error_update_playlists": "Playlists konnten nicht aktualisiert werden.",
+      "error_load_details": "Details konnten nicht geladen werden.",
+      "error_members_only": "Diese Aktion ist Mitgliedern vorbehalten.",
+      "msg_review_deleted": "Deine Bewertung wurde gelöscht.",
+      "error_delete_review": "Bewertung konnte nicht gelöscht werden.",
+
+      // Feed
+      "badge_your_rating": "DEINE BEWERTUNG",
+
+      // Conversations
+      "msg_start_conversation": "Beginne die Unterhaltung...",
+
+      // Bibliothek
+      "msg_loading_music": "Lade deine Musik...",
+
+      // Diskussion
+      "page_discussion": "Diskussion",
+      "msg_be_first_to_reply": "Sei der Erste, der antwortet!",
+      "msg_editing_message": "Nachricht bearbeiten",
+      "msg_reply_to_review": "Antwort auf die ursprüngliche Nachricht",
+      "placeholder_write_message": "Schreibe deine Nachricht...",
+      "confirm_delete_comment": "Möchtest du diesen Kommentar löschen?",
+      "error_save_comment": "Nachricht konnte nicht gespeichert werden.",
+      "error_like_update": "Like konnte nicht aktualisiert werden.",
     }
   },
 
@@ -1160,6 +1396,7 @@ const resources = {
       "released_in": "Rilasciato nel {{year}}",
       "description_title": "Descrizione",
       "change_status": "Cambia stato",
+      "status_update_error": "Impossibile aggiornare lo stato. Riprova.",
       "add_to_playlist": "Aggiungi alla playlist",
       "no_playlist": "Nessuna playlist disponibile.",
       "create_playlist": "Crea playlist",
@@ -1194,6 +1431,7 @@ const resources = {
       "search_conv_placeholder": "Cerca conversazione...",
       "no_conv_found": "Nessun messaggio o contatto trovato.",
       "type_message_placeholder": "Scrivi un message...",
+      "conv_no_messages": "Di' ciao e inizia la conversazione!",
       "select_conv_title": "Seleziona conversazione",
       "yesterday": "Ieri",
       "monday": "Lunedì",
@@ -1229,6 +1467,15 @@ const resources = {
       "action_new_album": " Nuovo album",
       "already_reviewed": "Già recensito",
       "write_review": "Scrivi una recensione",
+      "review_login_prompt": "Accedi per dare la tua recensione",
+      "review_post_button": "Pubblica una recensione per questo album",
+      "report_title": "Segnala",
+      "report_spam": "Spam",
+      "report_hate": "Contenuto odioso",
+      "report_inappropriate": "Inappropriato",
+      "report_other": "Altro",
+      "report_sending": "Invio...",
+      "report_send": "Invia",
       "feed_like_login_required": "Devi effettuare l'accesso per mettere like.",
       "feed_like_update_error": "Impossibile aggiornare il like.",
       "auth_required": "Accesso richiesto",
@@ -1241,12 +1488,18 @@ const resources = {
       "cancel_btn": "Annulla",
       "comment_placeholder": "Commenta questa recensione...",
       "no_post_found": "Nessun post trovato.",
+      "time_just_now": "Proprio ora",
+      "time_mins_ago": "{{count}} min fa",
+      "time_hours_ago": "{{count}}h fa",
+      "time_days_ago": "{{count}}g fa",
+      "time_months_ago": "{{count}} mesi fa",
 
       // Explore
       "explore_title": "Esplora",
       "explore_subtitle": "Scopri il tuo prossimo album preferito",
       "search_label": "Cerca",
       "sort_label": "Ordina per",
+      "sort_az": "Titolo A-Z",
       "sort_popular": "Più popolari",
       "sort_recent": "Ultime uscite",
       "sort_rating": "I più votati",
@@ -1304,6 +1557,9 @@ const resources = {
       "delete_playlist_confirm": "Eliminare questa playlist?",
       "playlist_default_desc": "Le tue liste personalizzate.",
       "no_albums_in_playlist": "Nessun brano in questa playlist al momento.",
+      "track_singular": "brano",
+      "track_plural": "brani",
+      "empty_playlists_list": "Nessuna playlist per ora.",
       "my_playlists_title": "Le mie playlist",
       "my_playlists_subtitle": "Le tue liste di lettura",
       "create_playlist_card": "Crea playlist",
@@ -1333,9 +1589,13 @@ const resources = {
       "tab_unread": "Non lette",
       "tab_mentions": "Menzioni",
       "no_notifications": "Nessuna notifica da visualizzare.",
+      "notif_earlier": "Precedenti",
       "action_liked_review": "ha messo like alla tua recensione su \"{{album}}\"",
       "action_commented_review": "ha commentato la tua recensione",
       "action_started_following": "ha iniziato a seguirti",
+      "action_like_added": "ha messo like alla tua recensione",
+      "action_recommendation": "ti consiglia un album",
+      "action_new_message": "ti ha inviato un messaggio",
 
       // Profil
       "profile_edit_btn": "Modifica profilo",
@@ -1348,6 +1608,14 @@ const resources = {
       "follow_button": "Segui",
       "following_button": "Seguito",
       "activity_reviewed_album": "ha valutato un album",
+      "activity_rated": "ha valutato",
+      "activity_by": "di",
+      "like_singular": "like",
+      "like_plural": "likes",
+      "comment_singular": "commento",
+      "comment_plural": "commenti",
+      "profile_no_activity": "Nessuna attività recente",
+      "load_more": "Carica altro",
       "profile_member_since": "Membro da Gennaio 2023",
       "profile_followers": "Follower",
       "profile_following": "Seguiti",
@@ -1434,6 +1702,53 @@ const resources = {
       "stats_detail_title": "Dettagli statistiche",
       "stats_no_data": "Nessun dato disponibile.",
       "no_album_category": "Nessun album in questa categoria.",
+
+      // Comune
+      "placeholder_email": "tua@email.com",
+      "placeholder_password": "••••••••",
+      "text_unknown_artist": "Artista sconosciuto",
+      "text_unknown_album": "Album sconosciuto",
+      "user_system": "Sistema",
+      "settings_edit_profile_subtitle": "Nome, Email, Password",
+      "app_version": "Versione 1.0.0",
+      "btn_confirm": "Conferma",
+      "error_oops": "Ops!",
+      "char_limit_100": " / 100 caratteri",
+      "text_element": "elemento",
+
+      // Dettagli Album
+      "tab_reviews": "Recensioni",
+      "section_about": "Informazioni",
+      "text_no_biography": "Nessuna biografia disponibile.",
+      "msg_be_first_reviewer": "Sii il primo a dare la tua recensione!",
+      "error_review_already_published_msg": "Hai già pubblicato una recensione per questo album.",
+      "msg_please_wait": "Attendere",
+      "msg_album_syncing": "L'album si sta sincronizzando...",
+      "msg_playlists_updated": "Le tue playlist sono state aggiornate.",
+      "error_update_playlists": "Impossibile aggiornare le playlist.",
+      "error_load_details": "Impossibile caricare i dettagli.",
+      "error_members_only": "Questa azione è riservata ai membri.",
+      "msg_review_deleted": "La tua recensione è stata eliminata.",
+      "error_delete_review": "Impossibile eliminare la recensione.",
+
+      // Feed
+      "badge_your_rating": "IL TUO VOTO",
+
+      // Conversazioni
+      "msg_start_conversation": "Inizia la conversazione...",
+
+      // Libreria
+      "msg_loading_music": "Caricamento della tua musica...",
+
+      // Discussione
+      "page_discussion": "Discussione",
+      "msg_be_first_to_reply": "Sii il primo a rispondere!",
+      "msg_editing_message": "Modifica del tuo messaggio",
+      "msg_reply_to_review": "Risposta al messaggio originale",
+      "placeholder_write_message": "Scrivi il tuo messaggio...",
+      "confirm_delete_comment": "Vuoi eliminare questo commento?",
+      "error_save_comment": "Impossibile salvare il tuo messaggio.",
+      "error_like_update": "Impossibile aggiornare il like.",
     }
   },
 
@@ -1514,6 +1829,7 @@ const resources = {
       "released_in": "Lanzado en {{year}}",
       "description_title": "Descripción",
       "change_status": "Cambiar estado",
+      "status_update_error": "No se pudo actualizar el estado. Por favor, inténtalo de nuevo.",
       "add_to_playlist": "Añadir a playlist",
       "no_playlist": "Sin playlists disponibles.",
       "create_playlist": "Crear playlist",
@@ -1548,6 +1864,7 @@ const resources = {
       "search_conv_placeholder": "Buscar conversación...",
       "no_conv_found": "No se encontró mensaje o contacto.",
       "type_message_placeholder": "Escribir mensaje...",
+      "conv_no_messages": "¡Di hola y comienza la conversación!",
       "select_conv_title": "Seleccionar conversación",
       "yesterday": "Ayer",
       "monday": "Lunes",
@@ -1583,6 +1900,15 @@ const resources = {
       "action_new_album": " Nuevo álbum",
       "already_reviewed": "Ya calificado",
       "write_review": "Escribir una reseña",
+      "review_login_prompt": "Inicia sesión para dar tu opinión",
+      "review_post_button": "Publicar una reseña de este álbum",
+      "report_title": "Reportar",
+      "report_spam": "Spam",
+      "report_hate": "Contenido de odio",
+      "report_inappropriate": "Inapropiado",
+      "report_other": "Otro",
+      "report_sending": "Enviando...",
+      "report_send": "Enviar",
       "feed_like_login_required": "Debes iniciar sesión para dar me gusta.",
       "feed_like_update_error": "No se pudo actualizar el me gusta.",
       "auth_required": "Inicio de sesión requerido",
@@ -1595,12 +1921,18 @@ const resources = {
       "cancel_btn": "Cancelar",
       "comment_placeholder": "Comentar esta reseña...",
       "no_post_found": "No se encontraron publicaciones.",
+      "time_just_now": "Justo ahora",
+      "time_mins_ago": "Hace {{count}} min",
+      "time_hours_ago": "Hace {{count}}h",
+      "time_days_ago": "Hace {{count}}d",
+      "time_months_ago": "Hace {{count}} meses",
 
       // Explore
       "explore_title": "Explorar",
       "explore_subtitle": "Descubre tu próximo álbum favorito",
       "search_label": "Buscar",
       "sort_label": "Ordenar por",
+      "sort_az": "Título A-Z",
       "sort_popular": "Más populares",
       "sort_recent": "Últimos lanzamientos",
       "sort_rating": "Mejor valorados",
@@ -1658,6 +1990,9 @@ const resources = {
       "delete_playlist_confirm": "¿Eliminar esta playlist?",
       "playlist_default_desc": "Tus listas personalizadas.",
       "no_albums_in_playlist": "Aún no hay canciones en esta playlist.",
+      "track_singular": "canción",
+      "track_plural": "canciones",
+      "empty_playlists_list": "Aún no hay playlists.",
       "my_playlists_title": "Mis playlists",
       "my_playlists_subtitle": "Tus listas de lectura",
       "create_playlist_card": "Crear playlist",
@@ -1687,9 +2022,13 @@ const resources = {
       "tab_unread": "No leídas",
       "tab_mentions": "Menciones",
       "no_notifications": "No hay notificaciones aquí.",
+      "notif_earlier": "Anteriores",
       "action_liked_review": "le gustó tu reseña de \"{{album}}\"",
       "action_commented_review": "comentó tu reseña",
       "action_started_following": "empezó a seguirte",
+      "action_like_added": "le gustó tu reseña",
+      "action_recommendation": "te recomienda un álbum",
+      "action_new_message": "te envió un mensaje",
 
       // Profil
       "profile_edit_btn": "Editar perfil",
@@ -1702,6 +2041,14 @@ const resources = {
       "follow_button": "Seguir",
       "following_button": "Seguido",
       "activity_reviewed_album": "evaluó un álbum",
+      "activity_rated": "calificó",
+      "activity_by": "por",
+      "like_singular": "me gusta",
+      "like_plural": "me gusta",
+      "comment_singular": "comentario",
+      "comment_plural": "comentarios",
+      "profile_no_activity": "Sin actividad reciente",
+      "load_more": "Ver más",
       "profile_member_since": "Miembro desde enero 2023",
       "profile_followers": "Seguidores",
       "profile_following": "Seguidos",
@@ -1788,25 +2135,78 @@ const resources = {
       "stats_detail_title": "Detalles estadísticos",
       "stats_no_data": "No hay datos disponibles.",
       "no_album_category": "Aún no hay álbumes en esta categoría.",
+
+      // Común
+      "placeholder_email": "tu@email.com",
+      "placeholder_password": "••••••••",
+      "text_unknown_artist": "Artista desconocido",
+      "text_unknown_album": "Álbum desconocido",
+      "user_system": "Sistema",
+      "settings_edit_profile_subtitle": "Nombre, Email, Contraseña",
+      "app_version": "Versión 1.0.0",
+      "btn_confirm": "Confirmar",
+      "error_oops": "¡Vaya!",
+      "char_limit_100": " / 100 caracteres",
+      "text_element": "elemento",
+
+      // Detalles Album
+      "tab_reviews": "Reseñas",
+      "section_about": "Acerca de",
+      "text_no_biography": "Sin biografía disponible.",
+      "msg_be_first_reviewer": "¡Sé el primero en dar tu opinión!",
+      "error_review_already_published_msg": "Ya has publicado una reseña para este álbum.",
+      "msg_please_wait": "Por favor espera",
+      "msg_album_syncing": "El álbum se está sincronizando...",
+      "msg_playlists_updated": "Tus playlists han sido actualizadas.",
+      "error_update_playlists": "No se pudieron actualizar las playlists.",
+      "error_load_details": "No se pudieron cargar los detalles.",
+      "error_members_only": "Esta acción está reservada a los miembros.",
+      "msg_review_deleted": "Tu reseña ha sido eliminada.",
+      "error_delete_review": "No se pudo eliminar la reseña.",
+
+      // Feed
+      "badge_your_rating": "TU VALORACIÓN",
+
+      // Conversaciones
+      "msg_start_conversation": "Empieza la conversación...",
+
+      // Biblioteca
+      "msg_loading_music": "Cargando tu música...",
+
+      // Discusión
+      "page_discussion": "Discusión",
+      "msg_be_first_to_reply": "¡Sé el primero en responder!",
+      "msg_editing_message": "Editando tu mensaje",
+      "msg_reply_to_review": "Respuesta al mensaje original",
+      "placeholder_write_message": "Escribe tu mensaje...",
+      "confirm_delete_comment": "¿Quieres eliminar este comentario?",
+      "error_save_comment": "No se pudo guardar tu mensaje.",
+      "error_like_update": "No se pudo actualizar el like.",
     }
   }
 };
 
-const deviceLanguage = getLocales()[0]?.languageCode ?? 'fr';
+const getSavedLanguage = (): string => {
+  try {
+    return SecureStore.getItem('user_language') ?? 'fr';
+  } catch {
+    return 'fr';
+  }
+};
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    compatibilityJSON: 'v4', 
-    lng: 'fr', 
+    compatibilityJSON: 'v4',
+    lng: getSavedLanguage(),
     fallbackLng: 'fr',
     react: {
-      useSuspense: false 
+      useSuspense: false,
     },
     interpolation: {
-      escapeValue: false 
-    }
+      escapeValue: false,
+    },
   });
 
 export default i18n;

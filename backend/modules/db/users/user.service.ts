@@ -27,6 +27,7 @@ import {
     UserResponseDto,
     UserUpdateDto,
 } from "../../../types/users/user.dto.js";
+
 import {Users} from "../../../generated/prisma/browser.js";
 import {userMapper} from "../../../mappers/users/user.mapper.js";
 
@@ -420,8 +421,14 @@ export class UserService {
             updateData.has_notifications = data.has_notifications;
         }
 
-        if (data.profile_picture !== undefined) {
-            updateData.profile_picture = data.profile_picture;
+        if (data.profile_picture !== undefined && data.profile_picture !== null) {
+            let base64 = data.profile_picture;
+            if (base64.startsWith("data:")) {
+                base64 = base64.split(",")[1];
+            }
+            updateData.profile_picture = Buffer.from(base64, "base64");
+        } else if (data.profile_picture === null) {
+            updateData.profile_picture = null;
         }
 
         const user: Users = await PrismaDb.users.update({
@@ -504,7 +511,7 @@ export class UserService {
     async updateProfile(
         id: string,
         data: Partial<UserUpdateDto>,
-    ): Promise<UserResponseDto> {
+    ): Promise<UserPublicDto> {
         if (isEmptyString(id)) {
             throw new BadRequest("User id cannot be empty");
         }
@@ -546,15 +553,21 @@ export class UserService {
         }
 
         if (data.biography !== undefined) updateData.biography = data.biography;
-        if (data.profile_picture !== undefined)
-            updateData.profile_picture = data.profile_picture;
+
+        if (data.profile_picture !== undefined && data.profile_picture !== null) {
+            let base64 = data.profile_picture;
+            if (base64.startsWith("data:")) {
+                base64 = base64.split(",")[1];
+            }
+            updateData.profile_picture = Buffer.from(base64, "base64");
+        }
 
         const updatedUser = await PrismaDb.users.update({
             where: {id},
             data: updateData,
         });
 
-        return userMapper.toDto(updatedUser);
+        return userMapper.toPublicDto(updatedUser);
     }
 
     async updatePushToken(id: string, token: string): Promise<void> {

@@ -8,8 +8,6 @@ import {
   EdgeInsets,
 } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import i18n from "../src/i18n";
 import Footer from "@/src/components/Footer";
 import { ThemeProvider, useTheme } from "../src/context/ThemeContext";
 import { usePushNotifications } from "../src/hook/usePushNotifications";
@@ -51,16 +49,6 @@ function LayoutContent() {
       }
     };
     checkUser();
-  }, []);
-
-  useEffect((): void => {
-    const loadLanguage = async (): Promise<void> => {
-      const savedLang = SecureStore.getItem("user_language");
-      if (savedLang) {
-        await i18n.changeLanguage(savedLang);
-      }
-    };
-    loadLanguage();
   }, []);
 
   usePushNotifications(userId);

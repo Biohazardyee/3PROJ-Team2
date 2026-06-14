@@ -1,4 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
+
 import {BadRequest, Forbidden, NotFound} from '../utils/errors.js';
 import {PrismaDb} from '../config/database.js';
 
@@ -24,6 +25,7 @@ type ResourceType =
 interface ResourceConfig {
     model: any;
     ownerField: string;
+    publicField?: string; // ✅ NOUVEAU : Champ optionnel pour gérer la visibilité
 }
 
 /**
@@ -56,7 +58,8 @@ const RESOURCE_CONFIG: Record<ResourceType, ResourceConfig> = {
     },
     playlists: {
         model: PrismaDb.playlists,
-        ownerField: 'user_id'
+        ownerField: 'user_id',
+        publicField: 'is_public' // ✅ On indique au middleware quel champ regarder
     },
     notifications: {
         model: PrismaDb.notifications,
@@ -89,10 +92,9 @@ const RESOURCE_CONFIG: Record<ResourceType, ResourceConfig> = {
 };
 
 /**
- * Récupère l'ID du propriétaire d'une ressource
+ * Récupère les métadonnées (Propriétaire et Statut public) d'une ressource
  */
-async function getResourceOwnerId(resourceType: ResourceType, resourceId: string): Promise<string | null> {
-
+async function getResourceMeta(resourceType: ResourceType, resourceId: string): Promise<{ ownerId: string | null, isPublic: boolean }> {
     const config: ResourceConfig = RESOURCE_CONFIG[resourceType];
 
     if (!config) {
@@ -103,16 +105,23 @@ async function getResourceOwnerId(resourceType: ResourceType, resourceId: string
         [config.ownerField]: true
     };
 
+    if (config.publicField) {
+        selectFields[config.publicField] = true;
+    }
+
     const resource: any = await config.model.findUnique({
         where: {id: resourceId},
         select: selectFields
     });
 
     if (!resource) {
-        return null;
+        return { ownerId: null, isPublic: false };
     }
 
-    return resource[config.ownerField];
+    return {
+        ownerId: resource[config.ownerField],
+        isPublic: config.publicField ? !!resource[config.publicField] : false
+    };
 }
 
 /**
@@ -137,7 +146,7 @@ export function checkResourceOwnerOrAdmin(resourceType: ResourceType) {
                 return next();
             }
 
-            const ownerId: string | null = await getResourceOwnerId(resourceType, resourceId);
+            const { ownerId, isPublic } = await getResourceMeta(resourceType, resourceId);
 
             if (!ownerId) {
                 throw new NotFound(`${resourceType} not found`);
@@ -147,7 +156,11 @@ export function checkResourceOwnerOrAdmin(resourceType: ResourceType) {
                 return next();
             }
 
-            throw new Forbidden(`Access denied: you can only modify your own ${resourceType}`);
+            if (req.method === 'GET' && isPublic) {
+                return next();
+            }
+
+            throw new Forbidden(`Access denied: you can only modify or access your own private ${resourceType}`);
 
         } catch (err) {
             next(err);

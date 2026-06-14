@@ -77,7 +77,7 @@ export interface UserUpdateDto {
     biography?: string | null
     favorite_band?: string
     has_notifications?: boolean;
-    profile_picture?: Uint8Array<ArrayBuffer>;
+    profile_picture?: string | null;
 }
 
 export interface LoginDto {

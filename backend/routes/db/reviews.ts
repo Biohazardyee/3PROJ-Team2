@@ -1,6 +1,6 @@
 import express, {Request, Response, NextFunction, Router} from 'express';
 import ReviewController from '../../modules/db/reviews/review.controller.js';
-import {authGuard} from "../../middlewares/auth.js";
+import {authGuard, optionalAuthGuard} from "../../middlewares/auth.js";
 import {checkAdmin} from "../../middlewares/checkAdmin.js";
 import ReviewLikeController from "../../modules/db/reviews/review.like.controller.js";
 import {checkResourceOwnerOrAdmin} from "../../middlewares/checkResourceOwnerOrAdmin.js";
@@ -32,11 +32,11 @@ router.get('/', (req, res, next) => {
     ReviewController.getAll(req, res, next);
 });
 
-router.get('/media/:id', (req, res, next) => {
+router.get('/media/:id', optionalAuthGuard, (req, res, next) => {
     ReviewController.getReviewsByMedia(req, res, next);
 })
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', optionalAuthGuard, (req, res, next) => {
     ReviewController.getById(req, res, next);
 });
 

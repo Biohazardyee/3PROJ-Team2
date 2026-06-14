@@ -350,7 +350,7 @@ class UserController extends Controller {
                 profile_picture: req.body.profile_picture,
             };
 
-            const user: UserResponseDto = await this.service.updateProfile(userId, updateData);
+            const user: UserPublicDto = await this.service.updateProfile(userId, updateData);
 
             res.status(200).json({
                 message: "Profile updated successfully",

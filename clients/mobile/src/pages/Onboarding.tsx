@@ -110,7 +110,7 @@ export default function Onboarding() {
 
     const handleFinish: () => Promise<void> = async (): Promise<void> => {
         if (!favorite_band) {
-            Alert.alert("Champ manquant", "Choisis un artiste !");
+            Alert.alert(t("onboarding_missing_artist_title"), t("onboarding_missing_artist_text"));
             return;
         }
         setIsLoading(true);
@@ -121,7 +121,7 @@ export default function Onboarding() {
             router.replace("/");
         } catch (error: any) {
             console.error("Erreur save artist:", error.response?.data);
-            Alert.alert("Erreur", "Impossible de sauvegarder votre artiste.");
+            Alert.alert(t("error"), t("onboarding_save_error"));
         } finally {
             setIsLoading(false);
         }
@@ -153,8 +153,8 @@ export default function Onboarding() {
                     ) : (
                         <View style={styles.searchSection}>
                             <InputMobile
-                                label="Artiste préféré"
-                                placeholder="Ex: Daft Punk, Angèle..."
+                                label={t("onboarding_favorite_artist_label")}
+                                placeholder={t("onboarding_favorite_artist_placeholder")}
                                 icon="musical-note-outline"
                                 value={favorite_band}
                                 onChangeText={searchArtists}

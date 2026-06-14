@@ -5,7 +5,9 @@ import React, {
     useCallback,
     useMemo,
 } from "react";
-import {Search, MoreVertical, Send} from "lucide-react";
+import {Search, MoreVertical, Send, MessageSquare, Smile} from "lucide-react";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
 import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
 import {io, Socket} from "socket.io-client";
@@ -44,8 +46,26 @@ interface BackendConversation {
 const BACKEND_URL = import.meta.env.VITE_API_URL;
 
 const Conversations: React.FC = () => {
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
     const navigate = useNavigate();
+
+    const GAP_MINUTES = 30;
+
+    const formatSeparatorDate = (dateStr: string): string => {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const time = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+        if (date.toDateString() === now.toDateString()) return `${t("today")}, ${time}`;
+        if (date.toDateString() === yesterday.toDateString()) return `${t("yesterday")}, ${time}`;
+        return `${date.toLocaleDateString()}, ${time}`;
+    };
+
+    const shouldShowSeparator = (prevDateStr: string, currDateStr: string): boolean => {
+        const gap = new Date(currDateStr).getTime() - new Date(prevDateStr).getTime();
+        return gap >= GAP_MINUTES * 60 * 1000;
+    };
 
     const [userId, setUserId] = useState<string | null>(null);
     const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
@@ -56,9 +76,12 @@ const Conversations: React.FC = () => {
     const [loadingConv, setLoadingConv] = useState(true);
 
     const [socket, setSocket] = useState<Socket | null>(null);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const selectedConvIdRef = useRef<string | null>(null);
+    const emojiButtonRef = useRef<HTMLButtonElement>(null);
+    const emojiPickerRef = useRef<HTMLDivElement>(null);
 
     useEffect((): void => {
         selectedConvIdRef.current = selectedConvId;
@@ -101,7 +124,13 @@ const Conversations: React.FC = () => {
                 };
             });
 
-            setConversations(processed);
+            const sorted = processed.sort((a, b) => {
+                const tA = a.messages?.[0]?.created_at ? new Date(a.messages[0].created_at).getTime() : 0;
+                const tB = b.messages?.[0]?.created_at ? new Date(b.messages[0].created_at).getTime() : 0;
+                return tB - tA;
+            });
+
+            setConversations(sorted);
         } catch (e) {
             console.error("Erreur chargement des conversations:", e);
         } finally {
@@ -302,6 +331,26 @@ const Conversations: React.FC = () => {
         });
     }, [conversations, searchQuery, getOtherUser, t]);
 
+    useEffect(() => {
+        if (!showEmojiPicker) return;
+        const handleClickOutside = (e: MouseEvent): void => {
+            const target = e.target as Node;
+            if (
+                !emojiButtonRef.current?.contains(target) &&
+                !emojiPickerRef.current?.contains(target)
+            ) {
+                setShowEmojiPicker(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [showEmojiPicker]);
+
+    const handleEmojiSelect = (emoji: any): void => {
+        setNewMessage((prev) => prev + emoji.native);
+        setShowEmojiPicker(false);
+    };
+
     const handleSendMessage = (): void => {
         if (!newMessage.trim() || !selectedConvId || !socket) return;
 
@@ -318,7 +367,7 @@ const Conversations: React.FC = () => {
 
     return (
         <div
-            className="flex h-[calc(100vh-70px)] bg-[#0f1117] dark:bg-slate-50 text-slate-200 dark:text-slate-900 overflow-hidden font-sans transition-colors duration-300">
+            className="flex h-[calc(100vh-70px)] bg-[#13131A] dark:bg-slate-50 text-slate-200 dark:text-slate-900 overflow-hidden font-sans transition-colors duration-300">
             <aside
                 className={`w-full md:w-80 lg:w-96 border-r border-slate-800 dark:border-slate-200 flex flex-col ${selectedConvId ? "hidden md:flex" : "flex"}`}
             >
@@ -420,12 +469,12 @@ const Conversations: React.FC = () => {
             </aside>
 
             <main
-                className={`flex-1 flex flex-col bg-[#0f1117] dark:bg-white ${!selectedConvId ? "hidden md:flex" : "flex"}`}
+                className={`flex-1 flex flex-col bg-[#13131A] dark:bg-white ${!selectedConvId ? "hidden md:flex" : "flex"}`}
             >
                 {selectedConversation ? (
                     <>
                         <header
-                            className="p-4 border-b border-slate-800 dark:border-slate-200 flex justify-between items-center bg-[#0f1117]/50 dark:bg-white/50 backdrop-blur-md">
+                            className="p-4 border-b border-slate-800 dark:border-slate-200 flex justify-between items-center bg-[#13131A]/50 dark:bg-white/50 backdrop-blur-md">
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setSelectedConvId(null)}
@@ -481,44 +530,83 @@ const Conversations: React.FC = () => {
                         </header>
 
                         <div className="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col">
-                            {messages.map((msg: BackendMessage) => {
+                            {messages.length === 0 ? (
+                                <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center select-none">
+                                    <div className="w-16 h-16 rounded-full bg-[#1a1d26] dark:bg-slate-100 border border-slate-700 dark:border-slate-200 flex items-center justify-center">
+                                        <MessageSquare size={28} className="text-slate-500 dark:text-slate-400"/>
+                                    </div>
+                                    <p className="text-sm text-slate-400 dark:text-slate-500 max-w-[220px] leading-relaxed">
+                                        {t("conv_no_messages")}
+                                    </p>
+                                </div>
+                            ) : messages.map((msg: BackendMessage, index: number) => {
                                 const isMe: boolean = String(msg.sender_id) === String(userId);
                                 const messageTime: string = new Date(msg.created_at).toLocaleTimeString(
                                     [],
                                     {hour: "2-digit", minute: "2-digit"},
                                 );
+                                const showSeparator: boolean =
+                                    index === 0 ||
+                                    shouldShowSeparator(messages[index - 1].created_at, msg.created_at);
 
                                 return (
-                                    <div
-                                        key={msg.id}
-                                        className={`max-w-[80%] flex items-start gap-2 ${isMe ? "self-end" : "self-start"}`}
-                                    >
-                                        {!isMe && (
-                                            <UserAvatar
-                                                userId={activeChatUser?.id}
-                                                username={activeChatUser?.username}
-                                                sizeClass="w-7 h-7 text-[10px] mt-0.5"
-                                            />
-                                        )}
-                                        <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
-                                            <div
-                                                className={`px-4 py-2.5 rounded-2xl text-sm ${isMe ? "bg-blue-600 text-white rounded-tr-none shadow-md" : "bg-[#1a1d26] dark:bg-slate-100 text-slate-200 dark:text-gray-800 border border-slate-800 dark:border-slate-200 rounded-tl-none"}`}
-                                            >
-                                                {msg.content}
+                                    <React.Fragment key={msg.id}>
+                                        {showSeparator && (
+                                            <div className="flex items-center justify-center my-2">
+                                                <span className="text-[11px] text-slate-400 dark:text-slate-500 bg-[#1a1d26] dark:bg-slate-100 border border-slate-700 dark:border-slate-200 px-3 py-1 rounded-full select-none">
+                                                    {formatSeparatorDate(msg.created_at)}
+                                                </span>
                                             </div>
-                                            <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 px-1">
-                                                {messageTime}
-                                            </span>
+                                        )}
+                                        <div
+                                            className={`max-w-[80%] flex items-start gap-2 ${isMe ? "self-end" : "self-start"}`}
+                                        >
+                                            {!isMe && (
+                                                <UserAvatar
+                                                    userId={activeChatUser?.id}
+                                                    username={activeChatUser?.username}
+                                                    sizeClass="w-7 h-7 text-[10px] mt-0.5"
+                                                />
+                                            )}
+                                            <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                                                <div
+                                                    className={`px-4 py-2.5 rounded-2xl text-sm ${isMe ? "bg-blue-600 text-white rounded-tr-none shadow-md" : "bg-[#1a1d26] dark:bg-slate-100 text-slate-200 dark:text-gray-800 border border-slate-800 dark:border-slate-200 rounded-tl-none"}`}
+                                                >
+                                                    {msg.content}
+                                                </div>
+                                                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 px-1">
+                                                    {messageTime}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </React.Fragment>
                                 );
                             })}
                             <div ref={messagesEndRef}/>
                         </div>
 
-                        <footer className="p-4 bg-[#0f1117] dark:bg-white">
+                        <footer className="p-4 bg-[#13131A] dark:bg-white relative">
+                            {showEmojiPicker && (
+                                <div ref={emojiPickerRef} className="absolute bottom-full mb-2 left-4 z-50">
+                                    <Picker
+                                        data={data}
+                                        onEmojiSelect={handleEmojiSelect}
+                                        theme={document.documentElement.classList.contains("dark") ? "light" : "dark"}
+                                        locale={["fr", "de", "it"].includes(i18n.language.substring(0, 2)) ? i18n.language.substring(0, 2) : "en"}
+                                        previewPosition="none"
+                                    />
+                                </div>
+                            )}
                             <div
                                 className="flex items-center gap-2 bg-[#1a1d26] dark:bg-slate-100 border border-slate-800 dark:border-slate-200 rounded-xl px-4 py-2 focus-within:border-blue-500/50 transition-all">
+                                <button
+                                    ref={emojiButtonRef}
+                                    onClick={() => setShowEmojiPicker((v) => !v)}
+                                    className={`p-1 transition-colors ${showEmojiPicker ? "text-yellow-400 dark:text-yellow-500" : "text-slate-500 hover:text-yellow-400 dark:hover:text-yellow-500"}`}
+                                    title="Emoji"
+                                >
+                                    <Smile size={18}/>
+                                </button>
                                 <input
                                     type="text"
                                     placeholder={t("type_message_placeholder")}

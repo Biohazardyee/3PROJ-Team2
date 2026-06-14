@@ -18,7 +18,7 @@ export const AuthReviewButton: React.FC<AuthReviewButtonProps> = ({onPress, isLo
         return (
             <TouchableOpacity
                 style={styles.guestButton}
-                onPress={(): void => router.push('/login')}
+                onPress={(): void => router.push('/restriction')}
                 activeOpacity={0.8}
             >
                 <LinearGradient

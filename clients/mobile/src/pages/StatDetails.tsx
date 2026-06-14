@@ -14,9 +14,11 @@ import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
 import {useTranslation} from "react-i18next";
+import {useTheme} from "../context/ThemeContext";
 
 const StatDetails: React.FC = () => {
     const { t } = useTranslation();
+    const {theme} = useTheme();
     const {type} = useLocalSearchParams();
     const [albums, setAlbums] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -72,7 +74,7 @@ const StatDetails: React.FC = () => {
                         displayId: m.api_id || m.id,
                         dbId: m.id,
                         album: m.name || m.title || t("album_not_found"),
-                        artist: m.artist || "Artiste inconnu",
+                        artist: m.artist || t("text_unknown_artist"),
                         rating: m.rating || 0,
                         cover: m.cover || m.cover_url || "https://via.placeholder.com/150",
                     };
@@ -92,7 +94,7 @@ const StatDetails: React.FC = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: theme.background}]}>
             <Header/>
             <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -105,7 +107,7 @@ const StatDetails: React.FC = () => {
                             {config.title}
                         </Text>
                     </View>
-                    <Text style={styles.subtitle}>{config.subtitle}</Text>
+                    <Text style={[styles.subtitle, {color: theme.subText}]}>{config.subtitle}</Text>
                 </View>
 
                 {loading ? (
@@ -135,19 +137,18 @@ const StatDetails: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: "#1C1C28"},
+    container: {flex: 1},
     scroll: {padding: 20, paddingTop: 10},
     headerTextContainer: {marginBottom: 25},
     headerTitle: {flexDirection: "row", alignItems: "center", gap: 10},
     title: {fontSize: 28, fontWeight: "bold"},
-    subtitle: {color: "#888", fontSize: 16, marginTop: 5},
+    subtitle: {fontSize: 16, marginTop: 5},
     grid: {
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-between",
     },
     emptyText: {
-        color: "#555",
         textAlign: "center",
         marginTop: 50,
         width: "100%",

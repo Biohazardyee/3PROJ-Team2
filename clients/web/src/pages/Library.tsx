@@ -155,7 +155,7 @@ const LibraryPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#0f1117] dark:bg-slate-50 text-white dark:text-slate-900 transition-colors duration-300">
+            <div className="min-h-screen flex items-center justify-center bg-[#13131A] dark:bg-slate-50 text-white dark:text-slate-900 transition-colors duration-300">
                 <Loader2 className="animate-spin" size={48}/>
             </div>
         );
@@ -165,7 +165,7 @@ const LibraryPage: React.FC = () => {
         const currentAlbums = selectedPlaylist.items || [];
 
         return (
-            <div className="min-h-screen bg-[#0f1117] dark:bg-slate-50 p-6 md:p-10 text-white dark:text-slate-900 font-sans transition-colors duration-300">
+            <div className="min-h-screen bg-[#13131A] dark:bg-slate-50 p-6 md:p-10 text-white dark:text-slate-900 font-sans transition-colors duration-300">
                 <div className="max-w-7xl mx-auto space-y-8">
                     <button
                         onClick={() => setSelectedPlaylist(null)}
@@ -259,7 +259,7 @@ const LibraryPage: React.FC = () => {
 
     return (
         <div
-            className="min-h-screen bg-[#0f1117] dark:bg-slate-50 text-slate-50 dark:text-gray-900 p-6 md:p-10 font-sans transition-colors duration-300">
+            className="min-h-screen bg-[#13131A] dark:bg-slate-50 text-slate-50 dark:text-gray-900 p-6 md:p-10 font-sans transition-colors duration-300">
             <div className="max-w-7xl mx-auto space-y-10">
                 <header>
                     <h1 className="text-4xl font-bold text-white dark:text-slate-900 mb-2">

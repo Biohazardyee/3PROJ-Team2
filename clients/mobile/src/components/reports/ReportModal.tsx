@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {Modal, View, Text, TouchableOpacity, Pressable} from "react-native";
+import {useTranslation} from "react-i18next";
 
 type Props = {
     visible: boolean;
@@ -8,20 +9,21 @@ type Props = {
     loading?: boolean;
 };
 
-const reasons = [
-    {key: "spam", label: "Spam"},
-    {key: "hate", label: "Contenu haineux"},
-    {key: "inappropriate", label: "Inapproprié"},
-    {key: "other", label: "Autre"},
-];
-
 export default function ReportModal({
                                         visible,
                                         onClose,
                                         onSubmit,
                                         loading,
                                     }: Props) {
+    const {t} = useTranslation();
     const [selected, setSelected] = useState<string>("");
+
+    const reasons = [
+        {key: "spam", label: t("report_spam")},
+        {key: "hate", label: t("report_hate")},
+        {key: "inappropriate", label: t("report_inappropriate")},
+        {key: "other", label: t("report_other")},
+    ];
 
     const handleSubmit = (): void => {
         if (!selected) return;
@@ -45,7 +47,7 @@ export default function ReportModal({
                     }}
                 >
                     <Text style={{color: "white", fontSize: 18, marginBottom: 10}}>
-                        Signaler
+                        {t("report_title")}
                     </Text>
 
                     {reasons.map((r) => (
@@ -73,7 +75,7 @@ export default function ReportModal({
                         }}
                     >
                         <Text style={{color: "white"}}>
-                            {loading ? "Envoi..." : "Envoyer"}
+                            {loading ? t("report_sending") : t("report_send")}
                         </Text>
                     </TouchableOpacity>
                 </View>

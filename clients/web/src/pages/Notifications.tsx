@@ -1,10 +1,19 @@
 import React, {useState, useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
-import {Loader2} from "lucide-react";
+import {
+    Bell,
+    Heart,
+    MessageCircle,
+    Star,
+    MessageSquare,
+    UserPlus,
+    Sparkles,
+    Loader2,
+    CheckCheck,
+} from "lucide-react";
 import {jwtDecode} from "jwt-decode";
 import {useNavigate} from "react-router-dom";
 import apiClient from "../api/client";
-
 
 export interface AppNotification {
     id: string;
@@ -14,114 +23,112 @@ export interface AppNotification {
     content?: string;
     related_user_id?: string;
     created_at: string;
-    sender?: {
-        username: string;
-        profile_image?: string;
-    };
-    related_user?: {
-        username: string;
-        profile_image?: string;
-    };
+    sender?: {username: string; profile_image?: string};
+    related_user?: {username: string; profile_image?: string};
 }
 
-const TabItem: React.FC<{
-    label: string;
-    count?: number;
-    active?: boolean;
-    onClick?: () => void;
-}> = ({label, count, active, onClick}) => (
-    <button
-        onClick={onClick}
-        className={`px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors ${
-            active
-                ? "bg-slate-700 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md"
-                : "text-slate-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800 dark:hover:bg-gray-100"
-        }`}
-    >
-        {label}
-        {count !== undefined && count > 0 && (
-            <span className={`text-xs opacity-80 ${active ? "" : "font-medium"}`}>
-        ({count})
-      </span>
-        )}
-    </button>
+type Tab = "all" | "unread" | "mentions";
+
+type ActionConfig = {
+    Icon: React.FC<{size?: number; className?: string}>;
+    badgeBg: string;
+    iconColor: string;
+    accent: string;
+};
+
+const ACTION_CONFIG: Record<string, ActionConfig> = {
+    like_added:     {Icon: Heart,          badgeBg: "bg-rose-500/15 dark:bg-rose-50",     iconColor: "text-rose-400 dark:text-rose-500",       accent: "border-l-rose-500 dark:border-l-rose-400"},
+    comment_added:  {Icon: MessageCircle,  badgeBg: "bg-emerald-500/15 dark:bg-emerald-50", iconColor: "text-emerald-400 dark:text-emerald-600", accent: "border-l-emerald-500 dark:border-l-emerald-400"},
+    review_added:   {Icon: Star,           badgeBg: "bg-amber-500/15 dark:bg-amber-50",   iconColor: "text-amber-400 dark:text-amber-500",     accent: "border-l-amber-500 dark:border-l-amber-400"},
+    new_message:    {Icon: MessageSquare,  badgeBg: "bg-blue-500/15 dark:bg-blue-50",     iconColor: "text-blue-400 dark:text-blue-500",       accent: "border-l-blue-500 dark:border-l-blue-400"},
+    new_follow:     {Icon: UserPlus,       badgeBg: "bg-violet-500/15 dark:bg-violet-50", iconColor: "text-violet-400 dark:text-violet-600",   accent: "border-l-violet-500 dark:border-l-violet-400"},
+    recommendation: {Icon: Sparkles,       badgeBg: "bg-cyan-500/15 dark:bg-cyan-50",     iconColor: "text-cyan-400 dark:text-cyan-600",       accent: "border-l-cyan-500 dark:border-l-cyan-400"},
+};
+
+const DEFAULT_CONFIG: ActionConfig = {
+    Icon: Bell,
+    badgeBg: "bg-slate-500/15 dark:bg-slate-100",
+    iconColor: "text-slate-400 dark:text-slate-500",
+    accent: "border-l-slate-600 dark:border-l-slate-400",
+};
+
+const getConfig = (action: string): ActionConfig => ACTION_CONFIG[action] ?? DEFAULT_CONFIG;
+
+const SectionHeader: React.FC<{label: string; count: number}> = ({label, count}) => (
+    <div className="flex items-center gap-3 mb-3 mt-8 first:mt-0">
+        <span className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 shrink-0">
+            {label}
+        </span>
+        <div className="flex-1 h-px bg-slate-800 dark:bg-slate-200"/>
+        <span className="text-xs font-medium text-slate-600 dark:text-slate-400 shrink-0 tabular-nums">{count}</span>
+    </div>
 );
 
 const NotificationCard: React.FC<{
     notification: AppNotification;
     onClick: () => void;
     onAvatarClick: (e: React.MouseEvent) => void;
-}> = ({notification, onClick, onAvatarClick}) => {
-    const {t} = useTranslation(); // ✅ Ajout pour la traduction locale dans la carte
+    formatTime: (d: string) => string;
+}> = ({notification, onClick, onAvatarClick, formatTime}) => {
+    const {t} = useTranslation();
+    const config = getConfig(notification.action);
+    const {Icon} = config;
 
-    const displayUser: string =
+    const displayUser =
         notification.related_user?.username ||
         notification.sender?.username ||
         "Système";
-    const userInitial: string = displayUser.charAt(0).toUpperCase();
-    const userProfilePic: string | undefined =
+    const userInitial = displayUser.charAt(0).toUpperCase();
+    const userPic =
         notification.related_user?.profile_image ||
         notification.sender?.profile_image;
 
-    // ✅ Génération et traduction dynamique de la phrase
-    const getNotificationText = (): string => {
-        // Clé générée dynamiquement (ex: notification_action_review_added)
-        const translationKey = `notification_action_${notification.action}`;
-
-        // On tente de traduire en fournissant le username pour l'injection i18n
-        const translated = t(translationKey, { username: displayUser });
-
-        // Si la traduction n'existe pas (clé renvoyée identique à la clé fournie),
-        // on se rabat sur le content bdd ou l'action brute.
-        if (translated === translationKey) {
-            return notification.content || notification.action;
-        }
-
-        return translated;
+    const text = (): string => {
+        const key = `notification_action_${notification.action}`;
+        const translated = t(key, {username: displayUser});
+        return translated === key ? notification.content || notification.action : translated;
     };
 
     return (
         <div
             onClick={onClick}
-            className={`bg-slate-900 dark:bg-white border rounded-2xl p-5 flex items-center justify-between gap-4 shadow-sm hover:border-slate-600 dark:hover:border-gray-300 transition-colors cursor-pointer ${
-                !notification.is_read
-                    ? "border-blue-500/40"
-                    : "border-slate-700 dark:border-gray-200"
-            }`}
+            className={`
+                relative flex items-center gap-4 p-4 rounded-xl cursor-pointer
+                border-l-4 ${config.accent}
+                border border-slate-800 dark:border-slate-200
+                transition-all duration-200 group
+                ${notification.is_read
+                    ? "bg-[#16161f] dark:bg-white/60 hover:bg-[#1a1d26] dark:hover:bg-white"
+                    : "bg-[#1a1d26] dark:bg-white hover:bg-[#1e2130] dark:hover:bg-slate-50 shadow-sm"
+                }
+            `}
         >
-            <div className="flex items-center gap-5">
-                <div
-                    onClick={onAvatarClick}
-                    className="shrink-0 w-12 h-12 rounded-full overflow-hidden bg-slate-800 dark:bg-gray-100 flex items-center justify-center shadow-inner cursor-pointer hover:opacity-80 hover:scale-105 transition-all duration-200"
-                >
-                    {userProfilePic ? (
-                        <img
-                            src={userProfilePic}
-                            alt={displayUser}
-                            className="w-full h-full object-cover"
-                        />
+            <div className="relative shrink-0" onClick={onAvatarClick}>
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-800 dark:bg-gray-100 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
+                    {userPic ? (
+                        <img src={userPic} alt={displayUser} className="w-full h-full object-cover"/>
                     ) : (
-                        <span className="text-blue-500 font-bold text-lg">
-              {userInitial}
-            </span>
+                        <span className="text-blue-400 dark:text-blue-600 font-bold text-base">
+                            {userInitial}
+                        </span>
                     )}
                 </div>
-
-                <div className="flex flex-col">
-                    <div className="text-slate-100 dark:text-gray-900 text-[15px] leading-relaxed">
-                        {/* ✅ Remplacement par la fonction i18n unifiée */}
-                        <span className="text-slate-200 dark:text-gray-700">
-                            {getNotificationText()}
-                        </span>
-                    </div>
-                    <p className="text-slate-500 dark:text-gray-400 text-sm mt-1">
-                        {new Date(notification.created_at).toLocaleDateString()}
-                    </p>
+                <div className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full ${config.badgeBg} flex items-center justify-center border-2 border-[#13131A] dark:border-white`}>
+                    <Icon size={10} className={config.iconColor}/>
                 </div>
             </div>
 
+            <div className="flex-1 min-w-0">
+                <p className={`text-sm leading-relaxed truncate ${notification.is_read ? "text-slate-400 dark:text-gray-500" : "text-slate-100 dark:text-gray-900 font-medium"}`}>
+                    {text()}
+                </p>
+                <p className={`text-xs mt-0.5 ${notification.is_read ? "text-slate-600 dark:text-gray-400" : "text-blue-400 dark:text-blue-500 font-medium"}`}>
+                    {formatTime(notification.created_at)}
+                </p>
+            </div>
+
             {!notification.is_read && (
-                <div className="shrink-0 w-3 h-3 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
+                <div className="shrink-0 w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_6px_rgba(59,130,246,0.7)]"/>
             )}
         </div>
     );
@@ -131,14 +138,12 @@ const Notifications: React.FC = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [notifications, setNotifications] = useState<AppNotification[]>([]);
-    const [activeTab, setActiveTab] = useState<"Tout" | "Non lues" | "Mentions">(
-        "Tout",
-    );
+    const [activeTab, setActiveTab] = useState<Tab>("all");
     const [loading, setLoading] = useState(true);
     const [userId, setUserId] = useState<string | null>(null);
 
     useEffect((): void => {
-        const token: string | null = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
         if (token) {
             try {
                 const decoded: any = jwtDecode(token);
@@ -163,144 +168,197 @@ const Notifications: React.FC = () => {
     };
 
     useEffect((): void => {
-        if (userId) {
-            fetchNotifications();
-        }
+        if (userId) fetchNotifications();
     }, [userId]);
 
-    const unreadCount: number = useMemo(
-        () => notifications.filter((n: AppNotification) => !n.is_read).length,
+    const unreadCount = useMemo(
+        () => notifications.filter((n) => !n.is_read).length,
         [notifications],
     );
 
     const handleMarkAllAsRead = async (): Promise<void> => {
-        const unreadNotifs: AppNotification[] = notifications.filter((n: AppNotification) => !n.is_read);
-        if (unreadNotifs.length === 0) return;
-
+        const unread = notifications.filter((n) => !n.is_read);
+        if (!unread.length) return;
         try {
-            setNotifications((prev: AppNotification[]) => prev.map((n: AppNotification) => ({...n, is_read: true})));
-
-            await Promise.all(
-                unreadNotifs.map((notif: AppNotification) =>
-                    apiClient.put(`/notifications/${notif.id}`, {is_read: true}),
-                ),
-            );
+            setNotifications((prev) => prev.map((n) => ({...n, is_read: true})));
+            await Promise.all(unread.map((n) => apiClient.put(`/notifications/${n.id}`, {is_read: true})));
         } catch (e) {
-            console.error("Erreur lors du marquage global:", e);
+            console.error("Erreur marquage global:", e);
             await fetchNotifications();
         }
     };
 
-    const handleNotificationClick = async (notification: AppNotification): Promise<void> => {
-        if (notification.is_read) return;
-
+    const handleNotificationClick = async (notif: AppNotification): Promise<void> => {
+        if (notif.is_read) return;
         try {
-            setNotifications((prev: AppNotification[]) =>
-                prev.map((n: AppNotification) =>
-                    n.id === notification.id ? {...n, is_read: true} : n,
-                ),
-            );
-            await apiClient.put(`/notifications/${notification.id}`, {
-                is_read: true,
-            });
+            setNotifications((prev) => prev.map((n) => n.id === notif.id ? {...n, is_read: true} : n));
+            await apiClient.put(`/notifications/${notif.id}`, {is_read: true});
         } catch (e) {
-            console.error("Erreur lors du marquage unitaire:", e);
+            console.error("Erreur marquage unitaire:", e);
         }
     };
 
-    const handleAvatarClick = async (
-        e: React.MouseEvent,
-        notification: AppNotification,
-    ): Promise<void> => {
+    const handleAvatarClick = async (e: React.MouseEvent, notif: AppNotification): Promise<void> => {
         e.stopPropagation();
-
-        if (!notification.is_read) {
-            await handleNotificationClick(notification);
-        }
-
-        if (notification.related_user_id) {
-            navigate(`/profil/${notification.related_user_id}`);
-        }
+        if (!notif.is_read) await handleNotificationClick(notif);
+        if (notif.related_user_id) navigate(`/profil/${notif.related_user_id}`);
     };
 
-    const filteredNotifications: AppNotification[] = useMemo((): AppNotification[] => {
-        if (activeTab === "Non lues")
-            return notifications.filter((n: AppNotification) => !n.is_read);
-        if (activeTab === "Mentions")
-            return notifications.filter((n: AppNotification): boolean => n.action === "mention" || n.action === "recommendation");
-        return notifications;
+    const filteredNotifications = useMemo((): AppNotification[] => {
+        const sorted = [...notifications].sort(
+            (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        );
+        if (activeTab === "unread") return sorted.filter((n) => !n.is_read);
+        if (activeTab === "mentions") return sorted.filter((n) => n.action === "mention" || n.action === "recommendation");
+        return sorted;
     }, [notifications, activeTab]);
+
+    const isToday = (dateStr: string): boolean =>
+        new Date(dateStr).toDateString() === new Date().toDateString();
+
+    const todayNotifs = filteredNotifications.filter((n) => isToday(n.created_at));
+    const earlierNotifs = filteredNotifications.filter((n) => !isToday(n.created_at));
+
+    const formatTime = (dateStr: string): string => {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const time = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+        if (date.toDateString() === now.toDateString()) return time;
+        if (date.toDateString() === yesterday.toDateString()) return `${t("yesterday")}, ${time}`;
+        return date.toLocaleDateString([], {day: "numeric", month: "short"});
+    };
+
+    const tabs: {key: Tab; label: string; count?: number}[] = [
+        {key: "all",      label: t("tab_all")},
+        {key: "unread",   label: t("tab_unread"), count: unreadCount},
+        {key: "mentions", label: t("tab_mentions")},
+    ];
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-950 dark:bg-slate-50 text-white dark:text-gray-900 transition-colors duration-300">
-                <Loader2 className="animate-spin" size={48}/>
+            <div className="min-h-screen flex items-center justify-center bg-[#13131A] dark:bg-slate-50 transition-colors duration-300">
+                <Loader2 className="animate-spin text-slate-500" size={40}/>
             </div>
         );
     }
 
     return (
-        <div
-            className="min-h-screen bg-slate-950 dark:bg-slate-50 text-slate-50 dark:text-gray-900 p-6 md:p-10 lg:p-12 font-sans transition-colors duration-300">
-            <div className="max-w-6xl mx-auto">
-                <header className="flex justify-between items-start mb-10">
-                    <div>
-                        <h1 className="text-4xl font-extrabold text-white dark:text-gray-900 tracking-tight">
-                            {t("notifications_title", "Notifications")}
-                        </h1>
-                        <p className="text-slate-400 dark:text-gray-600 text-lg mt-1.5 font-medium">
-                            {unreadCount} non lue{unreadCount > 1 ? "s" : ""}
-                        </p>
+        <div className="min-h-screen bg-[#13131A] dark:bg-slate-50 text-slate-50 dark:text-gray-900 font-sans transition-colors duration-300">
+            <div className="max-w-2xl mx-auto px-4 py-10 md:py-14">
+
+                {/* Header */}
+                <header className="flex justify-between items-center mb-10">
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-900/30">
+                                <Bell size={22} className="text-white"/>
+                            </div>
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 bg-blue-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow">
+                                    {unreadCount > 99 ? "99+" : unreadCount}
+                                </span>
+                            )}
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-extrabold text-white dark:text-gray-900 tracking-tight">
+                                {t("notifications_title", "Notifications")}
+                            </h1>
+                            <p className="text-slate-500 dark:text-gray-400 text-sm mt-0.5">
+                                {unreadCount > 0
+                                    ? `${unreadCount} ${t("tab_unread").toLowerCase()}`
+                                    : t("no_notifications", "Tout lu")}
+                            </p>
+                        </div>
                     </div>
+
                     <button
                         onClick={handleMarkAllAsRead}
                         disabled={unreadCount === 0}
-                        className={`border px-6 py-2.5 rounded-full text-sm font-semibold transition-colors shadow-sm ${
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
                             unreadCount > 0
-                                ? "bg-slate-800 dark:bg-white dark:text-gray-900 dark:border-gray-200 text-slate-100 hover:bg-slate-700 dark:hover:bg-gray-100"
-                                : "bg-slate-900 dark:bg-gray-100 dark:text-gray-400 border-slate-800 dark:border-gray-200 text-slate-600 cursor-not-allowed"
+                                ? "bg-slate-800 dark:bg-white border border-slate-700 dark:border-gray-200 text-slate-200 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-50 hover:border-slate-600"
+                                : "bg-slate-900 dark:bg-gray-100 border border-slate-800 dark:border-gray-200 text-slate-600 dark:text-gray-400 cursor-not-allowed"
                         }`}
                     >
-                        {t("mark_all_read", "Tout marquer comme lu")}
+                        <CheckCheck size={15}/>
+                        <span className="hidden sm:inline">{t("mark_all_read", "Tout lire")}</span>
                     </button>
                 </header>
 
-                <nav
-                    className="bg-slate-900 dark:bg-white border border-slate-700 dark:border-gray-200 rounded-xl p-1.5 flex justify-center gap-1.5 shadow-inner">
-                    <TabItem
-                        label={t("tab_all", "Tout")}
-                        active={activeTab === "Tout"}
-                        onClick={() => setActiveTab("Tout")}
-                    />
-                    <TabItem
-                        label={t("tab_unread", "Non lues")}
-                        count={unreadCount}
-                        active={activeTab === "Non lues"}
-                        onClick={() => setActiveTab("Non lues")}
-                    />
-                    <TabItem
-                        label={t("tab_mentions", "Mentions")}
-                        active={activeTab === "Mentions"}
-                        onClick={() => setActiveTab("Mentions")}
-                    />
+                {/* Tabs */}
+                <nav className="flex gap-0 border-b border-slate-800 dark:border-slate-200 mb-8">
+                    {tabs.map(({key, label, count}) => (
+                        <button
+                            key={key}
+                            onClick={() => setActiveTab(key)}
+                            className={`relative px-5 py-3 text-sm font-semibold transition-colors duration-150 ${
+                                activeTab === key
+                                    ? "text-blue-400 dark:text-blue-600"
+                                    : "text-slate-500 dark:text-slate-400 hover:text-slate-200 dark:hover:text-gray-700"
+                            }`}
+                        >
+                            {label}
+                            {count !== undefined && count > 0 && (
+                                <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-blue-600 text-white text-[10px] font-bold">
+                                    {count}
+                                </span>
+                            )}
+                            {activeTab === key && (
+                                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 dark:bg-blue-600 rounded-t-full"/>
+                            )}
+                        </button>
+                    ))}
                 </nav>
 
-                <main className="mt-10 space-y-5">
-                    {filteredNotifications.length > 0 ? (
-                        filteredNotifications.map((notification: AppNotification) => (
-                            <NotificationCard
-                                key={notification.id}
-                                notification={notification}
-                                onClick={() => handleNotificationClick(notification)}
-                                onAvatarClick={(e) => handleAvatarClick(e, notification)}
-                            />
-                        ))
-                    ) : (
-                        <div className="text-center py-10 text-slate-500 dark:text-gray-400">
-                            {t("no_notifications", "Aucune notification.")}
+                {/* Content */}
+                {filteredNotifications.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+                        <div className="w-16 h-16 rounded-full bg-slate-800 dark:bg-slate-100 border border-slate-700 dark:border-slate-200 flex items-center justify-center">
+                            <Bell size={28} className="text-slate-600 dark:text-slate-400"/>
                         </div>
-                    )}
-                </main>
+                        <p className="text-sm text-slate-500 dark:text-gray-400 max-w-[200px] leading-relaxed">
+                            {t("no_notifications")}
+                        </p>
+                    </div>
+                ) : (
+                    <main className="space-y-2">
+                        {todayNotifs.length > 0 && (
+                            <section>
+                                <SectionHeader label={t("today")} count={todayNotifs.length}/>
+                                <div className="space-y-2">
+                                    {todayNotifs.map((n) => (
+                                        <NotificationCard
+                                            key={n.id}
+                                            notification={n}
+                                            onClick={() => handleNotificationClick(n)}
+                                            onAvatarClick={(e) => handleAvatarClick(e, n)}
+                                            formatTime={formatTime}
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {earlierNotifs.length > 0 && (
+                            <section>
+                                <SectionHeader label={t("notif_earlier")} count={earlierNotifs.length}/>
+                                <div className="space-y-2">
+                                    {earlierNotifs.map((n) => (
+                                        <NotificationCard
+                                            key={n.id}
+                                            notification={n}
+                                            onClick={() => handleNotificationClick(n)}
+                                            onAvatarClick={(e) => handleAvatarClick(e, n)}
+                                            formatTime={formatTime}
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+                    </main>
+                )}
             </div>
         </div>
     );

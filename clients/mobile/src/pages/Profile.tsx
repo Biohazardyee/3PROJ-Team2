@@ -26,6 +26,16 @@ import {AuthGuardWrapper} from "../components/AuthGuardMapper";
 import apiClient from "../api/client";
 import ReportUserButton from "../components/reports/ReportUserButton";
 import {useTranslation} from "react-i18next";
+import {AxiosResponse} from "axios";
+import {useTheme} from "../context/ThemeContext";
+
+const getRatingStyle = (rating: number) => {
+    if (rating >= 4.5) return { bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.25)", color: "#10b981" };
+    if (rating >= 3.5) return { bg: "rgba(59,130,246,0.12)", border: "rgba(59,130,246,0.25)", color: "#3b82f6" };
+    if (rating >= 2.5) return { bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.25)", color: "#f59e0b" };
+    if (rating >= 1.5) return { bg: "rgba(249,115,22,0.12)", border: "rgba(249,115,22,0.25)", color: "#f97316" };
+    return { bg: "rgba(244,63,94,0.12)", border: "rgba(244,63,94,0.25)", color: "#f43f5e" };
+};
 
 const formatReviewItem = (item: any, username: string) => {
     const content = item.media?.content;
@@ -54,6 +64,7 @@ const formatReviewItem = (item: any, username: string) => {
 const ProfileScreen = () => {
     const {t} = useTranslation();
     const router: Router = useRouter();
+    const {theme} = useTheme();
     const params: UnknownOutputParams = useLocalSearchParams();
     const externalUserIdRaw: string | string[] = params.id;
 
@@ -293,16 +304,13 @@ const ProfileScreen = () => {
         }
     };
 
-    const fetchFavoriteAlbums: (userId: string) => Promise<void> = async (
-        userId: string,
-    ): Promise<void> => {
+    const fetchFavoriteAlbums = async (userId: string): Promise<void> => {
         try {
-            const response = await apiClient.get(`/reviews/user/${userId}/top`);
+            const response: AxiosResponse<any, any> = await apiClient.get(`/reviews/user/${userId}/top`);
             const rawData = response.data.data || [];
 
-            const normalizedData = rawData.map((item: any) => {
+            const normalizedData = rawData.map((item: any): any => {
                 const content = item.media?.content;
-
                 if (content?.album) {
                     return {
                         ...item,
@@ -321,10 +329,9 @@ const ProfileScreen = () => {
                 }
                 return item;
             });
-
             setFavoriteReviews(normalizedData);
         } catch (error: any) {
-            console.error("❌ Erreur Albums favoris  :", error.response?.status);
+            console.error("❌ Erreur Favorite Albums :", error.response?.status);
         }
     };
 
@@ -407,7 +414,7 @@ const ProfileScreen = () => {
 
     if (loading) {
         return (
-            <View style={styles.loaderContainer}>
+            <View style={[styles.loaderContainer, {backgroundColor: theme.background}]}>
                 <ActivityIndicator size="large" color="#4A90E2"/>
             </View>
         );
@@ -415,7 +422,7 @@ const ProfileScreen = () => {
 
     return (
         <AuthGuardWrapper>
-            <View style={styles.container}>
+            <View style={[styles.container, {backgroundColor: theme.background}]}>
                 <Header/>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
@@ -431,7 +438,7 @@ const ProfileScreen = () => {
                             style={styles.banner}
                         />
                         <TouchableOpacity
-                            style={styles.profilePicOuter}
+                            style={[styles.profilePicOuter, {borderColor: theme.background, backgroundColor: theme.background}]}
                             onPress={handleProfilePicturePress}
                             disabled={!isOwnProfile}
                             activeOpacity={isOwnProfile ? 0.7 : 1}
@@ -477,36 +484,36 @@ const ProfileScreen = () => {
                     </View>
 
                     <View style={styles.contentPadding}>
-                        <Text style={styles.userName}>{userProfil?.username}</Text>
-                        <Text style={styles.handle}>
+                        <Text style={[styles.userName, {color: theme.text}]}>{userProfil?.username}</Text>
+                        <Text style={[styles.handle, {color: theme.subText}]}>
                             @{userProfil?.username?.toLowerCase()}
                         </Text>
 
                         <View style={styles.statsRow}>
                             <TouchableOpacity style={styles.statItem}>
-                                <Text style={styles.statNumber}>{followCounts.followers}</Text>
-                                <Text style={styles.statLabel}> {t("profile_followers")}</Text>
+                                <Text style={[styles.statNumber, {color: theme.text}]}>{followCounts.followers}</Text>
+                                <Text style={[styles.statLabel, {color: theme.subText}]}> {t("profile_followers")}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.statItem}>
-                                <Text style={styles.statNumber}>{followCounts.following}</Text>
-                                <Text style={styles.statLabel}> {t("profile_following")}</Text>
+                                <Text style={[styles.statNumber, {color: theme.text}]}>{followCounts.following}</Text>
+                                <Text style={[styles.statLabel, {color: theme.subText}]}> {t("profile_following")}</Text>
                             </TouchableOpacity>
                         </View>
 
                         {isOwnProfile ? (
                             <TouchableOpacity
-                                style={styles.editButton}
+                                style={[styles.editButton, {borderColor: theme.border}]}
                                 onPress={(): void => router.push("/settings")}
                             >
-                                <Ionicons name="settings-outline" size={18} color="#fff"/>
-                                <Text style={styles.editButtonText}>{t("profile_edit_btn")}</Text>
+                                <Ionicons name="settings-outline" size={18} color={theme.text}/>
+                                <Text style={[styles.editButtonText, {color: theme.text}]}>{t("profile_edit_btn")}</Text>
                             </TouchableOpacity>
                         ) : (
                             <View style={{flexDirection: "row", gap: 10}}>
                                 <TouchableOpacity
                                     style={[
                                         styles.editButton,
-                                        isFollowing ? styles.followingButton : styles.followButton,
+                                        isFollowing ? [styles.followingButton, {borderColor: theme.border}] : styles.followButton,
                                         {flex: 1},
                                     ]}
                                     onPress={handleFollowToggle}
@@ -518,9 +525,9 @@ const ProfileScreen = () => {
                                                 : "person-add-outline"
                                         }
                                         size={18}
-                                        color="#fff"
+                                        color={isFollowing ? theme.text : "#fff"}
                                     />
-                                    <Text style={styles.editButtonText}>
+                                    <Text style={[styles.editButtonText, {color: isFollowing ? theme.text : "#fff"}]}>
                                         {isFollowing ? t("following_button") : t("follow_button")}
                                     </Text>
                                 </TouchableOpacity>
@@ -533,12 +540,24 @@ const ProfileScreen = () => {
                                 </View>
                             </View>
                         )}
-                        <Text style={styles.bio}>
+                        <Text style={[styles.bio, {color: theme.subText}]}>
                             {userProfil?.biography || t("profile_no_bio")}
                         </Text>
+
+                        {userProfil?.favorite_band && (
+                            <View style={styles.favBandRow}>
+                                <Ionicons name="musical-notes" size={15} color="#3b82f6"/>
+                                <Text style={[styles.favBandLabel, {color: theme.subText}]}>
+                                    {t("label_favorite_band")} :{" "}
+                                    <Text style={[styles.favBandValue, {color: theme.text}]}>
+                                        {userProfil.favorite_band}
+                                    </Text>
+                                </Text>
+                            </View>
+                        )}
                     </View>
 
-                    <View style={styles.tabContainer}>
+                    <View style={[styles.tabContainer, {borderBottomColor: theme.border}]}>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             {tabs.map((tab: string) => (
                                 <TouchableOpacity
@@ -552,7 +571,8 @@ const ProfileScreen = () => {
                                     <Text
                                         style={[
                                             styles.tabText,
-                                            activeTab === tab && styles.tabTextActive,
+                                            {color: theme.subText},
+                                            activeTab === tab && [styles.tabTextActive, {color: theme.text}],
                                         ]}
                                     >
                                         {tab === t("tab_playlists")
@@ -568,12 +588,12 @@ const ProfileScreen = () => {
                         {activeTab === t("tab_favorite_albums") && (
                             <View style={styles.albumGrid}>
                                 {(favoriteReviews || []).map((item) => (
-                                    <View key={item.id} style={styles.cardWrapper}>
+                                    <View key={item.media_id || item.id} style={styles.cardWrapper}>
                                         <AlbumCard
                                             id={item.media_id}
                                             title={item.media?.content?.name}
                                             artist={item.media?.content?.artist}
-                                            rating={item.rating.toString()}
+                                            rating={item.rating ? item.rating.toString() : "0"}
                                             cover={item.media?.content?.cover}
                                         />
                                     </View>
@@ -583,108 +603,197 @@ const ProfileScreen = () => {
 
                         {activeTab === t("tab_playlists") && (
                             <View style={styles.playlistList}>
-                                {(playlists || []).map((playlist) => (
-                                    <TouchableOpacity
-                                        key={playlist.id}
-                                        style={styles.playlistItem}
-                                        onPress={(): void =>
-                                            router.push({
-                                                pathname: "/playlistdetails",
-                                                params: {id: playlist.id, title: playlist.name},
-                                            })
-                                        }
-                                    >
-                                        <View style={styles.playlistIconBox}>
-                                            {playlist.image_url ? (
-                                                <Image
-                                                    source={{
-                                                        uri: playlist.image_url.startsWith("data")
-                                                            ? playlist.image_url
-                                                            : `data:image/jpeg;base64,${playlist.image_url}`,
-                                                    }}
-                                                    style={styles.playlistImage}
-                                                />
-                                            ) : (
-                                                <Ionicons
-                                                    name="musical-notes-outline"
-                                                    size={24}
-                                                    color="#4A90E2"
-                                                />
-                                            )}
-                                        </View>
-                                        <View style={{flex: 1}}>
-                                            <Text style={styles.playlistName}>{playlist.name} </Text>
-                                            {String(playlist.is_public) === "false" && (
-                                                <Text style={styles.privateLabel}>{t("playlist_private")}</Text>
-                                            )}
-                                        </View>
-                                    </TouchableOpacity>
-                                ))}
+                                {(playlists || []).map((playlist) => {
+                                    const tracksCount = playlist.items?.length ?? playlist._count?.items ?? 0;
+                                    const isPublic = String(playlist.is_public) !== "false";
+                                    const imageUri = playlist.image_url
+                                        ? (playlist.image_url.startsWith("data") || playlist.image_url.startsWith("http")
+                                            ? playlist.image_url
+                                            : `data:image/jpeg;base64,${playlist.image_url}`)
+                                        : null;
+
+                                    return (
+                                        <TouchableOpacity
+                                            key={playlist.id}
+                                            style={[styles.playlistItem, {backgroundColor: theme.card, borderColor: theme.border}]}
+                                            onPress={(): void =>
+                                                router.push({
+                                                    pathname: "/playlistdetails",
+                                                    params: {id: playlist.id, title: playlist.name},
+                                                })
+                                            }
+                                            activeOpacity={0.75}
+                                        >
+                                            <View style={[styles.playlistCover, {backgroundColor: theme.surface}]}>
+                                                {imageUri ? (
+                                                    <Image source={{uri: imageUri}} style={styles.playlistImage}/>
+                                                ) : (
+                                                    <Ionicons name="musical-notes-outline" size={28} color="#4A90E2"/>
+                                                )}
+                                            </View>
+
+                                            <View style={styles.playlistInfo}>
+                                                <Text style={[styles.playlistName, {color: theme.text}]} numberOfLines={1}>
+                                                    {playlist.name}
+                                                </Text>
+                                                <View style={styles.playlistMeta}>
+                                                    <Ionicons name="musical-note-outline" size={13} color={theme.subText}/>
+                                                    <Text style={[styles.playlistCount, {color: theme.subText}]}>
+                                                        {tracksCount} {t(tracksCount <= 1 ? "track_singular" : "track_plural")}
+                                                    </Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={styles.playlistRight}>
+                                                <View style={[
+                                                    styles.playlistBadge,
+                                                    isPublic ? styles.badgePublic : styles.badgePrivate,
+                                                ]}>
+                                                    <Text style={[
+                                                        styles.playlistBadgeText,
+                                                        {color: isPublic ? "#10b981" : "#f59e0b"},
+                                                    ]}>
+                                                        {t(isPublic ? "playlist_public" : "playlist_private")}
+                                                    </Text>
+                                                </View>
+                                                <Ionicons name="chevron-forward" size={18} color={theme.subText}/>
+                                            </View>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+
+                                {(playlists || []).length === 0 && (
+                                    <View style={styles.emptyState}>
+                                        <Ionicons name="musical-notes-outline" size={40} color={theme.placeholder}/>
+                                        <Text style={[styles.emptyText, {color: theme.subText}]}>{t("empty_playlists_list")}</Text>
+                                    </View>
+                                )}
                             </View>
                         )}
 
                         {activeTab === t("tab_recent_activity") && (
                             <View style={styles.postsList}>
-                                {(recentActivity || []).map((item) => (
-                                    <View key={item.id} style={styles.card}>
-                                        <Text style={styles.cardUserName}>
-                                            {item.user_name}{" "}
-                                            <Text style={styles.actionText}>{t("activity_reviewed_album")}</Text>
-                                        </Text>
-
-                                        <TouchableOpacity
-                                            style={styles.activityAlbumBox}
-                                            onPress={(): void => {
-                                                if (!item.media_id) {
-                                                    console.error(
-                                                        "ERREUR : Aucun media_id trouvé dans cet item !",
-                                                        item,
-                                                    );
-                                                    return;
-                                                }
-                                                router.push({
-                                                    pathname: "/albumdetails",
-                                                    params: {
-                                                        id: item.media_id,
-                                                        album: item.album,
-                                                        artist: item.artist,
-                                                        cover: item.cover,
-                                                    },
-                                                });
-                                            }}
+                                {(recentActivity || []).map((item) => {
+                                    const ratingStyle = getRatingStyle(item.rating);
+                                    return (
+                                        <View
+                                            key={item.id}
+                                            style={[styles.activityCard, {backgroundColor: theme.card, borderColor: theme.border}]}
                                         >
-                                            <Image
-                                                source={{uri: item.cover}}
-                                                style={styles.activityAlbumImage}
-                                            />
-                                            <View style={styles.activityAlbumInfo}>
-                                                <Text
-                                                    style={styles.activityAlbumTitle}
-                                                    numberOfLines={1}
+                                            {/* Row: cover + content */}
+                                            <View style={styles.activityRow}>
+                                                {/* Album cover */}
+                                                <TouchableOpacity
+                                                    onPress={(): void => {
+                                                        if (!item.media_id) return;
+                                                        router.push({
+                                                            pathname: "/albumdetails",
+                                                            params: {id: item.media_id, album: item.album, artist: item.artist, cover: item.cover},
+                                                        });
+                                                    }}
+                                                    activeOpacity={0.85}
                                                 >
-                                                    {item.album}
-                                                </Text>
-                                                <Text style={styles.activityAlbumArtist}>
-                                                    {item.artist}
-                                                </Text>
+                                                    <Image
+                                                        source={{uri: item.cover}}
+                                                        style={styles.activityCover}
+                                                    />
+                                                </TouchableOpacity>
+
+                                                {/* Right content */}
+                                                <View style={styles.activityContent}>
+                                                    {/* Header: album + rating badge */}
+                                                    <View style={styles.activityHeader}>
+                                                        <View style={{flex: 1, marginRight: 8}}>
+                                                            <Text style={[styles.activityAlbumName, {color: "#4A90E2"}]} numberOfLines={1}>
+                                                                {item.album}
+                                                            </Text>
+                                                            <Text style={[styles.activityArtistName, {color: theme.subText}]} numberOfLines={1}>
+                                                                {t("activity_by")} {item.artist}
+                                                            </Text>
+                                                        </View>
+                                                        {item.rating > 0 && (
+                                                            <View style={[styles.ratingBadge, {backgroundColor: ratingStyle.bg, borderColor: ratingStyle.border}]}>
+                                                                <Ionicons name="star" size={11} color={ratingStyle.color}/>
+                                                                <Text style={[styles.ratingBadgeText, {color: ratingStyle.color}]}>{item.rating}</Text>
+                                                            </View>
+                                                        )}
+                                                    </View>
+
+                                                    {/* Action line */}
+                                                    <Text style={[styles.activityAction, {color: theme.subText}]}>
+                                                        <Text style={[styles.activityUsername, {color: theme.text}]}>{item.user_name}</Text>
+                                                        {" "}{t("activity_rated")}
+                                                    </Text>
+                                                </View>
                                             </View>
-                                        </TouchableOpacity>
 
-                                        <Text style={styles.postContent}>{item.content}</Text>
+                                            {/* Review content blockquote */}
+                                            {!!item.content && (
+                                                <View style={[styles.reviewBox, {backgroundColor: theme.surface, borderColor: theme.border}]}>
+                                                    <Text style={[styles.reviewText, {color: theme.subText}]}>
+                                                        "{item.content}"
+                                                    </Text>
+                                                </View>
+                                            )}
 
-                                        <TouchableOpacity
-                                            onPress={(): Promise<void> => handleLike(item.id)}
-                                            style={styles.likeContainer}
-                                        >
-                                            <Ionicons
-                                                name={item.isLiked ? "heart" : "heart-outline"}
-                                                size={20}
-                                                color={item.isLiked ? "#ec4899" : "#9ca3af"}
-                                            />
-                                            <Text style={styles.likesCount}>{item.likes_count}</Text>
-                                        </TouchableOpacity>
+                                            {/* Footer: likes + comments */}
+                                            <View style={[styles.activityFooter, {borderTopColor: theme.separator}]}>
+                                                <TouchableOpacity
+                                                    onPress={(): Promise<void> => handleLike(item.id)}
+                                                    style={styles.footerBtn}
+                                                >
+                                                    <Ionicons
+                                                        name={item.isLiked ? "heart" : "heart-outline"}
+                                                        size={15}
+                                                        color={item.isLiked ? "#ec4899" : theme.subText}
+                                                    />
+                                                    <Text style={[styles.footerBtnText, {color: item.isLiked ? "#ec4899" : theme.subText}]}>
+                                                        {item.likes_count}{" "}
+                                                        {item.likes_count > 1 ? t("like_plural") : t("like_singular")}
+                                                    </Text>
+                                                </TouchableOpacity>
+
+                                                <TouchableOpacity
+                                                    style={styles.footerBtn}
+                                                    onPress={(): void => {
+                                                        router.push({
+                                                            pathname: "/review/[id]/comments",
+                                                            params: {id: item.review_id},
+                                                        });
+                                                    }}
+                                                >
+                                                    <Ionicons name="chatbubble-outline" size={15} color={theme.subText}/>
+                                                    <Text style={[styles.footerBtnText, {color: theme.subText}]}>
+                                                        {item.comments_count}{" "}
+                                                        {item.comments_count > 1 ? t("comment_plural") : t("comment_singular")}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    );
+                                })}
+
+                                {recentActivity.length === 0 && !loadingMore && (
+                                    <View style={styles.emptyState}>
+                                        <Ionicons name="musical-notes-outline" size={40} color={theme.placeholder}/>
+                                        <Text style={[styles.emptyText, {color: theme.subText}]}>{t("profile_no_activity")}</Text>
                                     </View>
-                                ))}
+                                )}
+
+                                {hasMoreActivity && recentActivity.length > 0 && (
+                                    <TouchableOpacity
+                                        style={styles.loadMoreBtn}
+                                        onPress={(): void => {
+                                            if (userProfil?.id) fetchRecentActivity(activityOffset, userProfil.id);
+                                        }}
+                                        disabled={loadingMore}
+                                    >
+                                        {loadingMore
+                                            ? <ActivityIndicator size="small" color="#4A90E2"/>
+                                            : <Text style={styles.loadMoreText}>{t("load_more")}</Text>
+                                        }
+                                    </TouchableOpacity>
+                                )}
                             </View>
                         )}
                     </View>
@@ -695,10 +804,9 @@ const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: "#0f0f1e"},
+    container: {flex: 1},
     loaderContainer: {
         flex: 1,
-        backgroundColor: "#0f0f1e",
         justifyContent: "center",
         alignItems: "center",
     },
@@ -708,47 +816,9 @@ const styles = StyleSheet.create({
         marginTop: -55,
         marginLeft: 20,
         borderWidth: 4,
-        borderColor: "#0f0f1e",
         borderRadius: 60,
         width: 110,
         height: 110,
-        backgroundColor: "#0f0f1e",
-    },
-    activityAlbumBox: {
-        flexDirection: "row",
-        backgroundColor: "#2a2a40",
-        borderRadius: 8,
-        padding: 8,
-        marginVertical: 10,
-        alignItems: "center",
-    },
-    activityAlbumImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 4,
-    },
-    activityAlbumInfo: {
-        marginLeft: 12,
-        flex: 1,
-    },
-    activityAlbumTitle: {
-        color: "white",
-        fontWeight: "600",
-        fontSize: 14,
-    },
-    activityAlbumArtist: {
-        color: "#9ca3af",
-        fontSize: 12,
-    },
-    likeContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 8,
-    },
-    likesCount: {
-        color: "#9ca3af",
-        marginLeft: 6,
-        fontSize: 12,
     },
     profilePicInner: {
         flex: 1,
@@ -756,21 +826,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    privateLabel: {
-        color: "#9ca3af",
-        fontSize: 12,
-        marginTop: 2,
-        fontStyle: "italic",
-    },
     fullImage: {width: "100%", height: "100%"},
     profileLetter: {color: "white", fontSize: 36, fontWeight: "bold"},
     contentPadding: {paddingHorizontal: 20, paddingTop: 10},
-    userName: {color: "white", fontSize: 26, fontWeight: "800"},
-    handle: {color: "#888", fontSize: 16, marginBottom: 10},
+    userName: {fontSize: 26, fontWeight: "800"},
+    handle: {fontSize: 16, marginBottom: 10},
     statsRow: {flexDirection: "row", marginBottom: 15, gap: 20},
     statItem: {flexDirection: "row", alignItems: "baseline"},
-    statNumber: {color: "white", fontSize: 16, fontWeight: "bold"},
-    statLabel: {color: "#888", fontSize: 14},
+    statNumber: {fontSize: 16, fontWeight: "bold"},
+    statLabel: {fontSize: 14},
     editButton: {
         flexDirection: "row",
         paddingVertical: 12,
@@ -781,23 +845,24 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     followButton: {backgroundColor: "#4A90E2", borderColor: "#4A90E2"},
-    followingButton: {backgroundColor: "transparent", borderColor: "#2a2a40"},
+    followingButton: {backgroundColor: "transparent"},
     editButtonText: {
-        color: "white",
         marginLeft: 8,
         fontWeight: "600",
         fontSize: 15,
     },
-    bio: {color: "#ccc", lineHeight: 22, fontSize: 15, marginBottom: 10},
+    bio: {lineHeight: 22, fontSize: 15, marginBottom: 8},
+    favBandRow: {flexDirection: "row", alignItems: "center", gap: 6, marginTop: 2},
+    favBandLabel: {fontSize: 13},
+    favBandValue: {fontWeight: "700"},
     tabContainer: {
         marginTop: 15,
         borderBottomWidth: 1,
-        borderBottomColor: "#1c1c2e",
     },
     tabItem: {paddingVertical: 15, paddingHorizontal: 15},
     tabItemActive: {borderBottomWidth: 2, borderBottomColor: "#4A90E2"},
-    tabText: {color: "#888", fontSize: 15, fontWeight: "600"},
-    tabTextActive: {color: "white"},
+    tabText: {fontSize: 15, fontWeight: "600"},
+    tabTextActive: {},
     sectionPadding: {paddingHorizontal: 20, paddingTop: 20},
     albumGrid: {
         flexDirection: "row",
@@ -809,27 +874,144 @@ const styles = StyleSheet.create({
     playlistItem: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#1c1c2e",
-        padding: 12,
-        borderRadius: 12,
-        gap: 15,
+        padding: 14,
+        borderRadius: 16,
+        borderWidth: 1,
+        gap: 14,
     },
-    playlistIconBox: {
-        width: 55,
-        height: 55,
-        backgroundColor: "#2a2a40",
-        borderRadius: 8,
+    playlistCover: {
+        width: 72,
+        height: 72,
+        borderRadius: 12,
         justifyContent: "center",
         alignItems: "center",
         overflow: "hidden",
+        flexShrink: 0,
     },
     playlistImage: {width: "100%", height: "100%"},
-    playlistName: {color: "white", fontSize: 16, fontWeight: "600"},
-    postsList: {gap: 16},
-    card: {backgroundColor: "#1f2937", borderRadius: 16, padding: 16},
-    cardUserName: {color: "white", fontWeight: "600"},
-    actionText: {fontWeight: "normal", color: "#9ca3af"},
-    postContent: {color: "#d1d5db", fontSize: 14, marginVertical: 8},
+    playlistInfo: {flex: 1, justifyContent: "center", gap: 6},
+    playlistName: {fontSize: 16, fontWeight: "700"},
+    playlistMeta: {flexDirection: "row", alignItems: "center", gap: 5},
+    playlistCount: {fontSize: 13},
+    playlistRight: {alignItems: "flex-end", gap: 8, flexShrink: 0},
+    playlistBadge: {
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 20,
+        borderWidth: 1,
+    },
+    badgePublic: {
+        backgroundColor: "rgba(16,185,129,0.1)",
+        borderColor: "rgba(16,185,129,0.2)",
+    },
+    badgePrivate: {
+        backgroundColor: "rgba(245,158,11,0.1)",
+        borderColor: "rgba(245,158,11,0.2)",
+    },
+    playlistBadgeText: {fontSize: 11, fontWeight: "700"},
+    postsList: {gap: 14},
+
+    /* ── Activity card ── */
+    activityCard: {
+        borderRadius: 16,
+        borderWidth: 1,
+        overflow: "hidden",
+    },
+    activityRow: {
+        flexDirection: "row",
+        gap: 14,
+        padding: 14,
+    },
+    activityCover: {
+        width: 90,
+        height: 90,
+        borderRadius: 12,
+    },
+    activityContent: {
+        flex: 1,
+        justifyContent: "space-between",
+    },
+    activityHeader: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        marginBottom: 6,
+    },
+    activityAlbumName: {
+        fontWeight: "700",
+        fontSize: 14,
+        letterSpacing: 0.1,
+    },
+    activityArtistName: {
+        fontSize: 12,
+        marginTop: 2,
+    },
+    ratingBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 3,
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 20,
+        borderWidth: 1,
+        marginTop: 2,
+    },
+    ratingBadgeText: {
+        fontSize: 11,
+        fontWeight: "700",
+    },
+    activityAction: {
+        fontSize: 12,
+        marginTop: 4,
+    },
+    activityUsername: {
+        fontWeight: "700",
+        fontSize: 12,
+    },
+    reviewBox: {
+        marginHorizontal: 14,
+        padding: 12,
+        borderRadius: 10,
+        borderWidth: 1,
+    },
+    reviewText: {
+        fontSize: 13,
+        lineHeight: 19,
+        fontStyle: "italic",
+    },
+    activityFooter: {
+        flexDirection: "row",
+        gap: 20,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        marginTop: 10,
+        borderTopWidth: 1,
+    },
+    footerBtn: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5,
+    },
+    footerBtnText: {
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    emptyState: {
+        alignItems: "center",
+        paddingVertical: 40,
+        gap: 12,
+    },
+    emptyText: {
+        fontSize: 14,
+    },
+    loadMoreBtn: {
+        alignItems: "center",
+        paddingVertical: 14,
+    },
+    loadMoreText: {
+        color: "#4A90E2",
+        fontWeight: "700",
+        fontSize: 13,
+    },
 });
 
 export default ProfileScreen;

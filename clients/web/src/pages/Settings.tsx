@@ -205,7 +205,7 @@ const Settings: React.FC = () => {
 
     return (
         <div
-            className="min-h-screen bg-[#0f1117] dark:bg-slate-50 text-slate-200 dark:text-gray-900 p-6 md:p-10 font-sans transition-colors duration-300">
+            className="min-h-screen bg-[#13131A] dark:bg-slate-50 text-slate-200 dark:text-gray-900 p-6 md:p-10 font-sans transition-colors duration-300">
             <div className="max-w-4xl mx-auto space-y-10">
                 <header>
                     <h1 className="text-4xl font-bold text-white dark:text-gray-900 mb-2"
@@ -285,7 +285,7 @@ const Settings: React.FC = () => {
                                             name="username"
                                             value={username}
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => e.target.value.length <= USERNAME_MAX && setUsername(e.target.value)}
-                                            className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
+                                            className="w-full bg-[#13131A] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                         />
                                     </div>
 
@@ -299,7 +299,7 @@ const Settings: React.FC = () => {
                                             value={favoriteBand}
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => searchArtists(e.target.value)}
                                             placeholder="Type to search bands..."
-                                            className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
+                                            className="w-full bg-[#13131A] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                         />
 
                                         {/* Menu déroulant des suggestions */}
@@ -344,7 +344,7 @@ const Settings: React.FC = () => {
                                         rows={3}
                                         value={biography}
                                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => e.target.value.length <= BIO_MAX && setBiography(e.target.value)}
-                                        className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 resize-none text-white dark:text-gray-900"
+                                        className="w-full bg-[#13131A] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 resize-none text-white dark:text-gray-900"
                                     />
                                 </div>
                             </div>
@@ -388,14 +388,14 @@ const Settings: React.FC = () => {
                                     placeholder={t("old_password_placeholder")}
                                     value={oldPassword}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOldPassword(e.target.value)}
-                                    className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
+                                    className="w-full bg-[#13131A] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                 />
                                 <input
                                     type="password"
                                     placeholder={t("new_password_placeholder")}
                                     value={newPassword}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
-                                    className="w-full bg-[#0f1117] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
+                                    className="w-full bg-[#13131A] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                 />
                                 <button
                                     onClick={handleUpdatePassword}

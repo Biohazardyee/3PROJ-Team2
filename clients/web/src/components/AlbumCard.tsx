@@ -8,7 +8,6 @@ type TrendingCardProps = {
   artist: string;
   cover: string;
   rating: number;
-  year: number;
   genre?: string;
 };
 
@@ -18,7 +17,6 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
   artist,
   cover,
   rating,
-  year,
 }) => {
   const navigate: NavigateFunction = useNavigate();
 
@@ -50,9 +48,6 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
               {rating}
             </span>
           </div>
-          <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold">
-            {year}
-          </span>
         </div>
       </div>
     </div>

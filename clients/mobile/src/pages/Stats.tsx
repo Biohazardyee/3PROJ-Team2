@@ -17,10 +17,12 @@ import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import * as SecureStore from "expo-secure-store";
 import {useTranslation} from "react-i18next";
+import {useTheme} from "../context/ThemeContext";
 
 const Stats = () => {
     const router: Router = useRouter();
     const {t} = useTranslation();
+    const {theme} = useTheme();
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         listened: 0,
@@ -69,13 +71,13 @@ const Stats = () => {
     const Legend = ({item, color}: { item: string; color: string }) => (
         <View style={styles.legendItem}>
             <View style={[styles.dot, {backgroundColor: color}]}/>
-            <Text style={styles.legendLabel}>{item}</Text>
+            <Text style={[styles.legendLabel, {color: theme.text}]}>{item}</Text>
         </View>
     );
 
     if (loading) {
         return (
-            <View style={[styles.container, {justifyContent: "center"}]}>
+            <View style={[styles.container, {backgroundColor: theme.background, justifyContent: "center"}]}>
                 <ActivityIndicator size="large" color="#3b82f6"/>
             </View>
         );
@@ -83,14 +85,14 @@ const Stats = () => {
 
     return (
         <AuthGuardWrapper>
-            <View style={styles.container}>
+            <View style={[styles.container, {backgroundColor: theme.background}]}>
                 <Header/>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.scrollContent}
                 >
                     <View style={styles.header}>
-                        <Text style={styles.mainTitle}>{t("stats_title")}</Text>
+                        <Text style={[styles.mainTitle, {color: theme.text}]}>{t("stats_title")}</Text>
                     </View>
 
                     <View style={styles.grid}>
@@ -144,10 +146,10 @@ const Stats = () => {
                         />
                     </View>
 
-                    <View style={styles.chartBox}>
+                    <View style={[styles.chartBox, {backgroundColor: theme.card}]}>
                         <View style={styles.chartHeaderRow}>
                             <Ionicons name="stats-chart" size={20} color="#3b82f6"/>
-                            <Text style={styles.chartHeaderText}>
+                            <Text style={[styles.chartHeaderText, {color: theme.text}]}>
                                 {t("stats_detail_title")}
                             </Text>
                         </View>
@@ -159,14 +161,14 @@ const Stats = () => {
                                     radius={80}
                                     innerRadius={60}
                                     data={pieData}
-                                    innerCircleColor={"#2A2A38"}
+                                    innerCircleColor={theme.card}
                                     centerLabelComponent={() => (
                                         <Icon name="music" size={50} color="#ad46ff"/>
                                     )}
                                 />
                             ) : (
-                                <Text style={{color: "#888", paddingVertical: 20}}>
-                                    Aucune donnée
+                                <Text style={{color: theme.subText, paddingVertical: 20}}>
+                                    {t("stats_no_data")}
                                 </Text>
                             )}
                         </View>
@@ -186,7 +188,6 @@ const Stats = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#1C1C28",
     },
     scrollContent: {
         paddingHorizontal: 20,
@@ -198,7 +199,6 @@ const styles = StyleSheet.create({
     mainTitle: {
         fontSize: 28,
         fontWeight: "bold",
-        color: "#fff",
     },
     grid: {
         flexDirection: "row",
@@ -206,7 +206,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     chartBox: {
-        backgroundColor: "#2A2A38",
         borderRadius: 20,
         padding: 20,
         marginBottom: 30,
@@ -217,7 +216,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     chartHeaderText: {
-        color: "#fff",
         marginLeft: 10,
     },
     pieWrapper: {
@@ -241,7 +239,6 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     legendLabel: {
-        color: "#fff",
         fontSize: 12,
     },
 });

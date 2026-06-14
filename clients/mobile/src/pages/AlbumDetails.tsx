@@ -24,6 +24,8 @@ import {AuthReviewButton} from "../components/AuthReviewButton";
 import apiClient from "../api/client";
 import {getValidSource} from "@/helpers/helpers";
 import {AxiosResponse} from "axios";
+import {useTheme} from "../context/ThemeContext";
+import {useTranslation} from "react-i18next";
 
 const {width} = Dimensions.get("window");
 
@@ -32,6 +34,19 @@ type TabType = "Reviews" | "Similar";
 const AlbumDetails = () => {
     const {id, mbid, artist, album, cover} = useLocalSearchParams();
     const router = useRouter();
+    const {theme} = useTheme();
+    const {t} = useTranslation();
+
+    const formatReviewDate = (dateStr: string | undefined): string => {
+        const date = new Date(dateStr || Date.now());
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const time = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+        if (date.toDateString() === now.toDateString()) return `${t("today")} · ${time}`;
+        if (date.toDateString() === yesterday.toDateString()) return `${t("yesterday")} · ${time}`;
+        return date.toLocaleDateString();
+    };
 
     const [loading, setLoading] = useState(true);
     const [albumData, setAlbumData] = useState<any>(null);
@@ -138,6 +153,7 @@ const AlbumDetails = () => {
     }, [showPlaylistSelector]);
 
     const handleAddToPlaylists: () => Promise<void> = async (): Promise<void> => {
+        if (!currentUserId) { router.push("/restriction"); return; }
         if (!mediaId) return;
 
         try {
@@ -174,11 +190,11 @@ const AlbumDetails = () => {
 
             await Promise.all(promises);
 
-            Alert.alert("Succès", "Vos playlists ont été mises à jour.");
+            Alert.alert(t("success"), t("msg_playlists_updated"));
             setShowPlaylistSelector(false);
             await fetchUserPlaylists();
         } catch (err: any) {
-            Alert.alert("Erreur", "Impossible de mettre à jour les playlists.");
+            Alert.alert(t("error"), t("error_update_playlists"));
         }
     };
 
@@ -233,7 +249,7 @@ const AlbumDetails = () => {
             }
             setAlbumData(finalData);
         } catch (error) {
-            Alert.alert("Erreur", "Impossible de charger les détails.");
+            Alert.alert(t("error"), t("error_load_details"));
         } finally {
             setLoading(false);
         }
@@ -283,15 +299,15 @@ const AlbumDetails = () => {
 
     const handleDeleteReview: (reviewId: string) => Promise<void> = async (reviewId: string): Promise<void> => {
         Alert.alert(
-            "Supprimer l'avis",
-            "Voulez-vous vraiment supprimer votre avis ?",
+            t("delete"),
+            t("delete_confirm"),
             [
                 {
-                    text: "Annuler",
+                    text: t("cancel"),
                     style: "cancel",
                 },
                 {
-                    text: "Supprimer",
+                    text: t("delete"),
                     style: "destructive",
                     onPress: async (): Promise<void> => {
                         try {
@@ -303,11 +319,11 @@ const AlbumDetails = () => {
 
                             setUserReview(null);
 
-                            Alert.alert("Succès", "Votre avis a été supprimé.");
+                            Alert.alert(t("success"), t("msg_review_deleted"));
                         } catch (error) {
                             console.error("Erreur suppression review:", error);
 
-                            Alert.alert("Erreur", "Impossible de supprimer l'avis.");
+                            Alert.alert(t("error"), t("error_delete_review"));
                         } finally {
                             setDeletingReview(false);
                         }
@@ -318,14 +334,8 @@ const AlbumDetails = () => {
     };
 
     const handleStatusChange: (newStatus: string) => Promise<void> = async (newStatus: string): Promise<void> => {
-        if (!currentUserId) return Alert.alert("Connexion requise", "...");
-
-        if (!mediaIdInDB) {
-            return Alert.alert(
-                "Patience",
-                "Le média est en cours de synchronisation avec la base de données.",
-            );
-        }
+        if (!currentUserId) { router.push("/restriction"); return; }
+        if (!mediaIdInDB) return;
 
         const previousStatus: string | null = userStatus;
         const isDeselecting: boolean = userStatus === newStatus;
@@ -333,29 +343,33 @@ const AlbumDetails = () => {
         try {
             setUserStatus(isDeselecting ? null : newStatus);
             if (isDeselecting) {
-                await apiClient.delete(
-                    `/medias/status/${currentUserId}/${mediaIdInDB}`,
-                );
+                await apiClient.delete(`/medias/status/${currentUserId}/${mediaIdInDB}`);
             } else {
-                await apiClient.post(`/medias/status`, {
-                    user_id: currentUserId,
-                    media_id: mediaIdInDB,
-                    status: newStatus,
-                });
+                try {
+                    await apiClient.post(`/medias/status`, {
+                        user_id: currentUserId,
+                        media_id: mediaIdInDB,
+                        status: newStatus,
+                    });
+                } catch (err: any) {
+                    if (err.response?.status === 400) {
+                        await apiClient.put(`/medias/status/${currentUserId}/${mediaIdInDB}`, {
+                            status: newStatus,
+                        });
+                    } else {
+                        throw err;
+                    }
+                }
             }
         } catch (error: any) {
             setUserStatus(previousStatus);
             console.error("Erreur status:", error.response?.data);
-            Alert.alert("Erreur", "La mise à jour a échoué.");
+            Alert.alert(t("error"), t("status_update_error"));
         }
     };
 
     const handleToggleLike: (reviewId: string) => Promise<void> = async (reviewId: string): Promise<void> => {
-        if (!currentUserId)
-            return Alert.alert(
-                "Connexion requise",
-                "L'action est réservée aux membres.",
-            );
+        if (!currentUserId) { router.push("/restriction"); return; }
 
         const updatedReviews: any[] = reviews.map((rev) => {
             if (rev.id === reviewId) {
@@ -391,13 +405,13 @@ const AlbumDetails = () => {
 
     if (loading || !albumData)
         return (
-            <View style={[styles.container, styles.center]}>
+            <View style={[styles.container, styles.center, {backgroundColor: theme.background}]}>
                 <ActivityIndicator size="large" color="#ec4899"/>
             </View>
         );
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: theme.background}]}>
             <Header/>
             <ScrollView
                 showsVerticalScrollIndicator={false}
@@ -418,7 +432,10 @@ const AlbumDetails = () => {
                                 key={i}
                                 style={[
                                     styles.badge,
-                                    {backgroundColor: i === 0 ? "#ec4899" : "#1e1e2d"},
+                                    {
+                                        backgroundColor: i === 0 ? "#ec4899" : theme.surface,
+                                        borderColor: theme.border,
+                                    },
                                 ]}
                             >
                                 <Text style={styles.badgeText}>{t.name.toUpperCase()}</Text>
@@ -426,10 +443,10 @@ const AlbumDetails = () => {
                         ))}
                     </ScrollView>
 
-                    <Text style={styles.albumTitle}>
+                    <Text style={[styles.albumTitle, {color: theme.text}]}>
                         {albumData.album?.name || albumData.name}
                     </Text>
-                    <Text style={styles.artistName}>
+                    <Text style={[styles.artistName, {color: theme.subText}]}>
                         {albumData.album?.artist || albumData.artist}
                     </Text>
 
@@ -446,35 +463,35 @@ const AlbumDetails = () => {
                                 />
                             ))}
                         </View>
-                        <Text style={styles.ratingValue}>{averageRating.toFixed(1)}</Text>
-                        <Text style={styles.ratingCount}>({reviews.length} avis)</Text>
+                        <Text style={[styles.ratingValue, {color: theme.text}]}>{averageRating.toFixed(1)}</Text>
+                        <Text style={[styles.ratingCount, {color: theme.placeholder}]}>({reviews.length} avis)</Text>
                     </View>
 
                     <View style={styles.actionButtons}>
                         <View style={styles.grid}>
                             <StatCard
-                                title="Écouté"
+                                title={t("status_completed")}
                                 icon="check-circle-outline"
                                 color="#00ffa3"
                                 checked={userStatus === "listened"}
                                 onPress={(): Promise<void> => handleStatusChange("listened")}
                             />
                             <StatCard
-                                title="Plus tard"
+                                title={t("status_listening")}
                                 icon="playlist-music"
                                 color="#4747ff"
                                 checked={userStatus === "later"}
                                 onPress={(): Promise<void> => handleStatusChange("later")}
                             />
                             <StatCard
-                                title="Favori"
+                                title={t("status_wishlist")}
                                 icon="star"
                                 color="#fbbf24"
                                 checked={userStatus === "favorite"}
                                 onPress={(): Promise<void> => handleStatusChange("favorite")}
                             />
                             <StatCard
-                                title="Dislike"
+                                title={t("status_dropped")}
                                 icon="close-circle-outline"
                                 color="#f43f5e"
                                 checked={userStatus === "disliked"}
@@ -484,40 +501,44 @@ const AlbumDetails = () => {
 
                         <TouchableOpacity
                             style={styles.primaryButton}
-                            onPress={(): void => setShowPlaylistSelector(true)}
+                            onPress={(): void => {
+                                if (!currentUserId) { router.push("/restriction"); return; }
+                                setShowPlaylistSelector(true);
+                            }}
                         >
                             <Text style={styles.primaryButtonText}>
-                                Ajouter à une playlist
+                                {t("add_to_playlist")}
                             </Text>
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.aboutSection}>
-                        <Text style={styles.sectionTitle}>À propos</Text>
-                        <Text style={styles.aboutText}>
+                        <Text style={[styles.sectionTitle, {color: theme.text}]}>{t("section_about")}</Text>
+                        <Text style={[styles.aboutText, {color: theme.subText}]}>
                             {albumData.album?.wiki?.summary
                                 ? albumData.album.wiki.summary
                                     .replace(/<[^>]*>?/gm, "")
                                     .split(" <a href")[0]
-                                : "Aucune biographie disponible."}
+                                : t("text_no_biography")}
                         </Text>
                     </View>
                 </View>
 
-                <View style={styles.tabsContainer}>
+                <View style={[styles.tabsContainer, {backgroundColor: theme.surface}]}>
                     {(["Reviews", "Similar"] as TabType[]).map((tab) => (
                         <TouchableOpacity
                             key={tab}
-                            style={[styles.tab, activeTab === tab && styles.activeTab]}
+                            style={[styles.tab, activeTab === tab && [styles.activeTab, {backgroundColor: theme.card}]]}
                             onPress={(): void => setActiveTab(tab)}
                         >
                             <Text
                                 style={[
                                     styles.tabText,
-                                    activeTab === tab && styles.activeTabText,
+                                    {color: theme.placeholder},
+                                    activeTab === tab && [styles.activeTabText, {color: theme.text}],
                                 ]}
                             >
-                                {tab === "Reviews" ? "Avis" : "Similaires"}
+                                {tab === "Reviews" ? t("tab_reviews") : t("tab_similar")}
                             </Text>
                         </TouchableOpacity>
                     ))}
@@ -532,15 +553,15 @@ const AlbumDetails = () => {
                                     onPress={(): void => {
                                         if (userReview) {
                                             return Alert.alert(
-                                                "Avis déjà publié",
-                                                "Vous avez déjà publié un avis pour cet album.",
+                                                t("already_reviewed"),
+                                                t("error_review_already_published_msg"),
                                             );
                                         }
 
                                         if (!mediaId)
                                             return Alert.alert(
-                                                "Patience",
-                                                "L'album se synchronise...",
+                                                t("msg_please_wait"),
+                                                t("msg_album_syncing"),
                                             );
 
                                         router.push({
@@ -561,7 +582,7 @@ const AlbumDetails = () => {
                             ) : reviews.length > 0 ? (
                                 reviews.map((rev) => {
                                     return (
-                                        <View key={rev.id} style={styles.reviewCard}>
+                                        <View key={rev.id} style={[styles.reviewCard, {backgroundColor: theme.surface, borderColor: theme.border}]}>
                                             <View style={styles.reviewHeader}>
                                                 <View style={styles.userInfo}>
                                                     {rev.user?.avatar ||
@@ -579,7 +600,7 @@ const AlbumDetails = () => {
                                                         <Ionicons
                                                             name="person-circle"
                                                             size={24}
-                                                            color="#94a3b8"
+                                                            color={theme.subText}
                                                             style={{marginRight: 8}}
                                                         />
                                                     )}
@@ -615,8 +636,8 @@ const AlbumDetails = () => {
                                                 </View>
                                             </View>
 
-                                            <Text style={styles.reviewTitleText}>{rev.title}</Text>
-                                            <Text style={styles.reviewContentText}>
+                                            <Text style={[styles.reviewTitleText, {color: theme.text}]}>{rev.title}</Text>
+                                            <Text style={[styles.reviewContentText, {color: theme.subText}]}>
                                                 {rev.content}
                                             </Text>
 
@@ -640,10 +661,10 @@ const AlbumDetails = () => {
                                                                     (l: any): boolean => l.user_id === currentUserId,
                                                                 )
                                                                     ? "#ec4899"
-                                                                    : "#94a3b8"
+                                                                    : theme.subText
                                                             }
                                                         />
-                                                        <Text style={styles.actionCountText}>
+                                                        <Text style={[styles.actionCountText, {color: theme.subText}]}>
                                                             {rev.likes?.length || 0}
                                                         </Text>
                                                     </TouchableOpacity>
@@ -657,9 +678,9 @@ const AlbumDetails = () => {
                                                         <Ionicons
                                                             name="chatbubble-outline"
                                                             size={18}
-                                                            color="#94a3b8"
+                                                            color={theme.subText}
                                                         />
-                                                        <Text style={styles.actionCountText}>
+                                                        <Text style={[styles.actionCountText, {color: theme.subText}]}>
                                                             {rev._count?.comments ?? 0}
                                                         </Text>
                                                     </TouchableOpacity>
@@ -689,7 +710,7 @@ const AlbumDetails = () => {
                                                             <Ionicons
                                                                 name="create-outline"
                                                                 size={18}
-                                                                color="#94a3b8"
+                                                                color={theme.subText}
                                                             />
                                                         </TouchableOpacity>
 
@@ -715,16 +736,16 @@ const AlbumDetails = () => {
                                                     />
                                                 )}
 
-                                                <Text style={styles.reviewDate}>
-                                                    {new Date(rev.created_at).toLocaleDateString()}
+                                                <Text style={[styles.reviewDate, {color: theme.placeholder}]}>
+                                                    {formatReviewDate(rev.created_at)}
                                                 </Text>
                                             </View>
                                         </View>
                                     );
                                 })
                             ) : (
-                                <Text style={styles.emptyText}>
-                                    Soyez le premier à donner votre avis !
+                                <Text style={[styles.emptyText, {color: theme.placeholder}]}>
+                                    {t("msg_be_first_reviewer")}
                                 </Text>
                             )}
                         </View>
@@ -758,7 +779,7 @@ const AlbumDetails = () => {
                                             )}
                                             style={styles.similarCover}
                                         />
-                                        <Text numberOfLines={1} style={styles.similarTitle}>
+                                        <Text numberOfLines={1} style={[styles.similarTitle, {color: theme.text}]}>
                                             {item.name}
                                         </Text>
                                     </TouchableOpacity>
@@ -779,11 +800,11 @@ const AlbumDetails = () => {
                     style={styles.modalOverlay}
                     onPress={(): void => setShowPlaylistSelector(false)}
                 >
-                    <View style={styles.modalContent}>
+                    <View style={[styles.modalContent, {backgroundColor: theme.card}]}>
                         <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Ajouter à une playlist</Text>
+                            <Text style={[styles.modalTitle, {color: theme.text}]}>{t("add_to_playlist")}</Text>
                             <TouchableOpacity onPress={(): void => setShowPlaylistSelector(false)}>
-                                <Ionicons name="close" size={24} color="#94a3b8"/>
+                                <Ionicons name="close" size={24} color={theme.subText}/>
                             </TouchableOpacity>
                         </View>
 
@@ -798,7 +819,8 @@ const AlbumDetails = () => {
                                             key={pl.id}
                                             style={[
                                                 styles.playlistItem,
-                                                isSelected && styles.playlistItemActive,
+                                                {backgroundColor: theme.surface},
+                                                isSelected && [styles.playlistItemActive, {backgroundColor: theme.card}],
                                             ]}
                                             onPress={(): void =>
                                                 setSelectedPlaylists((prev: string[]): string[] =>
@@ -811,6 +833,7 @@ const AlbumDetails = () => {
                                             <View
                                                 style={[
                                                     styles.checkbox,
+                                                    {borderColor: theme.subText},
                                                     isSelected && styles.checkboxActive,
                                                 ]}
                                             >
@@ -821,7 +844,8 @@ const AlbumDetails = () => {
                                             <Text
                                                 style={[
                                                     styles.playlistItemText,
-                                                    isSelected && styles.whiteText,
+                                                    {color: theme.subText},
+                                                    isSelected && [styles.whiteText, {color: theme.text}],
                                                 ]}
                                             >
                                                 {pl.name}
@@ -842,7 +866,7 @@ const AlbumDetails = () => {
                                         color="#00ffa3"
                                     />
                                     <Text style={styles.createPlaylistText}>
-                                        Créer une playlist
+                                        {t("create_playlist")}
                                     </Text>
                                 </TouchableOpacity>
                             </ScrollView>
@@ -854,7 +878,7 @@ const AlbumDetails = () => {
                                 onPress={handleAddToPlaylists}
                             >
                                 <Text style={styles.confirmBtnText}>
-                                    Confirmer ({selectedPlaylists.length})
+                                    {t("btn_confirm")} ({selectedPlaylists.length})
                                 </Text>
                             </TouchableOpacity>
                         )}
@@ -866,7 +890,7 @@ const AlbumDetails = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: "#0f111a"},
+    container: {flex: 1},
     center: {justifyContent: "center", alignItems: "center"},
     scrollContent: {paddingBottom: 60},
     imageContainer: {padding: 20, alignItems: "center"},
@@ -878,17 +902,15 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: "#2d2d3f",
         marginRight: 8,
     },
     badgeText: {color: "white", fontWeight: "bold", fontSize: 11},
     albumTitle: {
-        color: "white",
         fontSize: 26,
         fontWeight: "bold",
         marginTop: 15,
     },
-    artistName: {color: "#94a3b8", fontSize: 18, marginTop: 4},
+    artistName: {fontSize: 18, marginTop: 4},
     ratingRow: {
         flexDirection: "row",
         alignItems: "center",
@@ -896,8 +918,8 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     starsRow: {flexDirection: "row", gap: 2},
-    ratingValue: {color: "white", fontSize: 22, fontWeight: "bold"},
-    ratingCount: {color: "#64748b", fontSize: 14},
+    ratingValue: {fontSize: 22, fontWeight: "bold"},
+    ratingCount: {fontSize: 14},
     actionButtons: {marginTop: 25, gap: 12},
     grid: {
         flexDirection: "row",
@@ -915,32 +937,28 @@ const styles = StyleSheet.create({
     primaryButtonText: {color: "white", fontWeight: "bold", fontSize: 16},
     aboutSection: {marginTop: 30},
     sectionTitle: {
-        color: "white",
         fontSize: 20,
         fontWeight: "bold",
         marginBottom: 10,
     },
-    aboutText: {color: "#94a3b8", fontSize: 15, lineHeight: 22},
+    aboutText: {fontSize: 15, lineHeight: 22},
     tabsContainer: {
         flexDirection: "row",
-        backgroundColor: "#1a1d29",
         margin: 20,
         padding: 5,
         borderRadius: 12,
     },
     tab: {flex: 1, paddingVertical: 10, alignItems: "center", borderRadius: 8},
-    activeTab: {backgroundColor: "#2d2d3f"},
-    tabText: {color: "#64748b", fontWeight: "bold"},
-    activeTabText: {color: "white"},
+    activeTab: {},
+    tabText: {fontWeight: "bold"},
+    activeTabText: {},
     tabContent: {paddingHorizontal: 20},
-    emptyText: {color: "#64748b", textAlign: "center", marginTop: 20},
+    emptyText: {textAlign: "center", marginTop: 20},
     reviewCard: {
-        backgroundColor: "#1a1d29",
         padding: 16,
         borderRadius: 16,
         marginBottom: 12,
         borderWidth: 1,
-        borderColor: "#2d2d3f",
     },
     reviewHeader: {
         flexDirection: "row",
@@ -950,12 +968,11 @@ const styles = StyleSheet.create({
     userInfo: {flexDirection: "row", alignItems: "center", gap: 8},
     reviewerName: {color: "#ec4899", fontWeight: "bold"},
     reviewTitleText: {
-        color: "white",
         fontWeight: "bold",
         fontSize: 16,
         marginBottom: 4,
     },
-    reviewContentText: {color: "#94a3b8", fontSize: 14, lineHeight: 20},
+    reviewContentText: {fontSize: 14, lineHeight: 20},
     reviewFooter: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -964,21 +981,20 @@ const styles = StyleSheet.create({
     },
     reviewActionsLeft: {flexDirection: "row", gap: 16},
     actionIconBtn: {flexDirection: "row", alignItems: "center", gap: 4},
-    actionCountText: {color: "#94a3b8", fontSize: 12},
+    actionCountText: {fontSize: 12},
     ownerActions: {flexDirection: "row", gap: 12},
     ownerActionBtn: {padding: 4},
-    reviewDate: {color: "#64748b", fontSize: 12},
+    reviewDate: {fontSize: 12},
     similarGrid: {marginTop: 10},
     similarCard: {marginRight: 14, width: 120},
     similarCover: {width: 120, height: 120, borderRadius: 12},
-    similarTitle: {color: "white", fontSize: 14, marginTop: 6},
+    similarTitle: {fontSize: 14, marginTop: 6},
     modalOverlay: {
         flex: 1,
         backgroundColor: "rgba(0,0,0,0.7)",
         justifyContent: "flex-end",
     },
     modalContent: {
-        backgroundColor: "#10121d",
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         padding: 24,
@@ -990,7 +1006,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 20,
     },
-    modalTitle: {color: "white", fontSize: 18, fontWeight: "bold"},
+    modalTitle: {fontSize: 18, fontWeight: "bold"},
     modalScroll: {marginBottom: 20},
     playlistItem: {
         flexDirection: "row",
@@ -999,17 +1015,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 12,
         marginBottom: 8,
-        backgroundColor: "#1a1d29",
     },
-    playlistItemActive: {backgroundColor: "#2d2d3f"},
-    playlistItemText: {color: "#94a3b8", fontSize: 16, marginLeft: 12},
-    whiteText: {color: "white"},
+    playlistItemActive: {},
+    playlistItemText: {fontSize: 16, marginLeft: 12},
+    whiteText: {},
     checkbox: {
         width: 22,
         height: 22,
         borderRadius: 6,
         borderWidth: 2,
-        borderColor: "#475569",
         justifyContent: "center",
         alignItems: "center",
     },

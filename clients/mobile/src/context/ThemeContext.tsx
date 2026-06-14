@@ -9,14 +9,22 @@ export const Colors = {
         subText: '#AAAAAA',
         border: 'rgba(255,255,255,0.05)',
         accent: '#6C5CE7',
+        surface: '#141721',
+        inputBg: '#1a1a24',
+        placeholder: '#6b7280',
+        separator: '#444444',
     },
     light: {
         background: '#F5F5F7',
         card: '#FFFFFF',
         text: '#1C1C28',
         subText: '#666666',
-        border: 'rgba(0,0,0,0.05)',
+        border: 'rgba(0,0,0,0.08)',
         accent: '#6C5CE7',
+        surface: '#EEEEF6',
+        inputBg: '#E8E8F0',
+        placeholder: '#9ca3af',
+        separator: '#CCCCCC',
     }
 };
 

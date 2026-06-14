@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {View, Text, StyleSheet, Pressable, PressableStateCallbackType} from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import {useTheme} from "../context/ThemeContext";
 
 type StatCardProps = {
     title: string;
@@ -21,6 +22,7 @@ const StatCard: React.FC<StatCardProps> = ({
                                                initialChecked = false,
                                                onPress,
                                            }: StatCardProps) => {
+    const {theme} = useTheme();
     const [checked, setChecked] = useState(initialChecked);
 
     const handlePress: () => void = (): void => {
@@ -35,9 +37,10 @@ const StatCard: React.FC<StatCardProps> = ({
         <Pressable
             style={({pressed}: PressableStateCallbackType) => [
                 styles.card,
+                {backgroundColor: theme.card},
                 checked && showCheckbox
                     ? {borderColor: color, borderWidth: 1}
-                    : {borderColor: "#2a2a35", borderWidth: 1},
+                    : {borderColor: theme.border, borderWidth: 1},
                 {opacity: pressed ? 0.8 : 1},
             ]}
             onPress={handlePress}
@@ -47,22 +50,21 @@ const StatCard: React.FC<StatCardProps> = ({
                     <Icon
                         name={checked ? "checkbox-marked" : "checkbox-blank-outline"}
                         size={22}
-                        color={checked ? color : "#8e8e93"}
+                        color={checked ? color : theme.subText}
                     />
                 </View>
             )}
             <View style={styles.cardHeader}>
                 <Icon name={icon} size={20} color={color}/>
-                <Text style={styles.cardCount}>{count}</Text>
+                <Text style={[styles.cardCount, {color: theme.text}]}>{count}</Text>
             </View>
-            <Text style={styles.cardTitle}>{title}</Text>
+            <Text style={[styles.cardTitle, {color: theme.subText}]}>{title}</Text>
         </Pressable>
     );
 };
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#2A2A38",
         width: "48%",
         borderRadius: 15,
         padding: 15,
@@ -82,16 +84,13 @@ const styles = StyleSheet.create({
     cardCount: {
         fontSize: 22,
         fontWeight: "bold",
-        color: "#fff",
     },
     cardTitle: {
-        color: "#8e8e93",
         marginTop: 10,
         fontSize: 13,
     },
     progressBarBg: {
         height: 4,
-        backgroundColor: "#1C1C28",
         borderRadius: 2,
         marginTop: 10,
     },

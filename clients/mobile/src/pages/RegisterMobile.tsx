@@ -20,12 +20,14 @@ import * as Linking from "expo-linking";
 import {ParsedURL} from "expo-linking";
 import {WebBrowserAuthSessionResult} from "expo-web-browser";
 import {useTranslation} from "react-i18next";
+import {useTheme} from "../context/ThemeContext";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const RegisterMobile: React.FC = () => {
     const router: Router = useRouter();
     const {t} = useTranslation();
+    const {theme} = useTheme();
 
     const [email, setEmail] = React.useState("");
     const [username, setUsername] = React.useState("");
@@ -34,7 +36,6 @@ const RegisterMobile: React.FC = () => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [suggestions, setSuggestions] = React.useState<any[]>([]);
     const [showSuggestions, setShowSuggestions] = React.useState(false);
-
 
     const handleOAuth: (provider: "google" | "discord") => Promise<void> = async (provider: "google" | "discord"): Promise<void> => {
         try {
@@ -57,8 +58,8 @@ const RegisterMobile: React.FC = () => {
 
                 if (error) {
                     Alert.alert(
-                        "Compte existant",
-                        "Cet email est déjà lié à un autre compte.",
+                        t("oauth_existing_account"),
+                        t("oauth_existing_account"),
                     );
                     return;
                 }
@@ -67,18 +68,18 @@ const RegisterMobile: React.FC = () => {
                     await SecureStore.setItemAsync("userToken", token);
                     router.replace("/onboarding");
                 } else {
-                    Alert.alert("Erreur", "Aucun token reçu après l'authentification.");
+                    Alert.alert(t("error"), t("oauth_token_missing"));
                 }
             }
         } catch (error) {
             console.error("Erreur OAuth:", error);
-            Alert.alert("Erreur", "La connexion a échoué.");
+            Alert.alert(t("error"), t("login_error_connection"));
         }
     };
 
     const handleRegister: () => Promise<void> = async (): Promise<void> => {
         if (!email || !username || !password) {
-            Alert.alert("Erreur", "Veuillez remplir tous les champs.");
+            Alert.alert(t("error"), t("login_fill_fields"));
             return;
         }
         setIsLoading(true);
@@ -97,35 +98,34 @@ const RegisterMobile: React.FC = () => {
                 await SecureStore.setItemAsync("userToken", token);
                 router.push("/onboarding");
             } else {
-                Alert.alert("Succès", "Compte créé, veuillez vous connecter.");
+                Alert.alert(t("success"), t("register_success_message"));
                 router.push("/login");
             }
         } catch (error: any) {
             const message =
                 error.response?.data?.message ||
-                "Erreur lors de la création du compte.";
-            Alert.alert("Erreur", message);
+                t("register_error_create");
+            Alert.alert(t("error"), message);
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: theme.background}]}>
             <ScrollView contentContainerStyle={styles.scroll}>
                 <View style={styles.header}>
-                    {/* Logo */}
                     <Image
                         source={require("@/assets/images/logo.png")}
                         style={styles.logoImage}
                     />
-                    <Text style={styles.title}>{t("register_title")}</Text>
-                    <Text style={styles.subtitle}>{t("register_subtitle")}</Text>
+                    <Text style={[styles.title, {color: theme.text}]}>{t("register_title")}</Text>
+                    <Text style={[styles.subtitle, {color: theme.subText}]}>{t("register_subtitle")}</Text>
                 </View>
 
                 <InputMobile
                     label={t("register_email_label")}
-                    placeholder="votre@email.com"
+                    placeholder={t("placeholder_email")}
                     icon="mail-outline"
                     value={email}
                     onChangeText={setEmail}
@@ -134,7 +134,7 @@ const RegisterMobile: React.FC = () => {
                 />
                 <InputMobile
                     label={t("register_username_label")}
-                    placeholder="fan"
+                    placeholder={t("register_username_placeholder")}
                     icon="person-circle-outline"
                     value={username}
                     onChangeText={setUsername}
@@ -142,15 +142,16 @@ const RegisterMobile: React.FC = () => {
                 />
                 <InputMobile
                     label={t("register_password_label")}
-                    placeholder="••••••••"
+                    placeholder={t("placeholder_password")}
                     icon="lock-closed-outline"
                     secureTextEntry
                     value={password}
                     onChangeText={setPassword}
                 />
+
                 <View style={{zIndex: 1000}}>
                     {showSuggestions && suggestions.length > 0 && (
-                        <View style={styles.suggestionsContainer}>
+                        <View style={[styles.suggestionsContainer, {backgroundColor: theme.card}]}>
                             <ScrollView
                                 style={{maxHeight: 200}}
                                 keyboardShouldPersistTaps="handled"
@@ -158,13 +159,13 @@ const RegisterMobile: React.FC = () => {
                                 {suggestions.map((item, index: number) => (
                                     <TouchableOpacity
                                         key={index}
-                                        style={styles.suggestionItem}
+                                        style={[styles.suggestionItem, {borderBottomColor: theme.separator}]}
                                         onPress={(): void => {
                                             setfavorite_band(item.name);
                                             setShowSuggestions(false);
                                         }}
                                     >
-                                        <Text style={styles.suggestionText}>{item.name}</Text>
+                                        <Text style={[styles.suggestionText, {color: theme.text}]}>{item.name}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </ScrollView>
@@ -180,26 +181,22 @@ const RegisterMobile: React.FC = () => {
                 />
 
                 <View style={styles.separator}>
-                    <View style={styles.line}/>
-                    <Text style={styles.sepText}>{t("register_separator")}</Text>
-                    <View style={styles.line}/>
+                    <View style={[styles.line, {backgroundColor: theme.separator}]}/>
+                    <Text style={[styles.sepText, {color: theme.subText}]}>{t("register_separator")}</Text>
+                    <View style={[styles.line, {backgroundColor: theme.separator}]}/>
                 </View>
 
                 <View style={styles.socialRow}>
                     <ButtonMobile variant="social" onPress={(): Promise<void> => handleOAuth("google")}>
-                        <Ionicons name="logo-google" size={24} color="#FFF"/>
+                        <Ionicons name="logo-google" size={24} color={theme.text}/>
                     </ButtonMobile>
 
                     <ButtonMobile
                         variant="social"
                         onPress={(): Promise<void> => handleOAuth("discord")}
-                        style={{marginHorizontal: 10}}
+                        style={{marginLeft: 12}}
                     >
-                        <Ionicons name="logo-discord" size={24} color="#FFF"/>
-                    </ButtonMobile>
-
-                    <ButtonMobile variant="social">
-                        <Ionicons name="logo-facebook" size={24} color="#FFF"/>
+                        <Ionicons name="logo-discord" size={24} color={theme.text}/>
                     </ButtonMobile>
                 </View>
 
@@ -207,7 +204,7 @@ const RegisterMobile: React.FC = () => {
                     onPress={(): void => router.push("/login")}
                     style={styles.footer}
                 >
-                    <Text style={styles.footerText}>
+                    <Text style={[styles.footerText, {color: theme.subText}]}>
                         {t("register_already_account")} <Text style={styles.link}>{t("register_login_link")}</Text>
                     </Text>
                 </TouchableOpacity>
@@ -219,9 +216,7 @@ const RegisterMobile: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#1C1C28",
     },
-
     scroll: {
         padding: 25,
     },
@@ -233,7 +228,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 30,
     },
-
     logo: {
         width: 60,
         height: 60,
@@ -242,20 +236,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 15,
     },
-
     title: {
-        color: "#FFF",
         fontSize: 24,
         fontWeight: "bold",
     },
-
     subtitle: {
-        color: "#888",
         fontSize: 14,
         marginTop: 5,
     },
     suggestionsContainer: {
-        backgroundColor: "#2D2D3F",
         borderRadius: 8,
         marginTop: -10,
         marginBottom: 10,
@@ -266,45 +255,31 @@ const styles = StyleSheet.create({
     suggestionItem: {
         padding: 15,
         borderBottomWidth: 1,
-        borderBottomColor: "#333",
     },
     suggestionText: {
-        color: "#FFF",
         fontSize: 14,
     },
-
     separator: {
         flexDirection: "row",
         alignItems: "center",
         marginVertical: 25,
     },
-
     line: {
         flex: 1,
         height: 1,
-        backgroundColor: "#333",
     },
-
     sepText: {
-        color: "#555",
         marginHorizontal: 10,
         fontSize: 12,
     },
-
     socialRow: {
         flexDirection: "row",
-        justifyContent: "space-between",
     },
-
     footer: {
         marginTop: 30,
         alignItems: "center",
     },
-
-    footerText: {
-        color: "#888",
-    },
-
+    footerText: {},
     link: {
         color: "#3b82f6",
         fontWeight: "bold",

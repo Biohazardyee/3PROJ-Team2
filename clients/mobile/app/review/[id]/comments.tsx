@@ -19,8 +19,9 @@ import { AuthGuardWrapper } from "@/src/components/AuthGuardMapper";
 import { jwtDecode } from "jwt-decode";
 import * as SecureStore from "expo-secure-store";
 import { Keyboard } from "react-native";
-
 import ReportButton from "@/src/components/reports/ReportButton";
+import { useTheme } from "../../../src/context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 interface Comment {
   id: string;
@@ -45,7 +46,20 @@ interface Review {
 export default function CommentsScreen() {
   const { id } = useLocalSearchParams();
   const router: Router = useRouter();
+  const { theme } = useTheme();
+  const { t } = useTranslation();
   const inputRef = useRef<TextInput>(null);
+
+  const formatReviewDate = (dateStr: string | undefined): string => {
+    const date = new Date(dateStr || Date.now());
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const time = date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+    if (date.toDateString() === now.toDateString()) return `${t("today")} · ${time}`;
+    if (date.toDateString() === yesterday.toDateString()) return `${t("yesterday")} · ${time}`;
+    return date.toLocaleDateString();
+  };
 
   const [comments, setComments] = useState<Comment[]>([]);
   const [review, setReview] = useState<Review | null>(null);
@@ -55,7 +69,6 @@ export default function CommentsScreen() {
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // Gestion de l'affichage de l'input
   const [isInputVisible, setIsInputVisible] = useState(false);
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
   const [editingComment, setEditingComment] = useState<Comment | null>(null);
@@ -151,6 +164,7 @@ export default function CommentsScreen() {
   };
 
   const handlePostComment: () => Promise<void> = async (): Promise<void> => {
+    if (!currentUserId) { router.push("/restriction"); return; }
     if (!newComment.trim()) return;
     setSending(true);
     try {
@@ -174,7 +188,7 @@ export default function CommentsScreen() {
       const commentsRes = await apiClient.get(`/review-comments/review/${id}`);
       setComments(commentsRes.data.comments || []);
     } catch (err) {
-      Alert.alert("Erreur", "Impossible d'enregistrer votre message.");
+      Alert.alert(t("error"), t("error_save_comment"));
     } finally {
       setSending(false);
     }
@@ -182,6 +196,7 @@ export default function CommentsScreen() {
 
   const handleToggleLikeReview: () => Promise<void> =
     async (): Promise<void> => {
+      if (!currentUserId) { router.push("/restriction"); return; }
       if (!review) return;
 
       const previousState = { ...review };
@@ -206,13 +221,14 @@ export default function CommentsScreen() {
       } catch (error) {
         console.error("Erreur lors du like de la review", error);
         setReview(previousState);
-        Alert.alert("Erreur", "Impossible de mettre à jour le like.");
+        Alert.alert(t("error"), t("error_like_update"));
       }
     };
 
   const handleToggleLike: (commentId: string) => Promise<void> = async (
     commentId: string,
   ): Promise<void> => {
+    if (!currentUserId) { router.push("/restriction"); return; }
     try {
       const response = await apiClient.post(
         `/review-comments/${commentId}/toggle-like`,
@@ -231,10 +247,10 @@ export default function CommentsScreen() {
   const handleDeleteComment: (commentId: string) => void = (
     commentId: string,
   ): void => {
-    Alert.alert("Supprimer", "Voulez-vous supprimer ce commentaire ?", [
-      { text: "Annuler", style: "cancel" },
+    Alert.alert(t("delete"), t("confirm_delete_comment"), [
+      { text: t("cancel"), style: "cancel" },
       {
-        text: "Supprimer",
+        text: t("delete"),
         style: "destructive",
         onPress: async (): Promise<void> => {
           try {
@@ -253,14 +269,14 @@ export default function CommentsScreen() {
   const renderHeader = () => {
     if (!review) return null;
     return (
-      <View style={styles.originalReviewContainer}>
+      <View style={[styles.originalReviewContainer, {backgroundColor: theme.surface}]}>
         <View style={styles.commentHeader}>
-          <Text style={styles.originalUsername}>@{review.user?.username}</Text>
-          <Text style={styles.date}>
-            {new Date(review.created_at).toLocaleDateString()}
+          <Text style={[styles.originalUsername, {color: theme.text}]}>@{review.user?.username}</Text>
+          <Text style={[styles.date, {color: theme.placeholder}]}>
+            {formatReviewDate(review.created_at)}
           </Text>
         </View>
-        <Text style={styles.originalContent}>{review.content}</Text>
+        <Text style={[styles.originalContent, {color: theme.subText}]}>{review.content}</Text>
 
         <View style={styles.commentActions}>
           <TouchableOpacity
@@ -270,11 +286,12 @@ export default function CommentsScreen() {
             <Ionicons
               name={review.isLiked ? "heart" : "heart-outline"}
               size={20}
-              color={review.isLiked ? "#ec4899" : "#64748b"}
+              color={review.isLiked ? "#ec4899" : theme.placeholder}
             />
             <Text
               style={[
                 styles.actionLabel,
+                {color: theme.placeholder},
                 review.isLiked && { color: "#ec4899" },
               ]}
             >
@@ -286,13 +303,15 @@ export default function CommentsScreen() {
             onPress={handleReplyToReview}
             style={styles.actionBtn}
           >
-            <Ionicons name="chatbubble-outline" size={18} color="#64748b" />
-            <Text style={styles.actionLabel}>Répondre à la review</Text>
+            <Ionicons name="chatbubble-outline" size={18} color={theme.placeholder} />
+            <Text style={[styles.actionLabel, {color: theme.placeholder}]}>{t("reply")}</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.separator} />
-        <Text style={styles.repliesCount}>{comments.length} Réponse(s)</Text>
+        <View style={[styles.separator, {backgroundColor: theme.border}]} />
+        <Text style={[styles.repliesCount, {color: theme.placeholder}]}>
+          {comments.length} {t(comments.length <= 1 ? "comment_singular" : "comment_plural")}
+        </Text>
       </View>
     );
   };
@@ -302,16 +321,20 @@ export default function CommentsScreen() {
     const isMyComment: boolean = currentUserId === item.user?.id;
 
     return (
-      <View style={[styles.commentCard, isReply && styles.replyCard]}>
-        {isReply && <View style={styles.threadLine} />}
+      <View style={[
+        styles.commentCard,
+        {backgroundColor: theme.surface, borderColor: theme.border},
+        isReply && [styles.replyCard, {backgroundColor: theme.inputBg, borderColor: theme.border}],
+      ]}>
+        {isReply && <View style={[styles.threadLine, {backgroundColor: theme.border, borderColor: theme.border}]} />}
         <View style={{ flex: 1 }}>
           <View style={styles.commentHeader}>
             <Text style={styles.username}>@{item.user?.username}</Text>
-            <Text style={styles.date}>
-              {new Date(item.created_at).toLocaleDateString()}
+            <Text style={[styles.date, {color: theme.placeholder}]}>
+              {formatReviewDate(item.created_at)}
             </Text>
           </View>
-          <Text style={styles.commentText}>{item.content}</Text>
+          <Text style={[styles.commentText, {color: theme.subText}]}>{item.content}</Text>
           <View style={styles.commentActions}>
             <TouchableOpacity
               onPress={(): Promise<void> => handleToggleLike(item.id)}
@@ -320,11 +343,12 @@ export default function CommentsScreen() {
               <Ionicons
                 name={item.isLiked ? "heart" : "heart-outline"}
                 size={16}
-                color={item.isLiked ? "#ec4899" : "#64748b"}
+                color={item.isLiked ? "#ec4899" : theme.placeholder}
               />
               <Text
                 style={[
                   styles.actionLabel,
+                  {color: theme.placeholder},
                   item.isLiked && { color: "#ec4899" },
                 ]}
               >
@@ -346,7 +370,7 @@ export default function CommentsScreen() {
                 }}
                 style={styles.actionBtn}
               >
-                <Text style={styles.actionLabel}>Répondre</Text>
+                <Text style={[styles.actionLabel, {color: theme.placeholder}]}>{t("reply")}</Text>
               </TouchableOpacity>
             )}
 
@@ -362,7 +386,7 @@ export default function CommentsScreen() {
                   onPress={(): void => startEditing(item)}
                   style={styles.actionBtn}
                 >
-                  <Text style={styles.actionLabel}>Modifier</Text>
+                  <Text style={[styles.actionLabel, {color: theme.placeholder}]}>{t("modify")}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -381,7 +405,7 @@ export default function CommentsScreen() {
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, {backgroundColor: theme.background}]}>
         <ActivityIndicator color="#ec4899" size="large" />
       </View>
     );
@@ -389,12 +413,12 @@ export default function CommentsScreen() {
 
   return (
     <AuthGuardWrapper>
-      <View style={styles.container}>
-        <View style={styles.header}>
+      <View style={[styles.container, {backgroundColor: theme.background}]}>
+        <View style={[styles.header, {borderBottomColor: theme.border}]}>
           <TouchableOpacity onPress={(): void => router.back()}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="arrow-back" size={24} color={theme.text} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Discussion</Text>
+          <Text style={[styles.headerTitle, {color: theme.text}]}>{t("page_discussion")}</Text>
           <View style={{ width: 24 }} />
         </View>
 
@@ -405,7 +429,7 @@ export default function CommentsScreen() {
           contentContainerStyle={styles.listContent}
           renderItem={renderComment}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>Soyez le premier à répondre !</Text>
+            <Text style={[styles.emptyText, {color: theme.placeholder}]}>{t("msg_be_first_to_reply")}</Text>
           }
         />
 
@@ -413,16 +437,16 @@ export default function CommentsScreen() {
           <View
             style={[
               styles.absoluteInputWrapper,
-              { bottom: keyboardHeight - 10 },
+              {backgroundColor: theme.surface, bottom: keyboardHeight - 10},
             ]}
           >
-            <View style={styles.replyHint}>
-              <Text style={{ color: "#94a3b8", fontSize: 12 }}>
+            <View style={[styles.replyHint, {backgroundColor: theme.card}]}>
+              <Text style={{ color: theme.subText, fontSize: 12 }}>
                 {editingComment
-                  ? "Modification de votre message"
+                  ? t("msg_editing_message")
                   : replyTo
-                    ? `Réponse à @${replyTo.user.username}`
-                    : "Réponse au message de base"}
+                    ? `${t("reply")} @${replyTo.user.username}`
+                    : t("msg_reply_to_review")}
               </Text>
               <TouchableOpacity
                 onPress={(): void => {
@@ -439,9 +463,9 @@ export default function CommentsScreen() {
             <View style={styles.inputContainer}>
               <TextInput
                 ref={inputRef}
-                style={styles.input}
-                placeholder="Écrivez votre message..."
-                placeholderTextColor="#64748b"
+                style={[styles.input, {color: theme.text, backgroundColor: theme.inputBg}]}
+                placeholder={t("placeholder_write_message")}
+                placeholderTextColor={theme.placeholder}
                 value={newComment}
                 onChangeText={setNewComment}
                 multiline
@@ -470,10 +494,9 @@ export default function CommentsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0f111a" },
+  container: { flex: 1 },
   center: {
     flex: 1,
-    backgroundColor: "#1C1C28",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -485,45 +508,37 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#1e1e2d",
   },
-  headerTitle: { color: "white", fontSize: 18, fontWeight: "bold" },
+  headerTitle: { fontSize: 18, fontWeight: "bold" },
   listContent: { padding: 20, paddingBottom: 100 },
   originalReviewContainer: {
-    backgroundColor: "#1a1d29",
     padding: 15,
     borderRadius: 12,
     marginBottom: 25,
     borderLeftWidth: 4,
     borderLeftColor: "#ec4899",
   },
-  originalUsername: { color: "white", fontWeight: "bold", fontSize: 16 },
+  originalUsername: { fontWeight: "bold", fontSize: 16 },
   originalContent: {
-    color: "#e2e8f0",
     fontSize: 16,
     marginTop: 8,
     lineHeight: 22,
   },
-  separator: { height: 1, backgroundColor: "#2d2d3f", marginVertical: 15 },
+  separator: { height: 1, marginVertical: 15 },
   repliesCount: {
-    color: "#64748b",
     fontSize: 11,
     fontWeight: "bold",
     textTransform: "uppercase",
   },
   commentCard: {
-    backgroundColor: "#11131f",
     padding: 15,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#1e1e2d",
     flexDirection: "row",
   },
   replyCard: {
     marginLeft: 40,
-    backgroundColor: "#0d0e17",
-    borderColor: "#161826",
   },
   threadLine: {
     position: "absolute",
@@ -531,10 +546,8 @@ const styles = StyleSheet.create({
     top: -15,
     bottom: "50%",
     width: 2,
-    backgroundColor: "#2d2d3f",
     borderBottomLeftRadius: 10,
     borderLeftWidth: 2,
-    borderColor: "#2d2d3f",
   },
   commentHeader: {
     flexDirection: "row",
@@ -542,8 +555,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   username: { color: "#ec4899", fontWeight: "bold", fontSize: 13 },
-  date: { color: "#475569", fontSize: 11 },
-  commentText: { color: "#94a3b8", lineHeight: 20, fontSize: 14 },
+  date: { fontSize: 11 },
+  commentText: { lineHeight: 20, fontSize: 14 },
   commentActions: {
     flexDirection: "row",
     marginTop: 12,
@@ -551,12 +564,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionBtn: { flexDirection: "row", alignItems: "center", gap: 5 },
-  actionLabel: { color: "#64748b", fontSize: 12, fontWeight: "600" },
+  actionLabel: { fontSize: 12, fontWeight: "600" },
   absoluteInputWrapper: {
     position: "absolute",
     left: 0,
     right: 0,
-    backgroundColor: "#1a1d29",
     borderTopWidth: 1,
     borderTopColor: "#ec4899",
   },
@@ -568,8 +580,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: "white",
-    backgroundColor: "#0f111a",
     borderRadius: 20,
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -590,7 +600,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: "#1e1e2d",
   },
-  emptyText: { color: "#64748b", textAlign: "center", marginTop: 20 },
+  emptyText: { textAlign: "center", marginTop: 20 },
 });

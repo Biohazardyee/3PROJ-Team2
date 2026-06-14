@@ -20,6 +20,7 @@ import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
 import {AuthGuardWrapper} from "../components/AuthGuardMapper";
 import {getValidSource} from "@/helpers/helpers";
+import {useTheme} from "../context/ThemeContext";
 
 type Filter = "Review" | "Abonnement" | "Tendances";
 
@@ -43,9 +44,23 @@ interface HasMoreCache {
 
 const ITEMS_PER_PAGE: number = 10;
 
+function timeAgo(dateStr: string | undefined, t: (key: string, opts?: any) => string): string {
+    if (!dateStr) return "";
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return t("time_just_now");
+    if (mins < 60) return t("time_mins_ago", {count: mins});
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return t("time_hours_ago", {count: hours});
+    const days = Math.floor(hours / 24);
+    if (days < 30) return t("time_days_ago", {count: days});
+    return t("time_months_ago", {count: Math.floor(days / 30)});
+}
+
 const Feed = () => {
     const {t} = useTranslation();
     const router: Router = useRouter();
+    const {theme, isDarkMode} = useTheme();
     const [activeFilter, setActiveFilter] = useState<Filter>("Review");
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -268,7 +283,7 @@ const Feed = () => {
             item.userReviewRating ?? item.globalRating ?? item.rating ?? 0;
 
         return (
-            <View style={styles.card}>
+            <View style={[styles.card, {backgroundColor: theme.surface, borderColor: theme.border}]}>
                 <View style={styles.userRow}>
                     <TouchableOpacity
                         style={styles.userInfoClickable}
@@ -299,16 +314,16 @@ const Feed = () => {
                             </View>
                         )}
                         <View>
-                            <Text style={styles.userName}>
-                                {item.user_name || t("recommendation_label")}
-                                <Text style={styles.actionText}>
+                            <Text style={[styles.userName, {color: theme.text}]}>
+                                {item.user_name + " " || t("recommendation_label")}
+                                <Text style={[styles.actionText, {color: theme.placeholder}]}>
                                     {item.type === "review"
                                         ? t("action_wrote_review")
                                         : t("action_new_album")}
                                 </Text>
                             </Text>
-                            <Text style={styles.timeText}>
-                                {item.type === "recommendation" ? t("feed_ai_suggestion") : t("feed_recent")}
+                            <Text style={[styles.timeText, {color: theme.placeholder}]}>
+                                {item.type === "recommendation" ? t("feed_ai_suggestion") : timeAgo(item.created_at, t)}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -328,33 +343,33 @@ const Feed = () => {
                         })
                     }
                 >
-                    <View style={styles.albumRow}>
+                    <View style={[styles.albumRow, {backgroundColor: theme.inputBg}]}>
                         {item.cover ? (
                             <Image
                                 source={getValidSource(item.cover)}
                                 style={styles.albumCover}
                             />
                         ) : (
-                            <View style={[styles.albumCover, styles.albumCoverPlaceholder]}>
-                                <Ionicons name="musical-notes" size={30} color="#4b5563"/>
+                            <View style={[styles.albumCover, styles.albumCoverPlaceholder, {backgroundColor: theme.card}]}>
+                                <Ionicons name="musical-notes" size={30} color={theme.placeholder}/>
                             </View>
                         )}
                         <View style={styles.albumDetails}>
-                            <Text style={styles.albumTitle} numberOfLines={1}>
+                            <Text style={[styles.albumTitle, {color: theme.text}]} numberOfLines={1}>
                                 {item.album}
                             </Text>
-                            <Text style={styles.artistName}>{item.artist}</Text>
+                            <Text style={[styles.artistName, {color: theme.subText}]}>{item.artist}</Text>
                             <View style={styles.starsRow}>
                                 {[...Array(5)].map((_, i: number) => (
                                     <Ionicons
                                         key={i}
                                         name="star"
                                         size={14}
-                                        color={i < displayRating ? "#ec4899" : "#374151"}
+                                        color={i < displayRating ? "#ec4899" : theme.separator}
                                     />
                                 ))}
                                 {item.hasReviewed && (
-                                    <Text style={styles.userRatingBadge}>VOTRE NOTE</Text>
+                                    <Text style={styles.userRatingBadge}>{t("badge_your_rating")}</Text>
                                 )}
                             </View>
                         </View>
@@ -363,9 +378,9 @@ const Feed = () => {
                     {item.type === "review" && item.content && (
                         <View style={styles.reviewBody}>
                             {item.title && (
-                                <Text style={styles.reviewTitle}>{item.title}</Text>
+                                <Text style={[styles.reviewTitle, {color: theme.text}]}>{item.title}</Text>
                             )}
-                            <Text style={styles.postContent} numberOfLines={3}>
+                            <Text style={[styles.postContent, {color: theme.subText}]} numberOfLines={3}>
                                 {item.content}
                             </Text>
                         </View>
@@ -376,29 +391,29 @@ const Feed = () => {
                     {item.type === "review" ? (
                         <>
                             <TouchableOpacity
-                                style={styles.actionButton}
+                                style={[styles.actionButton, {backgroundColor: theme.card}]}
                                 onPress={(): Promise<void> => handleLike(item.id)}
                             >
                                 <Ionicons
                                     name={liked ? "heart" : "heart-outline"}
                                     size={20}
-                                    color={liked ? "#ec4899" : "#9ca3af"}
+                                    color={liked ? "#ec4899" : theme.subText}
                                 />
                                 <Text
-                                    style={[styles.actionCount, liked && {color: "#ec4899"}]}
+                                    style={[styles.actionCount, {color: theme.subText}, liked && {color: "#ec4899"}]}
                                 >
                                     {item.likes_count || 0}
                                 </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={styles.actionButton}
+                                style={[styles.actionButton, {backgroundColor: theme.card}]}
                                 onPress={(): void =>
                                     router.push(`/review/${item.review_id}/comments`)
                                 }
                             >
-                                <Ionicons name="chatbubble-outline" size={18} color="#9ca3af"/>
-                                <Text style={styles.actionCount}>
+                                <Ionicons name="chatbubble-outline" size={18} color={theme.subText}/>
+                                <Text style={[styles.actionCount, {color: theme.subText}]}>
                                     {item.comments_count || 0}
                                 </Text>
                             </TouchableOpacity>
@@ -453,7 +468,7 @@ const Feed = () => {
 
     if (isLoading && feedsCache[activeFilter].length === 0) {
         return (
-            <View style={[styles.container, styles.center]}>
+            <View style={[styles.container, styles.center, {backgroundColor: theme.background}]}>
                 <ActivityIndicator size="large" color="#ec4899"/>
             </View>
         );
@@ -461,8 +476,8 @@ const Feed = () => {
 
     return (
         <AuthGuardWrapper>
-            <View style={styles.container}>
-                <StatusBar barStyle="light-content"/>
+            <View style={[styles.container, {backgroundColor: theme.background}]}>
+                <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"}/>
                 <Header/>
 
                 <FlatList
@@ -481,29 +496,29 @@ const Feed = () => {
                     ListHeaderComponent={
                         <>
                             <View style={styles.headerSection}>
-                                <Text style={styles.title}>{t("feed_title")}</Text>
-                                <Text style={styles.subtitle}>
+                                <Text style={[styles.title, {color: theme.text}]}>{t("feed_title")}</Text>
+                                <Text style={[styles.subtitle, {color: theme.subText}]}>
                                     {t("feed_subtitle")}
                                 </Text>
                             </View>
 
-                            <View style={styles.searchContainer}>
+                            <View style={[styles.searchContainer, {backgroundColor: theme.surface, borderColor: theme.border}]}>
                                 <Ionicons
                                     name="search"
                                     size={20}
-                                    color="#6b7280"
+                                    color={theme.placeholder}
                                     style={styles.searchIcon}
                                 />
                                 <TextInput
-                                    style={styles.searchInput}
+                                    style={[styles.searchInput, {color: theme.text}]}
                                     placeholder={t("search_feed_placeholder")}
-                                    placeholderTextColor="#6b7280"
+                                    placeholderTextColor={theme.placeholder}
                                     value={searchQuery}
                                     onChangeText={setSearchQuery}
                                 />
                             </View>
 
-                            <View style={styles.filterTabs}>
+                            <View style={[styles.filterTabs, {backgroundColor: theme.surface, borderColor: theme.border}]}>
                                 <FilterButton
                                     label={t("tab_activities")}
                                     active={activeFilter === "Review"}
@@ -531,47 +546,46 @@ const Feed = () => {
     );
 };
 
-const FilterButton = ({label, active, onPress, icon}: any) => (
-    <TouchableOpacity
-        style={[styles.filterBtn, active && styles.filterBtnActive]}
-        onPress={onPress}
-    >
-        <Ionicons name={icon} size={16} color={active ? "#fff" : "#6b7280"}/>
-        <Text style={[styles.filterBtnText, active && styles.filterBtnTextActive]}>
-            {label}
-        </Text>
-    </TouchableOpacity>
-);
+const FilterButton = ({label, active, onPress, icon}: any) => {
+    const {theme} = useTheme();
+    return (
+        <TouchableOpacity
+            style={[styles.filterBtn, active && [styles.filterBtnActive, {backgroundColor: theme.card}]]}
+            onPress={onPress}
+        >
+            <Ionicons name={icon} size={16} color={active ? theme.text : theme.placeholder}/>
+            <Text style={[styles.filterBtnText, {color: theme.placeholder}, active && {color: theme.text}]}>
+                {label}
+            </Text>
+        </TouchableOpacity>
+    );
+};
 
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: "#1C1C28"},
+    container: {flex: 1},
     center: {justifyContent: "center", alignItems: "center"},
     scrollContent: {paddingBottom: 40},
     headerSection: {paddingHorizontal: 20, paddingTop: 10, marginBottom: 5},
-    title: {fontSize: 28, fontWeight: "bold", color: "#fff"},
-    subtitle: {color: "#9ca3af", fontSize: 14, marginTop: 4},
+    title: {fontSize: 28, fontWeight: "bold"},
+    subtitle: {fontSize: 14, marginTop: 4},
     searchContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#1a1d29",
         marginHorizontal: 20,
         marginVertical: 15,
         borderRadius: 12,
         paddingHorizontal: 12,
         borderWidth: 1,
-        borderColor: "#1f2937",
     },
     searchIcon: {marginRight: 10},
-    searchInput: {flex: 1, height: 45, color: "#fff", fontSize: 15},
+    searchInput: {flex: 1, height: 45, fontSize: 15},
     filterTabs: {
         flexDirection: "row",
-        backgroundColor: "#1a1d29",
         marginHorizontal: 20,
         padding: 5,
         borderRadius: 15,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: "#1f2937",
     },
     filterBtn: {
         flex: 1,
@@ -582,17 +596,15 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         gap: 6,
     },
-    filterBtnActive: {backgroundColor: "#2a2e3f"},
-    filterBtnText: {color: "#6b7280", fontSize: 12, fontWeight: "600"},
-    filterBtnTextActive: {color: "#fff"},
+    filterBtnActive: {},
+    filterBtnText: {fontSize: 12, fontWeight: "600"},
+    filterBtnTextActive: {},
     card: {
-        backgroundColor: "#1a1d29",
         borderRadius: 20,
         padding: 16,
         marginBottom: 16,
-        marginHorizontal: 20, // Ajouté car la FlatList prend toute la largeur
+        marginHorizontal: 20,
         borderWidth: 1,
-        borderColor: "#1f2937",
     },
     userRow: {flexDirection: "row", alignItems: "center", marginBottom: 12},
     userInfoClickable: {flexDirection: "row", alignItems: "center", gap: 10},
@@ -604,35 +616,32 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     avatarText: {color: "#fff", fontWeight: "bold", fontSize: 12},
-    userName: {color: "#fff", fontWeight: "bold", fontSize: 13},
-    actionText: {fontWeight: "400", color: "#6b7280"},
-    timeText: {color: "#4b5563", fontSize: 9, fontWeight: "bold", marginTop: 2},
+    userName: {fontWeight: "bold", fontSize: 13},
+    actionText: {fontWeight: "400"},
+    timeText: {fontSize: 9, fontWeight: "bold", marginTop: 2},
     albumRow: {
         flexDirection: "row",
         gap: 12,
         marginBottom: 12,
-        backgroundColor: "#141721",
         padding: 10,
         borderRadius: 12,
     },
     albumCover: {width: 70, height: 70, borderRadius: 8},
     albumCoverPlaceholder: {
-        backgroundColor: "#2a2e3f",
         justifyContent: "center",
         alignItems: "center",
     },
     albumDetails: {flex: 1, justifyContent: "center"},
-    albumTitle: {color: "#fff", fontSize: 16, fontWeight: "bold"},
-    artistName: {color: "#9ca3af", fontSize: 13, marginBottom: 4},
+    albumTitle: {fontSize: 16, fontWeight: "bold"},
+    artistName: {fontSize: 13, marginBottom: 4},
     starsRow: {flexDirection: "row", alignItems: "center", gap: 4},
     reviewBody: {marginVertical: 8, paddingHorizontal: 4},
     reviewTitle: {
-        color: "#fff",
         fontSize: 15,
         fontWeight: "700",
         marginBottom: 4,
     },
-    postContent: {color: "#9ca3af", fontSize: 13, lineHeight: 18},
+    postContent: {fontSize: 13, lineHeight: 18},
     cardFooter: {
         flexDirection: "row",
         alignItems: "center",
@@ -645,7 +654,6 @@ const styles = StyleSheet.create({
         gap: 6,
         paddingVertical: 6,
         paddingHorizontal: 12,
-        backgroundColor: "#1e212e",
         borderRadius: 20,
     },
     writeReviewBtn: {
@@ -657,7 +665,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#10b98110",
         borderColor: "#10b98130",
     },
-    actionCount: {color: "#9ca3af", fontSize: 13, fontWeight: "600"},
+    actionCount: {fontSize: 13, fontWeight: "600"},
     userRatingBadge: {
         color: "#ec4899",
         fontSize: 8,

@@ -2,6 +2,7 @@ import React from 'react';
 import {TouchableOpacity, StyleSheet, ViewStyle} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {Router, useRouter} from 'expo-router';
+import {useTheme} from '../context/ThemeContext';
 
 type BackButtonProps = {
     style?: ViewStyle;
@@ -9,6 +10,7 @@ type BackButtonProps = {
 
 const BackButton = ({style}: BackButtonProps) => {
     const router: Router = useRouter();
+    const {theme} = useTheme();
 
     return (
         <TouchableOpacity
@@ -16,7 +18,7 @@ const BackButton = ({style}: BackButtonProps) => {
             onPress={(): void => router.back()}
             activeOpacity={0.7}
         >
-            <Ionicons name="chevron-back" size={30} color="white"/>
+            <Ionicons name="chevron-back" size={30} color={theme.text}/>
         </TouchableOpacity>
     );
 };

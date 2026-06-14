@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import {Router, useRouter} from "expo-router";
 import {getValidSource} from "@/helpers/helpers";
+import {useTheme} from '../context/ThemeContext';
 
 type AlbumCardProps = {
     id: string | number;
@@ -21,13 +22,14 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                                                  cover,
                                              }: AlbumCardProps) => {
     const router: Router = useRouter();
+    const {theme} = useTheme();
 
     const numericRating: number =
         typeof rating === "string" ? parseFloat(rating) : rating;
 
     return (
         <TouchableOpacity
-            style={styles.albumCard}
+            style={[styles.albumCard, {backgroundColor: theme.card, borderColor: theme.border}]}
             onPress={(): void =>
                 router.push({
                     pathname: "/albumdetails",
@@ -40,10 +42,10 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
             </View>
 
             <View style={styles.albumInfo}>
-                <Text style={styles.albumTitle} numberOfLines={1}>
+                <Text style={[styles.albumTitle, {color: theme.text}]} numberOfLines={1}>
                     {title}
                 </Text>
-                <Text style={styles.artistName} numberOfLines={1}>
+                <Text style={[styles.artistName, {color: theme.subText}]} numberOfLines={1}>
                     {artist}
                 </Text>
 
@@ -55,7 +57,7 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
                                 name="star"
                                 size={12}
                                 color={
-                                    i < Math.floor(numericRating || 0) ? "#ec4899" : "#374151"
+                                    i < Math.floor(numericRating || 0) ? "#ec4899" : theme.separator
                                 }
                             />
                         ))}
@@ -72,12 +74,10 @@ const AlbumCard: React.FC<AlbumCardProps> = ({
 const styles = StyleSheet.create({
     albumCard: {
         width: "100%",
-        backgroundColor: "#1c1c27",
         borderRadius: 15,
         marginBottom: 20,
         overflow: "hidden",
         borderWidth: 1,
-        borderColor: "#2a2a35",
     },
     albumCover: {
         width: "100%",
@@ -101,12 +101,10 @@ const styles = StyleSheet.create({
         padding: 12,
     },
     albumTitle: {
-        color: "white",
         fontWeight: "bold",
         fontSize: 15,
     },
     artistName: {
-        color: "#94a3b8",
         fontSize: 14,
     },
     albumFooter: {

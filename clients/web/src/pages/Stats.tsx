@@ -222,17 +222,12 @@ const Stats: React.FC = () => {
         .map((item: UserMediaStatusResponse) => {
             const album = item.media!;
 
-            const albumYear: number = album.created_at
-                ? new Date(album.created_at).getFullYear()
-                : new Date().getFullYear();
-
             return {
                 id: album.id,
                 title: album.name,
                 artist: album.artist,
                 image: album.cover || "",
                 rating: album.rating ?? 0,
-                year: albumYear,
             };
         });
 
@@ -406,7 +401,6 @@ const Stats: React.FC = () => {
                         artist={album.artist}
                         cover={album.image}
                         rating={album.rating ?? 0}
-                        year={album.year}
                     />
                 ))}
             </div>

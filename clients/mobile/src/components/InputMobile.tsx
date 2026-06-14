@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TextInput, TextInputProps, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useTheme} from '../context/ThemeContext';
 
 interface InputProps extends TextInputProps {
     label: string;
@@ -9,34 +10,35 @@ interface InputProps extends TextInputProps {
     secureTextEntry?: boolean;
 }
 
-export const InputMobile: React.FC<InputProps> = ({label, placeholder, icon, secureTextEntry, ...rest}: InputProps) => (
-    <View style={styles.container}>
-        <Text style={styles.label}>{label}</Text>
-        <View style={styles.wrapper}>
-            <Ionicons name={icon} size={20} color="#FFF"/>
-            <TextInput
-                style={styles.input}
-                placeholder={placeholder}
-                placeholderTextColor="#555"
-                secureTextEntry={secureTextEntry}
-                {...rest}
-            />
+export const InputMobile: React.FC<InputProps> = ({label, placeholder, icon, secureTextEntry, ...rest}: InputProps) => {
+    const {theme} = useTheme();
+    return (
+        <View style={styles.container}>
+            <Text style={[styles.label, {color: theme.subText}]}>{label}</Text>
+            <View style={[styles.wrapper, {backgroundColor: theme.inputBg, borderColor: theme.border}]}>
+                <Ionicons name={icon} size={20} color={theme.text}/>
+                <TextInput
+                    style={[styles.input, {color: theme.text}]}
+                    placeholder={placeholder}
+                    placeholderTextColor={theme.placeholder}
+                    secureTextEntry={secureTextEntry}
+                    {...rest}
+                />
+            </View>
         </View>
-    </View>
-);
+    );
+};
 
 const styles = StyleSheet.create({
     container: {marginBottom: 15},
-    label: {color: '#CCC', fontSize: 14, marginBottom: 8, marginLeft: 5},
+    label: {fontSize: 14, marginBottom: 8, marginLeft: 5},
     wrapper: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#1C1C28',
         borderRadius: 15,
         paddingHorizontal: 15,
         height: 55,
         borderWidth: 1,
-        borderColor: '#333'
     },
-    input: {flex: 1, color: '#FFF', marginLeft: 10, fontSize: 16}
+    input: {flex: 1, marginLeft: 10, fontSize: 16},
 });

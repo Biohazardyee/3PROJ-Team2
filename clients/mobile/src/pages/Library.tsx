@@ -19,6 +19,7 @@ import {AuthGuardWrapper} from "../components/AuthGuardMapper";
 import apiClient from "../api/client";
 import * as SecureStore from "expo-secure-store";
 import {jwtDecode} from "jwt-decode";
+import {useTheme} from "../context/ThemeContext";
 
 type Playlist = {
     id: string;
@@ -34,6 +35,7 @@ const {width} = Dimensions.get("window");
 const Library: React.FC = () => {
     const {t} = useTranslation();
     const router: Router = useRouter();
+    const {theme} = useTheme();
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -127,14 +129,14 @@ const Library: React.FC = () => {
             return (
                 <View style={styles.card}>
                     <TouchableOpacity
-                        style={styles.createCard}
+                        style={[styles.createCard, {backgroundColor: theme.card, borderColor: theme.border}]}
                         onPress={(): void => router.push("/createplaylist")}
                         activeOpacity={0.7}
                     >
                         <View style={styles.iconCircle}>
                             <Ionicons name="add" size={32} color="#ec4899"/>
                         </View>
-                        <Text style={styles.createLabelInner}>{t("new_playlist")}</Text>
+                        <Text style={[styles.createLabelInner, {color: theme.text}]}>{t("new_playlist")}</Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -161,14 +163,14 @@ const Library: React.FC = () => {
 
     return (
         <AuthGuardWrapper>
-            <View style={styles.container}>
+            <View style={[styles.container, {backgroundColor: theme.background}]}>
                 <Header/>
 
                 {loading ? (
                     <View style={styles.loaderContainer}>
                         <ActivityIndicator size="large" color="#ec4899"/>
-                        <Text style={styles.loaderText}>
-                            Chargement de votre musique...
+                        <Text style={[styles.loaderText, {color: theme.subText}]}>
+                            {t("msg_loading_music")}
                         </Text>
                     </View>
                 ) : (
@@ -181,7 +183,7 @@ const Library: React.FC = () => {
                         renderItem={renderItem}
                         ListHeaderComponent={
                             <View style={styles.headerTextContainer}>
-                                <Text style={styles.title}>{t("my_playlists_title")}</Text>
+                                <Text style={[styles.title, {color: theme.text}]}>{t("my_playlists_title")}</Text>
                                 <View style={styles.badge}>
                                     <Text style={styles.subtitle}>
                                         {playlists.length} {t("library_playlists_created")}
@@ -199,7 +201,6 @@ const Library: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#0f0f1a",
     },
     loaderContainer: {
         flex: 1,
@@ -207,7 +208,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     loaderText: {
-        color: "#888",
         marginTop: 15,
         fontSize: 14,
     },
@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        color: "white",
         fontSize: 28,
         fontWeight: "800",
         letterSpacing: 0.5,
@@ -245,15 +244,12 @@ const styles = StyleSheet.create({
         maxWidth: width / 2 - 20,
     },
     createCard: {
-        backgroundColor: "#1c1c2e",
         width: "100%",
         aspectRatio: 1,
-        borderRadius: 20, // Plus arrondi
+        borderRadius: 20,
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.08)",
-        // Ombre subtile
         shadowColor: "#000",
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.3,
@@ -270,7 +266,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     createLabelInner: {
-        color: "#ffffff",
         fontSize: 14,
         fontWeight: "700",
         textAlign: "center",

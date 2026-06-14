@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
 import {
-    MapPin,
     Link as LinkIcon,
     Calendar,
     Settings,
@@ -14,6 +13,7 @@ import {
     MoreVertical,
     Star,
     MessageSquare,
+    ChevronRight,
 } from "lucide-react";
 import {NavigateFunction, useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
@@ -76,7 +76,7 @@ const getRatingColors = (rating: number) => {
 const Profil: React.FC = () => {
     const navigate: NavigateFunction = useNavigate();
     const {id: externalUserId} = useParams<{ id: string }>();
-    const {t} = useTranslation();
+    const {t} = useTranslation(); // <-- Utilisation de t()
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const isInteracting = useRef(false);
@@ -134,6 +134,11 @@ const Profil: React.FC = () => {
 
     const loadData: () => Promise<void> = async (): Promise<void> => {
         setLoading(true);
+
+        setRecentActivity([]);
+        setActivityOffset(0);
+        setHasMoreActivity(true);
+
         try {
             const token: string | null = localStorage.getItem("token");
             if (!token) return;
@@ -198,10 +203,8 @@ const Profil: React.FC = () => {
                 apiClient.get(`/follows/followers/${userId}`),
                 apiClient.get(`/follows/following/${userId}`),
             ]);
-            const followersCount =
-                resFollowers.data.count ?? (resFollowers.data.data?.length || 0);
-            const fontlowingCount =
-                resFollowing.data.count ?? (resFollowing.data.data?.length || 0);
+            const followersCount = resFollowers.data.count ?? (resFollowers.data.data?.length || 0);
+            const fontlowingCount = resFollowing.data.count ?? (resFollowing.data.data?.length || 0);
 
             setFollowCounts({
                 followers: followersCount,
@@ -241,7 +244,7 @@ const Profil: React.FC = () => {
             await fetchFollowCounts(userProfil.id);
         } catch (error) {
             console.error("Erreur Follow/Unfollow:", error);
-            alert("Impossible de mettre à jour le follow.");
+            alert(t("alert_follow_error")); // <-- Traduit
             setIsFollowing(previousStatus);
             setFollowCounts((prev) => ({...prev, followers: previousFollowers}));
         } finally {
@@ -271,7 +274,7 @@ const Profil: React.FC = () => {
             setSelectedPlaylist(res.data.playlist);
         } catch (error) {
             console.error("Erreur chargement détails playlist:", error);
-            alert("Impossible de charger le contenu de la playlist.");
+            alert(t("alert_playlist_load_error")); // <-- Traduit
         }
     };
 
@@ -281,7 +284,7 @@ const Profil: React.FC = () => {
         mediaTitle: string,
     ): Promise<void> => {
         e.stopPropagation();
-        if (window.confirm(`Retirer "${mediaTitle}" de la playlist ?`)) {
+        if (window.confirm(t("confirm_remove_item", { title: mediaTitle }))) { // <-- Traduit
             try {
                 await apiClient.delete(`/playlist-items/${playlistItemId}`);
                 setSelectedPlaylist((prev: any) => ({
@@ -290,7 +293,7 @@ const Profil: React.FC = () => {
                 }));
             } catch (error) {
                 console.error("Erreur suppression:", error);
-                alert("Impossible de retirer l'élément.");
+                alert(t("alert_item_remove_error")); // <-- Traduit
             }
         }
     };
@@ -330,10 +333,10 @@ const Profil: React.FC = () => {
             localStorage.setItem("user", JSON.stringify(user));
 
             window.dispatchEvent(new Event("profileUpdated"));
-            alert("Votre photo de profil a été mise à jour !");
+            alert(t("alert_pfp_success")); // <-- Traduit
         } catch (error) {
             console.error("Erreur upload image:", error);
-            alert("Impossible de mettre à jour la photo de profil.");
+            alert(t("alert_pfp_error")); // <-- Traduit
             await fetchProfile(userConnected);
         }
     };
@@ -450,7 +453,7 @@ const Profil: React.FC = () => {
 
     const submitReport = async (): Promise<void> => {
         if (!reportReason.trim()) {
-            alert("Veuillez entrer une raison pour le signalement.");
+            alert(t("report_alert_empty")); // <-- Traduit
             return;
         }
 
@@ -463,12 +466,12 @@ const Profil: React.FC = () => {
                 reason: reportReason,
                 reason_type: "profile",
             });
-            alert("Utilisateur signalé avec succès.");
+            alert(t("report_alert_success")); // <-- Traduit
             setIsReportModalOpen(false);
             setReportReason("");
         } catch (error) {
             console.error("Erreur lors du signalement:", error);
-            alert("Erreur lors du signalement.");
+            alert(t("report_alert_error")); // <-- Traduit
         } finally {
             setIsSubmittingReport(false);
         }
@@ -484,7 +487,7 @@ const Profil: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#0f1117] dark:bg-slate-50 flex items-center justify-center transition-colors duration-300">
+            <div className="min-h-screen bg-[#13131A] dark:bg-slate-50 flex items-center justify-center transition-colors duration-300">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
             </div>
         );
@@ -498,7 +501,7 @@ const Profil: React.FC = () => {
 
     return (
         <div
-            className="min-h-screen bg-[#0f1117] text-slate-200 dark:bg-slate-50 dark:text-gray-900 font-sans transition-colors duration-300">
+            className="min-h-screen bg-[#13131A] text-slate-200 dark:bg-slate-50 dark:text-gray-900 font-sans transition-colors duration-300">
             <input
                 type="file"
                 ref={fileInputRef}
@@ -590,10 +593,10 @@ const Profil: React.FC = () => {
 
                                     <button
                                         onClick={() => setIsReportModalOpen(true)}
-                                        className="p-2 bg-slate-800/80 border border-slate-700 dark:border-gray-200 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
-                                        title="Signaler l'utilisateur"
+                                        className="p-2.5 bg-slate-800/80 dark:bg-white border border-slate-700 dark:border-gray-200 rounded-lg text-slate-400 hover:text-red-500 hover:border-red-500/50 dark:hover:text-red-600 dark:hover:border-red-500/50 transition-all shadow-sm"
+                                        title={t("report_title")}
                                     >
-                                        <Flag size={16}/>
+                                        <Flag size={18} />
                                     </button>
                                 </>
                             )}
@@ -607,26 +610,15 @@ const Profil: React.FC = () => {
                         </p>
 
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-slate-400 dark:text-gray-500 text-sm">
-                            <div className="flex items-center gap-1.5">
-                                <MapPin
-                                    size={16}
-                                    className="text-slate-500 dark:text-gray-400"
-                                />
-                                {userProfil?.location || t("profile_location")}
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <LinkIcon
-                                    size={16}
-                                    className="text-slate-500 dark:text-gray-400"
-                                />
-                                <a
-                                    href="#"
-                                    className="text-blue-400 dark:text-blue-600 hover:underline"
-                                >
-                                    {userProfil?.website ||
-                                        `${userProfil?.username?.toLowerCase()}.com`}
-                                </a>
-                            </div>
+                            {userProfil?.favorite_band && (
+                                <div className="flex items-center gap-1.5">
+                                    <Music size={16} className="text-blue-400 dark:text-blue-500 shrink-0"/>
+                                    <span className="text-slate-300 dark:text-gray-600">
+                                        <span className="text-slate-500 dark:text-gray-400">{t("label_favorite_band")} : </span>
+                                        {userProfil.favorite_band}
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex items-center gap-1.5">
                                 <Calendar
                                     size={16}
@@ -786,7 +778,7 @@ const Profil: React.FC = () => {
                                 </div>
                             ) : (
                                 <p className="text-slate-500 font-medium py-12">
-                                    Aucun album dans cette playlist.
+                                    {t("empty_playlist")}
                                 </p>
                             )}
                         </div>
@@ -801,7 +793,6 @@ const Profil: React.FC = () => {
                                         id={item.media_id}
                                         title={item.media?.content?.name}
                                         artist={item.media?.content?.artist}
-                                        year={item.media?.content?.year || 2024}
                                         rating={item.rating}
                                         genre={item.media?.content?.genre || ""}
                                         cover={item.media?.content?.cover}
@@ -811,37 +802,70 @@ const Profil: React.FC = () => {
                         )}
 
                         {activeTab === "playlists" && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {playlists.map((playlist) => (
-                                    <div
-                                        key={playlist.id}
-                                        onClick={() => fetchPlaylistDetails(playlist.id)}
-                                        className="flex items-center gap-4 bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 p-3 rounded-xl cursor-pointer hover:border-slate-700 dark:hover:border-gray-300 transition-all shadow-sm"
-                                    >
+                            <div className="space-y-4 w-full">
+                                {playlists.map((playlist) => {
+                                    // Récupère dynamiquement le nombre de titres selon ce que renvoie ton API
+                                    const tracksCount = playlist.items?.length ?? playlist._count?.items ?? playlist.items_count ?? 0;
+
+                                    return (
                                         <div
-                                            className="w-14 h-14 bg-slate-800 dark:bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
-                                            {playlist.image_url ? (
-                                                <img
-                                                    src={formatPlaylistImage(playlist.image_url)}
-                                                    alt={playlist.name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <Music size={24} className="text-blue-500"/>
-                                            )}
+                                            key={playlist.id}
+                                            onClick={() => fetchPlaylistDetails(playlist.id)}
+                                            className="flex items-center gap-5 bg-[#1a1d26] dark:bg-white border border-slate-800/80 dark:border-gray-200 p-5 rounded-2xl cursor-pointer hover:border-slate-700/50 dark:hover:border-gray-300 transition-all shadow-md group"
+                                        >
+                                            {/* Pochette de la Playlist */}
+                                            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-slate-800 dark:bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden shrink-0 shadow-md relative border border-slate-800/50 dark:border-gray-200">
+                                                {playlist.image_url ? (
+                                                    <img
+                                                        src={formatPlaylistImage(playlist.image_url)}
+                                                        alt={playlist.name}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    />
+                                                ) : (
+                                                    <Music size={32} className="text-blue-500 group-hover:scale-110 transition-transform duration-300"/>
+                                                )}
+                                            </div>
+
+                                            {/* Informations textuelles */}
+                                            <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                <div>
+                                                    <h4 className="text-white dark:text-gray-900 font-bold text-lg md:text-xl truncate group-hover:text-blue-400 dark:group-hover:text-blue-600 transition-colors">
+                                                        {playlist.name}
+                                                    </h4>
+                                                    <p className="text-sm text-slate-400 dark:text-gray-500 mt-1 flex items-center gap-1.5 font-medium">
+                                                        <Music size={14} className="text-slate-500" />
+                                                        <span>
+                                                            {tracksCount} {tracksCount > 1 ? t("track_plural") : t("track_singular")}
+                                                        </span>
+                                                    </p>
+                                                </div>
+
+                                                {/* Badges de Statut & Indicateur d'action */}
+                                                <div className="flex items-center gap-4 self-start sm:self-center">
+                                                    {String(playlist.is_public) === "false" ? (
+                                                        <span className="bg-amber-500/10 text-amber-500 dark:text-amber-600 border border-amber-500/20 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
+                                                            {t("status_private")}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="bg-emerald-500/10 text-emerald-500 dark:text-emerald-600 border border-emerald-500/20 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
+                                                            {t("status_public")}
+                                                        </span>
+                                                    )}
+                                                    <ChevronRight
+                                                        size={20}
+                                                        className="text-slate-500 dark:text-gray-400 group-hover:text-white dark:group-hover:text-gray-900 group-hover:translate-x-1 transition-all hidden sm:block"
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="text-white dark:text-gray-900 font-semibold truncate">
-                                                {playlist.name}
-                                            </h4>
-                                            {String(playlist.is_public) === "false" && (
-                                                <span className="text-xs text-slate-500 font-medium italic">
-                                                     Privée
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
+
+                                {playlists.length === 0 && (
+                                    <p className="text-slate-500 font-medium py-12 text-center">
+                                        {t("empty_playlists_list")}
+                                    </p>
+                                )}
                             </div>
                         )}
 
@@ -877,7 +901,7 @@ const Profil: React.FC = () => {
                                                                 {item.user_name}
                                                             </span>
                                                             <span className="text-slate-400 dark:text-gray-500 sm:ml-1.5 text-xs sm:text-sm">
-                                                                a évalué l'album
+                                                                {t("activity_rated")}
                                                             </span>
                                                             <span
                                                                 onClick={() => navigate(`/album/${item.media_id}`)}
@@ -886,7 +910,7 @@ const Profil: React.FC = () => {
                                                                 {item.album}
                                                             </span>
                                                             <span className="text-slate-500 dark:text-gray-400 text-xs md:text-sm block sm:ml-1.5 sm:inline">
-                                                                par {item.artist}
+                                                                {t("activity_by")} {item.artist}
                                                             </span>
                                                         </div>
 
@@ -922,12 +946,12 @@ const Profil: React.FC = () => {
                                                             fill={item.isLiked ? "#ec4899" : "none"}
                                                             className={item.isLiked ? "text-pink-500" : ""}
                                                         />
-                                                        <span>{item.likes_count} {item.likes_count > 1 ? "j'aime" : "j'aime"}</span>
+                                                        <span>{item.likes_count} {item.likes_count > 1 ? t("like_plural") : t("like_singular")}</span>
                                                     </button>
 
                                                     <div className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 dark:text-gray-400 font-medium">
                                                         <MessageSquare size={15} />
-                                                        <span>{item.comments_count} {item.comments_count > 1 ? "commentaires" : "commentaire"}</span>
+                                                        <span>{item.comments_count} {item.comments_count > 1 ? t("comment_plural") : t("comment_singular")}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -944,7 +968,7 @@ const Profil: React.FC = () => {
                                             disabled={loadingMore}
                                             className="text-sm font-bold text-blue-500 dark:text-blue-600 hover:underline disabled:opacity-50"
                                         >
-                                            {loadingMore ? "Chargement..." : "Voir plus d'activité"}
+                                            {loadingMore ? t("loading") : t("load_more")}
                                         </button>
                                     </div>
                                 )}
@@ -959,18 +983,17 @@ const Profil: React.FC = () => {
                         <div
                             className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 p-6 rounded-xl shadow-2xl w-full max-w-md">
                             <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
-                                Signaler {userProfil?.username}
+                                {t("report_title")} {userProfil?.username}
                             </h3>
 
                             <p className="text-sm text-slate-400 dark:text-gray-600 mb-4">
-                                Merci de nous indiquer pourquoi vous signalez ce profil. Notre
-                                équipe examinera votre demande.
+                                {t("report_desc")}
                             </p>
 
                             <textarea
                                 value={reportReason}
                                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReportReason(e.target.value)}
-                                placeholder="Raison du signalement (spam, comportement inapproprié...)"
+                                placeholder={t("report_placeholder")}
                                 className="w-full h-32 p-3 bg-slate-900/50 dark:bg-gray-50 border border-slate-700 dark:border-gray-300 rounded-lg text-white dark:text-gray-900 placeholder-slate-500 focus:outline-none focus:border-red-500 transition-colors resize-none mb-6"
                             />
 
@@ -983,14 +1006,14 @@ const Profil: React.FC = () => {
                                     className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-300 dark:text-gray-600 hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors"
                                     disabled={isSubmittingReport}
                                 >
-                                    Annuler
+                                    {t("report_btn_cancel")}
                                 </button>
                                 <button
                                     onClick={submitReport}
                                     disabled={isSubmittingReport || !reportReason.trim()}
                                     className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 hover:bg-red-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                 >
-                                    {isSubmittingReport ? "Envoi..." : "Envoyer le signalement"}
+                                    {isSubmittingReport ? t("report_btn_sending") : t("report_btn_submit")}
                                 </button>
                             </div>
                         </div>
