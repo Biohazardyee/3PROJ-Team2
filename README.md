@@ -6,18 +6,40 @@
 
 ## Sommaire
 
-- [Présentation](#présentation)
-- [Stack technique](#stack-technique)
-- [Architecture](#architecture)
-- [Prérequis](#prérequis)
-- [Installation](#installation)
-- [Variables d'environnement](#variables-denvironnement)
-- [Déploiement Docker](#déploiement-docker)
-- [Application mobile (APK Android)](#application-mobile-apk-android)
-- [Fonctionnalités](#fonctionnalités)
-- [Structure du projet](#structure-du-projet)
-- [Documentation](#documentation)
-- [Équipe](#équipe)
+- [Melodia](#melodia)
+  - [Sommaire](#sommaire)
+  - [Présentation](#présentation)
+  - [Stack technique](#stack-technique)
+  - [Architecture](#architecture)
+    - [Services Docker](#services-docker)
+  - [Prérequis](#prérequis)
+  - [Installation](#installation)
+    - [1. Cloner le dépôt](#1-cloner-le-dépôt)
+    - [2. Installer les dépendances](#2-installer-les-dépendances)
+    - [3. Configurer Prisma](#3-configurer-prisma)
+  - [Variables d'environnement](#variables-denvironnement)
+    - [Backend (`backend/.env`)](#backend-backendenv)
+    - [Web (`clients/web/.env`)](#web-clientswebenv)
+    - [Mobile (`clients/mobile/.env`)](#mobile-clientsmobileenv)
+    - [Docker (racine `.env`)](#docker-racine-env)
+  - [Déploiement Docker](#déploiement-docker)
+  - [Application mobile (APK Android)](#application-mobile-apk-android)
+    - [Installation de l'APK](#installation-de-lapk)
+    - [(Re)générer l'APK via EAS](#regénérer-lapk-via-eas)
+  - [Fonctionnalités](#fonctionnalités)
+    - [Authentification](#authentification)
+    - [Musique](#musique)
+    - [Social](#social)
+    - [Playlists](#playlists)
+    - [Messagerie](#messagerie)
+    - [Administration](#administration)
+    - [Internationalisation](#internationalisation)
+  - [Structure du projet](#structure-du-projet)
+    - [Backend](#backend)
+    - [Web](#web)
+    - [Mobile](#mobile)
+  - [Documentation](#documentation)
+  - [Équipe](#équipe)
 
 ---
 
@@ -38,15 +60,15 @@
 
 ## Stack technique
 
-| Couche | Technologies |
-|--------|-------------|
-| **Backend** | Node.js 20, Express 5, TypeScript, Prisma 7, PostgreSQL 18 |
-| **Web** | React 19, Vite 7, TypeScript, Tailwind CSS 4, React Router 7 |
-| **Mobile** | React Native 0.81, Expo 54, Expo Router 6, TypeScript |
-| **Temps réel** | Socket.io 4.8 |
-| **Auth** | JWT, Passport.js (OAuth : Google, Discord) |
-| **i18n** | i18next (5 langues : FR, EN, DE, IT, ES) |
-| **Déploiement** | Docker, Cloudflare Tunnel |
+| Couche          | Technologies                                                 |
+| --------------- | ------------------------------------------------------------ |
+| **Backend**     | Node.js 20, Express 5, TypeScript, Prisma 7, PostgreSQL 18   |
+| **Web**         | React 19, Vite 7, TypeScript, Tailwind CSS 4, React Router 7 |
+| **Mobile**      | React Native 0.81, Expo 54, Expo Router 6, TypeScript        |
+| **Temps réel**  | Socket.io 4.8                                                |
+| **Auth**        | JWT, Passport.js (OAuth : Google, Discord)                   |
+| **i18n**        | i18next (5 langues : FR, EN, DE, IT, ES)                     |
+| **Déploiement** | Docker, Cloudflare Tunnel                                    |
 
 ---
 
@@ -65,12 +87,12 @@
 
 ### Services Docker
 
-| Service | Description | Port |
-|---------|-------------|------|
-| `db` | PostgreSQL 18.1 | 5432 |
-| `api` | Backend Express | 3000 |
-| `frontend` | Web React (Nginx) | 80 |
-| `cloudflare-tunnel` | Reverse proxy | — |
+| Service             | Description       | Port |
+| ------------------- | ----------------- | ---- |
+| `db`                | PostgreSQL 18.1   | 5432 |
+| `api`               | Backend Express   | 3000 |
+| `frontend`          | Web React (Nginx) | 80   |
+| `cloudflare-tunnel` | Reverse proxy     | —    |
 
 ---
 
@@ -88,7 +110,7 @@
 ### 1. Cloner le dépôt
 
 ```bash
-git clone https://github.com/<org>/3PROJ-Team2.git
+git clone https://github.com/Biohazardyee/3PROJ-Team2.git
 cd 3PROJ-Team2
 ```
 
@@ -131,12 +153,12 @@ API_KEY=your_lastfm_api_key
 # OAuth Google (actif)
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
-GOOGLE_CALLBACK_URL=http://localhost:3000/api/oauth/auth/google/callback
+GOOGLE_CALLBACK_URL=
 
 # OAuth Discord (actif)
 DISCORD_CLIENT_ID=
 DISCORD_CLIENT_SECRET=
-DISCORD_CALLBACK_URL=http://localhost:3000/api/oauth/auth/discord/callback
+DISCORD_CALLBACK_URL=
 
 # OAuth Facebook / GitHub (préparés, non activés)
 FACEBOOK_CLIENT_ID=
@@ -308,9 +330,9 @@ La documentation technique complète (architecture, modèle de données, API, s�
 
 ## Équipe
 
-| Nom | Photo |
-|-----|-------|
-| Marlier Thibaud | <img src="img/thibaud.jpg" width="120" height="120" alt="Marlier Thibaud" /> |
-| Guillard Noah | <img src="img/noah.jpeg" width="120" height="120" alt="Guillard Noah" /> |
+| Nom             | Photo                                                                         |
+| --------------- | ----------------------------------------------------------------------------- |
+| Marlier Thibaud | <img src="img/thibaud.jpg" width="120" height="120" alt="Marlier Thibaud" />  |
+| Guillard Noah   | <img src="img/noah.jpeg" width="120" height="120" alt="Guillard Noah" />      |
 | Aurelien Berlot | <img src="img/aurelien.png" width="120" height="120" alt="Aurelien Berlot" /> |
-| Romain Metais | <img src="img/romain.png" width="120" height="120" alt="Romain Metais" /> |
+| Romain Metais   | <img src="img/romain.png" width="120" height="120" alt="Romain Metais" />     |
