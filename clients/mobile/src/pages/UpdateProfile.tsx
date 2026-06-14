@@ -126,7 +126,11 @@ const UpdateProfile = () => {
         }
     };
 
-    const avatarUri = profilePicture || null;
+    const avatarUri = profilePicture
+        ? profilePicture.startsWith("data") || profilePicture.startsWith("http") || profilePicture.startsWith("file")
+            ? profilePicture
+            : `data:image/jpeg;base64,${profilePicture}`
+        : null;
 
     return (
         <ScrollView

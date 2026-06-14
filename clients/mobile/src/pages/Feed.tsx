@@ -315,7 +315,7 @@ const Feed = () => {
                         )}
                         <View>
                             <Text style={[styles.userName, {color: theme.text}]}>
-                                {item.user_name + " " || t("recommendation_label")}
+                                {(item.user_name || t("recommendation_label")) + " "}
                                 <Text style={[styles.actionText, {color: theme.placeholder}]}>
                                     {item.type === "review"
                                         ? t("action_wrote_review")

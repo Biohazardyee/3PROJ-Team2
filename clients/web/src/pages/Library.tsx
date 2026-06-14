@@ -268,6 +268,18 @@ const LibraryPage: React.FC = () => {
                 </header>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-12 max-w-262.5 mx-auto">
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={(): void | Promise<void> => navigate("/create-playlist")}
+                            className="aspect-square w-full bg-[#1e2230] dark:bg-white border border-slate-800 dark:border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-4 transition-all shadow-lg hover:bg-[#252a3d] dark:hover:bg-gray-50 group"
+                        >
+                            <Plus size={48} className="text-slate-300 dark:text-slate-500 group-hover:scale-110 transition-transform" />
+                            <span className="text-slate-300 dark:text-slate-700 font-bold text-lg">
+                                {t("create_playlist_card")}
+                            </span>
+                        </button>
+                    </div>
+
                     {playlists.map((list: any) => (
                         <ListCard
                             key={list.id}
@@ -284,18 +296,6 @@ const LibraryPage: React.FC = () => {
                             onDelete={handleDelete}
                         />
                     ))}
-
-                    <div className="flex flex-col gap-3">
-                        <button
-                            onClick={(): void | Promise<void> => navigate("/create-playlist")}
-                            className="aspect-square w-full bg-[#1e2230] dark:bg-white border border-slate-800 dark:border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-4 transition-all shadow-lg hover:bg-[#252a3d] dark:hover:bg-gray-50 group"
-                        >
-                            <Plus size={48} className="text-slate-300 dark:text-slate-500 group-hover:scale-110 transition-transform" />
-                            <span className="text-slate-300 dark:text-slate-700 font-bold text-lg">
-                                {t("create_playlist_card")}
-                            </span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

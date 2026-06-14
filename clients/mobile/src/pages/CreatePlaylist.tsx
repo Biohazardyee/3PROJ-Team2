@@ -110,33 +110,24 @@ const CreatePlaylist = () => {
 
     return (
         <SafeAreaView style={[styles.safe, {backgroundColor: theme.background}]}>
-            {/* Header */}
-            <View style={[styles.header, {borderBottomColor: theme.border}]}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.headerBtn} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
-                    <Ionicons name="close" size={24} color={theme.text}/>
-                </TouchableOpacity>
-                <Text style={[styles.headerTitle, {color: theme.text}]}>
-                    {isEditing ? t("edit_playlist") : t("new_playlist")}
-                </Text>
-                <TouchableOpacity
-                    onPress={handleSave}
-                    disabled={!canSave}
-                    style={[styles.saveHeaderBtn, {opacity: canSave ? 1 : 0.35}]}
-                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                >
-                    {loading
-                        ? <ActivityIndicator size="small" color="#6C5CE7"/>
-                        : <Text style={styles.saveHeaderText}>{isEditing ? t("save_changes_btn") : t("create_playlist_btn")}</Text>
-                    }
-                </TouchableOpacity>
-            </View>
-
             <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === "ios" ? "padding" : "height"}>
                 <ScrollView
                     contentContainerStyle={styles.scroll}
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
+                    {/* Top bar */}
+                    <View style={styles.topBar}>
+                        <TouchableOpacity onPress={() => router.back()} style={[styles.closeBtn, {backgroundColor: theme.surface}]} hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+                            <Ionicons name="close" size={20} color={theme.text}/>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Title */}
+                    <Text style={[styles.pageTitle, {color: theme.text}]}>
+                        {isEditing ? t("edit_playlist") : t("new_playlist")}
+                    </Text>
+
                     {/* Image picker */}
                     <TouchableOpacity onPress={pickImage} activeOpacity={0.85} style={styles.imageWrapper}>
                         <View style={[styles.imagePicker, {backgroundColor: theme.surface}]}>
@@ -229,7 +220,7 @@ const CreatePlaylist = () => {
 
                     {/* Create button */}
                     <TouchableOpacity
-                        style={[styles.createBtn, !canSave && styles.createBtnDisabled]}
+                        style={[styles.createBtn, {opacity: canSave ? 1 : 0.4}]}
                         onPress={handleSave}
                         disabled={!canSave}
                         activeOpacity={0.8}
@@ -254,32 +245,26 @@ const CreatePlaylist = () => {
 const styles = StyleSheet.create({
     safe: {flex: 1},
 
-    header: {
+    scroll: {paddingHorizontal: 24, paddingTop: 16, paddingBottom: 48},
+
+    topBar: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: 20,
-        paddingVertical: 14,
-        borderBottomWidth: StyleSheet.hairlineWidth,
+        marginBottom: 20,
     },
-    headerBtn: {
+    closeBtn: {
         width: 36,
         height: 36,
+        borderRadius: 18,
         justifyContent: "center",
         alignItems: "center",
     },
-    headerTitle: {fontSize: 17, fontWeight: "700"},
-    saveHeaderBtn: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 20,
-        backgroundColor: "#6C5CE7",
-        minWidth: 70,
-        alignItems: "center",
+    pageTitle: {
+        fontSize: 28,
+        fontWeight: "800",
+        marginBottom: 28,
+        letterSpacing: -0.5,
     },
-    saveHeaderText: {color: "#fff", fontWeight: "700", fontSize: 13},
-
-    scroll: {paddingHorizontal: 24, paddingTop: 32, paddingBottom: 48},
 
     // Image picker
     imageWrapper: {
@@ -387,7 +372,6 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 0, height: 4},
         elevation: 6,
     },
-    createBtnDisabled: {backgroundColor: "#555", shadowOpacity: 0},
     createBtnText: {color: "#fff", fontWeight: "800", fontSize: 16},
 });
 

@@ -380,9 +380,9 @@ const Settings: React.FC = () => {
 
                     {/* --- ONGLET : SÉCURITÉ --- */}
                     {activeTab === "Privacy" && (
-                        <div className="space-y-8 animate-in fade-in duration-300">
-                            <h3 className="text-lg font-bold text-white dark:text-gray-900">{t("security_title")}</h3>
-                            <div className="space-y-4 max-w-xl">
+                        <div className="space-y-8 animate-in fade-in duration-300 flex flex-col items-center">
+                            <h3 className="text-lg font-bold text-white dark:text-gray-900 w-full max-w-xl">{t("security_title")}</h3>
+                            <div className="space-y-4 max-w-xl w-full">
                                 <input
                                     type="password"
                                     placeholder={t("old_password_placeholder")}

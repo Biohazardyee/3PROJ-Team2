@@ -9,6 +9,7 @@ import {
     Heart,
     Flag,
     Music,
+    Plus,
     ArrowLeft,
     MoreVertical,
     Star,
@@ -606,7 +607,7 @@ const Profil: React.FC = () => {
                     {/* Biographie & Méta-données */}
                     <div className="max-w-2xl space-y-4">
                         <p className="text-slate-200 dark:text-gray-700 leading-relaxed text-lg">
-                            {userProfil?.biography || "No biography yet."}
+                            {userProfil?.biography || t("profile_no_bio")}
                         </p>
 
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-slate-400 dark:text-gray-500 text-sm">
@@ -803,6 +804,19 @@ const Profil: React.FC = () => {
 
                         {activeTab === "playlists" && (
                             <div className="space-y-4 w-full">
+                                {isOwnProfile && (
+                                    <button
+                                        onClick={() => navigate("/create-playlist")}
+                                        className="w-full flex items-center gap-5 bg-[#1a1d26] dark:bg-white border border-dashed border-slate-600 dark:border-gray-300 p-5 rounded-2xl cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 hover:bg-[#1e2230] dark:hover:bg-gray-50 transition-all group"
+                                    >
+                                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-slate-800/60 dark:bg-gray-100 rounded-xl flex items-center justify-center shrink-0 border border-slate-700 dark:border-gray-200 group-hover:border-blue-500/50 transition-colors">
+                                            <Plus size={28} className="text-slate-400 dark:text-gray-400 group-hover:text-blue-400 dark:group-hover:text-blue-500 group-hover:scale-110 transition-all"/>
+                                        </div>
+                                        <span className="text-slate-400 dark:text-gray-500 font-semibold text-lg group-hover:text-blue-400 dark:group-hover:text-blue-500 transition-colors">
+                                            {t("create_playlist_card")}
+                                        </span>
+                                    </button>
+                                )}
                                 {playlists.map((playlist) => {
                                     // Récupère dynamiquement le nombre de titres selon ce que renvoie ton API
                                     const tracksCount = playlist.items?.length ?? playlist._count?.items ?? playlist.items_count ?? 0;
