@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres:18.1
+    restart: always
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - melodia-network
+
+  api:
+    image: melodia-api:latest
+    restart: always
+    env_file:
+      - ./backend/.env
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - melodia-network
+
+  frontend:
+    image: melodia-frontend:latest
+    restart: always
+    env_file:
+      - ./clients/web/.env
+    build:
+      context: ./clients/web/
+      dockerfile: Dockerfile
+    networks:
+      - melodia-network
+
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - melodia-network
+
+volumes:
+  postgres_data:
+
+networks:
+  melodia-network:
+    driver: bridge

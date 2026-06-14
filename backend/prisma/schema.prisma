@@ -1,0 +1,301 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Users {
+  id              String  @id @default(uuid())
+  username        String  @unique @db.VarChar(25)
+  email           String  @unique @db.VarChar(320)
+  password        String?
+  favorite_band   String?
+  profile_picture Bytes?
+  role            Roles   @default(BASIC)
+
+  provider    AuthProvider?
+  provider_id String?
+
+  has_notifications Boolean  @default(true)
+  phone_number      String?  @db.VarChar(15)
+  biography         String?  @db.VarChar(255)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  reviews              Reviews[]
+  review_comments      ReviewComments[]
+  review_likes         ReviewLikes[]
+  playlists            Playlists[]
+  follows              Follows[]         @relation("following")
+  followers            Follows[]         @relation("followers")
+  notifications        Notifications[]   @relation("user_notifications")
+  notificationsRelated Notifications[]   @relation("user_related_notifications")
+  user_media_status    UserMediaStatus[]
+  reporter_reports     Reports[]         @relation("reporter_reports")
+  profile_reports      Reports[]         @relation("profile_reports")
+
+  activities          Activities[]    @relation("user_activities")
+  activities_targets  Activities[]    @relation("user_activities_targets")
+  conversations_user1 Conversations[] @relation("conversation_user1")
+  conversations_user2 Conversations[] @relation("conversation_user2")
+  messages            Messages[]
+  commentLikes        CommentLikes[]
+
+  expo_push_token String?
+
+  @@unique([provider, provider_id])
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  DISCORD
+  FACEBOOK
+}
+
+enum Roles {
+  BASIC
+  ADMIN
+}
+
+model Medias {
+  id         String   @id @default(uuid())
+  api_id     String   @unique
+  content    Json
+  rating     Float?
+  created_at DateTime @default(now())
+  expires_at DateTime
+
+  reviews           Reviews[]
+  playlist_items    PlaylistItems[]
+  user_music_status UserMediaStatus[]
+  notifications     Notifications[]
+  activities        Activities[]
+}
+
+model Reviews {
+  id         String   @id @default(uuid())
+  user       Users    @relation(fields: [user_id], references: [id])
+  user_id    String
+  media      Medias   @relation(fields: [media_id], references: [id])
+  media_id   String
+  rating     Int
+  title      String   @db.VarChar(100)
+  content    String   @db.VarChar(1000)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  comments ReviewComments[]
+  likes    ReviewLikes[]
+  reports  Reports[]
+
+  notifications Notifications[]
+
+  activities Activities[]
+
+  @@unique([user_id, media_id])
+}
+
+model ReviewComments {
+  id         String   @id @default(uuid())
+  content    String   @db.VarChar(1000)
+  created_at DateTime @default(now())
+
+  review    Reviews @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  review_id String
+
+  user    Users  @relation(fields: [user_id], references: [id])
+  user_id String
+
+  parent_id String?
+  parent    ReviewComments?  @relation("Thread", fields: [parent_id], references: [id], onDelete: Cascade)
+  replies   ReviewComments[] @relation("Thread")
+
+  reports      Reports[]
+  commentLikes CommentLikes[]
+}
+
+model CommentLikes {
+  user       Users          @relation(fields: [user_id], references: [id])
+  user_id    String
+  comment    ReviewComments @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  comment_id String
+  created_at DateTime       @default(now())
+
+  @@id([user_id, comment_id])
+}
+
+model ReviewLikes {
+  user       Users    @relation(fields: [user_id], references: [id])
+  user_id    String
+  review     Reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  review_id  String
+  created_at DateTime @default(now())
+
+  @@id([user_id, review_id])
+}
+
+model Playlists {
+  id         String   @id @default(uuid())
+  user       Users    @relation(fields: [user_id], references: [id])
+  user_id    String
+  name       String   @db.VarChar(30)
+  image_url  Bytes?
+  is_public  Boolean
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  items PlaylistItems[]
+
+  @@unique([user_id, name])
+}
+
+model PlaylistItems {
+  id          String    @id @default(uuid())
+  playlist    Playlists @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+  playlist_id String
+  media       Medias    @relation(fields: [media_id], references: [id])
+  media_id    String
+  created_at  DateTime  @default(now())
+
+  @@unique([playlist_id, media_id])
+}
+
+model UserMediaStatus {
+  user       Users       @relation(fields: [user_id], references: [id])
+  user_id    String
+  media      Medias      @relation(fields: [media_id], references: [id])
+  media_id   String
+  status     MediaStatus
+  created_at DateTime    @default(now())
+
+  @@id([user_id, media_id])
+}
+
+enum MediaStatus {
+  listened
+  later
+  favorite
+  disliked
+  none
+}
+
+model Activities {
+  id               String          @id @default(uuid())
+  user             Users           @relation("user_activities", fields: [user_id], references: [id])
+  user_id          String
+  target_user      Users?          @relation("user_activities_targets", fields: [target_user_id], references: [id])
+  target_user_id   String?
+  review           Reviews?        @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  review_id        String?
+  media            Medias?         @relation(fields: [media_id], references: [id])
+  media_id         String?
+  rating_from_user Int?
+  action           ActivityActions
+  created_at       DateTime        @default(now())
+}
+
+enum ActivityActions {
+  review_created
+  rating_added
+  playlist_added
+  follow
+}
+
+model Follows {
+  user           Users    @relation("following", fields: [user_id], references: [id])
+  user_id        String
+  follow_user    Users    @relation("followers", fields: [follow_user_id], references: [id])
+  follow_user_id String
+  created_at     DateTime @default(now())
+
+  @@id([user_id, follow_user_id])
+}
+
+model Reports {
+  id          String          @id @default(uuid())
+  reporter    Users           @relation("reporter_reports", fields: [reporter_id], references: [id])
+  reporter_id String
+  review      Reviews?        @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  review_id   String?
+  profile     Users?          @relation("profile_reports", fields: [profile_id], references: [id])
+  profile_id  String?
+  comment     ReviewComments? @relation(fields: [comment_id], references: [id])
+  comment_id  String?
+  reason      String
+  reason_type ReportTypes
+  is_checked  Boolean         @default(false)
+  created_at  DateTime        @default(now())
+}
+
+enum ReportTypes {
+  comment
+  profile
+  review
+}
+
+model Notifications {
+  id              String              @id @default(uuid())
+  user            Users               @relation("user_notifications", fields: [user_id], references: [id])
+  user_id         String
+  action          NotificationActions
+  related_user    Users?              @relation("user_related_notifications", fields: [related_user_id], references: [id])
+  related_user_id String?
+  review          Reviews?            @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  review_id       String?
+  media           Medias?             @relation(fields: [media_id], references: [id])
+  media_id        String?
+  is_read         Boolean             @default(false)
+  read_at         DateTime?
+  created_at      DateTime            @default(now())
+}
+
+model BannedUsers {
+  id         String   @id @default(uuid())
+  user_id    String   @unique
+  username   String   @db.VarChar(25)
+  email      String   @db.VarChar(320)
+  content    String   @db.VarChar(255)
+  created_at DateTime @default(now())
+}
+
+enum NotificationActions {
+  review_added
+  new_message
+  like_added
+  comment_added
+  new_follow
+  recommendation
+}
+
+model Conversations {
+  id         String     @id @default(uuid())
+  user1      Users      @relation("conversation_user1", fields: [user1_id], references: [id])
+  user1_id   String
+  user2      Users      @relation("conversation_user2", fields: [user2_id], references: [id])
+  user2_id   String
+  created_at DateTime   @default(now())
+  messages   Messages[]
+
+  @@unique([user1_id, user2_id])
+}
+
+model Messages {
+  id              String        @id @default(uuid())
+  conversation    Conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  conversation_id String
+  sender          Users         @relation(fields: [sender_id], references: [id])
+  sender_id       String
+  content         String        @db.VarChar(1000)
+  is_read         Boolean       @default(false)
+  created_at      DateTime      @default(now())
+}

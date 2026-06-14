@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",                  // Version JS à générer
+    "module": "ESNext",                  // Module system
+    "moduleResolution": "node",          // Résolution des modules
+    "outDir": "./dist",                   // Dossier de sortie
+    "rootDir": "./",                   // Dossier source
+    "strict": true,                       // Activer toutes les vérifications strictes
+    "esModuleInterop": true,              // Compatibilité import/export
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true                  // Évite les erreurs sur les types des libs externes
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["dist", "node_modules"]
+}
