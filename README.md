@@ -13,8 +13,10 @@
 - [Installation](#installation)
 - [Variables d'environnement](#variables-denvironnement)
 - [Déploiement Docker](#déploiement-docker)
+- [Application mobile (APK Android)](#application-mobile-apk-android)
 - [Fonctionnalités](#fonctionnalités)
 - [Structure du projet](#structure-du-projet)
+- [Documentation](#documentation)
 - [Équipe](#équipe)
 
 ---
@@ -122,20 +124,32 @@ DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/melodia
 PORT=3000
 JWT_SECRET=your_jwt_secret
 
-# OAuth
+# API musicale (Last.fm) — requis
+API_ROOT_URL=https://ws.audioscrobbler.com/2.0/
+API_KEY=your_lastfm_api_key
+
+# OAuth Google (actif)
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/oauth/auth/google/callback
+
+# OAuth Discord (actif)
 DISCORD_CLIENT_ID=
 DISCORD_CLIENT_SECRET=
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
+DISCORD_CALLBACK_URL=http://localhost:3000/api/oauth/auth/discord/callback
+
+# OAuth Facebook / GitHub (préparés, non activés)
 FACEBOOK_CLIENT_ID=
 FACEBOOK_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
 
-# URLs
+# URLs clients
 WEB_CLIENT_URL=http://localhost:5173
 MOBILE_REDIRECT_URI=exp://localhost:8081
 ```
+
+> La clé `API_KEY` s'obtient sur [last.fm/api/account/create](https://www.last.fm/api/account/create). Seules les stratégies OAuth **Google** et **Discord** sont actives ; les variables Facebook/GitHub sont présentes mais non utilisées.
 
 ### Web (`clients/web/.env`)
 
@@ -174,6 +188,31 @@ L'application est ensuite accessible via le tunnel Cloudflare configuré (domain
 
 ---
 
+## Application mobile (APK Android)
+
+Une version compilée de l'application mobile (APK Android) est disponible dans le dossier :
+
+```
+clients/mobile/release/
+```
+
+### Installation de l'APK
+
+1. Télécharger le fichier `.apk` depuis `clients/mobile/release/`.
+2. Sur l'appareil Android, autoriser l'installation depuis des sources inconnues (Paramètres → Sécurité).
+3. Ouvrir le fichier `.apk` pour lancer l'installation.
+
+### (Re)générer l'APK via EAS
+
+```bash
+cd clients/mobile
+eas build --platform android --profile preview
+```
+
+> L'APK pointe vers l'API de production (`EXPO_PUBLIC_API_URL`). Pour un usage local, recompiler en faisant pointer cette variable vers votre backend.
+
+---
+
 ## Fonctionnalités
 
 ### Authentification
@@ -184,7 +223,7 @@ L'application est ensuite accessible via le tunnel Cloudflare configuré (domain
 ### Musique
 - Recherche d'albums et d'artistes (API externe Last.fm)
 - Page détail album : tracklist, biographie, albums similaires
-- Statut personnel : Écouté, À écouter, Favori, Abandonné
+- Statut personnel : Écouté, À écouter, Favori, Pas aimé
 
 ### Social
 - Rédaction d'avis avec note (1-5 étoiles)
@@ -245,6 +284,8 @@ clients/web/src/
 clients/mobile/
 ├── app/                     # Routes Expo Router (file-based)
 │   └── review/[id]/         # Routes imbriquées (commentaires)
+├── release/                 # APK Android compilé (build de release)
+├── assets/                  # Polices, images, icônes
 └── src/
     ├── pages/               # Composants de page
     ├── components/          # Composants réutilisables
@@ -253,6 +294,15 @@ clients/mobile/
     ├── hook/                # Custom hooks
     └── i18n.ts              # Configuration i18next
 ```
+
+---
+
+## Documentation
+
+La documentation technique complète (architecture, modèle de données, API, sécurité, déploiement, diagrammes UML) est disponible dans le dossier [`docs/`](docs/) :
+
+- `docs/Documentation_Technique_Complete.docx` — documentation technique détaillée
+- `docs/Documentation_Technique.md` — version Markdown
 
 ---
 
