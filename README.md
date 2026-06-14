@@ -171,7 +171,7 @@ WEB_CLIENT_URL=http://localhost:5173
 MOBILE_REDIRECT_URI=exp://localhost:8081
 ```
 
-> La clé `API_KEY` s'obtient sur [last.fm/api/account/create](https://www.last.fm/api/account/create). Seules les stratégies OAuth **Google** et **Discord** sont actives ; les variables Facebook/GitHub sont présentes mais non utilisées.
+> La clé `API_KEY` s'obtient sur [last.fm/api/account/create](https://www.last.fm/api/account/create). Seules les stratégies OAuth **Google** et **Discord** sont actives.
 
 ### Web (`clients/web/.env`)
 
@@ -323,8 +323,9 @@ clients/mobile/
 
 La documentation technique complète (architecture, modèle de données, API, sécurité, déploiement, diagrammes UML) est disponible dans le dossier [`docs/`](docs/) :
 
-- `docs/Documentation_Technique_Complete.docx` — documentation technique détaillée
-- `docs/Documentation_Technique.md` — version Markdown
+- `docs/Documentation_Technique.pdf` - documentation technique
+- `docs/Manuel_utilisateur_mobile.pdf` - Documentation utilisateur mobile
+- `docs/Manuel_utilisateur_web.pdf` - Documentation utilisateur web
 
 ---
 
