@@ -53,7 +53,7 @@ const formatReviewItem = (
         id: item.id,
         review_id: item.review_id || item.id,
         media_id: item.media_id,
-        user_name: item.user?.username || username,
+        user_name: item.user?.pseudo || item.user?.username || username,
         album: isLastFm ? content.album.name : content?.name,
         artist: isLastFm ? content.album.artist : content?.artist,
         cover: isLastFm
@@ -429,7 +429,7 @@ const Profil: React.FC = () => {
             });
 
             const newItems = (response.data.data || []).map((review: any) =>
-                formatReviewItem(review, userProfil?.username || "User", userConnected),
+                formatReviewItem(review, userProfil?.pseudo || userProfil?.username || "User", userConnected),
             );
 
             if (offset === 0) setRecentActivity(newItems);
@@ -609,7 +609,7 @@ const Profil: React.FC = () => {
                                     />
                                 ) : (
                                     <div className="w-full h-full bg-blue-500 flex items-center justify-center">
-                                        {userProfil?.username?.substring(0, 2).toUpperCase()}
+                                        {(userProfil?.pseudo || userProfil?.username)?.substring(0, 2).toUpperCase()}
                                     </div>
                                 )}
 
@@ -626,7 +626,7 @@ const Profil: React.FC = () => {
                                     className="text-4xl font-bold text-white dark:text-gray-900 tracking-tight"
                                     style={{fontFamily: "'Orbitron', sans-serif"}}
                                 >
-                                    {userProfil?.username}
+                                    {userProfil?.pseudo || userProfil?.username}
                                 </h1>
                                 <p className="text-slate-400 dark:text-gray-600 font-medium">
                                     @{userProfil?.username?.toLowerCase()}

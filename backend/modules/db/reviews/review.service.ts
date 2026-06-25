@@ -128,7 +128,7 @@ export class ReviewService {
         );
 
         if (isAllowed && tokens.length > 0) {
-            const authorName: string = user.username || "Quelqu'un";
+            const authorName: string = user.pseudo || user.username || "Quelqu'un";
             broadcastPushNotifications(
                 tokens,
                 "Nouvelle critique !",

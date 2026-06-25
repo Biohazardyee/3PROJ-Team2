@@ -81,7 +81,7 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
     type: isReview ? "review" : "like",
 
     user_id: user?.id,
-    user_name: user?.name || user?.username || "Utilisateur",
+    user_name: user?.pseudo || user?.username || "Utilisateur",
 
     user_image: formattedUserImage || undefined,
 

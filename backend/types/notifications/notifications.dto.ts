@@ -7,6 +7,7 @@ export interface NotificationsResponseDto {
   related_user_id?: string | null;
   related_user?: {
     username: string;
+    pseudo?: string | null;
     profile_image?: string | null
   } | null;
   review_id?: string | null;

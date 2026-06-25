@@ -2,7 +2,7 @@ import {PrismaDb} from "../../../config/database.js";
 import {NotificationActions} from "../../../generated/prisma/enums";
 
 export function generateNotificationContent(notif: any) {
-    const sender = notif.related_user?.username || "Quelqu'un";
+    const sender = notif.related_user?.pseudo || notif.related_user?.username || "Quelqu'un";
 
     switch (notif.action) {
         case "new_follow":

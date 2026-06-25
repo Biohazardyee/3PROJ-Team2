@@ -18,6 +18,7 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
       id: user.id,
       email: user.email,
       username: user.username,
+      pseudo: user.pseudo,
       role: user.role,
       phone_number: user.phone_number,
       biography: user.biography,
@@ -69,6 +70,7 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
     return {
       id: user.id,
       username: user.username,
+      pseudo: user.pseudo,
       biography: user.biography,
       favorite_band: user.favorite_band,
       profile_picture: user.profile_picture

@@ -39,6 +39,7 @@ class NotificationsMapper extends BaseMapper<
       related_user: notification.related_user
         ? {
             username: notification.related_user.username,
+            pseudo: notification.related_user.pseudo ?? null,
             profile_image: this.formatImage(
               notification.related_user.profile_picture,
             ),

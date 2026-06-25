@@ -58,6 +58,32 @@ export class ConversationService {
             return conversationMapper.toAddDto(conversation);
         }
 
+        // Une conversation ne peut être créée qu'entre deux personnes qui se suivent mutuellement
+        const [aFollowsB, bFollowsA] = await Promise.all([
+            PrismaDb.follows.findUnique({
+                where: {
+                    user_id_follow_user_id: {
+                        user_id: data.user1_id,
+                        follow_user_id: data.user2_id,
+                    },
+                },
+            }),
+            PrismaDb.follows.findUnique({
+                where: {
+                    user_id_follow_user_id: {
+                        user_id: data.user2_id,
+                        follow_user_id: data.user1_id,
+                    },
+                },
+            }),
+        ]);
+
+        if (!aFollowsB || !bFollowsA) {
+            throw new BadRequest(
+                "Une conversation nécessite un abonnement mutuel entre les deux utilisateurs",
+            );
+        }
+
         const [sortedUser1, sortedUser2] = [data.user1_id, data.user2_id].sort();
 
         const createData: Prisma.ConversationsUncheckedCreateInput = {
@@ -118,6 +144,7 @@ export class ConversationService {
                     select: {
                         id: true,
                         username: true,
+                        pseudo: true,
                         profile_picture: true,
                         role: true,
                     },
@@ -126,6 +153,7 @@ export class ConversationService {
                     select: {
                         id: true,
                         username: true,
+                        pseudo: true,
                         profile_picture: true,
                         role: true,
                     },
@@ -150,6 +178,7 @@ export class ConversationService {
             user1: {
                 id: conv.user1.id,
                 username: conv.user1.username,
+                pseudo: conv.user1.pseudo,
                 role: conv.user1.role,
                 profile_picture: conv.user1.profile_picture
                     ? `data:image/png;base64,${Buffer.from(conv.user1.profile_picture).toString("base64")}`
@@ -158,6 +187,7 @@ export class ConversationService {
             user2: {
                 id: conv.user2.id,
                 username: conv.user2.username,
+                pseudo: conv.user2.pseudo,
                 role: conv.user2.role,
                 profile_picture: conv.user2.profile_picture
                     ? `data:image/png;base64,${Buffer.from(conv.user2.profile_picture).toString("base64")}`

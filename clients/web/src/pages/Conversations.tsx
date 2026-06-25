@@ -5,19 +5,21 @@ import React, {
     useCallback,
     useMemo,
 } from "react";
-import {Search, MoreVertical, Send, MessageSquare, Smile} from "lucide-react";
+import {Search, MoreVertical, Send, MessageSquare, Smile, Plus, X, PenSquare} from "lucide-react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
 import {io, Socket} from "socket.io-client";
 import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 import apiClient from "../api/client";
 import UserAvatar from "../components/UserAvatar";
 
 interface BackendUser {
     id: string;
     username: string;
+    pseudo?: string;
     profile_picture?: string;
 }
 
@@ -77,6 +79,11 @@ const Conversations: React.FC = () => {
 
     const [socket, setSocket] = useState<Socket | null>(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+    const [hiddenConvIds, setHiddenConvIds] = useState<Set<string>>(new Set());
+    const [showNewConvModal, setShowNewConvModal] = useState(false);
+    const [mutualUsers, setMutualUsers] = useState<BackendUser[]>([]);
+    const [loadingMutuals, setLoadingMutuals] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const selectedConvIdRef = useRef<string | null>(null);
@@ -157,6 +164,81 @@ const Conversations: React.FC = () => {
             fetchConversations();
         }
     }, [userId, fetchConversations]);
+
+    // Charge la liste des conversations masquées (stockée localement, pas en DB)
+    useEffect((): void => {
+        if (!userId) return;
+        try {
+            const stored: string | null = localStorage.getItem(`hiddenConversations_${userId}`);
+            if (stored) setHiddenConvIds(new Set(JSON.parse(stored)));
+        } catch (e) {
+            console.error("Erreur lecture conversations masquées:", e);
+        }
+    }, [userId]);
+
+    const updateHiddenConvIds = useCallback(
+        (updater: (prev: Set<string>) => Set<string>): void => {
+            setHiddenConvIds((prev: Set<string>): Set<string> => {
+                const next: Set<string> = updater(prev);
+                if (userId) {
+                    localStorage.setItem(
+                        `hiddenConversations_${userId}`,
+                        JSON.stringify([...next]),
+                    );
+                }
+                return next;
+            });
+        },
+        [userId],
+    );
+
+    const hideConversation = (convId: string, e?: React.MouseEvent): void => {
+        e?.stopPropagation();
+        updateHiddenConvIds((prev: Set<string>): Set<string> => new Set(prev).add(convId));
+        if (String(selectedConvId) === String(convId)) setSelectedConvId(null);
+    };
+
+    const unhideConversation = (convId: string): void => {
+        updateHiddenConvIds((prev: Set<string>): Set<string> => {
+            if (!prev.has(convId)) return prev;
+            const next: Set<string> = new Set(prev);
+            next.delete(convId);
+            return next;
+        });
+    };
+
+    const openNewConvModal = (): void => {
+        setShowNewConvModal(true);
+        if (!userId) return;
+        setLoadingMutuals(true);
+        apiClient
+            .get(`/follows/mutuals/${userId}`)
+            .then((res) => setMutualUsers(res.data.data || res.data || []))
+            .catch((e) => console.error("Erreur chargement des contacts:", e))
+            .finally(() => setLoadingMutuals(false));
+    };
+
+    const openConversationWith = async (targetUserId: string): Promise<void> => {
+        if (!userId) return;
+        try {
+            const res = await apiClient.post("/conversations", {
+                user1_id: userId,
+                user2_id: targetUserId,
+            });
+            const conv = res.data.conversation || res.data.data || res.data;
+            const convId: string = conv.id;
+            unhideConversation(convId);
+            await fetchConversations();
+            setSelectedConvId(convId);
+            setShowNewConvModal(false);
+        } catch (e: any) {
+            console.error("Erreur ouverture conversation:", e);
+            toast.error(
+                e.response?.data?.message ||
+                t("conv_create_error", "Impossible d'ouvrir la conversation."),
+            );
+        }
+    };
 
     useEffect(() => {
         const token: string | null = localStorage.getItem("token");
@@ -321,16 +403,18 @@ const Conversations: React.FC = () => {
 
     const filteredConversations: BackendConversation[] = useMemo(() => {
         return conversations.filter((conv: BackendConversation) => {
+            if (hiddenConvIds.has(conv.id)) return false;
             const otherUser: BackendUser | undefined = getOtherUser(conv);
             const lowerQuery: string = searchQuery.toLowerCase();
             const displayLastMessage: string =
                 conv.lastMessage || t("no_messages_yet", "Aucun message");
+            const name: string = (otherUser?.pseudo || otherUser?.username || "").toLowerCase();
             return (
-                otherUser?.username.toLowerCase().includes(lowerQuery) ||
+                name.includes(lowerQuery) ||
                 displayLastMessage.toLowerCase().includes(lowerQuery)
             );
         });
-    }, [conversations, searchQuery, getOtherUser, t]);
+    }, [conversations, searchQuery, getOtherUser, t, hiddenConvIds]);
 
     useEffect(() => {
         if (!showEmojiPicker) return;
@@ -377,12 +461,21 @@ const Conversations: React.FC = () => {
                 className={`w-full md:w-80 lg:w-96 border-r border-slate-800 dark:border-slate-200 flex flex-col ${selectedConvId ? "hidden md:flex" : "flex"}`}
             >
                 <div className="p-6">
-                    <h1
-                        className="text-3xl font-bold text-white dark:text-gray-900 mb-6"
-                        style={{fontFamily: "'Orbitron', sans-serif"}}
-                    >
-                        {t("messages_title")}
-                    </h1>
+                    <div className="flex items-center justify-between mb-6">
+                        <h1
+                            className="text-3xl font-bold text-white dark:text-gray-900"
+                            style={{fontFamily: "'Orbitron', sans-serif"}}
+                        >
+                            {t("messages_title")}
+                        </h1>
+                        <button
+                            onClick={openNewConvModal}
+                            title={t("new_conversation", "Nouvelle conversation")}
+                            className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-md hover:shadow-lg transition-all hover:scale-105"
+                        >
+                            <PenSquare size={18}/>
+                        </button>
+                    </div>
                     <div className="relative group">
                         <Search
                             className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors"
@@ -407,13 +500,13 @@ const Conversations: React.FC = () => {
                         filteredConversations.map((conv: BackendConversation) => {
                             const otherUser: BackendUser | undefined = getOtherUser(conv);
                             const usernameDisplay: string = otherUser
-                                ? `@${otherUser.username}`
+                                ? (otherUser.pseudo || otherUser.username)
                                 : t("unknown_user", "Utilisateur anonyme");
                             const hasUnread: boolean = (conv.unreadCount ?? 0) > 0;
 
                             return (
+                                <div key={conv.id} className="relative group">
                                 <button
-                                    key={conv.id}
                                     onClick={() => setSelectedConvId(conv.id)}
                                     className={`w-full flex items-center gap-4 p-4 transition-all hover:bg-[#1a1d26] dark:hover:bg-slate-100 ${String(selectedConvId) === String(conv.id) ? "bg-[#1a1d26] dark:bg-slate-100 border-l-4 border-blue-500" : "border-l-4 border-transparent"}`}
                                 >
@@ -427,7 +520,7 @@ const Conversations: React.FC = () => {
                                         ) : (
                                             <div
                                                 className="w-12 h-12 rounded-full bg-[#2a2e3d] dark:bg-indigo-100 flex items-center justify-center text-blue-400 dark:text-blue-600 font-bold border border-slate-700 dark:border-indigo-200">
-                                                {getAvatarText(otherUser?.username)}
+                                                {getAvatarText(otherUser?.pseudo || otherUser?.username)}
                                             </div>
                                         )}
                                     </div>
@@ -462,6 +555,14 @@ const Conversations: React.FC = () => {
                                         </div>
                                     </div>
                                 </button>
+                                    <button
+                                        onClick={(e) => hideConversation(conv.id, e)}
+                                        title={t("delete_conversation", "Retirer de la liste")}
+                                        className="absolute top-1/2 -translate-y-1/2 right-2 p-1.5 rounded-full bg-[#1a1d26] dark:bg-slate-100 text-slate-500 hover:text-red-500 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all z-10 shadow-sm"
+                                    >
+                                        <X size={16}/>
+                                    </button>
+                                </div>
                             );
                         })
                     )}
@@ -509,22 +610,27 @@ const Conversations: React.FC = () => {
                                         {activeChatUser?.profile_picture ? (
                                             <img
                                                 src={activeChatUser.profile_picture}
-                                                alt={activeChatUser.username}
+                                                alt={activeChatUser.pseudo || activeChatUser.username}
                                                 className="w-10 h-10 rounded-full object-cover border border-slate-700 dark:border-indigo-200 transition-transform group-hover:scale-105"
                                             />
                                         ) : (
                                             <div
                                                 className="w-10 h-10 rounded-full bg-[#2a2e3d] dark:bg-indigo-100 flex items-center justify-center text-blue-400 dark:text-blue-600 text-sm font-bold border border-slate-700 dark:border-indigo-200 transition-transform group-hover:scale-105">
-                                                {getAvatarText(activeChatUser?.username)}
+                                                {getAvatarText(activeChatUser?.pseudo || activeChatUser?.username)}
                                             </div>
                                         )}
                                     </div>
                                     <div>
                                         <h2 className="text-sm font-bold text-white dark:text-gray-900 group-hover:underline">
                                             {activeChatUser
-                                                ? `@${activeChatUser.username}`
+                                                ? (activeChatUser.pseudo || activeChatUser.username)
                                                 : t("unknown_user", "Utilisateur anonyme")}
                                         </h2>
+                                        {activeChatUser && (
+                                            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                                                @{activeChatUser.username}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -569,7 +675,7 @@ const Conversations: React.FC = () => {
                                             {!isMe && (
                                                 <UserAvatar
                                                     userId={activeChatUser?.id}
-                                                    username={activeChatUser?.username}
+                                                    username={activeChatUser?.pseudo || activeChatUser?.username}
                                                     sizeClass="w-7 h-7 text-[10px] mt-0.5"
                                                 />
                                             )}
@@ -655,6 +761,77 @@ const Conversations: React.FC = () => {
                     </div>
                 )}
             </main>
+
+            {/* Modal "Nouvelle conversation" — liste des follows mutuels */}
+            {showNewConvModal && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+                    onClick={() => setShowNewConvModal(false)}
+                >
+                    <div
+                        className="w-full max-w-md bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-slate-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between p-5 border-b border-slate-800 dark:border-slate-200">
+                            <h2 className="text-lg font-bold text-white dark:text-gray-900">
+                                {t("new_conversation", "Nouvelle conversation")}
+                            </h2>
+                            <button
+                                onClick={() => setShowNewConvModal(false)}
+                                className="p-1.5 rounded-full text-slate-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
+                            >
+                                <X size={20}/>
+                            </button>
+                        </div>
+
+                        <div className="overflow-y-auto p-2">
+                            {loadingMutuals ? (
+                                <div className="p-8 text-center text-sm text-slate-500">
+                                    {t("loading", "Chargement...")}
+                                </div>
+                            ) : mutualUsers.length === 0 ? (
+                                <div className="p-8 text-center">
+                                    <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-slate-800 dark:bg-slate-100 flex items-center justify-center">
+                                        <MessageSquare size={24} className="text-slate-600"/>
+                                    </div>
+                                    <p className="text-sm text-slate-400 dark:text-slate-500">
+                                        {t("no_mutuals", "Personne pour l'instant. Suivez-vous mutuellement pour discuter !")}
+                                    </p>
+                                </div>
+                            ) : (
+                                mutualUsers.map((u: BackendUser) => (
+                                    <button
+                                        key={u.id}
+                                        onClick={() => openConversationWith(u.id)}
+                                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#13131A] dark:hover:bg-slate-100 transition-colors text-left"
+                                    >
+                                        {u.profile_picture ? (
+                                            <img
+                                                src={u.profile_picture}
+                                                alt={u.pseudo || u.username}
+                                                className="w-11 h-11 rounded-full object-cover border border-slate-700 dark:border-indigo-200 shrink-0"
+                                            />
+                                        ) : (
+                                            <div className="w-11 h-11 rounded-full bg-[#2a2e3d] dark:bg-indigo-100 flex items-center justify-center text-blue-400 dark:text-blue-600 font-bold border border-slate-700 dark:border-indigo-200 shrink-0">
+                                                {getAvatarText(u.pseudo || u.username)}
+                                            </div>
+                                        )}
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-sm font-bold text-white dark:text-gray-900 truncate">
+                                                {u.pseudo || u.username}
+                                            </p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                                @{u.username}
+                                            </p>
+                                        </div>
+                                        <Plus size={18} className="text-slate-500 shrink-0"/>
+                                    </button>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

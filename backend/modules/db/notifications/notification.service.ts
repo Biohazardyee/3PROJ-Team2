@@ -19,6 +19,7 @@ import {
 import {notificationsMapper} from "../../../mappers/notifications/notifications.mapper.js";
 import {sendPushNotification} from "./notification.push.js";
 import {generateNotificationContent} from "./notification.helper.js";
+import {emitToUser} from "../../web_socket/socket.registry.js";
 
 export class NotificationService {
     async create(
@@ -91,6 +92,7 @@ export class NotificationService {
                 related_user: {
                     select: {
                         username: true,
+                        pseudo: true,
                         profile_picture: true,
                     },
                 },
@@ -98,6 +100,9 @@ export class NotificationService {
         });
 
         const {title, body} = generateNotificationContent(notification);
+
+        // Notification temps réel pour le destinataire (badge de la cloche instantané)
+        emitToUser(data.user_id, "notification_received", notificationsMapper.toAddDto(notification));
 
         if (user.expo_push_token) {
             sendPushNotification(user.expo_push_token, title, body, {
@@ -132,6 +137,7 @@ export class NotificationService {
                 related_user: {
                     select: {
                         username: true,
+                        pseudo: true,
                         profile_picture: true,
                     },
                 },

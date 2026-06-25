@@ -5,6 +5,7 @@ import type { AuthProvider } from '../../generated/prisma/enums.js';
 export interface UserResponseDto {
     id: string;
     username: string;
+    pseudo: string;
     email: string;
     phone_number: string | null;
     profile_picture: Uint8Array<ArrayBuffer> | null;
@@ -47,6 +48,7 @@ export interface UserResponseAddDto {
 export interface UserPublicDto {
     id: string;
     username: string;
+    pseudo: string;
     biography: string | null;
     favorite_band: string | null;
     profile_picture: string | null;
@@ -59,6 +61,7 @@ export interface UserPublicDto {
 export interface UserRegistrationDto {
     email: string;
     username: string;
+    pseudo: string;
     password: string;
     favorite_band: string;
     profile_picture: Uint8Array<ArrayBuffer>;
@@ -75,6 +78,7 @@ export interface OAuthUserDto {
 export interface UserUpdateDto {
     email?: string;
     username?: string;
+    pseudo?: string;
     password?: string;
     oldPassword?: string;
     phone_number?: string | null;
@@ -94,6 +98,7 @@ export type SelectableUserField =
     | 'id'
     | 'email'
     | 'username'
+    | 'pseudo'
     | 'role'
     | 'phone_number'
     | 'biography'

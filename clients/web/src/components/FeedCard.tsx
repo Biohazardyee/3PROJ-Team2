@@ -388,7 +388,7 @@ const FeedCard: React.FC<FeedCardProps> = ({
                 .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
                 .map((c: any) => ({
                     id: c.id,
-                    user: c.user?.username || c.user_name || t("anonymous"),
+                    user: c.user?.pseudo || c.user?.username || c.user_name || t("anonymous"),
                     user_id: c.user?.id || c.user_id || c.userId,
                     user_image: c.user?.profile_picture,
                     text: c.content || c.text || "",
@@ -446,7 +446,7 @@ const FeedCard: React.FC<FeedCardProps> = ({
                     c.id === tempId
                         ? {
                             id: saved.id || tempId,
-                            user: saved.user?.username || t("me"),
+                            user: saved.user?.pseudo || saved.user?.username || t("me"),
                             user_id: saved.user?.id || currentUserId,
                             user_image: saved.user?.profile_picture,
                             text: saved.content || text,
@@ -499,7 +499,7 @@ const FeedCard: React.FC<FeedCardProps> = ({
                     c.id === tempId
                         ? {
                             id: saved.id || tempId,
-                            user: saved.user?.username || t("me"),
+                            user: saved.user?.pseudo || saved.user?.username || t("me"),
                             user_id: saved.user?.id || currentUserId,
                             text: saved.content || text,
                             parent_id: parentId,

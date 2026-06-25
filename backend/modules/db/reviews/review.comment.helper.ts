@@ -7,7 +7,8 @@ export const getThreadByReview = async (reviewId: string, userId: string) => {
             user: {
                 select: {
                     id: true,
-                    username: true
+                    username: true,
+                    pseudo: true
                 }
             },
             _count: {

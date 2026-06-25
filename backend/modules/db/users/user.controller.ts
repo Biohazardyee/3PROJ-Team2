@@ -36,6 +36,7 @@ class UserController extends Controller {
             const registrationData: UserRegistrationDto = {
                 email: req.body.email,
                 username: req.body.username,
+                pseudo: req.body.pseudo,
                 password: req.body.password,
                 favorite_band: req.body.favorite_band,
                 profile_picture: req.body.profile_picture,
@@ -44,10 +45,11 @@ class UserController extends Controller {
             if (
                 !registrationData.email ||
                 !registrationData.username ||
+                !registrationData.pseudo ||
                 !registrationData.password
             ) {
                 throw new BadRequest(
-                    "Email, username, password & favorite band are required",
+                    "Email, username, pseudo & password are required",
                 );
             }
 
@@ -274,6 +276,10 @@ class UserController extends Controller {
                 updateData.biography = req.body.biography;
             }
 
+            if (req.body.pseudo !== undefined) {
+                updateData.pseudo = req.body.pseudo;
+            }
+
             if (req.body.favorite_band !== undefined) {
                 updateData.favorite_band = req.body.favorite_band;
             }
@@ -350,6 +356,7 @@ class UserController extends Controller {
             const updateData: UserUpdateDto = {
                 favorite_band: req.body.favorite_band,
                 username: req.body.username,
+                pseudo: req.body.pseudo,
                 biography: req.body.biography,
                 profile_picture: req.body.profile_picture,
                 banner: req.body.banner,

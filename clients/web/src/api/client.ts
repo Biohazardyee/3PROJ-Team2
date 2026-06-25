@@ -24,6 +24,7 @@ apiClient.interceptors.response.use(
       localStorage.removeItem("token");
 
       window.dispatchEvent(new CustomEvent("unauthorized"));
+      window.dispatchEvent(new Event("auth-changed"));
     }
     return Promise.reject(error);
   },

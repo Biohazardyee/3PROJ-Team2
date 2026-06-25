@@ -21,6 +21,7 @@ import {AxiosResponse} from "axios";
 type TabType = "Profile" | "Privacy" | "Data";
 
 const USERNAME_MAX: number = 20;
+const PSEUDO_MAX: number = 30;
 const BIO_MAX: number = 150;
 
 const Settings: React.FC = () => {
@@ -31,6 +32,7 @@ const Settings: React.FC = () => {
     const [userId, setUserId] = useState<string>("");
 
     const [username, setUsername] = useState("");
+    const [pseudo, setPseudo] = useState("");
     const [favoriteBand, setFavoriteBand] = useState("");
     const [biography, setBiography] = useState("");
     const [profilePicture, setProfilePicture] = useState<string>(() => {
@@ -66,6 +68,7 @@ const Settings: React.FC = () => {
                 const user = res.data.user || res.data;
 
                 setUsername(user.username || "");
+                setPseudo(user.pseudo || "");
                 setFavoriteBand(user.favorite_band || "");
                 setBiography(user.biography || "");
 
@@ -124,6 +127,7 @@ const Settings: React.FC = () => {
 
             await apiClient.put(`/users/${userId}`, {
                 username,
+                pseudo,
                 favorite_band: favoriteBand,
                 biography,
                 profile_picture: base64ForBackend,
@@ -135,6 +139,7 @@ const Settings: React.FC = () => {
                 localStorage.setItem("user", JSON.stringify({
                     ...parsedUser,
                     username,
+                    pseudo,
                     biography,
                     favorite_band: favoriteBand
                 }));
@@ -200,6 +205,7 @@ const Settings: React.FC = () => {
             localStorage.removeItem("userToken");
             localStorage.removeItem("user");
             localStorage.removeItem("user_profile_pic");
+            window.dispatchEvent(new Event("auth-changed"));
             navigate("/");
         }
     };
@@ -288,6 +294,29 @@ const Settings: React.FC = () => {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => e.target.value.length <= USERNAME_MAX && setUsername(e.target.value)}
                                             className="w-full bg-[#13131A] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900"
                                         />
+                                        <p className="text-[11px] text-slate-500 dark:text-gray-400 mt-1.5">
+                                            {t("username_hint", "Identifiant unique (@) utilisé pour vous retrouver.")}
+                                        </p>
+                                    </div>
+
+                                    {/* Champ Pseudo (nom d'affichage, non unique) */}
+                                    <div>
+                                        <label
+                                            className="flex justify-between text-xs font-bold text-slate-400 mb-2 uppercase">
+                                            <span>{t("label_pseudo")}</span>
+                                            <span
+                                                className="text-slate-500 text-[11px] font-normal">{pseudo.length}/{PSEUDO_MAX}</span>
+                                        </label>
+                                        <input
+                                            name="pseudo"
+                                            value={pseudo}
+                                            placeholder={t("pseudo_placeholder", "Votre nom d'affichage")}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => e.target.value.length <= PSEUDO_MAX && setPseudo(e.target.value)}
+                                            className="w-full bg-[#13131A] dark:bg-gray-50 border border-slate-800 dark:border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 text-white dark:text-gray-900 placeholder:text-slate-600"
+                                        />
+                                        <p className="text-[11px] text-slate-500 dark:text-gray-400 mt-1.5">
+                                            {t("pseudo_hint", "Nom affiché sur votre profil (peut être identique à d'autres).")}
+                                        </p>
                                     </div>
 
                                     {/* Champ Favorite Band avec suggestions */}

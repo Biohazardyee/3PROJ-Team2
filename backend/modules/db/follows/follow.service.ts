@@ -55,7 +55,19 @@ export class FollowService {
                 },
             });
 
-            await ensureConversation(data.user_id, data.follow_user_id, tx);
+            // La conversation n'est créée que si les deux personnes se suivent mutuellement
+            const reverseFollow = await tx.follows.findUnique({
+                where: {
+                    user_id_follow_user_id: {
+                        user_id: data.follow_user_id,
+                        follow_user_id: data.user_id,
+                    },
+                },
+            });
+
+            if (reverseFollow) {
+                await ensureConversation(data.user_id, data.follow_user_id, tx);
+            }
 
             const isAllowed: boolean = await canSendNotification(
                 data.follow_user_id,
@@ -142,6 +154,61 @@ export class FollowService {
         });
 
         return followsMapper.toDtoList(followers);
+    }
+
+    /**
+     * Renvoie les utilisateurs avec qui une conversation est possible :
+     * ceux que l'utilisateur suit ET qui le suivent en retour (follow mutuel).
+     */
+    async getMutualFollows(user_id: string): Promise<
+        {
+            id: string;
+            username: string;
+            pseudo: string;
+            profile_picture: string | null;
+        }[]
+    > {
+        if (isEmptyString(user_id)) {
+            throw new BadRequest("user_id cannot be empty");
+        }
+
+        const following = await PrismaDb.follows.findMany({
+            where: {user_id},
+            select: {follow_user_id: true},
+        });
+
+        const followingIds: string[] = following.map(
+            (f): string => f.follow_user_id,
+        );
+
+        if (followingIds.length === 0) return [];
+
+        // Parmi les personnes que je suis, celles qui me suivent aussi
+        const mutuals = await PrismaDb.follows.findMany({
+            where: {
+                user_id: {in: followingIds},
+                follow_user_id: user_id,
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        pseudo: true,
+                        profile_picture: true,
+                    },
+                },
+            },
+        });
+
+        return mutuals.map((m) => ({
+            id: m.user.id,
+            username: m.user.username,
+            pseudo: m.user.pseudo,
+            profile_picture: m.user.profile_picture
+                ? `data:image/jpeg;base64,${Buffer.from(m.user.profile_picture).toString("base64")}`
+                : null,
+        }));
     }
 
     async getFollowing(user_id: string): Promise<FollowResponseDto[]> {

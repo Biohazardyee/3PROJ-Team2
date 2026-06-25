@@ -11,6 +11,7 @@ export interface ReviewCommentResponseDto {
     user?: {
         id: string;
         username: string;
+        pseudo?: string | null;
     };
 }
 

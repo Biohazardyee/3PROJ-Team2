@@ -37,6 +37,7 @@ const Login: React.FC = () => {
 
       const token: string = response.data.token;
       localStorage.setItem("token", token);
+      window.dispatchEvent(new Event("auth-changed"));
 
       navigate("/home");
     } catch (err: any) {

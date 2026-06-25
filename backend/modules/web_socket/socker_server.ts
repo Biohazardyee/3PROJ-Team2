@@ -13,6 +13,7 @@ import {
 import {sendPushNotification} from "../db/notifications/notification.push.js";
 import {notificationService} from "../db/notifications/notification.service.js";
 import {BatchPayload} from "../../generated/prisma/internal/prismaNamespace";
+import {setIO} from "./socket.registry.js";
 
 export const initSocket = (server: http.Server) => {
     const io = new Server(server, {
@@ -20,6 +21,9 @@ export const initSocket = (server: http.Server) => {
         pingTimeout: 60000,
         pingInterval: 25000,
     });
+
+    // Rend l'instance Socket.IO accessible aux services (notifications temps réel)
+    setIO(io);
 
     io.use(async (socket, next): Promise<void> => {
         try {
@@ -239,16 +243,12 @@ export const initSocket = (server: http.Server) => {
 
                     if (!isRecipientInDiscussion) {
                         try {
-                            const newNotification = await notificationService.create({
+                            // notificationService.create émet déjà "notification_received" au destinataire
+                            await notificationService.create({
                                 user_id: recipientId,
                                 action: "new_message" as any,
                                 related_user_id: user.id,
                             });
-
-                            io.to(`user_${recipientId}`).emit(
-                                "notification_received",
-                                newNotification,
-                            );
                         } catch (notifErr) {
                             console.error(
                                 `[Notification Error] Impossible de générer la notification en BDD:`,

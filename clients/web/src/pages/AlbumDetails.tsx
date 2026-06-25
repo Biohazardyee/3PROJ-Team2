@@ -914,17 +914,19 @@ const AlbumDetails: React.FC = () => {
                     {/* Cover */}
                     <div className="w-full md:w-80 shrink-0">
                         <div className="sticky top-24">
-                            <img
-                                src={albumData?.cover || PLACEHOLDER_IMAGE}
-                                alt={albumData?.name}
-                                onError={(e) => {
-                                    const img = e.currentTarget;
-                                    if (img.src !== window.location.origin + PLACEHOLDER_IMAGE) {
-                                        img.src = PLACEHOLDER_IMAGE;
-                                    }
-                                }}
-                                className="w-full aspect-square rounded-2xl shadow-2xl border border-gray-800 dark:border-gray-200 object-cover"
-                            />
+                            <div className="w-full aspect-square rounded-2xl overflow-hidden shadow-2xl border border-gray-800 dark:border-gray-200 group">
+                                <img
+                                    src={albumData?.cover || PLACEHOLDER_IMAGE}
+                                    alt={albumData?.name}
+                                    onError={(e) => {
+                                        const img = e.currentTarget;
+                                        if (img.src !== window.location.origin + PLACEHOLDER_IMAGE) {
+                                            img.src = PLACEHOLDER_IMAGE;
+                                        }
+                                    }}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -1228,7 +1230,7 @@ const AlbumDetails: React.FC = () => {
                                                                     >
                                                                         <UserAvatar
                                                                             userId={comment.user?.id || comment.user_id}
-                                                                            username={comment.user?.username}
+                                                                            username={comment.user?.pseudo || comment.user?.username}
                                                                             sizeClass="w-10 h-10 text-sm"
                                                                         />
                                                                     </div>
@@ -1240,7 +1242,7 @@ const AlbumDetails: React.FC = () => {
                                                                                 onClick={() => comment.user?.id && navigate(`/profil/${comment.user.id}`)}
                                                                                 className="font-bold text-gray-100 dark:text-gray-900 hover:underline cursor-pointer"
                                                                             >
-                                                                                {comment.user?.username || "Anonyme"}
+                                                                                {comment.user?.pseudo || comment.user?.username || "Anonyme"}
                                                                             </h4>
 
                                                                             {/* Les étoiles migrent ici, plus aucun risque de collision ! */}
@@ -1317,7 +1319,7 @@ const AlbumDetails: React.FC = () => {
                                                                         <input
                                                                             type="text"
                                                                             autoFocus
-                                                                            placeholder={t("reply_to", {user: comment.user?.username || "Anonyme"})}
+                                                                            placeholder={t("reply_to", {user: comment.user?.pseudo || comment.user?.username || "Anonyme"})}
                                                                             value={replyInputs[String(comment.id)] || ""}
                                                                             onChange={(e) =>
                                                                                 setReplyInputs({
@@ -1375,7 +1377,7 @@ const AlbumDetails: React.FC = () => {
                                                                                             {/* Mini avatar */}
                                                                                             <UserAvatar
                                                                                                 userId={reply.user?.id || reply.user_id}
-                                                                                                username={reply.user?.username}
+                                                                                                username={reply.user?.pseudo || reply.user?.username}
                                                                                                 sizeClass="w-7 h-7 text-[10px]"
                                                                                             />
                                                                                             <div className="min-w-0">
@@ -1383,7 +1385,7 @@ const AlbumDetails: React.FC = () => {
                                                                                                     className="flex items-center gap-2 flex-wrap mb-1">
                                                                                                     <span
                                                                                                         className="font-bold text-blue-400 text-xs">
-                                                                                                      {reply.user?.username || "Anonyme"}
+                                                                                                      {reply.user?.pseudo || reply.user?.username || "Anonyme"}
                                                                                                     </span>
                                                                                                     {/* ✅ Mention @parent si réponse imbriquée */}
                                                                                                     {parentComment && (
@@ -1450,7 +1452,7 @@ const AlbumDetails: React.FC = () => {
                                                                                                 <input
                                                                                                     type="text"
                                                                                                     autoFocus
-                                                                                                    placeholder={`Répondre à ${reply.user?.username || "Anonyme"}...`}
+                                                                                                    placeholder={`Répondre à ${reply.user?.pseudo || reply.user?.username || "Anonyme"}...`}
                                                                                                     value={replyInputs[String(reply.id)] || ""}
                                                                                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                                                                         setReplyInputs({
@@ -1509,7 +1511,7 @@ const AlbumDetails: React.FC = () => {
                                             {similarAlbums.map((item: any, idx: number) => (
                                                 <div
                                                     key={idx}
-                                                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                                                    className="cursor-pointer group"
                                                     onClick={(): void => {
                                                         const artistName = item.artist?.name || item.artist || "";
                                                         const albumName = item.name || "";
@@ -1525,11 +1527,19 @@ const AlbumDetails: React.FC = () => {
                                                         navigate(`/album/${albumId}?${params}`);
                                                     }}
                                                 >
-                                                    <img
-                                                        src={item.image?.[3]?.["#text"]}
-                                                        alt={item.name}
-                                                        className="w-full aspect-square object-cover rounded-lg"
-                                                    />
+                                                    <div className="w-full aspect-square rounded-lg overflow-hidden bg-gray-900 dark:bg-gray-100">
+                                                        <img
+                                                            src={item.image?.[3]?.["#text"] || item.image?.[2]?.["#text"] || PLACEHOLDER_IMAGE}
+                                                            alt={item.name}
+                                                            onError={(e) => {
+                                                                const img = e.currentTarget;
+                                                                if (img.src !== window.location.origin + PLACEHOLDER_IMAGE) {
+                                                                    img.src = PLACEHOLDER_IMAGE;
+                                                                }
+                                                            }}
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                        />
+                                                    </div>
                                                     <p className="text-sm mt-2 font-medium text-white dark:text-slate-900 truncate">
                                                         {item.name}
                                                     </p>

@@ -73,6 +73,19 @@ class FollowController {
             next(error);
         }
     }
+
+    async getMutuals(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const mutuals = await this.service.getMutualFollows(req.params.user_id);
+
+            res.status(200).json({
+                message: 'Mutual follows retrieved successfully',
+                data: mutuals,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export default new FollowController();

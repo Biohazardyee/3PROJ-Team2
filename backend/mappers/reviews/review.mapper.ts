@@ -90,6 +90,7 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
         ? {
             id: r.user.id,
             username: r.user.username,
+            pseudo: r.user.pseudo,
             image: r.user.profile_picture
               ? `data:image/jpeg;base64,${Buffer.from(r.user.profile_picture).toString("base64")}`
               : null,
@@ -116,6 +117,7 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
         ? {
             id: r.user.id,
             username: r.user.username,
+            pseudo: r.user.pseudo,
             image: r.user.profile_picture
               ? `data:image/jpeg;base64,${Buffer.from(r.user.profile_picture).toString("base64")}`
               : null,
@@ -141,6 +143,7 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
         ? {
             id: review.user.id,
             username: review.user.username,
+            pseudo: review.user.pseudo,
             image: review.user.profile_picture
               ? `data:image/jpeg;base64,${Buffer.from(review.user.profile_picture).toString("base64")}`
               : null,

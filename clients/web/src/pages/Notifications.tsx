@@ -75,7 +75,9 @@ const NotificationCard: React.FC<{
     const {Icon} = config;
 
     const displayUser =
+        notification.related_user?.pseudo ||
         notification.related_user?.username ||
+        notification.sender?.pseudo ||
         notification.sender?.username ||
         "Système";
     const userInitial = displayUser.charAt(0).toUpperCase();

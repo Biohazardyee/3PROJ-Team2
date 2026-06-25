@@ -41,6 +41,14 @@ export class UserService {
             throw new BadRequest("Username cannot be empty");
         }
 
+        if (isEmptyString(data.pseudo)) {
+            throw new BadRequest("Pseudo cannot be empty");
+        }
+
+        if (!isValidStringLength(data.pseudo, 30)) {
+            throw new BadRequest("Pseudo is too long (max 30 chars)");
+        }
+
         if (isEmptyString(data.password)) {
             throw new BadRequest("Password cannot be empty");
         }
@@ -81,6 +89,7 @@ export class UserService {
         const createData: Prisma.UsersCreateInput = {
             email,
             username,
+            pseudo: data.pseudo.trim(),
             password: hashedPassword,
             favorite_band: data.favorite_band,
             profile_picture: data.profile_picture,
@@ -142,6 +151,7 @@ export class UserService {
                 data: {
                     email: data.email,
                     username,
+                    pseudo: username,
                     password: null,
                     provider: data.provider,
                     provider_id: data.provider_id,
@@ -179,6 +189,7 @@ export class UserService {
             "id",
             "email",
             "username",
+            "pseudo",
             "role",
             "phone_number",
             "biography",
@@ -265,6 +276,7 @@ export class UserService {
             "id",
             "email",
             "username",
+            "pseudo",
             "role",
             "phone_number",
             "biography",
@@ -364,6 +376,16 @@ export class UserService {
             }
 
             updateData.username = data.username.trim();
+        }
+
+        if (data.pseudo !== undefined) {
+            if (isEmptyString(data.pseudo)) {
+                throw new BadRequest("Pseudo cannot be empty");
+            }
+            if (!isValidStringLength(data.pseudo, 30)) {
+                throw new BadRequest("Pseudo is too long (max 30 chars)");
+            }
+            updateData.pseudo = data.pseudo.trim();
         }
 
         if (data.password !== undefined) {
@@ -555,6 +577,16 @@ export class UserService {
             if (usernameExists) throw new BadRequest("Username already in use");
 
             updateData.username = data.username.trim();
+        }
+
+        if (data.pseudo !== undefined) {
+            if (isEmptyString(data.pseudo)) {
+                throw new BadRequest("Pseudo cannot be empty");
+            }
+            if (!isValidStringLength(data.pseudo, 30)) {
+                throw new BadRequest("Pseudo is too long (max 30 chars)");
+            }
+            updateData.pseudo = data.pseudo.trim();
         }
 
         if (data.favorite_band !== undefined) {

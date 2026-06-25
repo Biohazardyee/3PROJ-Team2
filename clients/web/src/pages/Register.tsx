@@ -22,6 +22,7 @@ const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     email: "",
     username: "",
+    pseudo: "",
     password: "",
     confirmPassword: "",
     favorite_band: "",
@@ -91,6 +92,7 @@ const Register: React.FC = () => {
       const response: AxiosResponse = await apiClient.post("/users/signin", {
         email: formData.email,
         username: formData.username,
+        pseudo: formData.pseudo,
         password: formData.password,
         favorite_band: formData.favorite_band,
         profile_picture: null,
@@ -101,6 +103,7 @@ const Register: React.FC = () => {
 
         if (token) {
           localStorage.setItem("token", token);
+          window.dispatchEvent(new Event("auth-changed"));
 
           apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
@@ -172,7 +175,17 @@ const Register: React.FC = () => {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            placeholder="mélomane"
+            placeholder="melomane37"
+            icon={FaUser}
+            required
+          />
+          <Input
+            label={t("register_pseudo_label", "Pseudo (nom affiché)")}
+            type="text"
+            name="pseudo"
+            value={formData.pseudo}
+            onChange={handleChange}
+            placeholder="Mélomane 🎧"
             icon={FaUser}
             required
           />

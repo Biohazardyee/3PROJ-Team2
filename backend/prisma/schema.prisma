@@ -16,6 +16,7 @@ datasource db {
 model Users {
   id              String  @id @default(uuid())
   username        String  @unique @db.VarChar(25)
+  pseudo          String  @db.VarChar(30)
   email           String  @unique @db.VarChar(320)
   password        String?
   favorite_band   String?

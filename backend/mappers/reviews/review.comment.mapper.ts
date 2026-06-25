@@ -19,7 +19,8 @@ class ReviewCommentMapper extends BaseMapper<any, ReviewCommentResponseDto> {
 
             user: comment.user ? {
                 id: comment.user.id,
-                username: comment.user.username
+                username: comment.user.username,
+                pseudo: comment.user.pseudo ?? null
             } : undefined
         };
     }
