@@ -1,4 +1,22 @@
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, .dark *)); 
+@variant dark (&:where(.dark, .dark *));
+
+/* Curseur "main" sur tous les éléments interactifs */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  a,
+  label,
+  summary,
+  select,
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
 

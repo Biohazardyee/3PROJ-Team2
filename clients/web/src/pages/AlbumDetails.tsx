@@ -16,6 +16,8 @@ import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import UserAvatar from "../components/UserAvatar";
 import {AxiosResponse} from "axios";
+import {toast} from "react-toastify";
+import {useGoBack} from "../hooks/useGoBack";
 
 type TabType = "Commentaires" | "Albums";
 
@@ -23,6 +25,7 @@ const AlbumDetails: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const [searchParams] = useSearchParams();
     const navigate: NavigateFunction = useNavigate();
+    const goBack = useGoBack("/home");
     const {t} = useTranslation();
 
     const formatReviewDate = (dateStr: string | undefined): string => {
@@ -206,7 +209,7 @@ const AlbumDetails: React.FC = () => {
 
             await apiClient.post('/reports', payload);
 
-            alert(t("report_success", "Signalement envoyé avec succès."));
+            toast.success(t("report_success", "Signalement envoyé avec succès."));
 
             setIsReportModalOpen(false);
             setReportReason("");
@@ -214,7 +217,7 @@ const AlbumDetails: React.FC = () => {
             setReportingCommentId(null);
         } catch (error) {
             console.error("Erreur lors de l'envoi du signalement:", error);
-            alert(t("report_error", "Impossible d'envoyer le signalement."));
+            toast.error(t("report_error", "Impossible d'envoyer le signalement."));
         } finally {
             setIsSubmittingReport(false);
         }
@@ -230,11 +233,11 @@ const AlbumDetails: React.FC = () => {
                 media_id: mediaIdInDB,
             });
 
-            alert("Ajouté à la playlist avec succès !");
+            toast.success(t("playlist_add_success", "Ajouté à la playlist avec succès !"));
             setIsPlaylistModalOpen(false);
         } catch (err: any) {
             console.error("Erreur lors de l'ajout:", err);
-            alert("Impossible d'ajouter à la playlist.");
+            toast.error(t("playlist_add_error", "Impossible d'ajouter à la playlist."));
         }
     };
     const isMyComment = (comment: any): boolean => {
@@ -274,7 +277,22 @@ const AlbumDetails: React.FC = () => {
                             rating: media.rating ?? 0,
                             mbid: media.mbid,
                             db_id: media.id,
+                            wiki: null,
                         };
+
+                        // La DB locale ne stocke pas la description : on l'enrichit via l'API externe
+                        if (media.artist && media.name) {
+                            try {
+                                const infoRes: AxiosResponse<any, any> = await apiClient.get("/api/albums/info", {
+                                    params: {artist: media.artist, album: media.name, mbid: media.mbid || ""},
+                                });
+                                const info = infoRes.data.albumInfo || {};
+                                const albumObj = info.album || info;
+                                finalData.wiki = albumObj.wiki || null;
+                            } catch (wikiErr) {
+                                console.warn("Description (wiki) non récupérée depuis l'API externe", wikiErr);
+                            }
+                        }
                     }
                 } catch (err) {
                     console.log("Média non trouvé en DB locale, passage à l'API externe...");
@@ -286,13 +304,19 @@ const AlbumDetails: React.FC = () => {
                         params: {artist: urlArtist, album: urlAlbum, mbid: urlMbid},
                     });
                     const externalInfo = res.data.albumInfo || {};
-                    const imageUrl = urlCover || externalInfo.image?.[3]?.["#text"] || "";
+                    // Les données Last.fm sont imbriquées sous .album (name, artist, wiki, image...)
+                    const albumObj = externalInfo.album || externalInfo;
+                    const imageUrl = urlCover
+                        || albumObj.image?.[3]?.["#text"]
+                        || albumObj.image?.[2]?.["#text"]
+                        || "";
 
                     finalData = {
-                        name: externalInfo.name || urlAlbum,
-                        artist: externalInfo.artist || urlArtist,
+                        name: albumObj.name || urlAlbum,
+                        artist: (typeof albumObj.artist === "string" ? albumObj.artist : albumObj.artist?.name) || urlArtist,
                         cover: imageUrl,
-                        mbid: urlMbid || externalInfo.mbid || null,
+                        mbid: urlMbid || albumObj.mbid || null,
+                        wiki: albumObj.wiki || null,
                         rating: 0,
                         db_id: null,
                     };
@@ -400,7 +424,7 @@ const AlbumDetails: React.FC = () => {
         } catch (error: any) {
             setUserStatus(previousStatus);
             console.error("Erreur critique lors du changement de statut:", error);
-            alert("Impossible de mettre à jour le statut.");
+            toast.error(t("status_update_error", "Impossible de mettre à jour le statut."));
         }
     };
 
@@ -487,7 +511,7 @@ const AlbumDetails: React.FC = () => {
         if (!mediaIdInDB) return;
 
         if (!currentUserId) {
-            alert("Vous devez être connecté pour publier un avis.");
+            toast.error(t("review_auth_required", "Vous devez être connecté pour publier un avis."));
             navigate("/login");
             return;
         }
@@ -516,9 +540,21 @@ const AlbumDetails: React.FC = () => {
             setCommentText("");
             setUserRating(0);
 
+            const pointsEarned: number = res.data.points_earned ?? 0;
+            if (pointsEarned > 0) {
+                toast.success(
+                    t("review_published_points", {
+                        defaultValue: "Critique publiée ! +{{points}} points boutique 🎉",
+                        points: pointsEarned,
+                    })
+                );
+            } else {
+                toast.success(t("review_published", "Critique publiée !"));
+            }
+
         } catch (err) {
             console.error("Erreur lors de la publication de l'avis:", err);
-            alert("Impossible de publier l'avis. Veuillez réessayer.");
+            toast.error(t("review_publish_error", "Impossible de publier l'avis. Veuillez réessayer."));
         }
     };
 
@@ -559,7 +595,7 @@ const AlbumDetails: React.FC = () => {
             });
         } catch (err) {
             console.error("Erreur lors de la modification de l'avis:", err);
-            alert("Impossible de modifier l'avis.");
+            toast.error(t("review_edit_error", "Impossible de modifier l'avis."));
             fetchReviews();
         }
     };
@@ -575,7 +611,7 @@ const AlbumDetails: React.FC = () => {
                 await apiClient.delete(`/reviews/${commentId}`);
             } catch (err) {
                 console.error("Erreur lors de la suppression de l'avis:", err);
-                alert("Impossible de supprimer cet avis.");
+                toast.error(t("review_delete_error", "Impossible de supprimer cet avis."));
                 fetchReviews();
             }
         }
@@ -614,7 +650,7 @@ const AlbumDetails: React.FC = () => {
             await apiClient.delete(`/review-comments/${replyId}`);
         } catch (err) {
             console.error("Erreur lors de la suppression du commentaire:", err);
-            alert("Impossible de supprimer ce commentaire.");
+            toast.error(t("comment_delete_error", "Impossible de supprimer ce commentaire."));
             fetchReviews();
         }
     };
@@ -763,7 +799,7 @@ const AlbumDetails: React.FC = () => {
             );
         } catch (err) {
             console.error("Erreur lors de l'envoi de la réponse:", err);
-            alert("Impossible d'envoyer la réponse.");
+            toast.error(t("reply_send_error", "Impossible d'envoyer la réponse."));
             fetchReviews();
         }
     };
@@ -867,7 +903,7 @@ const AlbumDetails: React.FC = () => {
 
             <main className="max-w-6xl mx-auto px-6 pt-8">
                 <button
-                    onClick={() => navigate(-1)}
+                    onClick={goBack}
                     className="flex items-center gap-2 text-gray-400 dark:text-gray-600 hover:text-white dark:hover:text-gray-900 mb-8 group"
                 >
                     <FaChevronLeft className="group-hover:-translate-x-1 transition-transform"/>{" "}
@@ -879,8 +915,14 @@ const AlbumDetails: React.FC = () => {
                     <div className="w-full md:w-80 shrink-0">
                         <div className="sticky top-24">
                             <img
-                                src={albumData?.cover || "url_vers_une_image_par_defaut.jpg"}
+                                src={albumData?.cover || PLACEHOLDER_IMAGE}
                                 alt={albumData?.name}
+                                onError={(e) => {
+                                    const img = e.currentTarget;
+                                    if (img.src !== window.location.origin + PLACEHOLDER_IMAGE) {
+                                        img.src = PLACEHOLDER_IMAGE;
+                                    }
+                                }}
                                 className="w-full aspect-square rounded-2xl shadow-2xl border border-gray-800 dark:border-gray-200 object-cover"
                             />
                         </div>

@@ -23,6 +23,9 @@ import {
 } from "../notifications/notification.helper.js";
 import {JsonValue} from "@prisma/client/runtime/client";
 
+// Points boutique gagnés par l'utilisateur à chaque nouvelle critique publiée
+export const POINTS_PER_REVIEW = 10;
+
 export class ReviewService {
     async create(data: ReviewAddDto): Promise<ReviewResponseAddDto> {
         if (isEmptyString(data.user_id)) {
@@ -105,6 +108,12 @@ export class ReviewService {
             });
 
             await updateMediaAverageRating(tx, realMediaId);
+
+            // Récompense l'utilisateur en points boutique pour sa critique
+            await tx.users.update({
+                where: {id: data.user_id},
+                data: {shop_points: {increment: POINTS_PER_REVIEW}},
+            });
 
             return newReview;
         });

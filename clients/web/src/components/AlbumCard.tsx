@@ -2,6 +2,8 @@ import React from "react";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import { Star } from "lucide-react";
 
+const PLACEHOLDER_IMAGE = "/melodia_placeholder.png";
+
 type TrendingCardProps = {
   id: string;
   title: string;
@@ -27,8 +29,14 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
     >
       <div className="relative aspect-square w-full overflow-hidden bg-gray-900 dark:bg-gray-100">
         <img
-          src={cover}
+          src={cover || PLACEHOLDER_IMAGE}
           alt={title}
+          onError={(e) => {
+            const img = e.currentTarget;
+            if (img.src !== window.location.origin + PLACEHOLDER_IMAGE) {
+              img.src = PLACEHOLDER_IMAGE;
+            }
+          }}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
       </div>

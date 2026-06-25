@@ -82,6 +82,7 @@ const Conversations: React.FC = () => {
     const selectedConvIdRef = useRef<string | null>(null);
     const emojiButtonRef = useRef<HTMLButtonElement>(null);
     const emojiPickerRef = useRef<HTMLDivElement>(null);
+    const messageInputRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect((): void => {
         selectedConvIdRef.current = selectedConvId;
@@ -360,6 +361,10 @@ const Conversations: React.FC = () => {
         });
 
         setNewMessage("");
+        // Réinitialise la hauteur du textarea auto-grandissant
+        if (messageInputRef.current) {
+            messageInputRef.current.style.height = "auto";
+        }
     };
 
     const getAvatarText = (username?: string): string =>
@@ -570,7 +575,7 @@ const Conversations: React.FC = () => {
                                             )}
                                             <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
                                                 <div
-                                                    className={`px-4 py-2.5 rounded-2xl text-sm ${isMe ? "bg-blue-600 text-white rounded-tr-none shadow-md" : "bg-[#1a1d26] dark:bg-slate-100 text-slate-200 dark:text-gray-800 border border-slate-800 dark:border-slate-200 rounded-tl-none"}`}
+                                                    className={`px-4 py-2.5 rounded-2xl text-sm whitespace-pre-wrap break-words ${isMe ? "bg-blue-600 text-white rounded-tr-none shadow-md" : "bg-[#1a1d26] dark:bg-slate-100 text-slate-200 dark:text-gray-800 border border-slate-800 dark:border-slate-200 rounded-tl-none"}`}
                                                 >
                                                     {msg.content}
                                                 </div>
@@ -598,26 +603,37 @@ const Conversations: React.FC = () => {
                                 </div>
                             )}
                             <div
-                                className="flex items-center gap-2 bg-[#1a1d26] dark:bg-slate-100 border border-slate-800 dark:border-slate-200 rounded-xl px-4 py-2 focus-within:border-blue-500/50 transition-all">
+                                className="flex items-end gap-2 bg-[#1a1d26] dark:bg-slate-100 border border-slate-800 dark:border-slate-200 rounded-xl px-4 py-2 focus-within:border-blue-500/50 transition-all">
                                 <button
                                     ref={emojiButtonRef}
                                     onClick={() => setShowEmojiPicker((v) => !v)}
-                                    className={`p-1 transition-colors ${showEmojiPicker ? "text-yellow-400 dark:text-yellow-500" : "text-slate-500 hover:text-yellow-400 dark:hover:text-yellow-500"}`}
+                                    className={`p-1 mb-1 transition-colors ${showEmojiPicker ? "text-yellow-400 dark:text-yellow-500" : "text-slate-500 hover:text-yellow-400 dark:hover:text-yellow-500"}`}
                                     title="Emoji"
                                 >
                                     <Smile size={18}/>
                                 </button>
-                                <input
-                                    type="text"
+                                <textarea
+                                    ref={messageInputRef}
+                                    rows={1}
                                     placeholder={t("type_message_placeholder")}
                                     value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                    onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                                    className="flex-1 bg-transparent border-none focus:outline-none text-sm py-1 dark:text-gray-900"
+                                    onChange={(e) => {
+                                        setNewMessage(e.target.value);
+                                        const el = e.currentTarget;
+                                        el.style.height = "auto";
+                                        el.style.height = Math.min(el.scrollHeight, 128) + "px";
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSendMessage();
+                                        }
+                                    }}
+                                    className="flex-1 bg-transparent border-none focus:outline-none text-sm py-1 dark:text-gray-900 resize-none max-h-32 overflow-y-auto leading-relaxed"
                                 />
                                 <button
                                     onClick={handleSendMessage}
-                                    className="text-blue-500 hover:text-blue-400 p-1 transition-transform hover:scale-110"
+                                    className="text-blue-500 hover:text-blue-400 p-1 mb-1 transition-transform hover:scale-110"
                                 >
                                     <Send size={18}/>
                                 </button>

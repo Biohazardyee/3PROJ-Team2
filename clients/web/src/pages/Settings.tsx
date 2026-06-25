@@ -14,6 +14,7 @@ import {
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
+import {toast} from "react-toastify";
 import apiClient from "../api/client";
 import {AxiosResponse} from "axios";
 
@@ -145,14 +146,14 @@ const Settings: React.FC = () => {
             setTimeout(() => setIsSaved(false), 3000);
         } catch (err) {
             console.error(err);
-            alert("Erreur lors de la sauvegarde.");
+            toast.error(t("save_error", "Erreur lors de la sauvegarde."));
         } finally {
             setLoading(false);
         }
     };
     const handleUpdatePassword = async (): Promise<void> => {
         if (!oldPassword || !newPassword) {
-            alert("Veuillez remplir tous les champs");
+            toast.error(t("fill_all_fields", "Veuillez remplir tous les champs"));
             return;
         }
 
@@ -165,10 +166,10 @@ const Settings: React.FC = () => {
 
             setOldPassword("");
             setNewPassword("");
-            alert("Mot de passe mis à jour avec succès");
+            toast.success(t("password_update_success", "Mot de passe mis à jour avec succès"));
         } catch (err: any) {
             console.error(err);
-            alert(err.response?.data?.message || "Erreur lors de la modification");
+            toast.error(err.response?.data?.message || t("password_update_error", "Erreur lors de la modification"));
         } finally {
             setLoading(false);
         }

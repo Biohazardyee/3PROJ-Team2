@@ -3,11 +3,14 @@ import { Camera, X, Trash2, Loader2, Eye, EyeOff } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 import apiClient from "../api/client";
+import { useGoBack } from "../hooks/useGoBack";
 
 const CreatePlaylist: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const goBack = useGoBack("/library");
   const location = useLocation();
 
   const state = location.state as any;
@@ -88,7 +91,7 @@ const CreatePlaylist: React.FC = () => {
           console.error(
               "Impossible d'ajouter l'album : Aucun ID trouvé pour cet album.",
           );
-          alert(
+          toast.warn(
               "La playlist a été créée, mais l'album n'a pas pu être ajouté (ID manquant).",
           );
         } else {
@@ -99,7 +102,7 @@ const CreatePlaylist: React.FC = () => {
             });
           } catch (err: any) {
             console.error("Erreur API playlist-items:", err.response?.data);
-            alert(
+            toast.warn(
                 "Playlist créée, mais erreur lors de l'ajout de l'album : " +
                 (err.response?.data?.message || "Erreur serveur"),
             );
@@ -107,11 +110,17 @@ const CreatePlaylist: React.FC = () => {
         }
       }
 
+      toast.success(
+          isEditing
+              ? t("playlist_update_success", "Playlist mise à jour !")
+              : t("playlist_create_success", "Playlist créée avec succès !")
+      );
+
       if (returnTo) navigate(returnTo);
       else navigate("/library");
     } catch (e: any) {
       console.error("Erreur sauvegarde:", e);
-      alert(e.response?.data?.message || "Erreur lors de l'enregistrement.");
+      toast.error(e.response?.data?.message || "Erreur lors de l'enregistrement.");
     } finally {
       setLoading(false);
     }
@@ -121,7 +130,7 @@ const CreatePlaylist: React.FC = () => {
       <div className="min-h-screen bg-slate-950 dark:bg-slate-50 text-slate-50 dark:text-slate-900 flex flex-col font-sans transition-colors duration-300">
         <div className="flex justify-between items-center p-6 border-b border-slate-800 dark:border-slate-200">
           <button
-              onClick={() => navigate(-1)}
+              onClick={goBack}
               className="p-2 hover:bg-slate-800 dark:hover:bg-slate-200 rounded-full transition-colors text-slate-50 dark:text-slate-700"
           >
             <X size={28} />

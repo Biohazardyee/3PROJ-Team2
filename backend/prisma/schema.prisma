@@ -20,6 +20,8 @@ model Users {
   password        String?
   favorite_band   String?
   profile_picture Bytes?
+  banner          Bytes?
+  shop_points     Int     @default(0)
   role            Roles   @default(BASIC)
 
   provider    AuthProvider?

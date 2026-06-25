@@ -16,10 +16,12 @@ export async function updateMediaAverageRating(tx: Prisma.TransactionClient, med
         select: {rating: true}
     });
 
-    const averageRating: number = allReviews.length > 0
+    const rawAverage: number = allReviews.length > 0
         ? allReviews.reduce((acc: number, rev: { rating: number }): number => acc + rev.rating, 0) / allReviews.length
         : 0;
 
+    // Arrondi à un seul chiffre après la virgule (ex: 4.333 -> 4.3)
+    const averageRating: number = Math.round(rawAverage * 10) / 10;
 
     await tx.medias.update({
         where: {id: mediaId},

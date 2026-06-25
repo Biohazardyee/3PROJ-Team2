@@ -20,12 +20,15 @@ import Profil from "./pages/Profil";
 import Settings from "./pages/Settings";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreatePlaylist from "./pages/CreatePlaylist";
+import Shop from "./pages/Shop";
 import ScrollToTop from "./components/ScrollToTop";
 import AuthGuard from "./components/AuthGuard";
 import AuthRequired from "./pages/AuthRequired.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import AdminRoute from "./components/AdminRoute.tsx"; // ✅ 1. Importation du nouveau guard admin
 import AuthCallback from "./pages/AuthCallback.tsx";
+import {ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AuthRedirectListener: React.FC = (): null => {
     const navigate: NavigateFunction = useNavigate();
@@ -46,6 +49,15 @@ const App: React.FC = () => {
         <Router>
             <AuthRedirectListener></AuthRedirectListener>
             <ScrollToTop/>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+                theme="colored"
+            />
             <Routes>
                 {/* ROUTES PUBLIQUES (SANS BARRE DE NAVIGATION) */}
                 <Route path="/" element={<LandingPage/>}/>
@@ -69,6 +81,7 @@ const App: React.FC = () => {
                         <Route path="/conversations" element={<Conversations/>}/>
                         <Route path="/profil/:id?" element={<Profil/>}/>{" "}
                         <Route path="/settings" element={<Settings/>}/>
+                        <Route path="/shop" element={<Shop/>}/>
                         <Route path="/create-playlist" element={<CreatePlaylist/>}/>
                         <Route path="/authguard" element={<AuthGuard/>}/>
 

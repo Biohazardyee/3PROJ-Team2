@@ -2,7 +2,7 @@ import type {Request, Response, NextFunction} from "express";
 
 import {Controller} from "../../controller.js";
 import {BadRequest} from "../../../utils/errors.js";
-import {ReviewService} from "./review.service.js";
+import {ReviewService, POINTS_PER_REVIEW} from "./review.service.js";
 import {
     ReviewAddDto,
     ReviewResponseAddDto,
@@ -42,6 +42,7 @@ class ReviewController extends Controller {
             res.status(201).json({
                 message: "Review created successfully",
                 review,
+                points_earned: POINTS_PER_REVIEW,
             });
         } catch (error) {
             next(error);

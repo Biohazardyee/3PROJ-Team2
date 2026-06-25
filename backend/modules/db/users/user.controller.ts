@@ -286,6 +286,10 @@ class UserController extends Controller {
                 updateData.profile_picture = req.body.profile_picture;
             }
 
+            if (req.body.banner !== undefined) {
+                updateData.banner = req.body.banner;
+            }
+
             if (Object.keys(updateData).length === 0) {
                 throw new BadRequest("No fields provided");
             }
@@ -348,6 +352,7 @@ class UserController extends Controller {
                 username: req.body.username,
                 biography: req.body.biography,
                 profile_picture: req.body.profile_picture,
+                banner: req.body.banner,
             };
 
             const user: UserPublicDto = await this.service.updateProfile(userId, updateData);

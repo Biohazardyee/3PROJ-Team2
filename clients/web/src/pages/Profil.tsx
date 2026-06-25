@@ -10,6 +10,8 @@ import {
     Flag,
     Music,
     Plus,
+    Coins,
+    Image as ImageIcon,
     ArrowLeft,
     MoreVertical,
     Star,
@@ -19,6 +21,7 @@ import {
 import {NavigateFunction, useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
+import {toast} from "react-toastify";
 import apiClient from "../api/client";
 import {AlbumCard} from "../components/AlbumCard";
 import {AxiosResponse} from "axios";
@@ -80,6 +83,7 @@ const Profil: React.FC = () => {
     const {t} = useTranslation(); // <-- Utilisation de t()
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const bannerInputRef = useRef<HTMLInputElement>(null);
     const isInteracting = useRef(false);
 
     const [activeTab, setActiveTab] = useState("favorites");
@@ -245,7 +249,7 @@ const Profil: React.FC = () => {
             await fetchFollowCounts(userProfil.id);
         } catch (error) {
             console.error("Erreur Follow/Unfollow:", error);
-            alert(t("alert_follow_error")); // <-- Traduit
+            toast.error(t("alert_follow_error")); // <-- Traduit
             setIsFollowing(previousStatus);
             setFollowCounts((prev) => ({...prev, followers: previousFollowers}));
         } finally {
@@ -275,7 +279,7 @@ const Profil: React.FC = () => {
             setSelectedPlaylist(res.data.playlist);
         } catch (error) {
             console.error("Erreur chargement détails playlist:", error);
-            alert(t("alert_playlist_load_error")); // <-- Traduit
+            toast.error(t("alert_playlist_load_error")); // <-- Traduit
         }
     };
 
@@ -294,7 +298,7 @@ const Profil: React.FC = () => {
                 }));
             } catch (error) {
                 console.error("Erreur suppression:", error);
-                alert(t("alert_item_remove_error")); // <-- Traduit
+                toast.error(t("alert_item_remove_error")); // <-- Traduit
             }
         }
     };
@@ -334,10 +338,48 @@ const Profil: React.FC = () => {
             localStorage.setItem("user", JSON.stringify(user));
 
             window.dispatchEvent(new Event("profileUpdated"));
-            alert(t("alert_pfp_success")); // <-- Traduit
+            toast.success(t("alert_pfp_success")); // <-- Traduit
         } catch (error) {
             console.error("Erreur upload image:", error);
-            alert(t("alert_pfp_error")); // <-- Traduit
+            toast.error(t("alert_pfp_error")); // <-- Traduit
+            await fetchProfile(userConnected);
+        }
+    };
+
+    const handleBannerClick = (): void => {
+        if (isOwnProfile && bannerInputRef.current) {
+            bannerInputRef.current.click();
+        }
+    };
+
+    const handleBannerFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        const file: File | undefined = e.target.files?.[0];
+        if (!file) return;
+
+        const reader: FileReader = new FileReader();
+        reader.onloadend = (): void => {
+            const base64Result: string = reader.result as string;
+            const base64Image: string = base64Result.split(",")[1];
+            uploadBanner(base64Image, base64Result);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const uploadBanner = async (
+        base64Image: string,
+        localUri: string,
+    ): Promise<void> => {
+        try {
+            setUserProfil((prev: any) => ({...prev, banner: localUri}));
+
+            await apiClient.put(`/users/${userConnected}`, {
+                banner: base64Image,
+            });
+
+            toast.success(t("alert_banner_success"));
+        } catch (error) {
+            console.error("Erreur upload bannière:", error);
+            toast.error(t("alert_banner_error"));
             await fetchProfile(userConnected);
         }
     };
@@ -454,7 +496,7 @@ const Profil: React.FC = () => {
 
     const submitReport = async (): Promise<void> => {
         if (!reportReason.trim()) {
-            alert(t("report_alert_empty")); // <-- Traduit
+            toast.error(t("report_alert_empty")); // <-- Traduit
             return;
         }
 
@@ -467,12 +509,12 @@ const Profil: React.FC = () => {
                 reason: reportReason,
                 reason_type: "profile",
             });
-            alert(t("report_alert_success")); // <-- Traduit
+            toast.success(t("report_alert_success")); // <-- Traduit
             setIsReportModalOpen(false);
             setReportReason("");
         } catch (error) {
             console.error("Erreur lors du signalement:", error);
-            alert(t("report_alert_error")); // <-- Traduit
+            toast.error(t("report_alert_error")); // <-- Traduit
         } finally {
             setIsSubmittingReport(false);
         }
@@ -510,12 +552,39 @@ const Profil: React.FC = () => {
                 accept="image/*"
                 className="hidden"
             />
+            <input
+                type="file"
+                ref={bannerInputRef}
+                onChange={handleBannerFileChange}
+                accept="image/*"
+                className="hidden"
+            />
 
             {/* Header */}
             <div className="relative">
                 <div
-                    className="h-48 md:h-64 w-full bg-[url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1200')] bg-cover bg-center relative">
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+                    onClick={handleBannerClick}
+                    className={`h-56 md:h-72 lg:h-80 w-full bg-cover bg-center relative group ${isOwnProfile ? "cursor-pointer" : ""}`}
+                    style={{
+                        backgroundImage: `url('${
+                            userProfil?.banner
+                                ? (userProfil.banner.startsWith("data") || userProfil.banner.startsWith("http")
+                                    ? userProfil.banner
+                                    : `data:image/jpeg;base64,${userProfil.banner}`)
+                                : "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1600"
+                        }')`,
+                    }}
+                >
+                    {/* Léger dégradé en bas seulement (pas de flou) pour détacher l'avatar — la bannière reste nette */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none"></div>
+                    {isOwnProfile && (
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-black/30 transition-all">
+                            <div className="flex items-center gap-2 bg-black/60 text-white px-4 py-2 rounded-lg text-sm font-semibold backdrop-blur-sm">
+                                <ImageIcon size={16}/>
+                                {t("change_banner")}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Zone des infos du profil */}
@@ -606,7 +675,7 @@ const Profil: React.FC = () => {
 
                     {/* Biographie & Méta-données */}
                     <div className="max-w-2xl space-y-4">
-                        <p className="text-slate-200 dark:text-gray-700 leading-relaxed text-lg">
+                        <p className="text-slate-200 dark:text-gray-700 leading-relaxed text-lg whitespace-pre-wrap break-words">
                             {userProfil?.biography || t("profile_no_bio")}
                         </p>
 
@@ -666,6 +735,22 @@ const Profil: React.FC = () => {
                                 </span>
                             </div>
                         </div>
+
+                        {isOwnProfile && (
+                            <div
+                                onClick={() => navigate("/shop")}
+                                className="mt-4 inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-500/15 to-yellow-500/10 dark:from-amber-100 dark:to-yellow-50 border border-amber-500/30 dark:border-amber-300 px-4 py-2.5 rounded-xl cursor-pointer hover:border-amber-400/60 dark:hover:border-amber-400 transition-all shadow-sm group"
+                                title={t("shop_points_tooltip", "Points utilisables dans la boutique")}
+                            >
+                                <Coins size={20} className="text-amber-400 dark:text-amber-500 group-hover:scale-110 transition-transform"/>
+                                <span className="text-amber-300 dark:text-amber-700 font-bold text-lg">
+                                    {userProfil?.shop_points ?? 0}
+                                </span>
+                                <span className="text-amber-400/80 dark:text-amber-600 text-sm font-medium">
+                                    {t("shop_points_label", "points boutique")}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -92,6 +92,8 @@ export const UsersScalarFieldEnum = {
   password: 'password',
   favorite_band: 'favorite_band',
   profile_picture: 'profile_picture',
+  banner: 'banner',
+  shop_points: 'shop_points',
   role: 'role',
   provider: 'provider',
   provider_id: 'provider_id',

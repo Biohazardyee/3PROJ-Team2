@@ -1,10 +1,12 @@
 import React from 'react';
 import {NavigateFunction, useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
+import {useGoBack} from '../hooks/useGoBack';
 
 export default function AuthGuardWeb() {
     const {t, i18n} = useTranslation();
     const navigate: NavigateFunction = useNavigate();
+    const goBack = useGoBack('/home');
 
     const toggleLanguage = (): void => {
         const newLang: "fr" | "en" = i18n.language === 'fr' ? 'en' : 'fr';
@@ -48,7 +50,7 @@ export default function AuthGuardWeb() {
                     </button>
                 </div>
 
-                <button style={styles.backButton} onClick={() => navigate(-1)}>
+                <button style={styles.backButton} onClick={goBack}>
                     {t('later')}
                 </button>
             </div>

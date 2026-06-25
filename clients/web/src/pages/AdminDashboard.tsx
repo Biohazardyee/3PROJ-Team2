@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import {useTranslation} from 'react-i18next';
 import {Link, NavigateFunction, useNavigate} from 'react-router-dom';
+import {toast} from 'react-toastify';
 import apiClient from '../api/client';
 import UserAvatar from "../components/UserAvatar.tsx";
 import StatCard from "../components/StatCard.tsx";
@@ -95,7 +96,7 @@ const AdminDashboard: React.FC = () => {
         }
 
         if (!targetUserId) {
-            alert(t('alert_user_not_found', "Impossible de récupérer automatiquement l'identifiant de l'auteur de ce contenu."));
+            toast.error(t('alert_user_not_found', "Impossible de récupérer automatiquement l'identifiant de l'auteur de ce contenu."));
             return;
         }
 
@@ -172,10 +173,10 @@ const AdminDashboard: React.FC = () => {
                 reports: pendingCount
             }));
 
-            alert(t('alert_ban_success', "L'utilisateur a été banni avec succès et tous les signalements le concernant ont été clôturés."));
+            toast.success(t('alert_ban_success', "L'utilisateur a été banni avec succès et tous les signalements le concernant ont été clôturés."));
         } catch (error) {
             console.error("Erreur lors du bannissement de l'utilisateur :", error);
-            alert(t('alert_ban_error', "Une erreur est survenue lors du bannissement."));
+            toast.error(t('alert_ban_error', "Une erreur est survenue lors du bannissement."));
         }
     };
 
@@ -197,10 +198,10 @@ const AdminDashboard: React.FC = () => {
                 bannedUsers: Math.max(0, prev.bannedUsers - 1)
             }));
 
-            alert(t('alert_unban_success', "L'utilisateur a été débanni avec succès."));
+            toast.success(t('alert_unban_success', "L'utilisateur a été débanni avec succès."));
         } catch (error) {
             console.error("Erreur lors du débannissement :", error);
-            alert(t('alert_unban_error', "Impossible de débannir l'utilisateur."));
+            toast.error(t('alert_unban_error', "Impossible de débannir l'utilisateur."));
         }
     };
 

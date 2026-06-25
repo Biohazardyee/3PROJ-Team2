@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {toast} from "react-toastify";
 import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import {AxiosResponse} from "axios";
@@ -115,7 +116,7 @@ const LibraryPage: React.FC = () => {
             setSelectedPlaylist(res.data.playlist);
         } catch (e) {
             console.error("Erreur chargement détails playlist:", e);
-            alert("Impossible de charger le contenu de la playlist.");
+            toast.error(t("alert_playlist_load_error", "Impossible de charger le contenu de la playlist."));
         } finally {
             setLoading(false);
         }
@@ -128,7 +129,7 @@ const LibraryPage: React.FC = () => {
                 setPlaylists((prev: any[]): any[] => prev.filter((p: any): boolean => p.id !== id));
             } catch (e) {
                 console.error("Erreur suppression:", e);
-                alert("Impossible de supprimer la playlist.");
+                toast.error(t("playlist_delete_error", "Impossible de supprimer la playlist."));
             }
         }
     };
@@ -148,7 +149,7 @@ const LibraryPage: React.FC = () => {
                 }));
             } catch (e) {
                 console.error("Erreur suppression:", e);
-                alert("Impossible de retirer l'élément.");
+                toast.error(t("alert_item_remove_error", "Impossible de retirer l'élément."));
             }
         }
     };

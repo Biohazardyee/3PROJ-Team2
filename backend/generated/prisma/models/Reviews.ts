@@ -564,14 +564,6 @@ export type ReviewsUncheckedUpdateManyWithoutMediaNestedInput = {
   deleteMany?: Prisma.ReviewsScalarWhereInput | Prisma.ReviewsScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ReviewsCreateNestedOneWithoutCommentsInput = {
   create?: Prisma.XOR<Prisma.ReviewsCreateWithoutCommentsInput, Prisma.ReviewsUncheckedCreateWithoutCommentsInput>
   connectOrCreate?: Prisma.ReviewsCreateOrConnectWithoutCommentsInput

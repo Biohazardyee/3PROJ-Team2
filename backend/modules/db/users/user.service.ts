@@ -185,6 +185,7 @@ export class UserService {
             "favorite_band",
             "has_notifications",
             "profile_picture",
+            "banner",
             "created_at",
             "updated_at",
         ];
@@ -270,6 +271,7 @@ export class UserService {
             "favorite_band",
             "has_notifications",
             "profile_picture",
+            "banner",
             "created_at",
             "updated_at",
         ];
@@ -431,6 +433,16 @@ export class UserService {
             updateData.profile_picture = null;
         }
 
+        if (data.banner !== undefined && data.banner !== null) {
+            let base64 = data.banner;
+            if (base64.startsWith("data:")) {
+                base64 = base64.split(",")[1];
+            }
+            updateData.banner = Buffer.from(base64, "base64");
+        } else if (data.banner === null) {
+            updateData.banner = null;
+        }
+
         const user: Users = await PrismaDb.users.update({
             where: {
                 id,
@@ -560,6 +572,16 @@ export class UserService {
                 base64 = base64.split(",")[1];
             }
             updateData.profile_picture = Buffer.from(base64, "base64");
+        }
+
+        if (data.banner !== undefined && data.banner !== null) {
+            let base64 = data.banner;
+            if (base64.startsWith("data:")) {
+                base64 = base64.split(",")[1];
+            }
+            updateData.banner = Buffer.from(base64, "base64");
+        } else if (data.banner === null) {
+            updateData.banner = null;
         }
 
         const updatedUser = await PrismaDb.users.update({

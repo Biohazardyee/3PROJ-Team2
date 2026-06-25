@@ -8,9 +8,11 @@ export interface UserResponseDto {
     email: string;
     phone_number: string | null;
     profile_picture: Uint8Array<ArrayBuffer> | null;
+    banner: Uint8Array<ArrayBuffer> | null;
     role: Roles;
     biography: string | null;
     favorite_band: string | null;
+    shop_points: number;
     has_notifications: boolean;
     created_at: Date;
     updated_at: Date;
@@ -48,6 +50,8 @@ export interface UserPublicDto {
     biography: string | null;
     favorite_band: string | null;
     profile_picture: string | null;
+    banner: string | null;
+    shop_points: number;
     created_at: Date;
 }
 
@@ -78,6 +82,7 @@ export interface UserUpdateDto {
     favorite_band?: string
     has_notifications?: boolean;
     profile_picture?: string | null;
+    banner?: string | null;
 }
 
 export interface LoginDto {
@@ -95,6 +100,7 @@ export type SelectableUserField =
     | 'favorite_band'
     | 'has_notifications'
     | 'profile_picture'
+    | 'banner'
     | 'created_at'
     | 'updated_at';
 
