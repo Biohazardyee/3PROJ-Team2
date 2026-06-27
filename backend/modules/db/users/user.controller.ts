@@ -382,6 +382,57 @@ class UserController extends Controller {
             next(error);
         }
     }
+
+    async getCosmeticsCatalog(_req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const catalog = this.service.getCosmeticsCatalog();
+            res.status(200).json({catalog});
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async buyCosmetic(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId: any = (req as any).user?.id;
+            if (!userId) {
+                throw new Unauthorized("User not authenticated");
+            }
+            if (!req.body.cosmetic_id) {
+                throw new BadRequest("cosmetic_id is required");
+            }
+
+            const result = await this.service.buyCosmetic(userId, req.body.cosmetic_id);
+
+            res.status(200).json({
+                message: "Cosmetic purchased successfully",
+                ...result,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async equipCosmetic(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId: any = (req as any).user?.id;
+            if (!userId) {
+                throw new Unauthorized("User not authenticated");
+            }
+
+            const result = await this.service.equipCosmetic(
+                userId,
+                req.body.cosmetic_id ?? null,
+            );
+
+            res.status(200).json({
+                message: "Cosmetic equipped successfully",
+                ...result,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export default new UserController();

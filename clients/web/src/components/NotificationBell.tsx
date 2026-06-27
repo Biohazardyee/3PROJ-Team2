@@ -33,8 +33,25 @@ export const NotificationBell: React.FC = () => {
   useEffect(() => {
     fetchCount();
 
+    // Mise à jour instantanée (optimiste) quand les notifications sont lues
+    const handleRead = (e: Event): void => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.readAll) {
+        setUnreadCount(0);
+      } else if (detail?.readCount) {
+        setUnreadCount((c) => Math.max(0, c - detail.readCount));
+      } else {
+        fetchCount();
+      }
+    };
+    window.addEventListener("notificationsRead", handleRead);
+
+    // Filet de sécurité si un événement temps réel est manqué
     const interval = setInterval(fetchCount, 30000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("notificationsRead", handleRead);
+    };
   }, [fetchCount]);
 
   useEffect(() => {

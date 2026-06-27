@@ -20,3 +20,149 @@
   }
 }
 
+/* ===== Cosmétiques : contours animés de photo de profil ===== */
+@keyframes cosmetic-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes cosmetic-glow-gold {
+  0%, 100% { box-shadow: 0 0 5px rgba(250, 204, 21, 0.55), 0 0 11px rgba(245, 158, 11, 0.4); }
+  50%      { box-shadow: 0 0 13px rgba(250, 204, 21, 0.95), 0 0 24px rgba(245, 158, 11, 0.7); }
+}
+@keyframes cosmetic-glow-neon {
+  0%, 100% { box-shadow: 0 0 6px rgba(34, 211, 238, 0.7), 0 0 12px rgba(217, 70, 239, 0.5); }
+  50%      { box-shadow: 0 0 15px rgba(34, 211, 238, 1), 0 0 28px rgba(217, 70, 239, 0.85); }
+}
+@keyframes cosmetic-glow-fire {
+  0%, 100% { box-shadow: 0 0 6px rgba(249, 115, 22, 0.6), 0 0 12px rgba(239, 68, 68, 0.45); }
+  50%      { box-shadow: 0 0 14px rgba(249, 115, 22, 0.95), 0 0 26px rgba(239, 68, 68, 0.7); }
+}
+
+.cosmetic-ring {
+  position: relative;
+  display: inline-block;
+  border-radius: 9999px;
+  padding: 4px;
+  isolation: isolate;
+}
+.cosmetic-ring.cosmetic-compact {
+  padding: 2.5px;
+}
+.cosmetic-ring > * {
+  position: relative;
+  z-index: 1;
+  display: block;
+  border-radius: 9999px;
+}
+.cosmetic-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  z-index: 0;
+}
+
+.cosmetic-border_aurora::before {
+  background: conic-gradient(from 0deg, #ff0080, #7928ca, #2afadf, #00ff8f, #ff0080);
+  animation: cosmetic-spin 4s linear infinite;
+}
+.cosmetic-border_gold::before {
+  background: conic-gradient(from 0deg, #fde047, #f59e0b, #fff7cc, #eab308, #fde047);
+  animation: cosmetic-spin 6s linear infinite;
+}
+.cosmetic-border_gold {
+  animation: cosmetic-glow-gold 2.6s ease-in-out infinite;
+}
+.cosmetic-border_neon::before {
+  background: conic-gradient(from 0deg, #22d3ee, #d946ef, #22d3ee, #d946ef, #22d3ee);
+  animation: cosmetic-spin 3s linear infinite;
+}
+.cosmetic-border_neon {
+  animation: cosmetic-glow-neon 1.9s ease-in-out infinite;
+}
+.cosmetic-border_fire::before {
+  background: conic-gradient(from 0deg, #f97316, #ef4444, #fbbf24, #dc2626, #f97316);
+  animation: cosmetic-spin 2.4s linear infinite;
+}
+.cosmetic-border_fire {
+  animation: cosmetic-glow-fire 2.2s ease-in-out infinite;
+}
+.cosmetic-border_emerald::before {
+  background: conic-gradient(from 0deg, #34d399, #059669, #6ee7b7, #10b981, #34d399);
+  animation: cosmetic-spin 5s linear infinite;
+}
+
+/* ===== Thème Linkin Park (achetable) — noir/rouge, sombre et intense ===== */
+/* Fonds principaux (page) */
+html.theme-lp .bg-\[\#13131A\],
+html.theme-lp .bg-\[\#13131a\],
+html.theme-lp .bg-\[\#0f111a\],
+html.theme-lp .bg-\[\#16161f\] {
+  background-color: #0c0709 !important;
+}
+/* Header / sidebar / bordure avatar */
+html.theme-lp .bg-\[\#1C1C28\],
+html.theme-lp .bg-\[\#0f1117\] {
+  background-color: #160a0c !important;
+}
+/* Cartes / surfaces */
+html.theme-lp .bg-\[\#1a1d26\],
+html.theme-lp .bg-\[\#1a1b26\],
+html.theme-lp .bg-\[\#161b2c\],
+html.theme-lp .bg-\[\#1e1e26\],
+html.theme-lp .bg-\[\#1c1c27\],
+html.theme-lp .bg-\[\#1c1c26\],
+html.theme-lp .bg-\[\#1c1c28\],
+html.theme-lp .bg-\[\#1e1e2d\],
+html.theme-lp .bg-\[\#1c1c2e\],
+html.theme-lp .bg-\[\#1e2130\],
+html.theme-lp .bg-\[\#272737\] {
+  background-color: #1a0e11 !important;
+}
+/* Surfaces actives / hover */
+html.theme-lp .bg-\[\#2A2A38\],
+html.theme-lp .bg-\[\#2a2e3d\],
+html.theme-lp .bg-\[\#2a2e3f\],
+html.theme-lp .bg-\[\#2a2a40\],
+html.theme-lp .bg-\[\#252a3d\],
+html.theme-lp .bg-\[\#1e2230\] {
+  background-color: #2c1418 !important;
+}
+/* Accents bleu / violet -> rouge LP */
+html.theme-lp .bg-\[\#3b82f6\],
+html.theme-lp .bg-\[\#2563eb\],
+html.theme-lp .bg-\[\#a855f7\],
+html.theme-lp .bg-blue-600,
+html.theme-lp .bg-blue-500,
+html.theme-lp .bg-indigo-600,
+html.theme-lp .bg-indigo-500 {
+  background-color: #dc2626 !important;
+}
+html.theme-lp .hover\:bg-blue-500:hover,
+html.theme-lp .hover\:bg-blue-600:hover,
+html.theme-lp .hover\:bg-indigo-500:hover {
+  background-color: #ef4444 !important;
+}
+html.theme-lp .text-blue-400,
+html.theme-lp .text-blue-500,
+html.theme-lp .text-blue-600,
+html.theme-lp .text-indigo-400,
+html.theme-lp .text-indigo-500,
+html.theme-lp .text-indigo-600 {
+  color: #f87171 !important;
+}
+html.theme-lp .border-blue-500,
+html.theme-lp .border-indigo-500 {
+  border-color: #dc2626 !important;
+}
+/* Dégradé de marque (logo "Melodia") -> rouge */
+html.theme-lp .from-indigo-400,
+html.theme-lp .from-indigo-600 {
+  --tw-gradient-from: #ef4444 var(--tw-gradient-from-position, 0%) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(239 68 68 / 0)) !important;
+}
+html.theme-lp .to-pink-500,
+html.theme-lp .to-pink-600 {
+  --tw-gradient-to: #991b1b var(--tw-gradient-to-position, 100%) !important;
+}
+
+

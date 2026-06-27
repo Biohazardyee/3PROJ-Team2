@@ -23,6 +23,10 @@ model Users {
   profile_picture Bytes?
   banner          Bytes?
   shop_points     Int     @default(0)
+
+  owned_cosmetics        String[] @default([])
+  equipped_avatar_border String?
+
   role            Roles   @default(BASIC)
 
   provider    AuthProvider?

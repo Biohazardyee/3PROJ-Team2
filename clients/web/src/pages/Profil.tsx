@@ -11,6 +11,8 @@ import {
     Music,
     Plus,
     Coins,
+    Sparkles,
+    X,
     Image as ImageIcon,
     ArrowLeft,
     MoreVertical,
@@ -23,6 +25,8 @@ import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
 import {toast} from "react-toastify";
 import apiClient from "../api/client";
+import {useConfirm} from "../context/ConfirmContext";
+import AvatarBorder, {isValidBorder} from "../components/AvatarBorder";
 import {AlbumCard} from "../components/AlbumCard";
 import {AxiosResponse} from "axios";
 
@@ -81,6 +85,7 @@ const Profil: React.FC = () => {
     const navigate: NavigateFunction = useNavigate();
     const {id: externalUserId} = useParams<{ id: string }>();
     const {t} = useTranslation(); // <-- Utilisation de t()
+    const confirm = useConfirm();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const bannerInputRef = useRef<HTMLInputElement>(null);
@@ -89,6 +94,9 @@ const Profil: React.FC = () => {
     const [activeTab, setActiveTab] = useState("favorites");
     const [userProfil, setUserProfil] = useState<any>(null);
     const [userConnected, setUserConnected] = useState<string>("");
+    const [showCosmetics, setShowCosmetics] = useState<boolean>(false);
+    const [cosmeticNames, setCosmeticNames] = useState<Record<string, string>>({});
+    const [equipping, setEquipping] = useState<string | null>(null);
     const [playlists, setPlaylists] = useState<any[]>([]);
     const [favoriteReviews, setFavoriteReviews] = useState<any[]>([]);
     const [followCounts, setFollowCounts] = useState({
@@ -289,17 +297,60 @@ const Profil: React.FC = () => {
         mediaTitle: string,
     ): Promise<void> => {
         e.stopPropagation();
-        if (window.confirm(t("confirm_remove_item", { title: mediaTitle }))) { // <-- Traduit
-            try {
-                await apiClient.delete(`/playlist-items/${playlistItemId}`);
-                setSelectedPlaylist((prev: any) => ({
-                    ...prev,
-                    items: prev.items.filter((i: any): boolean => i.id !== playlistItemId),
-                }));
-            } catch (error) {
-                console.error("Erreur suppression:", error);
-                toast.error(t("alert_item_remove_error")); // <-- Traduit
-            }
+        const ok = await confirm({
+            title: t("remove_item_title", "Retirer de la playlist"),
+            message: t("confirm_remove_item", {title: mediaTitle}),
+            confirmText: t("remove", "Retirer"),
+            danger: true,
+        });
+        if (!ok) return;
+        try {
+            await apiClient.delete(`/playlist-items/${playlistItemId}`);
+            setSelectedPlaylist((prev: any) => ({
+                ...prev,
+                items: prev.items.filter((i: any): boolean => i.id !== playlistItemId),
+            }));
+            toast.success(t("item_removed_success", "Élément retiré."));
+        } catch (error) {
+            console.error("Erreur suppression:", error);
+            toast.error(t("alert_item_remove_error")); // <-- Traduit
+        }
+    };
+
+    const openCosmetics = async (): Promise<void> => {
+        setShowCosmetics(true);
+        try {
+            const res = await apiClient.get("/users/cosmetics/catalog");
+            const map: Record<string, string> = {};
+            (res.data.catalog || []).forEach((c: any) => {
+                map[c.id] = c.name;
+            });
+            setCosmeticNames(map);
+        } catch (e) {
+            console.error("Erreur chargement catalogue cosmétiques:", e);
+        }
+    };
+
+    const equipBorder = async (cosmeticId: string | null): Promise<void> => {
+        setEquipping(cosmeticId || "none");
+        try {
+            const res = await apiClient.post("/users/cosmetics/equip", {
+                cosmetic_id: cosmeticId,
+            });
+            setUserProfil((prev: any) => ({
+                ...prev,
+                equipped_avatar_border: res.data.equipped_avatar_border,
+            }));
+            window.dispatchEvent(new Event("profileUpdated"));
+            toast.success(
+                cosmeticId
+                    ? t("cosmetic_equipped", "Contour équipé !")
+                    : t("cosmetic_unequipped", "Contour retiré."),
+            );
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
+        } finally {
+            setEquipping(null);
         }
     };
 
@@ -591,6 +642,7 @@ const Profil: React.FC = () => {
                 <div className="max-w-6xl mx-auto px-6">
                     <div className="relative -mt-12 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div className="flex flex-col md:flex-row md:items-end gap-6">
+                            <AvatarBorder borderId={userProfil?.equipped_avatar_border} className="z-10">
                             <div
                                 onClick={handleProfilePictureClick}
                                 className={`w-32 h-32 md:w-40 md:h-40 rounded-full border-[6px] border-[#0f1117] dark:border-slate-50 flex items-center justify-center text-white text-4xl font-bold shadow-xl z-10 transition-colors relative overflow-hidden group ${isOwnProfile ? "cursor-pointer" : ""}`}
@@ -620,6 +672,7 @@ const Profil: React.FC = () => {
                                     </div>
                                 )}
                             </div>
+                            </AvatarBorder>
 
                             <div className="pb-2">
                                 <h1
@@ -636,13 +689,22 @@ const Profil: React.FC = () => {
 
                         <div className="flex items-center gap-2 self-start md:self-end mb-2">
                             {isOwnProfile ? (
-                                <button
-                                    onClick={() => navigate("/settings")}
-                                    className="flex items-center gap-2 bg-slate-800/80 dark:bg-white hover:bg-slate-700 dark:hover:bg-gray-100 text-slate-100 dark:text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-slate-700 dark:border-gray-200 shadow-sm"
-                                >
-                                    <Settings size={16}/>
-                                    {t("profile_edit_btn")}
-                                </button>
+                                <>
+                                    <button
+                                        onClick={openCosmetics}
+                                        className="flex items-center gap-2 bg-purple-600/90 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm"
+                                    >
+                                        <Sparkles size={16}/>
+                                        {t("cosmetics", "Cosmétiques")}
+                                    </button>
+                                    <button
+                                        onClick={() => navigate("/settings")}
+                                        className="flex items-center gap-2 bg-slate-800/80 dark:bg-white hover:bg-slate-700 dark:hover:bg-gray-100 text-slate-100 dark:text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-slate-700 dark:border-gray-200 shadow-sm"
+                                    >
+                                        <Settings size={16}/>
+                                        {t("profile_edit_btn")}
+                                    </button>
+                                </>
                             ) : (
                                 <>
                                     <button
@@ -736,21 +798,6 @@ const Profil: React.FC = () => {
                             </div>
                         </div>
 
-                        {isOwnProfile && (
-                            <div
-                                onClick={() => navigate("/shop")}
-                                className="mt-4 inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-500/15 to-yellow-500/10 dark:from-amber-100 dark:to-yellow-50 border border-amber-500/30 dark:border-amber-300 px-4 py-2.5 rounded-xl cursor-pointer hover:border-amber-400/60 dark:hover:border-amber-400 transition-all shadow-sm group"
-                                title={t("shop_points_tooltip", "Points utilisables dans la boutique")}
-                            >
-                                <Coins size={20} className="text-amber-400 dark:text-amber-500 group-hover:scale-110 transition-transform"/>
-                                <span className="text-amber-300 dark:text-amber-700 font-bold text-lg">
-                                    {userProfil?.shop_points ?? 0}
-                                </span>
-                                <span className="text-amber-400/80 dark:text-amber-600 text-sm font-medium">
-                                    {t("shop_points_label", "points boutique")}
-                                </span>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
@@ -1114,6 +1161,111 @@ const Profil: React.FC = () => {
                                 >
                                     {isSubmittingReport ? t("report_btn_sending") : t("report_btn_submit")}
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Modale : gérer les cosmétiques (profil perso) */}
+                {showCosmetics && (
+                    <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+                        onClick={() => setShowCosmetics(false)}
+                    >
+                        <div
+                            className="w-full max-w-lg bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-slate-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="flex items-center justify-between p-5 border-b border-slate-800 dark:border-slate-200">
+                                <h2 className="text-lg font-bold text-white dark:text-gray-900 flex items-center gap-2">
+                                    <Sparkles size={18} className="text-purple-400"/>
+                                    {t("my_cosmetics", "Mes contours")}
+                                </h2>
+                                <button
+                                    onClick={() => setShowCosmetics(false)}
+                                    className="p-1.5 rounded-full text-slate-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
+                                >
+                                    <X size={20}/>
+                                </button>
+                            </div>
+
+                            <div className="overflow-y-auto p-5">
+                                {(() => {
+                                    const ownedBorders: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidBorder(id));
+                                    const pic: string | null =
+                                        userProfil?.profile_picture && typeof userProfil.profile_picture === "string"
+                                            ? (userProfil.profile_picture.startsWith("data") || userProfil.profile_picture.startsWith("http")
+                                                ? userProfil.profile_picture
+                                                : `data:image/jpeg;base64,${userProfil.profile_picture}`)
+                                            : null;
+                                    const equipped: string | null = userProfil?.equipped_avatar_border || null;
+
+                                    const PreviewInner = (
+                                        <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-800 dark:bg-gray-100 flex items-center justify-center">
+                                            {pic ? (
+                                                <img src={pic} alt="" className="w-full h-full object-cover"/>
+                                            ) : (
+                                                <span className="text-sm font-bold text-blue-400">
+                                                    {(userProfil?.pseudo || userProfil?.username)?.substring(0, 2).toUpperCase()}
+                                                </span>
+                                            )}
+                                        </div>
+                                    );
+
+                                    if (ownedBorders.length === 0) {
+                                        return (
+                                            <div className="text-center py-8">
+                                                <p className="text-sm text-slate-400 dark:text-gray-500 mb-5">
+                                                    {t("no_owned_cosmetics", "Tu n'as pas encore de contour. Visite la boutique pour en débloquer !")}
+                                                </p>
+                                                <button
+                                                    onClick={() => navigate("/shop")}
+                                                    className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                                                >
+                                                    <Coins size={16}/>
+                                                    {t("go_to_shop", "Aller à la boutique")}
+                                                </button>
+                                            </div>
+                                        );
+                                    }
+
+                                    return (
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-5">
+                                            {/* Option "Aucun" */}
+                                            <button
+                                                onClick={() => equipBorder(null)}
+                                                disabled={equipping !== null}
+                                                className="flex flex-col items-center gap-2 disabled:opacity-50"
+                                            >
+                                                <div className={`p-1 rounded-full ${!equipped ? "ring-2 ring-purple-500" : ""}`}>
+                                                    {PreviewInner}
+                                                </div>
+                                                <span className={`text-xs ${!equipped ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                    {t("none", "Aucun")}
+                                                </span>
+                                            </button>
+
+                                            {/* Contours possédés */}
+                                            {ownedBorders.map((id: string) => (
+                                                <button
+                                                    key={id}
+                                                    onClick={() => equipBorder(id)}
+                                                    disabled={equipping !== null}
+                                                    className="flex flex-col items-center gap-2 disabled:opacity-50"
+                                                >
+                                                    <div className={`p-1 rounded-full ${equipped === id ? "ring-2 ring-purple-500" : ""}`}>
+                                                        <AvatarBorder borderId={id}>
+                                                            {PreviewInner}
+                                                        </AvatarBorder>
+                                                    </div>
+                                                    <span className={`text-xs truncate max-w-full ${equipped === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                        {cosmeticNames[id] || id}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         </div>
                     </div>

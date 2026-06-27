@@ -1,4 +1,4 @@
-import {Menu, MessageSquare, LogIn} from "lucide-react";
+import {Menu, MessageSquare, LogIn, Coins} from "lucide-react";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useState, useEffect, useCallback} from "react";
 import apiClient from "../api/client";
@@ -6,6 +6,8 @@ import {jwtDecode} from "jwt-decode";
 import {NotificationBell} from "./NotificationBell";
 import {useSocket} from "../context/SocketContext";
 import {AxiosResponse} from "axios";
+import AvatarBorder from "./AvatarBorder";
+import {useTranslation} from "react-i18next";
 
 type HeaderProps = {
     onMenuClick: () => void;
@@ -14,9 +16,12 @@ type HeaderProps = {
 export const Header = ({onMenuClick}: HeaderProps) => {
     const navigate: NavigateFunction = useNavigate();
     const socket = useSocket();
+    const {t} = useTranslation();
 
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
     const [profilePic, setProfilePic] = useState<string | null>(null);
+    const [borderId, setBorderId] = useState<string | null>(null);
+    const [shopPoints, setShopPoints] = useState<number>(0);
     const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
 
     const checkUser = async (): Promise<void> => {
@@ -28,6 +33,9 @@ export const Header = ({onMenuClick}: HeaderProps) => {
                 const decoded: any = jwtDecode(token);
                 const res: AxiosResponse = await apiClient.get(`/users/public/${decoded.id}`);
                 const userData = res.data.user || res.data;
+
+                setBorderId(userData.equipped_avatar_border ?? null);
+                setShopPoints(userData.shop_points ?? 0);
 
                 if (userData.profile_picture) {
                     const img = userData.profile_picture.startsWith("data:")
@@ -53,13 +61,11 @@ export const Header = ({onMenuClick}: HeaderProps) => {
 
             const res: AxiosResponse = await apiClient.get(`/conversations/user/${uId}`);
             const data = res.data.conversations || [];
-            const total = data.reduce((acc: number, conv: any) => {
-                const unread = conv.messages
-                    ? conv.messages.filter((m: any) => !m.is_read && m.sender_id !== uId)
-                        .length
-                    : 0;
-                return acc + unread;
-            }, 0);
+            // _count.messages = nombre exact de messages non lus (non envoyés par moi) par conversation
+            const total = data.reduce(
+                (acc: number, conv: any) => acc + (conv._count?.messages || 0),
+                0,
+            );
             setUnreadMessagesCount(total);
         } catch (err) {
             console.error("Erreur au calcul des non lus (Header):", err);
@@ -71,7 +77,10 @@ export const Header = ({onMenuClick}: HeaderProps) => {
 
         fetchGlobalUnreadCount();
 
+        // Nouveau message reçu → recompte (badge +)
         socket.on("update_conversation_list", fetchGlobalUnreadCount);
+        // Messages marqués comme lus → recompte (badge -)
+        socket.on("conversation_marked_read", fetchGlobalUnreadCount);
 
         const handleManualReadUpdate = (): void => {
             fetchGlobalUnreadCount();
@@ -81,6 +90,7 @@ export const Header = ({onMenuClick}: HeaderProps) => {
 
         return (): void => {
             socket.off("update_conversation_list", fetchGlobalUnreadCount);
+            socket.off("conversation_marked_read", fetchGlobalUnreadCount);
             window.removeEventListener("messagesRead", handleManualReadUpdate);
         };
     }, [socket, fetchGlobalUnreadCount]);
@@ -129,34 +139,47 @@ export const Header = ({onMenuClick}: HeaderProps) => {
                 {isLoggedIn ? (
                     <>
                         <button
+                            onClick={() => navigate("/shop")}
+                            title={t("shop_points_label", "points boutique")}
+                            className="hidden sm:flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 hover:border-amber-400/60 px-3 py-1.5 rounded-full transition-all"
+                        >
+                            <Coins size={16} className="text-amber-400 dark:text-amber-500"/>
+                            <span className="text-amber-300 dark:text-amber-600 font-bold text-sm">
+                                {shopPoints}
+                            </span>
+                        </button>
+
+                        <button
                             onClick={() => navigate("/conversations")}
                             className="relative hover:text-white dark:hover:text-gray-900 transition-colors cursor-pointer"
                         >
                             <MessageSquare size={22}/>
                             {unreadMessagesCount > 0 && (
                                 <span
-                                    className="absolute -top-1.5 -right-1.5 bg-[#FF1E56] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#1C1C28] dark:border-white animate-pulse">
-                  {unreadMessagesCount}
+                                    className="absolute -top-1.5 -right-1.5 bg-[#FF1E56] text-white text-[10px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center border-2 border-[#1C1C28] dark:border-white animate-pulse">
+                  {unreadMessagesCount > 9 ? "9+" : unreadMessagesCount}
                 </span>
                             )}
                         </button>
 
                         <NotificationBell/>
 
-                        <button
-                            onClick={() => navigate("/profil")}
-                            className="w-10 h-10 rounded-full border-2 border-indigo-500/30 overflow-hidden bg-slate-800 dark:bg-indigo-50 flex items-center justify-center transition-colors"
-                        >
-                            {profilePic ? (
-                                <img
-                                    src={profilePic}
-                                    alt="Profil"
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <span className="text-xs font-bold text-indigo-300 dark:text-indigo-600">ME</span>
-                            )}
-                        </button>
+                        <AvatarBorder borderId={borderId} compact>
+                            <button
+                                onClick={() => navigate("/profil")}
+                                className="w-10 h-10 rounded-full border-2 border-indigo-500/30 overflow-hidden bg-slate-800 dark:bg-indigo-50 flex items-center justify-center transition-colors"
+                            >
+                                {profilePic ? (
+                                    <img
+                                        src={profilePic}
+                                        alt="Profil"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="text-xs font-bold text-indigo-300 dark:text-indigo-600">ME</span>
+                                )}
+                            </button>
+                        </AvatarBorder>
                     </>
                 ) : (
                     <button

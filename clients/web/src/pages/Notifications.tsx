@@ -183,6 +183,8 @@ const Notifications: React.FC = () => {
         if (!unread.length) return;
         try {
             setNotifications((prev) => prev.map((n) => ({...n, is_read: true})));
+            // Met à jour le badge de la cloche immédiatement
+            window.dispatchEvent(new CustomEvent("notificationsRead", {detail: {readAll: true}}));
             await Promise.all(unread.map((n) => apiClient.put(`/notifications/${n.id}`, {is_read: true})));
         } catch (e) {
             console.error("Erreur marquage global:", e);
@@ -194,6 +196,8 @@ const Notifications: React.FC = () => {
         if (notif.is_read) return;
         try {
             setNotifications((prev) => prev.map((n) => n.id === notif.id ? {...n, is_read: true} : n));
+            // Décrémente le badge de la cloche immédiatement
+            window.dispatchEvent(new CustomEvent("notificationsRead", {detail: {readCount: 1}}));
             await apiClient.put(`/notifications/${notif.id}`, {is_read: true});
         } catch (e) {
             console.error("Erreur marquage unitaire:", e);

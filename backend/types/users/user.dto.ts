@@ -14,6 +14,8 @@ export interface UserResponseDto {
     biography: string | null;
     favorite_band: string | null;
     shop_points: number;
+    owned_cosmetics: string[];
+    equipped_avatar_border: string | null;
     has_notifications: boolean;
     created_at: Date;
     updated_at: Date;
@@ -54,6 +56,8 @@ export interface UserPublicDto {
     profile_picture: string | null;
     banner: string | null;
     shop_points: number;
+    owned_cosmetics: string[];
+    equipped_avatar_border: string | null;
     created_at: Date;
 }
 

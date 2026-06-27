@@ -11,6 +11,7 @@ import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {toast} from "react-toastify";
 import apiClient from "../api/client";
+import {useConfirm} from "../context/ConfirmContext";
 import {jwtDecode} from "jwt-decode";
 import {AxiosResponse} from "axios";
 
@@ -86,6 +87,7 @@ const ListCard: React.FC<any> = ({
 const LibraryPage: React.FC = () => {
     const navigate: NavigateFunction = useNavigate();
     const {t} = useTranslation();
+    const confirm = useConfirm();
     const [playlists, setPlaylists] = useState<any[]>([]);
     const [selectedPlaylist, setSelectedPlaylist] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
@@ -123,14 +125,20 @@ const LibraryPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string): Promise<void> => {
-        if (window.confirm(t("delete_playlist_confirm"))) {
-            try {
-                await apiClient.delete(`/playlists/${id}`);
-                setPlaylists((prev: any[]): any[] => prev.filter((p: any): boolean => p.id !== id));
-            } catch (e) {
-                console.error("Erreur suppression:", e);
-                toast.error(t("playlist_delete_error", "Impossible de supprimer la playlist."));
-            }
+        const ok = await confirm({
+            title: t("delete_playlist_title", "Supprimer la playlist"),
+            message: t("delete_playlist_confirm"),
+            confirmText: t("delete", "Supprimer"),
+            danger: true,
+        });
+        if (!ok) return;
+        try {
+            await apiClient.delete(`/playlists/${id}`);
+            setPlaylists((prev: any[]): any[] => prev.filter((p: any): boolean => p.id !== id));
+            toast.success(t("playlist_delete_success", "Playlist supprimée."));
+        } catch (e) {
+            console.error("Erreur suppression:", e);
+            toast.error(t("playlist_delete_error", "Impossible de supprimer la playlist."));
         }
     };
 
@@ -140,17 +148,23 @@ const LibraryPage: React.FC = () => {
         mediaTitle: string,
     ): Promise<void> => {
         e.stopPropagation();
-        if (window.confirm(`Retirer "${mediaTitle}" de la playlist ?`)) {
-            try {
-                await apiClient.delete(`/playlist-items/${playlistItemId}`);
-                setSelectedPlaylist((prev: any): any => ({
-                    ...prev,
-                    items: prev.items.filter((i: any): boolean => i.id !== playlistItemId),
-                }));
-            } catch (e) {
-                console.error("Erreur suppression:", e);
-                toast.error(t("alert_item_remove_error", "Impossible de retirer l'élément."));
-            }
+        const ok = await confirm({
+            title: t("remove_item_title", "Retirer de la playlist"),
+            message: t("confirm_remove_item", {title: mediaTitle}),
+            confirmText: t("remove", "Retirer"),
+            danger: true,
+        });
+        if (!ok) return;
+        try {
+            await apiClient.delete(`/playlist-items/${playlistItemId}`);
+            setSelectedPlaylist((prev: any): any => ({
+                ...prev,
+                items: prev.items.filter((i: any): boolean => i.id !== playlistItemId),
+            }));
+            toast.success(t("item_removed_success", "Élément retiré."));
+        } catch (e) {
+            console.error("Erreur suppression:", e);
+            toast.error(t("alert_item_remove_error", "Impossible de retirer l'élément."));
         }
     };
 

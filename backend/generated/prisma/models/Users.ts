@@ -44,6 +44,7 @@ export type UsersMinAggregateOutputType = {
   profile_picture: runtime.Bytes | null
   banner: runtime.Bytes | null
   shop_points: number | null
+  equipped_avatar_border: string | null
   role: $Enums.Roles | null
   provider: $Enums.AuthProvider | null
   provider_id: string | null
@@ -65,6 +66,7 @@ export type UsersMaxAggregateOutputType = {
   profile_picture: runtime.Bytes | null
   banner: runtime.Bytes | null
   shop_points: number | null
+  equipped_avatar_border: string | null
   role: $Enums.Roles | null
   provider: $Enums.AuthProvider | null
   provider_id: string | null
@@ -86,6 +88,8 @@ export type UsersCountAggregateOutputType = {
   profile_picture: number
   banner: number
   shop_points: number
+  owned_cosmetics: number
+  equipped_avatar_border: number
   role: number
   provider: number
   provider_id: number
@@ -117,6 +121,7 @@ export type UsersMinAggregateInputType = {
   profile_picture?: true
   banner?: true
   shop_points?: true
+  equipped_avatar_border?: true
   role?: true
   provider?: true
   provider_id?: true
@@ -138,6 +143,7 @@ export type UsersMaxAggregateInputType = {
   profile_picture?: true
   banner?: true
   shop_points?: true
+  equipped_avatar_border?: true
   role?: true
   provider?: true
   provider_id?: true
@@ -159,6 +165,8 @@ export type UsersCountAggregateInputType = {
   profile_picture?: true
   banner?: true
   shop_points?: true
+  owned_cosmetics?: true
+  equipped_avatar_border?: true
   role?: true
   provider?: true
   provider_id?: true
@@ -267,6 +275,8 @@ export type UsersGroupByOutputType = {
   profile_picture: runtime.Bytes | null
   banner: runtime.Bytes | null
   shop_points: number
+  owned_cosmetics: string[]
+  equipped_avatar_border: string | null
   role: $Enums.Roles
   provider: $Enums.AuthProvider | null
   provider_id: string | null
@@ -311,6 +321,8 @@ export type UsersWhereInput = {
   profile_picture?: Prisma.BytesNullableFilter<"Users"> | runtime.Bytes | null
   banner?: Prisma.BytesNullableFilter<"Users"> | runtime.Bytes | null
   shop_points?: Prisma.IntFilter<"Users"> | number
+  owned_cosmetics?: Prisma.StringNullableListFilter<"Users">
+  equipped_avatar_border?: Prisma.StringNullableFilter<"Users"> | string | null
   role?: Prisma.EnumRolesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableFilter<"Users"> | $Enums.AuthProvider | null
   provider_id?: Prisma.StringNullableFilter<"Users"> | string | null
@@ -349,6 +361,8 @@ export type UsersOrderByWithRelationInput = {
   profile_picture?: Prisma.SortOrderInput | Prisma.SortOrder
   banner?: Prisma.SortOrderInput | Prisma.SortOrder
   shop_points?: Prisma.SortOrder
+  owned_cosmetics?: Prisma.SortOrder
+  equipped_avatar_border?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrderInput | Prisma.SortOrder
   provider_id?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -391,6 +405,8 @@ export type UsersWhereUniqueInput = Prisma.AtLeast<{
   profile_picture?: Prisma.BytesNullableFilter<"Users"> | runtime.Bytes | null
   banner?: Prisma.BytesNullableFilter<"Users"> | runtime.Bytes | null
   shop_points?: Prisma.IntFilter<"Users"> | number
+  owned_cosmetics?: Prisma.StringNullableListFilter<"Users">
+  equipped_avatar_border?: Prisma.StringNullableFilter<"Users"> | string | null
   role?: Prisma.EnumRolesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableFilter<"Users"> | $Enums.AuthProvider | null
   provider_id?: Prisma.StringNullableFilter<"Users"> | string | null
@@ -429,6 +445,8 @@ export type UsersOrderByWithAggregationInput = {
   profile_picture?: Prisma.SortOrderInput | Prisma.SortOrder
   banner?: Prisma.SortOrderInput | Prisma.SortOrder
   shop_points?: Prisma.SortOrder
+  owned_cosmetics?: Prisma.SortOrder
+  equipped_avatar_border?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrderInput | Prisma.SortOrder
   provider_id?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -458,6 +476,8 @@ export type UsersScalarWhereWithAggregatesInput = {
   profile_picture?: Prisma.BytesNullableWithAggregatesFilter<"Users"> | runtime.Bytes | null
   banner?: Prisma.BytesNullableWithAggregatesFilter<"Users"> | runtime.Bytes | null
   shop_points?: Prisma.IntWithAggregatesFilter<"Users"> | number
+  owned_cosmetics?: Prisma.StringNullableListFilter<"Users">
+  equipped_avatar_border?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
   role?: Prisma.EnumRolesWithAggregatesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableWithAggregatesFilter<"Users"> | $Enums.AuthProvider | null
   provider_id?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
@@ -479,6 +499,8 @@ export type UsersCreateInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -517,6 +539,8 @@ export type UsersUncheckedCreateInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -555,6 +579,8 @@ export type UsersUpdateInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -593,6 +619,8 @@ export type UsersUncheckedUpdateInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -631,6 +659,8 @@ export type UsersCreateManyInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -652,6 +682,8 @@ export type UsersUpdateManyMutationInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -673,6 +705,8 @@ export type UsersUncheckedUpdateManyInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -682,6 +716,14 @@ export type UsersUncheckedUpdateManyInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type UsersProviderProvider_idCompoundUniqueInput = {
@@ -699,6 +741,8 @@ export type UsersCountOrderByAggregateInput = {
   profile_picture?: Prisma.SortOrder
   banner?: Prisma.SortOrder
   shop_points?: Prisma.SortOrder
+  owned_cosmetics?: Prisma.SortOrder
+  equipped_avatar_border?: Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   provider_id?: Prisma.SortOrder
@@ -724,6 +768,7 @@ export type UsersMaxOrderByAggregateInput = {
   profile_picture?: Prisma.SortOrder
   banner?: Prisma.SortOrder
   shop_points?: Prisma.SortOrder
+  equipped_avatar_border?: Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   provider_id?: Prisma.SortOrder
@@ -745,6 +790,7 @@ export type UsersMinOrderByAggregateInput = {
   profile_picture?: Prisma.SortOrder
   banner?: Prisma.SortOrder
   shop_points?: Prisma.SortOrder
+  equipped_avatar_border?: Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   provider_id?: Prisma.SortOrder
@@ -770,6 +816,10 @@ export type UsersNullableScalarRelationFilter = {
   isNot?: Prisma.UsersWhereInput | null
 }
 
+export type UsersCreateowned_cosmeticsInput = {
+  set: string[]
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -788,6 +838,11 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type UsersUpdateowned_cosmeticsInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type EnumRolesFieldUpdateOperationsInput = {
@@ -1060,6 +1115,8 @@ export type UsersCreateWithoutReviewsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1097,6 +1154,8 @@ export type UsersUncheckedCreateWithoutReviewsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1150,6 +1209,8 @@ export type UsersUpdateWithoutReviewsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1187,6 +1248,8 @@ export type UsersUncheckedUpdateWithoutReviewsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1224,6 +1287,8 @@ export type UsersCreateWithoutReview_commentsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1261,6 +1326,8 @@ export type UsersUncheckedCreateWithoutReview_commentsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1314,6 +1381,8 @@ export type UsersUpdateWithoutReview_commentsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1351,6 +1420,8 @@ export type UsersUncheckedUpdateWithoutReview_commentsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1388,6 +1459,8 @@ export type UsersCreateWithoutCommentLikesInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1425,6 +1498,8 @@ export type UsersUncheckedCreateWithoutCommentLikesInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1478,6 +1553,8 @@ export type UsersUpdateWithoutCommentLikesInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1515,6 +1592,8 @@ export type UsersUncheckedUpdateWithoutCommentLikesInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1552,6 +1631,8 @@ export type UsersCreateWithoutReview_likesInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1589,6 +1670,8 @@ export type UsersUncheckedCreateWithoutReview_likesInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1642,6 +1725,8 @@ export type UsersUpdateWithoutReview_likesInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1679,6 +1764,8 @@ export type UsersUncheckedUpdateWithoutReview_likesInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1716,6 +1803,8 @@ export type UsersCreateWithoutPlaylistsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1753,6 +1842,8 @@ export type UsersUncheckedCreateWithoutPlaylistsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1806,6 +1897,8 @@ export type UsersUpdateWithoutPlaylistsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1843,6 +1936,8 @@ export type UsersUncheckedUpdateWithoutPlaylistsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1880,6 +1975,8 @@ export type UsersCreateWithoutUser_media_statusInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1917,6 +2014,8 @@ export type UsersUncheckedCreateWithoutUser_media_statusInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1970,6 +2069,8 @@ export type UsersUpdateWithoutUser_media_statusInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2007,6 +2108,8 @@ export type UsersUncheckedUpdateWithoutUser_media_statusInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2044,6 +2147,8 @@ export type UsersCreateWithoutActivitiesInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2081,6 +2186,8 @@ export type UsersUncheckedCreateWithoutActivitiesInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2123,6 +2230,8 @@ export type UsersCreateWithoutActivities_targetsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2160,6 +2269,8 @@ export type UsersUncheckedCreateWithoutActivities_targetsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2213,6 +2324,8 @@ export type UsersUpdateWithoutActivitiesInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2250,6 +2363,8 @@ export type UsersUncheckedUpdateWithoutActivitiesInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2298,6 +2413,8 @@ export type UsersUpdateWithoutActivities_targetsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2335,6 +2452,8 @@ export type UsersUncheckedUpdateWithoutActivities_targetsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2372,6 +2491,8 @@ export type UsersCreateWithoutFollowsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2409,6 +2530,8 @@ export type UsersUncheckedCreateWithoutFollowsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2451,6 +2574,8 @@ export type UsersCreateWithoutFollowersInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2488,6 +2613,8 @@ export type UsersUncheckedCreateWithoutFollowersInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2541,6 +2668,8 @@ export type UsersUpdateWithoutFollowsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2578,6 +2707,8 @@ export type UsersUncheckedUpdateWithoutFollowsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2626,6 +2757,8 @@ export type UsersUpdateWithoutFollowersInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2663,6 +2796,8 @@ export type UsersUncheckedUpdateWithoutFollowersInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2700,6 +2835,8 @@ export type UsersCreateWithoutReporter_reportsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2737,6 +2874,8 @@ export type UsersUncheckedCreateWithoutReporter_reportsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2779,6 +2918,8 @@ export type UsersCreateWithoutProfile_reportsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2816,6 +2957,8 @@ export type UsersUncheckedCreateWithoutProfile_reportsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2869,6 +3012,8 @@ export type UsersUpdateWithoutReporter_reportsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2906,6 +3051,8 @@ export type UsersUncheckedUpdateWithoutReporter_reportsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2954,6 +3101,8 @@ export type UsersUpdateWithoutProfile_reportsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2991,6 +3140,8 @@ export type UsersUncheckedUpdateWithoutProfile_reportsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3028,6 +3179,8 @@ export type UsersCreateWithoutNotificationsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3065,6 +3218,8 @@ export type UsersUncheckedCreateWithoutNotificationsInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3107,6 +3262,8 @@ export type UsersCreateWithoutNotificationsRelatedInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3144,6 +3301,8 @@ export type UsersUncheckedCreateWithoutNotificationsRelatedInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3197,6 +3356,8 @@ export type UsersUpdateWithoutNotificationsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3234,6 +3395,8 @@ export type UsersUncheckedUpdateWithoutNotificationsInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3282,6 +3445,8 @@ export type UsersUpdateWithoutNotificationsRelatedInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3319,6 +3484,8 @@ export type UsersUncheckedUpdateWithoutNotificationsRelatedInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3356,6 +3523,8 @@ export type UsersCreateWithoutConversations_user1Input = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3393,6 +3562,8 @@ export type UsersUncheckedCreateWithoutConversations_user1Input = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3435,6 +3606,8 @@ export type UsersCreateWithoutConversations_user2Input = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3472,6 +3645,8 @@ export type UsersUncheckedCreateWithoutConversations_user2Input = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3525,6 +3700,8 @@ export type UsersUpdateWithoutConversations_user1Input = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3562,6 +3739,8 @@ export type UsersUncheckedUpdateWithoutConversations_user1Input = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3610,6 +3789,8 @@ export type UsersUpdateWithoutConversations_user2Input = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3647,6 +3828,8 @@ export type UsersUncheckedUpdateWithoutConversations_user2Input = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3684,6 +3867,8 @@ export type UsersCreateWithoutMessagesInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3721,6 +3906,8 @@ export type UsersUncheckedCreateWithoutMessagesInput = {
   profile_picture?: runtime.Bytes | null
   banner?: runtime.Bytes | null
   shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3774,6 +3961,8 @@ export type UsersUpdateWithoutMessagesInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3811,6 +4000,8 @@ export type UsersUncheckedUpdateWithoutMessagesInput = {
   profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4023,6 +4214,8 @@ export type UsersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   profile_picture?: boolean
   banner?: boolean
   shop_points?: boolean
+  owned_cosmetics?: boolean
+  equipped_avatar_border?: boolean
   role?: boolean
   provider?: boolean
   provider_id?: boolean
@@ -4062,6 +4255,8 @@ export type UsersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   profile_picture?: boolean
   banner?: boolean
   shop_points?: boolean
+  owned_cosmetics?: boolean
+  equipped_avatar_border?: boolean
   role?: boolean
   provider?: boolean
   provider_id?: boolean
@@ -4083,6 +4278,8 @@ export type UsersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   profile_picture?: boolean
   banner?: boolean
   shop_points?: boolean
+  owned_cosmetics?: boolean
+  equipped_avatar_border?: boolean
   role?: boolean
   provider?: boolean
   provider_id?: boolean
@@ -4104,6 +4301,8 @@ export type UsersSelectScalar = {
   profile_picture?: boolean
   banner?: boolean
   shop_points?: boolean
+  owned_cosmetics?: boolean
+  equipped_avatar_border?: boolean
   role?: boolean
   provider?: boolean
   provider_id?: boolean
@@ -4115,7 +4314,7 @@ export type UsersSelectScalar = {
   expo_push_token?: boolean
 }
 
-export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "pseudo" | "email" | "password" | "favorite_band" | "profile_picture" | "banner" | "shop_points" | "role" | "provider" | "provider_id" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at" | "expo_push_token", ExtArgs["result"]["users"]>
+export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "pseudo" | "email" | "password" | "favorite_band" | "profile_picture" | "banner" | "shop_points" | "owned_cosmetics" | "equipped_avatar_border" | "role" | "provider" | "provider_id" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at" | "expo_push_token", ExtArgs["result"]["users"]>
 export type UsersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviews?: boolean | Prisma.Users$reviewsArgs<ExtArgs>
   review_comments?: boolean | Prisma.Users$review_commentsArgs<ExtArgs>
@@ -4170,6 +4369,8 @@ export type $UsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     profile_picture: runtime.Bytes | null
     banner: runtime.Bytes | null
     shop_points: number
+    owned_cosmetics: string[]
+    equipped_avatar_border: string | null
     role: $Enums.Roles
     provider: $Enums.AuthProvider | null
     provider_id: string | null
@@ -4628,6 +4829,8 @@ export interface UsersFieldRefs {
   readonly profile_picture: Prisma.FieldRef<"Users", 'Bytes'>
   readonly banner: Prisma.FieldRef<"Users", 'Bytes'>
   readonly shop_points: Prisma.FieldRef<"Users", 'Int'>
+  readonly owned_cosmetics: Prisma.FieldRef<"Users", 'String[]'>
+  readonly equipped_avatar_border: Prisma.FieldRef<"Users", 'String'>
   readonly role: Prisma.FieldRef<"Users", 'Roles'>
   readonly provider: Prisma.FieldRef<"Users", 'AuthProvider'>
   readonly provider_id: Prisma.FieldRef<"Users", 'String'>

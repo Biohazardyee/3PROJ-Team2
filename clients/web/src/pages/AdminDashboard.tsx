@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {Link, NavigateFunction, useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import apiClient from '../api/client';
+import {useConfirm} from '../context/ConfirmContext';
 import UserAvatar from "../components/UserAvatar.tsx";
 import StatCard from "../components/StatCard.tsx";
 import {Report} from "../../../../backend/types/reports/report.dto.ts"
@@ -25,6 +26,7 @@ interface AdminStats {
 const AdminDashboard: React.FC = () => {
     const navigate: NavigateFunction = useNavigate();
     const {t} = useTranslation();
+    const confirm = useConfirm();
 
     const [activeTab, setActiveTab] = useState<AdminTab>('reports');
     const [reports, setReports] = useState<Report[]>([]);
@@ -187,7 +189,12 @@ const AdminDashboard: React.FC = () => {
     };
 
     const handleUnbanUser = async (banId: string): Promise<void> => {
-        if (!window.confirm(t('confirm_unban', "Êtes-vous sûr de vouloir débannir cet utilisateur ?"))) return;
+        const ok = await confirm({
+            title: t('unban_title', "Débannir l'utilisateur"),
+            message: t('confirm_unban', "Êtes-vous sûr de vouloir débannir cet utilisateur ?"),
+            confirmText: t('unban', "Débannir"),
+        });
+        if (!ok) return;
 
         try {
             await apiClient.delete(`/bans/${banId}`);
@@ -206,7 +213,13 @@ const AdminDashboard: React.FC = () => {
     };
 
     const handleRejectReport = async (reportId: string): Promise<void> => {
-        if (!window.confirm(t('confirm_reject_report', "Êtes-vous sûr de vouloir rejeter et supprimer ce signalement sans prendre de mesure ?"))) return;
+        const ok = await confirm({
+            title: t('reject_report_title', "Rejeter le signalement"),
+            message: t('confirm_reject_report', "Êtes-vous sûr de vouloir rejeter et supprimer ce signalement sans prendre de mesure ?"),
+            confirmText: t('reject', "Rejeter"),
+            danger: true,
+        });
+        if (!ok) return;
 
         try {
             await apiClient.delete(`/reports/${reportId}`);

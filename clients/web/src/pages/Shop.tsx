@@ -1,72 +1,132 @@
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
-import {Coins, Lock, Image as ImageIcon, Palette, BadgeCheck, Sparkles} from "lucide-react";
+import {toast} from "react-toastify";
+import {Coins, Sparkles, Check, Music, Palette} from "lucide-react";
 import apiClient from "../api/client";
 import {AxiosResponse} from "axios";
+import AvatarBorder from "../components/AvatarBorder";
+import {useConfirm} from "../context/ConfirmContext";
+import {useDarkMode} from "../useDarkMode";
 
-type ShopItem = {
+type CatalogItem = {
     id: string;
     name: string;
-    description: string;
     price: number;
-    icon: React.ReactNode;
+    type: string;
 };
 
 const Shop: React.FC = () => {
     const {t} = useTranslation();
+    const confirm = useConfirm();
+    const {theme, setTheme} = useDarkMode();
+    const [userId, setUserId] = useState<string>("");
     const [points, setPoints] = useState<number>(0);
+    const [owned, setOwned] = useState<string[]>([]);
+    const [equipped, setEquipped] = useState<string | null>(null);
+    const [profilePic, setProfilePic] = useState<string | null>(null);
+    const [catalog, setCatalog] = useState<CatalogItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [busyId, setBusyId] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchPoints = async (): Promise<void> => {
+        const load = async (): Promise<void> => {
             try {
                 const token: string | null = localStorage.getItem("token");
                 if (!token) return;
                 const decoded: any = jwtDecode(token);
-                const userId: string = decoded.id || decoded.userId;
-                const res: AxiosResponse = await apiClient.get(`/users/public/${userId}`);
-                const data = res.data.user || res.data;
+                const uId: string = decoded.id || decoded.userId;
+                setUserId(uId);
+
+                const [profileRes, catalogRes]: AxiosResponse[] = await Promise.all([
+                    apiClient.get(`/users/public/${uId}`),
+                    apiClient.get(`/users/cosmetics/catalog`),
+                ]);
+                const data = profileRes.data.user || profileRes.data;
                 setPoints(data.shop_points ?? 0);
+                setOwned(data.owned_cosmetics ?? []);
+                setEquipped(data.equipped_avatar_border ?? null);
+
+                if (data.profile_picture) {
+                    setProfilePic(
+                        data.profile_picture.startsWith("data") || data.profile_picture.startsWith("http")
+                            ? data.profile_picture
+                            : `data:image/jpeg;base64,${data.profile_picture}`,
+                    );
+                }
+                setCatalog(catalogRes.data.catalog || []);
             } catch (err) {
-                console.error("Erreur chargement des points :", err);
+                console.error("Erreur chargement boutique :", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchPoints();
+        load();
     }, []);
 
-    const items: ShopItem[] = [
-        {
-            id: "banner",
-            name: t("shop_item_banner", "Bannières exclusives"),
-            description: t("shop_item_banner_desc", "Des bannières animées pour votre profil"),
-            price: 150,
-            icon: <ImageIcon size={26}/>,
-        },
-        {
-            id: "theme",
-            name: t("shop_item_theme", "Thèmes de profil"),
-            description: t("shop_item_theme_desc", "Personnalisez les couleurs de votre page"),
-            price: 200,
-            icon: <Palette size={26}/>,
-        },
-        {
-            id: "badge",
-            name: t("shop_item_badge", "Badges de prestige"),
-            description: t("shop_item_badge_desc", "Affichez votre statut de mélomane"),
-            price: 100,
-            icon: <BadgeCheck size={26}/>,
-        },
-        {
-            id: "effect",
-            name: t("shop_item_effect", "Effets spéciaux"),
-            description: t("shop_item_effect_desc", "Des animations uniques sur votre avatar"),
-            price: 300,
-            icon: <Sparkles size={26}/>,
-        },
-    ];
+    const handleBuy = async (item: CatalogItem): Promise<void> => {
+        if (points < item.price) {
+            toast.error(t("not_enough_points", "Points insuffisants."));
+            return;
+        }
+        const ok = await confirm({
+            title: t("confirm_purchase_title", "Confirmer l'achat"),
+            message: t("confirm_purchase", {
+                name: item.name,
+                price: item.price,
+                defaultValue: 'Acheter "{{name}}" pour {{price}} points ?',
+            }),
+            confirmText: t("buy", "Acheter"),
+        });
+        if (!ok) return;
+
+        setBusyId(item.id);
+        try {
+            const res: AxiosResponse = await apiClient.post("/users/cosmetics/buy", {
+                cosmetic_id: item.id,
+            });
+            setPoints(res.data.shop_points);
+            setOwned(res.data.owned_cosmetics);
+            window.dispatchEvent(new Event("profileUpdated"));
+            toast.success(t("cosmetic_bought", "Cosmétique débloqué ! 🎉"));
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || t("cosmetic_buy_error", "Achat impossible."));
+        } finally {
+            setBusyId(null);
+        }
+    };
+
+    const handleEquip = async (cosmeticId: string | null): Promise<void> => {
+        setBusyId(cosmeticId || "none");
+        try {
+            const res: AxiosResponse = await apiClient.post("/users/cosmetics/equip", {
+                cosmetic_id: cosmeticId,
+            });
+            setEquipped(res.data.equipped_avatar_border);
+            window.dispatchEvent(new Event("profileUpdated"));
+            toast.success(
+                cosmeticId
+                    ? t("cosmetic_equipped", "Contour équipé !")
+                    : t("cosmetic_unequipped", "Contour retiré."),
+            );
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
+        } finally {
+            setBusyId(null);
+        }
+    };
+
+    const Preview: React.FC<{ borderId: string }> = ({borderId}) => (
+        <AvatarBorder borderId={borderId}>
+            <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-800 dark:bg-gray-100 flex items-center justify-center">
+                {profilePic ? (
+                    <img src={profilePic} alt="" className="w-full h-full object-cover"/>
+                ) : (
+                    <Music size={28} className="text-purple-400 dark:text-purple-500"/>
+                )}
+            </div>
+        </AvatarBorder>
+    );
 
     return (
         <div className="min-h-screen bg-transparent dark:bg-slate-50 text-white dark:text-gray-900 p-6 md:p-10 transition-colors duration-300">
@@ -92,7 +152,7 @@ const Shop: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Info comment gagner des points */}
+                {/* Info */}
                 <div className="mb-8 flex items-center gap-3 bg-blue-500/10 dark:bg-blue-50 border border-blue-500/20 dark:border-blue-200 rounded-xl px-5 py-4">
                     <Sparkles size={20} className="text-blue-400 dark:text-blue-500 shrink-0"/>
                     <p className="text-sm text-blue-200 dark:text-blue-700">
@@ -100,36 +160,156 @@ const Shop: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Grille des cosmétiques */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {items.map((item) => (
-                        <div
-                            key={item.id}
-                            className="relative bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm overflow-hidden"
-                        >
-                            <div className="absolute top-3 right-3 flex items-center gap-1 bg-slate-800/80 dark:bg-gray-100 text-slate-400 dark:text-gray-500 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                <Lock size={11}/>
-                                {t("shop_coming_soon", "Bientôt")}
-                            </div>
+                <h2 className="text-xl font-bold mb-5 text-white dark:text-gray-900">
+                    {t("shop_section_borders", "Contours de photo de profil")}
+                </h2>
 
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 dark:from-purple-100 dark:to-blue-100 flex items-center justify-center text-purple-400 dark:text-purple-500 mb-4">
-                                {item.icon}
-                            </div>
+                {/* Grille des contours */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                    {catalog.filter((c) => c.type === "avatar_border").map((item) => {
+                        const isOwned: boolean = owned.includes(item.id);
+                        const isEquipped: boolean = equipped === item.id;
+                        const busy: boolean = busyId === item.id;
 
-                            <h3 className="font-bold text-white dark:text-gray-900 mb-1">
-                                {item.name}
-                            </h3>
-                            <p className="text-xs text-slate-400 dark:text-gray-500 mb-4 grow">
-                                {item.description}
-                            </p>
+                        return (
+                            <div
+                                key={item.id}
+                                className={`relative bg-[#1a1d26] dark:bg-white border rounded-2xl p-6 flex flex-col items-center text-center shadow-sm transition-all ${
+                                    isEquipped
+                                        ? "border-purple-500 dark:border-purple-400"
+                                        : "border-slate-800 dark:border-gray-200"
+                                }`}
+                            >
+                                {isEquipped && (
+                                    <div className="absolute top-3 right-3 flex items-center gap-1 bg-purple-500/15 text-purple-400 dark:text-purple-500 text-[11px] font-bold px-2.5 py-1 rounded-full">
+                                        <Check size={12}/>
+                                        {t("equipped", "Équipé")}
+                                    </div>
+                                )}
 
-                            <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
-                                <Coins size={16}/>
-                                {item.price}
+                                <div className="mb-4 mt-2">
+                                    <Preview borderId={item.id}/>
+                                </div>
+
+                                <h3 className="font-bold text-white dark:text-gray-900 mb-2">
+                                    {item.name}
+                                </h3>
+
+                                <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold mb-4">
+                                    <Coins size={16}/>
+                                    {item.price}
+                                </div>
+
+                                {/* Action */}
+                                {!isOwned ? (
+                                    <button
+                                        onClick={() => handleBuy(item)}
+                                        disabled={busy || points < item.price}
+                                        className="w-full py-2.5 rounded-xl font-semibold text-sm bg-amber-500 hover:bg-amber-400 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                    >
+                                        {busy
+                                            ? "…"
+                                            : points < item.price
+                                                ? t("not_enough_points_short", "Trop cher")
+                                                : t("buy", "Acheter")}
+                                    </button>
+                                ) : isEquipped ? (
+                                    <button
+                                        onClick={() => handleEquip(null)}
+                                        disabled={busy}
+                                        className="w-full py-2.5 rounded-xl font-semibold text-sm bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-200 transition-colors disabled:opacity-40"
+                                    >
+                                        {busy ? "…" : t("unequip", "Retirer")}
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => handleEquip(item.id)}
+                                        disabled={busy}
+                                        className="w-full py-2.5 rounded-xl font-semibold text-sm bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-40"
+                                    >
+                                        {busy ? "…" : t("equip", "Équiper")}
+                                    </button>
+                                )}
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
+
+                {/* Section thèmes */}
+                {catalog.some((c) => c.type === "theme") && (
+                    <>
+                        <h2 className="text-xl font-bold mt-12 mb-5 text-white dark:text-gray-900">
+                            {t("shop_section_themes", "Thèmes du site")}
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {catalog.filter((c) => c.type === "theme").map((item) => {
+                                const isOwned: boolean = owned.includes(item.id);
+                                const isActive: boolean = item.id === "theme_linkinpark" && theme === "lp";
+                                const busy: boolean = busyId === item.id;
+
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`relative bg-[#1a1d26] dark:bg-white border rounded-2xl p-6 shadow-sm transition-all ${
+                                            isActive ? "border-red-500" : "border-slate-800 dark:border-gray-200"
+                                        }`}
+                                    >
+                                        {/* Aperçu du thème */}
+                                        <div className="h-28 rounded-xl overflow-hidden mb-4 flex items-end p-3 relative"
+                                             style={{background: "linear-gradient(135deg, #0c0709 0%, #1a0e11 55%, #7f1d1d 130%)"}}>
+                                            <div className="flex gap-1.5 relative z-10">
+                                                <span className="w-5 h-5 rounded-full bg-[#0c0709] border border-white/10"/>
+                                                <span className="w-5 h-5 rounded-full bg-[#1a0e11] border border-white/10"/>
+                                                <span className="w-5 h-5 rounded-full bg-red-600 border border-white/10"/>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
+                                                <Palette size={16} className="text-red-500"/>
+                                                {item.name}
+                                            </h3>
+                                            <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
+                                                <Coins size={16}/>
+                                                {item.price}
+                                            </div>
+                                        </div>
+
+                                        {!isOwned ? (
+                                            <button
+                                                onClick={() => handleBuy(item)}
+                                                disabled={busy || points < item.price}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-amber-500 hover:bg-amber-400 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                            >
+                                                {busy ? "…" : points < item.price ? t("not_enough_points_short", "Trop cher") : t("buy", "Acheter")}
+                                            </button>
+                                        ) : isActive ? (
+                                            <button
+                                                onClick={() => setTheme("dark")}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-200 transition-colors"
+                                            >
+                                                {t("deactivate_theme", "Revenir au thème sombre")}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => setTheme("lp")}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-red-600 hover:bg-red-500 text-white transition-colors"
+                                            >
+                                                {t("activate_theme", "Activer le thème")}
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
+
+                {!loading && catalog.length === 0 && (
+                    <p className="text-center text-slate-500 py-12">
+                        {t("shop_empty", "Aucun cosmétique disponible pour le moment.")}
+                    </p>
+                )}
             </div>
         </div>
     );

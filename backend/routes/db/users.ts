@@ -37,6 +37,31 @@ router.post(
     },
 );
 
+// --- Cosmétiques (boutique) ---
+router.get(
+    "/cosmetics/catalog",
+    authGuard,
+    function (req: Request, res: Response, next: NextFunction): void {
+        userController.getCosmeticsCatalog(req, res, next);
+    },
+);
+
+router.post(
+    "/cosmetics/buy",
+    authGuard,
+    function (req: Request, res: Response, next: NextFunction): void {
+        userController.buyCosmetic(req, res, next);
+    },
+);
+
+router.post(
+    "/cosmetics/equip",
+    authGuard,
+    function (req: Request, res: Response, next: NextFunction): void {
+        userController.equipCosmetic(req, res, next);
+    },
+);
+
 router.get(
     "/public/:id",
 

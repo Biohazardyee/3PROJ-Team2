@@ -30,6 +30,7 @@ import {
 
 import {Users} from "../../../generated/prisma/browser.js";
 import {userMapper} from "../../../mappers/users/user.mapper.js";
+import {COSMETICS, CosmeticItem, getCosmeticById} from "./cosmetics.catalog.js";
 
 export class UserService {
     async add(data: UserRegistrationDto): Promise<UserResponseAddDto> {
@@ -622,6 +623,80 @@ export class UserService {
         });
 
         return userMapper.toPublicDto(updatedUser);
+    }
+
+    getCosmeticsCatalog(): CosmeticItem[] {
+        return COSMETICS;
+    }
+
+    async buyCosmetic(
+        userId: string,
+        cosmeticId: string,
+    ): Promise<{ shop_points: number; owned_cosmetics: string[] }> {
+        if (isEmptyString(userId) || isEmptyString(cosmeticId)) {
+            throw new BadRequest("User id and cosmetic id are required");
+        }
+
+        const cosmetic = getCosmeticById(cosmeticId);
+        if (!cosmetic) {
+            throw new BadRequest("Unknown cosmetic");
+        }
+
+        const user = await PrismaDb.users.findUnique({where: {id: userId}});
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+
+        if (user.owned_cosmetics.includes(cosmeticId)) {
+            throw new BadRequest("Cosmetic already owned");
+        }
+
+        if (user.shop_points < cosmetic.price) {
+            throw new BadRequest("Not enough shop points");
+        }
+
+        const updated = await PrismaDb.users.update({
+            where: {id: userId},
+            data: {
+                shop_points: {decrement: cosmetic.price},
+                owned_cosmetics: {push: cosmeticId},
+            },
+        });
+
+        return {
+            shop_points: updated.shop_points,
+            owned_cosmetics: updated.owned_cosmetics,
+        };
+    }
+
+    async equipCosmetic(
+        userId: string,
+        cosmeticId: string | null,
+    ): Promise<{ equipped_avatar_border: string | null }> {
+        if (isEmptyString(userId)) {
+            throw new BadRequest("User id is required");
+        }
+
+        const user = await PrismaDb.users.findUnique({where: {id: userId}});
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+
+        if (cosmeticId !== null && cosmeticId !== "") {
+            if (!getCosmeticById(cosmeticId)) {
+                throw new BadRequest("Unknown cosmetic");
+            }
+            if (!user.owned_cosmetics.includes(cosmeticId)) {
+                throw new BadRequest("You don't own this cosmetic");
+            }
+        }
+
+        const updated = await PrismaDb.users.update({
+            where: {id: userId},
+            data: {equipped_avatar_border: cosmeticId || null},
+        });
+
+        return {equipped_avatar_border: updated.equipped_avatar_border};
     }
 
     async updatePushToken(id: string, token: string): Promise<void> {

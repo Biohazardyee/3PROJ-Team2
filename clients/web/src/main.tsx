@@ -4,13 +4,20 @@ import './index.css'
 import App from './App'
 import './i18n';
 import { SocketProvider } from './context/SocketContext';
+import { ConfirmProvider } from './context/ConfirmContext';
+import { applyTheme, Theme } from './useDarkMode';
+
+// Applique le thème enregistré dès le chargement (évite le flash sur toutes les pages)
+applyTheme((localStorage.getItem('theme') as Theme) || 'dark');
 
 const rootElement = document.getElementById('root') as HTMLElement;
 
 createRoot(rootElement).render(
     <StrictMode>
         <SocketProvider>
-            <App />
+            <ConfirmProvider>
+                <App />
+            </ConfirmProvider>
         </SocketProvider>
     </StrictMode>,
 )

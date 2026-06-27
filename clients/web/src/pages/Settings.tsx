@@ -17,6 +17,7 @@ import {jwtDecode} from "jwt-decode";
 import {toast} from "react-toastify";
 import apiClient from "../api/client";
 import {AxiosResponse} from "axios";
+import {useConfirm} from "../context/ConfirmContext";
 
 type TabType = "Profile" | "Privacy" | "Data";
 
@@ -26,6 +27,7 @@ const BIO_MAX: number = 150;
 
 const Settings: React.FC = () => {
     const {t} = useTranslation();
+    const confirm = useConfirm();
     const navigate: NavigateFunction = useNavigate();
     const [activeTab, setActiveTab] = useState<TabType>("Profile");
 
@@ -199,15 +201,20 @@ const Settings: React.FC = () => {
         }
     };
 
-    const handleLogout = (): void => {
-        if (window.confirm(t("logout_confirm"))) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("userToken");
-            localStorage.removeItem("user");
-            localStorage.removeItem("user_profile_pic");
-            window.dispatchEvent(new Event("auth-changed"));
-            navigate("/");
-        }
+    const handleLogout = async (): Promise<void> => {
+        const ok = await confirm({
+            title: t("logout_title", "Déconnexion"),
+            message: t("logout_confirm"),
+            confirmText: t("logout", "Se déconnecter"),
+            danger: true,
+        });
+        if (!ok) return;
+        localStorage.removeItem("token");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("user");
+        localStorage.removeItem("user_profile_pic");
+        window.dispatchEvent(new Event("auth-changed"));
+        navigate("/");
     };
 
     return (

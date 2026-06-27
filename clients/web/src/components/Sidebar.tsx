@@ -1,12 +1,13 @@
 import {useState, useEffect} from 'react';
 import {
     Home as HomeIcon, Library, Rocket, BarChart2,
-    Shield, Settings, X, Sun, Moon, Globe, ChevronRight
+    Shield, Settings, X, Sun, Moon, Globe, ChevronRight, ShoppingBag, Palette
 } from 'lucide-react';
 import {useNavigate, useLocation, NavigateFunction} from 'react-router-dom';
 import {useDarkMode} from '../useDarkMode';
 import {useTranslation} from 'react-i18next';
 import {jwtDecode} from "jwt-decode";
+import apiClient from '../api/client';
 import {TokenPayloadDto} from "../../../../backend/types/users/user.dto.ts"
 
 type SidebarProps = {
@@ -18,17 +19,45 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
     const {t, i18n} = useTranslation();
     const navigate: NavigateFunction = useNavigate();
     const location = useLocation();
-    const {theme, toggleTheme} = useDarkMode();
+    const {theme, setTheme} = useDarkMode();
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+    const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
+    const [ownsLpTheme, setOwnsLpTheme] = useState<boolean>(false);
 
     useEffect((): void => {
         if (!isOpen) {
             setIsLangMenuOpen(false);
+            setIsThemeMenuOpen(false);
         }
     }, [isOpen]);
+
+    // Récupère les cosmétiques possédés (pour savoir si le thème LP est débloqué)
+    useEffect((): void => {
+        if (!isOpen) return;
+        const token: string | null = localStorage.getItem('token');
+        if (!token) return;
+        try {
+            const decoded: any = jwtDecode(token);
+            const uId: string = decoded.id || decoded.userId;
+            apiClient
+                .get(`/users/public/${uId}`)
+                .then((res) => {
+                    const data = res.data.user || res.data;
+                    setOwnsLpTheme((data.owned_cosmetics || []).includes('theme_linkinpark'));
+                })
+                .catch((e) => console.error('Erreur cosmétiques sidebar:', e));
+        } catch (e) {
+            console.error(e);
+        }
+    }, [isOpen]);
+
+    const selectTheme = (t: "light" | "dark" | "lp"): void => {
+        setTheme(t);
+        setIsThemeMenuOpen(false);
+    };
 
     useEffect(():void => {
         const token:string | null = localStorage.getItem('token');
@@ -47,6 +76,7 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
         {name: t('nav_feed'), icon: Rocket, path: '/feed'},
         {name: t('nav_stats'), icon: BarChart2, path: '/stats'},
         {name: t('nav_library'), icon: Library, path: '/library'},
+        {name: t('nav_shop', 'Boutique'), icon: ShoppingBag, path: '/shop'},
     ];
 
     const languages = [
@@ -182,22 +212,60 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
                         )}
                     </div>
 
-                    <button
-                        onClick={toggleTheme}
-                        className="flex items-center gap-4 w-full p-3 rounded-xl transition-colors text-gray-400 hover:text-white hover:bg-[#2A2A38]/50 dark:text-gray-500 dark:hover:bg-gray-100 dark:hover:text-gray-900"
-                    >
-                        {theme === 'light' ? (
-                            <>
-                                <Sun size={20} className="text-yellow-400"/>
-                                <span className="font-semibold text-sm">{t('light_mode')}</span>
-                            </>
-                        ) : (
-                            <>
-                                <Moon size={20} className="text-indigo-600"/>
-                                <span className="font-semibold text-sm">{t('dark_mode')}</span>
-                            </>
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+                            className="flex items-center justify-between w-full p-3 rounded-xl transition-colors text-gray-400 hover:text-white hover:bg-[#2A2A38]/50 dark:text-gray-500 dark:hover:bg-gray-100 dark:hover:text-gray-900"
+                        >
+                            <div className="flex items-center gap-4">
+                                {theme === 'light' ? (
+                                    <Sun size={20} className="text-yellow-400"/>
+                                ) : theme === 'lp' ? (
+                                    <Palette size={20} className="text-red-500"/>
+                                ) : (
+                                    <Moon size={20} className="text-indigo-600"/>
+                                )}
+                                <span className="font-semibold text-sm">
+                                    {theme === 'light' ? t('light_mode') : theme === 'lp' ? t('theme_crimson', 'Cramoisi') : t('dark_mode')}
+                                </span>
+                            </div>
+                            <ChevronRight size={16}
+                                          className={`transition-transform duration-200 ${isThemeMenuOpen ? 'rotate-90' : ''}`}/>
+                        </button>
+
+                        {isThemeMenuOpen && (
+                            <div
+                                className="absolute left-[105%] bottom-0 w-52 bg-[#1C1C28] dark:bg-white border border-gray-800 dark:border-gray-200 rounded-xl p-2 space-y-1 shadow-xl animate-in fade-in slide-in-from-left-2 duration-200 z-50">
+                                <button
+                                    onClick={() => selectTheme('dark')}
+                                    className={`flex items-center gap-3 w-full text-left p-2 rounded-lg text-sm transition-colors ${theme === 'dark' ? 'text-white font-bold bg-[#2A2A38] dark:text-indigo-600 dark:bg-indigo-50' : 'text-gray-400 hover:text-white hover:bg-[#2A2A38]/50 dark:text-gray-500 dark:hover:text-gray-900 dark:hover:bg-gray-100'}`}
+                                >
+                                    <Moon size={16}/> {t('dark_mode')}
+                                </button>
+                                <button
+                                    onClick={() => selectTheme('light')}
+                                    className={`flex items-center gap-3 w-full text-left p-2 rounded-lg text-sm transition-colors ${theme === 'light' ? 'text-white font-bold bg-[#2A2A38] dark:text-indigo-600 dark:bg-indigo-50' : 'text-gray-400 hover:text-white hover:bg-[#2A2A38]/50 dark:text-gray-500 dark:hover:text-gray-900 dark:hover:bg-gray-100'}`}
+                                >
+                                    <Sun size={16}/> {t('light_mode')}
+                                </button>
+                                {ownsLpTheme ? (
+                                    <button
+                                        onClick={() => selectTheme('lp')}
+                                        className={`flex items-center gap-3 w-full text-left p-2 rounded-lg text-sm transition-colors ${theme === 'lp' ? 'text-red-500 font-bold bg-red-500/10' : 'text-gray-400 hover:text-white hover:bg-[#2A2A38]/50 dark:text-gray-500 dark:hover:text-gray-900 dark:hover:bg-gray-100'}`}
+                                    >
+                                        <Palette size={16}/> {t('theme_crimson', 'Cramoisi')}
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => handleNavigation('/shop')}
+                                        className="flex items-center gap-3 w-full text-left p-2 rounded-lg text-sm text-gray-500 hover:text-white hover:bg-[#2A2A38]/50 dark:hover:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+                                    >
+                                        <ShoppingBag size={16}/> {t('unlock_lp_theme', 'Linkin Park (boutique)')}
+                                    </button>
+                                )}
+                            </div>
                         )}
-                    </button>
+                    </div>
                 </div>
             </aside>
         </>

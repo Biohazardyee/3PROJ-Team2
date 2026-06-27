@@ -18,6 +18,7 @@ import UserAvatar from "../components/UserAvatar";
 import {AxiosResponse} from "axios";
 import {toast} from "react-toastify";
 import {useGoBack} from "../hooks/useGoBack";
+import {useConfirm} from "../context/ConfirmContext";
 
 type TabType = "Commentaires" | "Albums";
 
@@ -27,6 +28,7 @@ const AlbumDetails: React.FC = () => {
     const navigate: NavigateFunction = useNavigate();
     const goBack = useGoBack("/home");
     const {t} = useTranslation();
+    const confirm = useConfirm();
 
     const formatReviewDate = (dateStr: string | undefined): string => {
         const date = new Date(dateStr || Date.now());
@@ -601,24 +603,32 @@ const AlbumDetails: React.FC = () => {
     };
 
     const deleteComment = async (commentId: number | string): Promise<void> => {
-        if (
-            window.confirm(
-                t("delete_confirm") || "Voulez-vous vraiment supprimer cet avis ?",
-            )
-        ) {
-            setCommentsList((prev) => prev.filter((comment) => comment.id !== commentId));
-            try {
-                await apiClient.delete(`/reviews/${commentId}`);
-            } catch (err) {
-                console.error("Erreur lors de la suppression de l'avis:", err);
-                toast.error(t("review_delete_error", "Impossible de supprimer cet avis."));
-                fetchReviews();
-            }
+        const ok = await confirm({
+            title: t("delete_review_title", "Supprimer la critique"),
+            message: t("delete_confirm", "Voulez-vous vraiment supprimer cet avis ?"),
+            confirmText: t("delete", "Supprimer"),
+            danger: true,
+        });
+        if (!ok) return;
+        setCommentsList((prev) => prev.filter((comment) => comment.id !== commentId));
+        try {
+            await apiClient.delete(`/reviews/${commentId}`);
+            toast.success(t("review_deleted_success", "Critique supprimée."));
+        } catch (err) {
+            console.error("Erreur lors de la suppression de l'avis:", err);
+            toast.error(t("review_delete_error", "Impossible de supprimer cet avis."));
+            fetchReviews();
         }
     };
 
     const deleteReply = async (replyId: number | string): Promise<void> => {
-        if (!window.confirm("Voulez-vous vraiment supprimer ce commentaire ?")) return;
+        const okReply = await confirm({
+            title: t("delete_comment_title", "Supprimer le commentaire"),
+            message: t("delete_comment_confirm", "Voulez-vous vraiment supprimer ce commentaire ?"),
+            confirmText: t("delete", "Supprimer"),
+            danger: true,
+        });
+        if (!okReply) return;
 
         setCommentsList((prev) =>
             prev.map((review) => {

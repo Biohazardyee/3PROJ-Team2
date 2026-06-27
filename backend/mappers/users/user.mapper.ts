@@ -24,6 +24,8 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
       biography: user.biography,
       favorite_band: user.favorite_band,
       shop_points: user.shop_points ?? 0,
+      owned_cosmetics: user.owned_cosmetics ?? [],
+      equipped_avatar_border: user.equipped_avatar_border ?? null,
       has_notifications: user.has_notifications ?? true,
       profile_picture: user.profile_picture,
       banner: user.banner,
@@ -80,6 +82,8 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
         ? Buffer.from(user.banner).toString("base64")
         : null,
       shop_points: user.shop_points ?? 0,
+      owned_cosmetics: user.owned_cosmetics ?? [],
+      equipped_avatar_border: user.equipped_avatar_border ?? null,
       created_at: user.created_at,
     };
   }
