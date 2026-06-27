@@ -49,25 +49,19 @@ export class MediaStatusService {
             throw new BadRequest("Media with this id does not exist");
         }
 
-        const alreadyHasStatus: UserMediaStatus | null =
-            await PrismaDb.userMediaStatus.findUnique({
+        // Upsert : définir le statut, qu'il existe déjà ou non (évite une 400 inutile)
+        const userMediaStatus: UserMediaStatus =
+            await PrismaDb.userMediaStatus.upsert({
                 where: {
                     user_id_media_id: {
                         user_id: data.user_id,
                         media_id: data.media_id,
                     },
                 },
-            });
-
-        if (alreadyHasStatus) {
-            throw new BadRequest(
-                "User already has a status for this media. Use update instead",
-            );
-        }
-
-        const userMediaStatus: UserMediaStatus =
-            await PrismaDb.userMediaStatus.create({
-                data,
+                update: {
+                    status: data.status as MediaStatus,
+                },
+                create: data,
             });
 
         return mediaStatusMapper.toDto(userMediaStatus);

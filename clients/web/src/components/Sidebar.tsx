@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import {useNavigate, useLocation, NavigateFunction} from 'react-router-dom';
 import {useDarkMode} from '../useDarkMode';
+import {PREMIUM_THEMES, Theme} from '../themes.config';
 import {useTranslation} from 'react-i18next';
 import {jwtDecode} from "jwt-decode";
 import apiClient from '../api/client';
@@ -25,7 +26,7 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
     const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
-    const [ownsLpTheme, setOwnsLpTheme] = useState<boolean>(false);
+    const [ownedCosmetics, setOwnedCosmetics] = useState<string[]>([]);
 
     useEffect((): void => {
         if (!isOpen) {
@@ -34,7 +35,7 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
         }
     }, [isOpen]);
 
-    // Récupère les cosmétiques possédés (pour savoir si le thème LP est débloqué)
+    // Récupère les cosmétiques possédés (pour savoir quels thèmes premium sont débloqués)
     useEffect((): void => {
         if (!isOpen) return;
         const token: string | null = localStorage.getItem('token');
@@ -46,7 +47,7 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
                 .get(`/users/public/${uId}`)
                 .then((res) => {
                     const data = res.data.user || res.data;
-                    setOwnsLpTheme((data.owned_cosmetics || []).includes('theme_linkinpark'));
+                    setOwnedCosmetics(data.owned_cosmetics || []);
                 })
                 .catch((e) => console.error('Erreur cosmétiques sidebar:', e));
         } catch (e) {
@@ -54,10 +55,17 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
         }
     }, [isOpen]);
 
-    const selectTheme = (t: "light" | "dark" | "lp"): void => {
-        setTheme(t);
+    const selectTheme = (value: Theme): void => {
+        setTheme(value);
         setIsThemeMenuOpen(false);
     };
+
+    const currentPremium = PREMIUM_THEMES.find((p) => p.value === theme);
+    const currentThemeLabel: string = theme === 'light'
+        ? t('light_mode')
+        : currentPremium
+            ? t(currentPremium.labelKey, currentPremium.labelFallback)
+            : t('dark_mode');
 
     useEffect(():void => {
         const token:string | null = localStorage.getItem('token');
@@ -220,14 +228,12 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
                             <div className="flex items-center gap-4">
                                 {theme === 'light' ? (
                                     <Sun size={20} className="text-yellow-400"/>
-                                ) : theme === 'lp' ? (
-                                    <Palette size={20} className="text-red-500"/>
+                                ) : currentPremium ? (
+                                    <Palette size={20} className={currentPremium.accentClass}/>
                                 ) : (
                                     <Moon size={20} className="text-indigo-600"/>
                                 )}
-                                <span className="font-semibold text-sm">
-                                    {theme === 'light' ? t('light_mode') : theme === 'lp' ? t('theme_crimson', 'Cramoisi') : t('dark_mode')}
-                                </span>
+                                <span className="font-semibold text-sm">{currentThemeLabel}</span>
                             </div>
                             <ChevronRight size={16}
                                           className={`transition-transform duration-200 ${isThemeMenuOpen ? 'rotate-90' : ''}`}/>
@@ -248,20 +254,24 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
                                 >
                                     <Sun size={16}/> {t('light_mode')}
                                 </button>
-                                {ownsLpTheme ? (
-                                    <button
-                                        onClick={() => selectTheme('lp')}
-                                        className={`flex items-center gap-3 w-full text-left p-2 rounded-lg text-sm transition-colors ${theme === 'lp' ? 'text-red-500 font-bold bg-red-500/10' : 'text-gray-400 hover:text-white hover:bg-[#2A2A38]/50 dark:text-gray-500 dark:hover:text-gray-900 dark:hover:bg-gray-100'}`}
-                                    >
-                                        <Palette size={16}/> {t('theme_crimson', 'Cramoisi')}
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={() => handleNavigation('/shop')}
-                                        className="flex items-center gap-3 w-full text-left p-2 rounded-lg text-sm text-gray-500 hover:text-white hover:bg-[#2A2A38]/50 dark:hover:text-gray-900 dark:hover:bg-gray-100 transition-colors"
-                                    >
-                                        <ShoppingBag size={16}/> {t('unlock_lp_theme', 'Linkin Park (boutique)')}
-                                    </button>
+                                {PREMIUM_THEMES.map((pt) =>
+                                    ownedCosmetics.includes(pt.cosmeticId) ? (
+                                        <button
+                                            key={pt.value}
+                                            onClick={() => selectTheme(pt.value)}
+                                            className={`flex items-center gap-3 w-full text-left p-2 rounded-lg text-sm transition-colors ${theme === pt.value ? `${pt.accentClass} font-bold bg-white/5` : 'text-gray-400 hover:text-white hover:bg-[#2A2A38]/50 dark:text-gray-500 dark:hover:text-gray-900 dark:hover:bg-gray-100'}`}
+                                        >
+                                            <Palette size={16} className={pt.accentClass}/> {t(pt.labelKey, pt.labelFallback)}
+                                        </button>
+                                    ) : (
+                                        <button
+                                            key={pt.value}
+                                            onClick={() => handleNavigation('/shop')}
+                                            className="flex items-center gap-3 w-full text-left p-2 rounded-lg text-sm text-gray-500 hover:text-white hover:bg-[#2A2A38]/50 dark:hover:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+                                        >
+                                            <ShoppingBag size={16}/> {t(pt.labelKey, pt.labelFallback)} ({t('shop_title', 'Boutique')})
+                                        </button>
+                                    ),
                                 )}
                             </div>
                         )}

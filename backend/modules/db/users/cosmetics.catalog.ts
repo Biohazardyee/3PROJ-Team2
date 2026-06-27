@@ -15,7 +15,12 @@ export const COSMETICS: CosmeticItem[] = [
     {id: "border_neon", name: "Néon", price: 200, type: "avatar_border"},
     {id: "border_fire", name: "Brasier", price: 300, type: "avatar_border"},
     {id: "border_emerald", name: "Émeraude", price: 180, type: "avatar_border"},
-    {id: "theme_linkinpark", name: "Thème Cramoisi", price: 500, type: "theme"},
+    {id: "border_ice", name: "Glace", price: 220, type: "avatar_border"},
+    {id: "border_flame", name: "Flammes", price: 600, type: "avatar_border"},
+    {id: "border_galaxy", name: "Galaxie", price: 350, type: "avatar_border"},
+    {id: "border_toxic", name: "Toxique", price: 200, type: "avatar_border"},
+    {id: "theme_crimson", name: "Thème Cramoisi", price: 500, type: "theme"},
+    {id: "theme_cyan", name: "Thème Givre", price: 500, type: "theme"},
 ];
 
 export function getCosmeticById(id: string): CosmeticItem | undefined {

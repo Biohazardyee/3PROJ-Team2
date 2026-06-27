@@ -5,10 +5,10 @@ import App from './App'
 import './i18n';
 import { SocketProvider } from './context/SocketContext';
 import { ConfirmProvider } from './context/ConfirmContext';
-import { applyTheme, Theme } from './useDarkMode';
+import { applyTheme, readTheme } from './useDarkMode';
 
 // Applique le thème enregistré dès le chargement (évite le flash sur toutes les pages)
-applyTheme((localStorage.getItem('theme') as Theme) || 'dark');
+applyTheme(readTheme());
 
 const rootElement = document.getElementById('root') as HTMLElement;
 

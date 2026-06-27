@@ -7,7 +7,8 @@ import apiClient from "../api/client";
 import {AxiosResponse} from "axios";
 import AvatarBorder from "../components/AvatarBorder";
 import {useConfirm} from "../context/ConfirmContext";
-import {useDarkMode} from "../useDarkMode";
+import {useDarkMode, setOwnedThemes} from "../useDarkMode";
+import {PREMIUM_THEMES} from "../themes.config";
 
 type CatalogItem = {
     id: string;
@@ -87,6 +88,7 @@ const Shop: React.FC = () => {
             });
             setPoints(res.data.shop_points);
             setOwned(res.data.owned_cosmetics);
+            setOwnedThemes(res.data.owned_cosmetics);
             window.dispatchEvent(new Event("profileUpdated"));
             toast.success(t("cosmetic_bought", "Cosmétique débloqué ! 🎉"));
         } catch (e: any) {
@@ -243,30 +245,31 @@ const Shop: React.FC = () => {
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {catalog.filter((c) => c.type === "theme").map((item) => {
+                                const def = PREMIUM_THEMES.find((p) => p.cosmeticId === item.id);
                                 const isOwned: boolean = owned.includes(item.id);
-                                const isActive: boolean = item.id === "theme_linkinpark" && theme === "lp";
+                                const isActive: boolean = !!def && theme === def.value;
                                 const busy: boolean = busyId === item.id;
 
                                 return (
                                     <div
                                         key={item.id}
                                         className={`relative bg-[#1a1d26] dark:bg-white border rounded-2xl p-6 shadow-sm transition-all ${
-                                            isActive ? "border-red-500" : "border-slate-800 dark:border-gray-200"
+                                            isActive ? "border-blue-500" : "border-slate-800 dark:border-gray-200"
                                         }`}
                                     >
                                         {/* Aperçu du thème */}
                                         <div className="h-28 rounded-xl overflow-hidden mb-4 flex items-end p-3 relative"
-                                             style={{background: "linear-gradient(135deg, #0c0709 0%, #1a0e11 55%, #7f1d1d 130%)"}}>
+                                             style={{background: def?.previewGradient || "#1a1d26"}}>
                                             <div className="flex gap-1.5 relative z-10">
-                                                <span className="w-5 h-5 rounded-full bg-[#0c0709] border border-white/10"/>
-                                                <span className="w-5 h-5 rounded-full bg-[#1a0e11] border border-white/10"/>
-                                                <span className="w-5 h-5 rounded-full bg-red-600 border border-white/10"/>
+                                                {(def?.swatches || []).map((c, i) => (
+                                                    <span key={i} className="w-5 h-5 rounded-full border border-white/10" style={{backgroundColor: c}}/>
+                                                ))}
                                             </div>
                                         </div>
 
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
-                                                <Palette size={16} className="text-red-500"/>
+                                                <Palette size={16} className={def?.accentClass || "text-purple-500"}/>
                                                 {item.name}
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
@@ -292,8 +295,8 @@ const Shop: React.FC = () => {
                                             </button>
                                         ) : (
                                             <button
-                                                onClick={() => setTheme("lp")}
-                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-red-600 hover:bg-red-500 text-white transition-colors"
+                                                onClick={() => def && setTheme(def.value)}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-500 text-white transition-colors"
                                             >
                                                 {t("activate_theme", "Activer le thème")}
                                             </button>

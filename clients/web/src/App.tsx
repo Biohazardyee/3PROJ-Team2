@@ -22,6 +22,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import CreatePlaylist from "./pages/CreatePlaylist";
 import Shop from "./pages/Shop";
 import ScrollToTop from "./components/ScrollToTop";
+import ThemeGuard from "./components/ThemeGuard";
 import AuthGuard from "./components/AuthGuard";
 import AuthRequired from "./pages/AuthRequired.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
@@ -48,6 +49,7 @@ const App: React.FC = () => {
     return (
         <Router>
             <AuthRedirectListener></AuthRedirectListener>
+            <ThemeGuard/>
             <ScrollToTop/>
             <ToastContainer
                 position="top-right"
