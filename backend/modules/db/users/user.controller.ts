@@ -420,9 +420,11 @@ class UserController extends Controller {
                 throw new Unauthorized("User not authenticated");
             }
 
+            const slot = req.body.slot === "font" ? "font" : "avatar_border";
             const result = await this.service.equipCosmetic(
                 userId,
                 req.body.cosmetic_id ?? null,
+                slot,
             );
 
             res.status(200).json({

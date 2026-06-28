@@ -2,7 +2,7 @@ export interface CosmeticItem {
     id: string;
     name: string;
     price: number;
-    type: "avatar_border" | "theme";
+    type: "avatar_border" | "theme" | "font";
 }
 
 /**
@@ -21,6 +21,11 @@ export const COSMETICS: CosmeticItem[] = [
     {id: "border_toxic", name: "Toxique", price: 200, type: "avatar_border"},
     {id: "theme_crimson", name: "Thème Cramoisi", price: 500, type: "theme"},
     {id: "theme_cyan", name: "Thème Givre", price: 500, type: "theme"},
+    {id: "font_michroma", name: "Police Michroma", price: 90, type: "font"},
+    {id: "font_orbitron", name: "Police Orbitron", price: 90, type: "font"},
+    {id: "font_bebas", name: "Police Bebas", price: 110, type: "font"},
+    {id: "font_cinzel", name: "Police Cinzel", price: 130, type: "font"},
+    {id: "font_pacifico", name: "Police Pacifico", price: 150, type: "font"},
 ];
 
 export function getCosmeticById(id: string): CosmeticItem | undefined {

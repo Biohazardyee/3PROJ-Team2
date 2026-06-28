@@ -1654,6 +1654,7 @@ export const UsersScalarFieldEnum = {
   shop_points: 'shop_points',
   owned_cosmetics: 'owned_cosmetics',
   equipped_avatar_border: 'equipped_avatar_border',
+  equipped_font: 'equipped_font',
   role: 'role',
   provider: 'provider',
   provider_id: 'provider_id',

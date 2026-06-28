@@ -672,7 +672,8 @@ export class UserService {
     async equipCosmetic(
         userId: string,
         cosmeticId: string | null,
-    ): Promise<{ equipped_avatar_border: string | null }> {
+        slot: "avatar_border" | "font" = "avatar_border",
+    ): Promise<{ equipped_avatar_border: string | null; equipped_font: string | null }> {
         if (isEmptyString(userId)) {
             throw new BadRequest("User id is required");
         }
@@ -683,20 +684,29 @@ export class UserService {
         }
 
         if (cosmeticId !== null && cosmeticId !== "") {
-            if (!getCosmeticById(cosmeticId)) {
+            const cosmetic = getCosmeticById(cosmeticId);
+            if (!cosmetic) {
                 throw new BadRequest("Unknown cosmetic");
+            }
+            if (cosmetic.type !== slot) {
+                throw new BadRequest("Cosmetic type does not match the requested slot");
             }
             if (!user.owned_cosmetics.includes(cosmeticId)) {
                 throw new BadRequest("You don't own this cosmetic");
             }
         }
 
+        const field = slot === "font" ? "equipped_font" : "equipped_avatar_border";
+
         const updated = await PrismaDb.users.update({
             where: {id: userId},
-            data: {equipped_avatar_border: cosmeticId || null},
+            data: {[field]: cosmeticId || null},
         });
 
-        return {equipped_avatar_border: updated.equipped_avatar_border};
+        return {
+            equipped_avatar_border: updated.equipped_avatar_border,
+            equipped_font: updated.equipped_font,
+        };
     }
 
     async updatePushToken(id: string, token: string): Promise<void> {

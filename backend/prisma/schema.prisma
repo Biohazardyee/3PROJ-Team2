@@ -26,6 +26,7 @@ model Users {
 
   owned_cosmetics        String[] @default([])
   equipped_avatar_border String?
+  equipped_font          String?
 
   role            Roles   @default(BASIC)
 

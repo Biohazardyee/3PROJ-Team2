@@ -26,6 +26,7 @@ import {toast} from "react-toastify";
 import apiClient from "../api/client";
 import {useConfirm} from "../context/ConfirmContext";
 import AvatarBorder, {isValidBorder} from "../components/AvatarBorder";
+import {PSEUDO_FONTS, getPseudoFontFamily, isValidPseudoFont} from "../fonts.config";
 import {AlbumCard} from "../components/AlbumCard";
 import {AxiosResponse} from "axios";
 
@@ -331,10 +332,11 @@ const Profil: React.FC = () => {
     };
 
     const equipBorder = async (cosmeticId: string | null): Promise<void> => {
-        setEquipping(cosmeticId || "none");
+        setEquipping(cosmeticId || "none-border");
         try {
             const res = await apiClient.post("/users/cosmetics/equip", {
                 cosmetic_id: cosmeticId,
+                slot: "avatar_border",
             });
             setUserProfil((prev: any) => ({
                 ...prev,
@@ -345,6 +347,29 @@ const Profil: React.FC = () => {
                 cosmeticId
                     ? t("cosmetic_equipped", "Contour équipé !")
                     : t("cosmetic_unequipped", "Contour retiré."),
+            );
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
+        } finally {
+            setEquipping(null);
+        }
+    };
+
+    const equipFont = async (cosmeticId: string | null): Promise<void> => {
+        setEquipping(cosmeticId || "none-font");
+        try {
+            const res = await apiClient.post("/users/cosmetics/equip", {
+                cosmetic_id: cosmeticId,
+                slot: "font",
+            });
+            setUserProfil((prev: any) => ({
+                ...prev,
+                equipped_font: res.data.equipped_font,
+            }));
+            toast.success(
+                cosmeticId
+                    ? t("font_equipped", "Police équipée !")
+                    : t("font_unequipped", "Police retirée."),
             );
         } catch (e: any) {
             toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
@@ -676,7 +701,7 @@ const Profil: React.FC = () => {
                             <div className="pb-2">
                                 <h1
                                     className="text-4xl font-bold text-white dark:text-gray-900 tracking-tight"
-                                    style={{fontFamily: "'Orbitron', sans-serif"}}
+                                    style={{fontFamily: getPseudoFontFamily(userProfil?.equipped_font) || undefined}}
                                 >
                                     {userProfil?.pseudo || userProfil?.username}
                                 </h1>
@@ -1178,7 +1203,7 @@ const Profil: React.FC = () => {
                             <div className="flex items-center justify-between p-5 border-b border-slate-800 dark:border-slate-200">
                                 <h2 className="text-lg font-bold text-white dark:text-gray-900 flex items-center gap-2">
                                     <Sparkles size={18} className="text-purple-400"/>
-                                    {t("my_cosmetics", "Mes contours")}
+                                    {t("my_cosmetics", "Mes cosmétiques")}
                                 </h2>
                                 <button
                                     onClick={() => setShowCosmetics(false)}
@@ -1191,6 +1216,7 @@ const Profil: React.FC = () => {
                             <div className="overflow-y-auto p-5">
                                 {(() => {
                                     const ownedBorders: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidBorder(id));
+                                    const ownedFonts: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidPseudoFont(id));
                                     const pic: string | null =
                                         userProfil?.profile_picture && typeof userProfil.profile_picture === "string"
                                             ? (userProfil.profile_picture.startsWith("data") || userProfil.profile_picture.startsWith("http")
@@ -1198,6 +1224,8 @@ const Profil: React.FC = () => {
                                                 : `data:image/jpeg;base64,${userProfil.profile_picture}`)
                                             : null;
                                     const equipped: string | null = userProfil?.equipped_avatar_border || null;
+                                    const equippedFont: string | null = userProfil?.equipped_font || null;
+                                    const pseudoText: string = (userProfil?.pseudo || userProfil?.username) || "Aa";
 
                                     const PreviewInner = (
                                         <div className="w-16 h-16 rounded-full overflow-hidden bg-slate-800 dark:bg-gray-100 flex items-center justify-center">
@@ -1211,7 +1239,7 @@ const Profil: React.FC = () => {
                                         </div>
                                     );
 
-                                    if (ownedBorders.length === 0) {
+                                    if (ownedBorders.length === 0 && ownedFonts.length === 0) {
                                         return (
                                             <div className="text-center py-8">
                                                 <p className="text-sm text-slate-400 dark:text-gray-500 mb-5">
@@ -1229,39 +1257,84 @@ const Profil: React.FC = () => {
                                     }
 
                                     return (
-                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-5">
-                                            {/* Option "Aucun" */}
-                                            <button
-                                                onClick={() => equipBorder(null)}
-                                                disabled={equipping !== null}
-                                                className="flex flex-col items-center gap-2 disabled:opacity-50"
-                                            >
-                                                <div className={`p-1 rounded-full ${!equipped ? "ring-2 ring-purple-500" : ""}`}>
-                                                    {PreviewInner}
-                                                </div>
-                                                <span className={`text-xs ${!equipped ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
-                                                    {t("none", "Aucun")}
-                                                </span>
-                                            </button>
-
-                                            {/* Contours possédés */}
-                                            {ownedBorders.map((id: string) => (
-                                                <button
-                                                    key={id}
-                                                    onClick={() => equipBorder(id)}
-                                                    disabled={equipping !== null}
-                                                    className="flex flex-col items-center gap-2 disabled:opacity-50"
-                                                >
-                                                    <div className={`p-1 rounded-full ${equipped === id ? "ring-2 ring-purple-500" : ""}`}>
-                                                        <AvatarBorder borderId={id}>
-                                                            {PreviewInner}
-                                                        </AvatarBorder>
+                                        <div className="space-y-6">
+                                            {/* Contours */}
+                                            {ownedBorders.length > 0 && (
+                                                <div>
+                                                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-gray-400 mb-3">
+                                                        {t("shop_section_borders", "Contours")}
+                                                    </h3>
+                                                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-5">
+                                                        <button
+                                                            onClick={() => equipBorder(null)}
+                                                            disabled={equipping !== null}
+                                                            className="flex flex-col items-center gap-2 disabled:opacity-50"
+                                                        >
+                                                            <div className={`p-1 rounded-full ${!equipped ? "ring-2 ring-purple-500" : ""}`}>
+                                                                {PreviewInner}
+                                                            </div>
+                                                            <span className={`text-xs ${!equipped ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                {t("none", "Aucun")}
+                                                            </span>
+                                                        </button>
+                                                        {ownedBorders.map((id: string) => (
+                                                            <button
+                                                                key={id}
+                                                                onClick={() => equipBorder(id)}
+                                                                disabled={equipping !== null}
+                                                                className="flex flex-col items-center gap-2 disabled:opacity-50"
+                                                            >
+                                                                <div className={`p-1 rounded-full ${equipped === id ? "ring-2 ring-purple-500" : ""}`}>
+                                                                    <AvatarBorder borderId={id}>
+                                                                        {PreviewInner}
+                                                                    </AvatarBorder>
+                                                                </div>
+                                                                <span className={`text-xs truncate max-w-full ${equipped === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                    {cosmeticNames[id] || id}
+                                                                </span>
+                                                            </button>
+                                                        ))}
                                                     </div>
-                                                    <span className={`text-xs truncate max-w-full ${equipped === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
-                                                        {cosmeticNames[id] || id}
-                                                    </span>
-                                                </button>
-                                            ))}
+                                                </div>
+                                            )}
+
+                                            {/* Polices (aperçu du pseudo) */}
+                                            {ownedFonts.length > 0 && (
+                                                <div>
+                                                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-gray-400 mb-3">
+                                                        {t("shop_section_fonts", "Polices")}
+                                                    </h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                                        <button
+                                                            onClick={() => equipFont(null)}
+                                                            disabled={equipping !== null}
+                                                            className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all disabled:opacity-50 ${!equippedFont ? "border-purple-500 bg-purple-500/10" : "border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-300"}`}
+                                                        >
+                                                            <span className="text-xl text-white dark:text-gray-900 truncate max-w-full leading-tight">
+                                                                {pseudoText}
+                                                            </span>
+                                                            <span className={`text-[11px] ${!equippedFont ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                {t("default_font", "Défaut")}
+                                                            </span>
+                                                        </button>
+                                                        {ownedFonts.map((id: string) => (
+                                                            <button
+                                                                key={id}
+                                                                onClick={() => equipFont(id)}
+                                                                disabled={equipping !== null}
+                                                                className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all disabled:opacity-50 ${equippedFont === id ? "border-purple-500 bg-purple-500/10" : "border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-300"}`}
+                                                            >
+                                                                <span className="text-xl text-white dark:text-gray-900 truncate max-w-full leading-tight" style={{fontFamily: getPseudoFontFamily(id)}}>
+                                                                    {pseudoText}
+                                                                </span>
+                                                                <span className={`text-[11px] truncate max-w-full ${equippedFont === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                    {PSEUDO_FONTS.find((f) => f.id === id)?.name || id}
+                                                                </span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     );
                                 })()}

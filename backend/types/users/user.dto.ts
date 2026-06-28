@@ -16,6 +16,7 @@ export interface UserResponseDto {
     shop_points: number;
     owned_cosmetics: string[];
     equipped_avatar_border: string | null;
+    equipped_font: string | null;
     has_notifications: boolean;
     created_at: Date;
     updated_at: Date;
@@ -58,6 +59,7 @@ export interface UserPublicDto {
     shop_points: number;
     owned_cosmetics: string[];
     equipped_avatar_border: string | null;
+    equipped_font: string | null;
     created_at: Date;
 }
 

@@ -26,6 +26,7 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
       shop_points: user.shop_points ?? 0,
       owned_cosmetics: user.owned_cosmetics ?? [],
       equipped_avatar_border: user.equipped_avatar_border ?? null,
+      equipped_font: user.equipped_font ?? null,
       has_notifications: user.has_notifications ?? true,
       profile_picture: user.profile_picture,
       banner: user.banner,
@@ -84,6 +85,7 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
       shop_points: user.shop_points ?? 0,
       owned_cosmetics: user.owned_cosmetics ?? [],
       equipped_avatar_border: user.equipped_avatar_border ?? null,
+      equipped_font: user.equipped_font ?? null,
       created_at: user.created_at,
     };
   }

@@ -2,13 +2,14 @@ import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
 import {toast} from "react-toastify";
-import {Coins, Sparkles, Check, Music, Palette} from "lucide-react";
+import {Coins, Sparkles, Check, Music, Palette, Type} from "lucide-react";
 import apiClient from "../api/client";
 import {AxiosResponse} from "axios";
 import AvatarBorder from "../components/AvatarBorder";
 import {useConfirm} from "../context/ConfirmContext";
 import {useDarkMode, setOwnedThemes} from "../useDarkMode";
 import {PREMIUM_THEMES} from "../themes.config";
+import {getPseudoFontFamily} from "../fonts.config";
 
 type CatalogItem = {
     id: string;
@@ -25,6 +26,8 @@ const Shop: React.FC = () => {
     const [points, setPoints] = useState<number>(0);
     const [owned, setOwned] = useState<string[]>([]);
     const [equipped, setEquipped] = useState<string | null>(null);
+    const [equippedFont, setEquippedFont] = useState<string | null>(null);
+    const [pseudo, setPseudo] = useState<string>("Aa");
     const [profilePic, setProfilePic] = useState<string | null>(null);
     const [catalog, setCatalog] = useState<CatalogItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -47,6 +50,8 @@ const Shop: React.FC = () => {
                 setPoints(data.shop_points ?? 0);
                 setOwned(data.owned_cosmetics ?? []);
                 setEquipped(data.equipped_avatar_border ?? null);
+                setEquippedFont(data.equipped_font ?? null);
+                setPseudo(data.pseudo || data.username || "Aa");
 
                 if (data.profile_picture) {
                     setProfilePic(
@@ -98,18 +103,24 @@ const Shop: React.FC = () => {
         }
     };
 
-    const handleEquip = async (cosmeticId: string | null): Promise<void> => {
-        setBusyId(cosmeticId || "none");
+    const handleEquip = async (
+        cosmeticId: string | null,
+        slot: "avatar_border" | "font" = "avatar_border",
+    ): Promise<void> => {
+        setBusyId(cosmeticId || `none-${slot}`);
         try {
             const res: AxiosResponse = await apiClient.post("/users/cosmetics/equip", {
                 cosmetic_id: cosmeticId,
+                slot,
             });
             setEquipped(res.data.equipped_avatar_border);
+            setEquippedFont(res.data.equipped_font);
             window.dispatchEvent(new Event("profileUpdated"));
+            const isFont = slot === "font";
             toast.success(
                 cosmeticId
-                    ? t("cosmetic_equipped", "Contour équipé !")
-                    : t("cosmetic_unequipped", "Contour retiré."),
+                    ? (isFont ? t("font_equipped", "Police équipée !") : t("cosmetic_equipped", "Contour équipé !"))
+                    : (isFont ? t("font_unequipped", "Police retirée.") : t("cosmetic_unequipped", "Contour retiré.")),
             );
         } catch (e: any) {
             toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
@@ -299,6 +310,78 @@ const Shop: React.FC = () => {
                                                 className="w-full py-2.5 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-500 text-white transition-colors"
                                             >
                                                 {t("activate_theme", "Activer le thème")}
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
+
+                {/* Section polices (pseudo sur le profil) */}
+                {catalog.some((c) => c.type === "font") && (
+                    <>
+                        <h2 className="text-xl font-bold mt-12 mb-5 text-white dark:text-gray-900">
+                            {t("shop_section_fonts", "Polices du pseudo")}
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {catalog.filter((c) => c.type === "font").map((item) => {
+                                const isOwned: boolean = owned.includes(item.id);
+                                const isEquipped: boolean = equippedFont === item.id;
+                                const busy: boolean = busyId === item.id;
+
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`relative bg-[#1a1d26] dark:bg-white border rounded-2xl p-6 shadow-sm transition-all ${
+                                            isEquipped ? "border-purple-500" : "border-slate-800 dark:border-gray-200"
+                                        }`}
+                                    >
+                                        {/* Aperçu du pseudo dans la police */}
+                                        <div className="h-24 rounded-xl mb-4 flex items-center justify-center bg-slate-900/60 dark:bg-gray-50 px-3 overflow-hidden">
+                                            <span
+                                                className="text-3xl text-white dark:text-gray-900 truncate"
+                                                style={{fontFamily: getPseudoFontFamily(item.id)}}
+                                            >
+                                                {pseudo}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
+                                                <Type size={16} className="text-purple-400"/>
+                                                {item.name}
+                                            </h3>
+                                            <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
+                                                <Coins size={16}/>
+                                                {item.price}
+                                            </div>
+                                        </div>
+
+                                        {!isOwned ? (
+                                            <button
+                                                onClick={() => handleBuy(item)}
+                                                disabled={busy || points < item.price}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-amber-500 hover:bg-amber-400 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                            >
+                                                {busy ? "…" : points < item.price ? t("not_enough_points_short", "Trop cher") : t("buy", "Acheter")}
+                                            </button>
+                                        ) : isEquipped ? (
+                                            <button
+                                                onClick={() => handleEquip(null, "font")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-200 transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("unequip", "Retirer")}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleEquip(item.id, "font")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("equip", "Équiper")}
                                             </button>
                                         )}
                                     </div>
