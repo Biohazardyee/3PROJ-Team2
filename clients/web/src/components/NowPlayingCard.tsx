@@ -67,7 +67,7 @@ const NowPlayingCard: React.FC<NowPlayingCardProps> = ({userId}) => {
         if (!nowPlaying?.isPlaying) return;
 
         const tick = setInterval(() => {
-            setDisplayProgressMs((prev) => {
+            setDisplayProgressMs(() => {
                 const elapsed = Date.now() - fetchedAt;
                 return Math.min(nowPlaying.durationMs, nowPlaying.progressMs + elapsed);
             });
