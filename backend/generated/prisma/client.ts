@@ -45,6 +45,11 @@ export { Prisma }
  */
 export type Users = Prisma.UsersModel
 /**
+ * Model SpotifyAccounts
+ * 
+ */
+export type SpotifyAccounts = Prisma.SpotifyAccountsModel
+/**
  * Model Medias
  * 
  */

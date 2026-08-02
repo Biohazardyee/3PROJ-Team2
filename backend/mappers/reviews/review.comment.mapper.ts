@@ -1,5 +1,6 @@
 import { BaseMapper } from '../base.mapper.js';
 import { ReviewCommentResponseDto } from "../../types/reviews/review.comment.dto.js";
+import { bufferToImageDataUri } from "../../utils/imageDataUri.js";
 
 class ReviewCommentMapper extends BaseMapper<any, ReviewCommentResponseDto> {
 
@@ -20,7 +21,11 @@ class ReviewCommentMapper extends BaseMapper<any, ReviewCommentResponseDto> {
             user: comment.user ? {
                 id: comment.user.id,
                 username: comment.user.username,
-                pseudo: comment.user.pseudo ?? null
+                pseudo: comment.user.pseudo ?? null,
+                image: bufferToImageDataUri(comment.user.profile_picture),
+                equipped_avatar_border: comment.user.equipped_avatar_border ?? null,
+                equipped_font: comment.user.equipped_font ?? null,
+                equipped_text_effect: comment.user.equipped_text_effect ?? null,
             } : undefined
         };
     }

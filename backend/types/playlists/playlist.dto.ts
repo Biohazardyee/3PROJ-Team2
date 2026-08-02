@@ -47,6 +47,7 @@ export interface PlaylistAddDto {
     name: string;
     is_public: boolean;
     image_url?: string;
+    spotify_playlist_id?: string;
 }
 
 export interface PlaylistUpdateDto {

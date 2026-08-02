@@ -8,7 +8,11 @@ export const getThreadByReview = async (reviewId: string, userId: string) => {
                 select: {
                     id: true,
                     username: true,
-                    pseudo: true
+                    pseudo: true,
+                    profile_picture: true,
+                    equipped_avatar_border: true,
+                    equipped_font: true,
+                    equipped_text_effect: true,
                 }
             },
             _count: {

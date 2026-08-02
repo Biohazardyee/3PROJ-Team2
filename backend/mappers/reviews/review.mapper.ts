@@ -7,6 +7,7 @@ import {
   ReviewWithMediaDto,
 } from "../../types/reviews/review.dto.js";
 import { Prisma } from "../../generated/prisma/client.js";
+import { bufferToImageDataUri } from "../../utils/imageDataUri.js";
 
 export type ReviewFullPayload = Prisma.ReviewsGetPayload<{
   include: {
@@ -91,9 +92,10 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
             id: r.user.id,
             username: r.user.username,
             pseudo: r.user.pseudo,
-            image: r.user.profile_picture
-              ? `data:image/jpeg;base64,${Buffer.from(r.user.profile_picture).toString("base64")}`
-              : null,
+            image: bufferToImageDataUri(r.user.profile_picture),
+            equipped_avatar_border: r.user.equipped_avatar_border,
+            equipped_font: r.user.equipped_font,
+            equipped_text_effect: r.user.equipped_text_effect,
           }
         : undefined,
       media: this.parseMediaContent(r.media) as any,
@@ -118,9 +120,10 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
             id: r.user.id,
             username: r.user.username,
             pseudo: r.user.pseudo,
-            image: r.user.profile_picture
-              ? `data:image/jpeg;base64,${Buffer.from(r.user.profile_picture).toString("base64")}`
-              : null,
+            image: bufferToImageDataUri(r.user.profile_picture),
+            equipped_avatar_border: r.user.equipped_avatar_border,
+            equipped_font: r.user.equipped_font,
+            equipped_text_effect: r.user.equipped_text_effect,
           }
         : undefined,
       media: this.parseMediaContent(r.media),
@@ -144,9 +147,10 @@ class ReviewMapper extends BaseMapper<Reviews, ReviewResponseDto> {
             id: review.user.id,
             username: review.user.username,
             pseudo: review.user.pseudo,
-            image: review.user.profile_picture
-              ? `data:image/jpeg;base64,${Buffer.from(review.user.profile_picture).toString("base64")}`
-              : null,
+            image: bufferToImageDataUri(review.user.profile_picture),
+            equipped_avatar_border: review.user.equipped_avatar_border,
+            equipped_font: review.user.equipped_font,
+            equipped_text_effect: review.user.equipped_text_effect,
           }
         : null,
       media: this.parseMediaContent(review.media),

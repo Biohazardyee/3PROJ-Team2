@@ -11,8 +11,12 @@ export interface ConversationResponseDto {
 export interface ConversationUserDto {
   id: string;
   username: string;
+  pseudo?: string;
   profile_picture: string | null;
   role: string;
+  equipped_avatar_border?: string | null;
+  equipped_font?: string | null;
+  equipped_text_effect?: string | null;
 }
 
 export interface UserConversationResponseDto {

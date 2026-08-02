@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Users: 'Users',
+  SpotifyAccounts: 'SpotifyAccounts',
   Medias: 'Medias',
   Reviews: 'Reviews',
   ReviewComments: 'ReviewComments',
@@ -415,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "users" | "medias" | "reviews" | "reviewComments" | "commentLikes" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
+    modelProps: "users" | "spotifyAccounts" | "medias" | "reviews" | "reviewComments" | "commentLikes" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -490,6 +491,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UsersCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UsersCountAggregateOutputType> | number
+        }
+      }
+    }
+    SpotifyAccounts: {
+      payload: Prisma.$SpotifyAccountsPayload<ExtArgs>
+      fields: Prisma.SpotifyAccountsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SpotifyAccountsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SpotifyAccountsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>
+        }
+        findFirst: {
+          args: Prisma.SpotifyAccountsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SpotifyAccountsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>
+        }
+        findMany: {
+          args: Prisma.SpotifyAccountsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>[]
+        }
+        create: {
+          args: Prisma.SpotifyAccountsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>
+        }
+        createMany: {
+          args: Prisma.SpotifyAccountsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SpotifyAccountsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>[]
+        }
+        delete: {
+          args: Prisma.SpotifyAccountsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>
+        }
+        update: {
+          args: Prisma.SpotifyAccountsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>
+        }
+        deleteMany: {
+          args: Prisma.SpotifyAccountsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SpotifyAccountsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SpotifyAccountsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>[]
+        }
+        upsert: {
+          args: Prisma.SpotifyAccountsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SpotifyAccountsPayload>
+        }
+        aggregate: {
+          args: Prisma.SpotifyAccountsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSpotifyAccounts>
+        }
+        groupBy: {
+          args: Prisma.SpotifyAccountsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SpotifyAccountsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SpotifyAccountsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SpotifyAccountsCountAggregateOutputType> | number
         }
       }
     }
@@ -1655,6 +1730,10 @@ export const UsersScalarFieldEnum = {
   owned_cosmetics: 'owned_cosmetics',
   equipped_avatar_border: 'equipped_avatar_border',
   equipped_font: 'equipped_font',
+  equipped_title: 'equipped_title',
+  equipped_text_effect: 'equipped_text_effect',
+  equipped_banner: 'equipped_banner',
+  equipped_pattern: 'equipped_pattern',
   role: 'role',
   provider: 'provider',
   provider_id: 'provider_id',
@@ -1667,6 +1746,21 @@ export const UsersScalarFieldEnum = {
 } as const
 
 export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
+
+
+export const SpotifyAccountsScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  spotify_id: 'spotify_id',
+  display_name: 'display_name',
+  access_token: 'access_token',
+  refresh_token: 'refresh_token',
+  expires_at: 'expires_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type SpotifyAccountsScalarFieldEnum = (typeof SpotifyAccountsScalarFieldEnum)[keyof typeof SpotifyAccountsScalarFieldEnum]
 
 
 export const MediasScalarFieldEnum = {
@@ -1731,6 +1825,7 @@ export const PlaylistsScalarFieldEnum = {
   name: 'name',
   image_url: 'image_url',
   is_public: 'is_public',
+  spotify_playlist_id: 'spotify_playlist_id',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
@@ -2161,6 +2256,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   users?: Prisma.UsersOmit
+  spotifyAccounts?: Prisma.SpotifyAccountsOmit
   medias?: Prisma.MediasOmit
   reviews?: Prisma.ReviewsOmit
   reviewComments?: Prisma.ReviewCommentsOmit

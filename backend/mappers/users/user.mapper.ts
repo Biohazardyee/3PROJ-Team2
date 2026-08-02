@@ -27,6 +27,10 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
       owned_cosmetics: user.owned_cosmetics ?? [],
       equipped_avatar_border: user.equipped_avatar_border ?? null,
       equipped_font: user.equipped_font ?? null,
+      equipped_title: user.equipped_title ?? null,
+      equipped_text_effect: user.equipped_text_effect ?? null,
+      equipped_banner: user.equipped_banner ?? null,
+      equipped_pattern: user.equipped_pattern ?? null,
       has_notifications: user.has_notifications ?? true,
       profile_picture: user.profile_picture,
       banner: user.banner,
@@ -74,6 +78,7 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
       id: user.id,
       username: user.username,
       pseudo: user.pseudo,
+      role: user.role,
       biography: user.biography,
       favorite_band: user.favorite_band,
       profile_picture: user.profile_picture
@@ -86,6 +91,10 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
       owned_cosmetics: user.owned_cosmetics ?? [],
       equipped_avatar_border: user.equipped_avatar_border ?? null,
       equipped_font: user.equipped_font ?? null,
+      equipped_title: user.equipped_title ?? null,
+      equipped_text_effect: user.equipped_text_effect ?? null,
+      equipped_banner: user.equipped_banner ?? null,
+      equipped_pattern: user.equipped_pattern ?? null,
       created_at: user.created_at,
     };
   }

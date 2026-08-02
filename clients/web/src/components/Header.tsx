@@ -8,6 +8,7 @@ import {useSocket} from "../context/SocketContext";
 import {AxiosResponse} from "axios";
 import AvatarBorder from "./AvatarBorder";
 import {useTranslation} from "react-i18next";
+import {toImageDataUri} from "../utils/imageDataUri";
 
 type HeaderProps = {
     onMenuClick: () => void;
@@ -37,14 +38,7 @@ export const Header = ({onMenuClick}: HeaderProps) => {
                 setBorderId(userData.equipped_avatar_border ?? null);
                 setShopPoints(userData.shop_points ?? 0);
 
-                if (userData.profile_picture) {
-                    const img = userData.profile_picture.startsWith("data:")
-                        ? userData.profile_picture
-                        : `data:image/jpeg;base64,${userData.profile_picture}`;
-                    setProfilePic(img);
-                } else {
-                    setProfilePic(null);
-                }
+                setProfilePic(toImageDataUri(userData.profile_picture));
             } catch (e) {
                 console.error("Erreur fetch user header", e);
             }

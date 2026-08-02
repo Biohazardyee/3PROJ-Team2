@@ -25,4 +25,12 @@ router.get('/mutuals/:user_id', authGuard, function (req: Request, res: Response
     followController.getMutuals(req, res, next);
 });
 
+router.get('/followers/:user_id/users', authGuard, function (req: Request, res: Response, next: NextFunction): void {
+    followController.getFollowersWithUsers(req, res, next);
+});
+
+router.get('/following/:user_id/users', authGuard, function (req: Request, res: Response, next: NextFunction): void {
+    followController.getFollowingWithUsers(req, res, next);
+});
+
 export default router;

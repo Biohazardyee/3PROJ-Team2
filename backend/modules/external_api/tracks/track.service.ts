@@ -69,6 +69,37 @@ export class TrackService {
         return similarTracks;
     }
 
+    async getTrackPreview(data: { artist: string; track: string }): Promise<{
+        previewUrl: string | null;
+        artworkUrl: string | null;
+        spotifyUrl: string;
+    }> {
+        const {artist, track} = data;
+
+        if (isEmptyString(artist)) {
+            throw new BadRequest('Artist cannot be empty');
+        }
+
+        if (isEmptyString(track)) {
+            throw new BadRequest('Track cannot be empty');
+        }
+
+        const query: string = `${artist} ${track}`;
+        const searchUrl: string =
+            `https://itunes.apple.com/search?term=${encodeURIComponent(query)}` +
+            `&media=music&entity=song&limit=1`;
+
+        const response: Response = await fetch(searchUrl);
+        const searchResult: any = await response.json();
+        const match: any = searchResult.results?.[0];
+
+        return {
+            previewUrl: match?.previewUrl || null,
+            artworkUrl: match?.artworkUrl100 || null,
+            spotifyUrl: `https://open.spotify.com/search/${encodeURIComponent(query)}`,
+        };
+    }
+
     async getTopTrackTags(data: { artist: string; track: string }): Promise<any> {
         const {artist, track} = data;
 

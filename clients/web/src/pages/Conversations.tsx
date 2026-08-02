@@ -15,12 +15,18 @@ import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 import apiClient from "../api/client";
 import UserAvatar from "../components/UserAvatar";
+import AvatarBorder from "../components/AvatarBorder";
+import {getPseudoFontFamily} from "../fonts.config";
+import {getTextEffectClassName} from "../textEffects.config";
 
 interface BackendUser {
     id: string;
     username: string;
     pseudo?: string;
     profile_picture?: string;
+    equipped_avatar_border?: string | null;
+    equipped_font?: string | null;
+    equipped_text_effect?: string | null;
 }
 
 interface BackendMessage {
@@ -511,24 +517,27 @@ const Conversations: React.FC = () => {
                                     className={`w-full flex items-center gap-4 p-4 transition-all hover:bg-[#1a1d26] dark:hover:bg-slate-100 ${String(selectedConvId) === String(conv.id) ? "bg-[#1a1d26] dark:bg-slate-100 border-l-4 border-blue-500" : "border-l-4 border-transparent"}`}
                                 >
                                     <div className="relative shrink-0">
-                                        {otherUser?.profile_picture ? (
-                                            <img
-                                                src={otherUser.profile_picture}
-                                                alt={usernameDisplay}
-                                                className="w-12 h-12 rounded-full object-cover border border-slate-700 dark:border-indigo-200"
-                                            />
-                                        ) : (
-                                            <div
-                                                className="w-12 h-12 rounded-full bg-[#2a2e3d] dark:bg-indigo-100 flex items-center justify-center text-blue-400 dark:text-blue-600 font-bold border border-slate-700 dark:border-indigo-200">
-                                                {getAvatarText(otherUser?.pseudo || otherUser?.username)}
-                                            </div>
-                                        )}
+                                        <AvatarBorder borderId={otherUser?.equipped_avatar_border} compact>
+                                            {otherUser?.profile_picture ? (
+                                                <img
+                                                    src={otherUser.profile_picture}
+                                                    alt={usernameDisplay}
+                                                    className="w-12 h-12 rounded-full object-cover border border-slate-700 dark:border-indigo-200"
+                                                />
+                                            ) : (
+                                                <div
+                                                    className="w-12 h-12 rounded-full bg-[#2a2e3d] dark:bg-indigo-100 flex items-center justify-center text-blue-400 dark:text-blue-600 font-bold border border-slate-700 dark:border-indigo-200">
+                                                    {getAvatarText(otherUser?.pseudo || otherUser?.username)}
+                                                </div>
+                                            )}
+                                        </AvatarBorder>
                                     </div>
 
                                     <div className="flex-1 text-left overflow-hidden">
                                         <div className="flex justify-between items-center mb-1">
                       <span
-                          className={`text-sm truncate ${hasUnread ? "font-black text-white dark:text-blue-600" : "font-bold text-slate-300 dark:text-gray-900"}`}
+                          className={`text-sm truncate ${hasUnread ? "font-black" : "font-bold"} ${getTextEffectClassName(otherUser?.equipped_text_effect) || (hasUnread ? "text-white dark:text-blue-600" : "text-slate-300 dark:text-gray-900")}`}
+                          style={{fontFamily: getPseudoFontFamily(otherUser?.equipped_font) || undefined}}
                       >
                         {usernameDisplay}
                       </span>
@@ -607,21 +616,26 @@ const Conversations: React.FC = () => {
                                     className="flex items-center gap-3 cursor-pointer group hover:opacity-80 transition-opacity"
                                 >
                                     <div className="relative">
-                                        {activeChatUser?.profile_picture ? (
-                                            <img
-                                                src={activeChatUser.profile_picture}
-                                                alt={activeChatUser.pseudo || activeChatUser.username}
-                                                className="w-10 h-10 rounded-full object-cover border border-slate-700 dark:border-indigo-200 transition-transform group-hover:scale-105"
-                                            />
-                                        ) : (
-                                            <div
-                                                className="w-10 h-10 rounded-full bg-[#2a2e3d] dark:bg-indigo-100 flex items-center justify-center text-blue-400 dark:text-blue-600 text-sm font-bold border border-slate-700 dark:border-indigo-200 transition-transform group-hover:scale-105">
-                                                {getAvatarText(activeChatUser?.pseudo || activeChatUser?.username)}
-                                            </div>
-                                        )}
+                                        <AvatarBorder borderId={activeChatUser?.equipped_avatar_border} compact>
+                                            {activeChatUser?.profile_picture ? (
+                                                <img
+                                                    src={activeChatUser.profile_picture}
+                                                    alt={activeChatUser.pseudo || activeChatUser.username}
+                                                    className="w-10 h-10 rounded-full object-cover border border-slate-700 dark:border-indigo-200 transition-transform group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <div
+                                                    className="w-10 h-10 rounded-full bg-[#2a2e3d] dark:bg-indigo-100 flex items-center justify-center text-blue-400 dark:text-blue-600 text-sm font-bold border border-slate-700 dark:border-indigo-200 transition-transform group-hover:scale-105">
+                                                    {getAvatarText(activeChatUser?.pseudo || activeChatUser?.username)}
+                                                </div>
+                                            )}
+                                        </AvatarBorder>
                                     </div>
                                     <div>
-                                        <h2 className="text-sm font-bold text-white dark:text-gray-900 group-hover:underline">
+                                        <h2
+                                            className={`text-sm font-bold group-hover:underline ${getTextEffectClassName(activeChatUser?.equipped_text_effect) || "text-white dark:text-gray-900"}`}
+                                            style={{fontFamily: getPseudoFontFamily(activeChatUser?.equipped_font) || undefined}}
+                                        >
                                             {activeChatUser
                                                 ? (activeChatUser.pseudo || activeChatUser.username)
                                                 : t("unknown_user", "Utilisateur anonyme")}

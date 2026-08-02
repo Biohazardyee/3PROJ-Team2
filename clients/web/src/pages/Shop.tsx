@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {jwtDecode} from "jwt-decode";
 import {toast} from "react-toastify";
-import {Coins, Sparkles, Check, Music, Palette, Type} from "lucide-react";
+import {Coins, Sparkles, Check, Music, Palette, Type, Tag, Wand2, Image as ImageIcon, LayoutGrid} from "lucide-react";
 import apiClient from "../api/client";
 import {AxiosResponse} from "axios";
 import AvatarBorder from "../components/AvatarBorder";
@@ -10,6 +10,11 @@ import {useConfirm} from "../context/ConfirmContext";
 import {useDarkMode, setOwnedThemes} from "../useDarkMode";
 import {PREMIUM_THEMES} from "../themes.config";
 import {getPseudoFontFamily} from "../fonts.config";
+import {getProfileTitle} from "../titles.config";
+import {getTextEffectClassName} from "../textEffects.config";
+import {getPremiumBanner} from "../banners.config";
+import {getPattern} from "../patterns.config";
+import {toImageDataUri} from "../utils/imageDataUri";
 
 type CatalogItem = {
     id: string;
@@ -18,15 +23,30 @@ type CatalogItem = {
     type: string;
 };
 
+type CosmeticSlot = "avatar_border" | "font" | "title" | "text_effect" | "banner" | "pattern";
+
+const EQUIP_MESSAGES: Record<CosmeticSlot, { equippedKey: string; equippedFallback: string; unequippedKey: string; unequippedFallback: string }> = {
+    avatar_border: {equippedKey: "cosmetic_equipped", equippedFallback: "Contour équipé !", unequippedKey: "cosmetic_unequipped", unequippedFallback: "Contour retiré."},
+    font: {equippedKey: "font_equipped", equippedFallback: "Police équipée !", unequippedKey: "font_unequipped", unequippedFallback: "Police retirée."},
+    title: {equippedKey: "title_equipped", equippedFallback: "Titre équipé !", unequippedKey: "title_unequipped", unequippedFallback: "Titre retiré."},
+    text_effect: {equippedKey: "text_effect_equipped", equippedFallback: "Effet équipé !", unequippedKey: "text_effect_unequipped", unequippedFallback: "Effet retiré."},
+    banner: {equippedKey: "banner_equipped", equippedFallback: "Bannière équipée !", unequippedKey: "banner_unequipped", unequippedFallback: "Bannière retirée."},
+    pattern: {equippedKey: "pattern_equipped", equippedFallback: "Motif équipé !", unequippedKey: "pattern_unequipped", unequippedFallback: "Motif retiré."},
+};
+
 const Shop: React.FC = () => {
     const {t} = useTranslation();
     const confirm = useConfirm();
     const {theme, setTheme} = useDarkMode();
-    const [userId, setUserId] = useState<string>("");
+    const [, setUserId] = useState<string>("");
     const [points, setPoints] = useState<number>(0);
     const [owned, setOwned] = useState<string[]>([]);
     const [equipped, setEquipped] = useState<string | null>(null);
     const [equippedFont, setEquippedFont] = useState<string | null>(null);
+    const [equippedTitle, setEquippedTitle] = useState<string | null>(null);
+    const [equippedTextEffect, setEquippedTextEffect] = useState<string | null>(null);
+    const [equippedBanner, setEquippedBanner] = useState<string | null>(null);
+    const [equippedPattern, setEquippedPattern] = useState<string | null>(null);
     const [pseudo, setPseudo] = useState<string>("Aa");
     const [profilePic, setProfilePic] = useState<string | null>(null);
     const [catalog, setCatalog] = useState<CatalogItem[]>([]);
@@ -51,14 +71,14 @@ const Shop: React.FC = () => {
                 setOwned(data.owned_cosmetics ?? []);
                 setEquipped(data.equipped_avatar_border ?? null);
                 setEquippedFont(data.equipped_font ?? null);
+                setEquippedTitle(data.equipped_title ?? null);
+                setEquippedTextEffect(data.equipped_text_effect ?? null);
+                setEquippedBanner(data.equipped_banner ?? null);
+                setEquippedPattern(data.equipped_pattern ?? null);
                 setPseudo(data.pseudo || data.username || "Aa");
 
                 if (data.profile_picture) {
-                    setProfilePic(
-                        data.profile_picture.startsWith("data") || data.profile_picture.startsWith("http")
-                            ? data.profile_picture
-                            : `data:image/jpeg;base64,${data.profile_picture}`,
-                    );
+                    setProfilePic(toImageDataUri(data.profile_picture));
                 }
                 setCatalog(catalogRes.data.catalog || []);
             } catch (err) {
@@ -105,7 +125,7 @@ const Shop: React.FC = () => {
 
     const handleEquip = async (
         cosmeticId: string | null,
-        slot: "avatar_border" | "font" = "avatar_border",
+        slot: CosmeticSlot = "avatar_border",
     ): Promise<void> => {
         setBusyId(cosmeticId || `none-${slot}`);
         try {
@@ -115,12 +135,16 @@ const Shop: React.FC = () => {
             });
             setEquipped(res.data.equipped_avatar_border);
             setEquippedFont(res.data.equipped_font);
+            setEquippedTitle(res.data.equipped_title);
+            setEquippedTextEffect(res.data.equipped_text_effect);
+            setEquippedBanner(res.data.equipped_banner);
+            setEquippedPattern(res.data.equipped_pattern);
             window.dispatchEvent(new Event("profileUpdated"));
-            const isFont = slot === "font";
+            const messages = EQUIP_MESSAGES[slot];
             toast.success(
                 cosmeticId
-                    ? (isFont ? t("font_equipped", "Police équipée !") : t("cosmetic_equipped", "Contour équipé !"))
-                    : (isFont ? t("font_unequipped", "Police retirée.") : t("cosmetic_unequipped", "Contour retiré.")),
+                    ? t(messages.equippedKey, messages.equippedFallback)
+                    : t(messages.unequippedKey, messages.unequippedFallback),
             );
         } catch (e: any) {
             toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
@@ -378,6 +402,276 @@ const Shop: React.FC = () => {
                                         ) : (
                                             <button
                                                 onClick={() => handleEquip(item.id, "font")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("equip", "Équiper")}
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
+
+                {/* Section titres (badge à côté du pseudo) */}
+                {catalog.some((c) => c.type === "title") && (
+                    <>
+                        <h2 className="text-xl font-bold mt-12 mb-5 text-white dark:text-gray-900">
+                            {t("shop_section_titles", "Titres de profil")}
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {catalog.filter((c) => c.type === "title").map((item) => {
+                                const def = getProfileTitle(item.id);
+                                const isOwned: boolean = owned.includes(item.id);
+                                const isEquipped: boolean = equippedTitle === item.id;
+                                const busy: boolean = busyId === item.id;
+
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`relative bg-[#1a1d26] dark:bg-white border rounded-2xl p-6 shadow-sm transition-all ${
+                                            isEquipped ? "border-purple-500" : "border-slate-800 dark:border-gray-200"
+                                        }`}
+                                    >
+                                        {/* Aperçu du badge */}
+                                        <div className="h-24 rounded-xl mb-4 flex items-center justify-center bg-slate-900/60 dark:bg-gray-50 px-3 overflow-hidden">
+                                            <span className={`inline-flex items-center px-3 py-1.5 rounded-full border text-sm font-bold ${def?.className || "bg-slate-700 text-slate-200 border-slate-600"}`}>
+                                                {def?.label || item.name}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
+                                                <Tag size={16} className="text-purple-400"/>
+                                                {item.name}
+                                            </h3>
+                                            <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
+                                                <Coins size={16}/>
+                                                {item.price}
+                                            </div>
+                                        </div>
+
+                                        {!isOwned ? (
+                                            <button
+                                                onClick={() => handleBuy(item)}
+                                                disabled={busy || points < item.price}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-amber-500 hover:bg-amber-400 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                            >
+                                                {busy ? "…" : points < item.price ? t("not_enough_points_short", "Trop cher") : t("buy", "Acheter")}
+                                            </button>
+                                        ) : isEquipped ? (
+                                            <button
+                                                onClick={() => handleEquip(null, "title")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-200 transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("unequip", "Retirer")}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleEquip(item.id, "title")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("equip", "Équiper")}
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
+
+                {/* Section effets de texte (pseudo) */}
+                {catalog.some((c) => c.type === "text_effect") && (
+                    <>
+                        <h2 className="text-xl font-bold mt-12 mb-5 text-white dark:text-gray-900">
+                            {t("shop_section_text_effects", "Effets de texte du pseudo")}
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {catalog.filter((c) => c.type === "text_effect").map((item) => {
+                                const isOwned: boolean = owned.includes(item.id);
+                                const isEquipped: boolean = equippedTextEffect === item.id;
+                                const busy: boolean = busyId === item.id;
+
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`relative bg-[#1a1d26] dark:bg-white border rounded-2xl p-6 shadow-sm transition-all ${
+                                            isEquipped ? "border-purple-500" : "border-slate-800 dark:border-gray-200"
+                                        }`}
+                                    >
+                                        {/* Aperçu de l'effet sur le pseudo */}
+                                        <div className="h-24 rounded-xl mb-4 flex items-center justify-center bg-slate-900/60 dark:bg-gray-50 px-3 overflow-hidden">
+                                            <span className={`text-3xl font-bold truncate ${getTextEffectClassName(item.id)}`}>
+                                                {pseudo}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
+                                                <Wand2 size={16} className="text-purple-400"/>
+                                                {item.name}
+                                            </h3>
+                                            <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
+                                                <Coins size={16}/>
+                                                {item.price}
+                                            </div>
+                                        </div>
+
+                                        {!isOwned ? (
+                                            <button
+                                                onClick={() => handleBuy(item)}
+                                                disabled={busy || points < item.price}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-amber-500 hover:bg-amber-400 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                            >
+                                                {busy ? "…" : points < item.price ? t("not_enough_points_short", "Trop cher") : t("buy", "Acheter")}
+                                            </button>
+                                        ) : isEquipped ? (
+                                            <button
+                                                onClick={() => handleEquip(null, "text_effect")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-200 transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("unequip", "Retirer")}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleEquip(item.id, "text_effect")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("equip", "Équiper")}
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
+
+                {/* Section bannières premium */}
+                {catalog.some((c) => c.type === "banner") && (
+                    <>
+                        <h2 className="text-xl font-bold mt-12 mb-5 text-white dark:text-gray-900">
+                            {t("shop_section_banners", "Bannières premium")}
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {catalog.filter((c) => c.type === "banner").map((item) => {
+                                const def = getPremiumBanner(item.id);
+                                const isOwned: boolean = owned.includes(item.id);
+                                const isEquipped: boolean = equippedBanner === item.id;
+                                const busy: boolean = busyId === item.id;
+
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`relative bg-[#1a1d26] dark:bg-white border rounded-2xl p-6 shadow-sm transition-all ${
+                                            isEquipped ? "border-purple-500" : "border-slate-800 dark:border-gray-200"
+                                        }`}
+                                    >
+                                        {/* Aperçu animé de la bannière */}
+                                        <div className={`h-24 rounded-xl mb-4 overflow-hidden ${def?.className || ""}`}/>
+
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
+                                                <ImageIcon size={16} className="text-purple-400"/>
+                                                {item.name}
+                                            </h3>
+                                            <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
+                                                <Coins size={16}/>
+                                                {item.price}
+                                            </div>
+                                        </div>
+
+                                        {!isOwned ? (
+                                            <button
+                                                onClick={() => handleBuy(item)}
+                                                disabled={busy || points < item.price}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-amber-500 hover:bg-amber-400 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                            >
+                                                {busy ? "…" : points < item.price ? t("not_enough_points_short", "Trop cher") : t("buy", "Acheter")}
+                                            </button>
+                                        ) : isEquipped ? (
+                                            <button
+                                                onClick={() => handleEquip(null, "banner")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-200 transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("unequip", "Retirer")}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleEquip(item.id, "banner")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("equip", "Équiper")}
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
+
+                {/* Section motifs de fond (page profil) */}
+                {catalog.some((c) => c.type === "pattern") && (
+                    <>
+                        <h2 className="text-xl font-bold mt-12 mb-5 text-white dark:text-gray-900">
+                            {t("shop_section_patterns", "Motifs de profil")}
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {catalog.filter((c) => c.type === "pattern").map((item) => {
+                                const def = getPattern(item.id);
+                                const isOwned: boolean = owned.includes(item.id);
+                                const isEquipped: boolean = equippedPattern === item.id;
+                                const busy: boolean = busyId === item.id;
+
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`relative bg-[#1a1d26] dark:bg-white border rounded-2xl p-6 shadow-sm transition-all ${
+                                            isEquipped ? "border-purple-500" : "border-slate-800 dark:border-gray-200"
+                                        }`}
+                                    >
+                                        <div className={`h-24 rounded-xl mb-4 bg-slate-900/60 dark:bg-gray-50 ${def?.className || ""}`}/>
+
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
+                                                <LayoutGrid size={16} className="text-purple-400"/>
+                                                {item.name}
+                                            </h3>
+                                            <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
+                                                <Coins size={16}/>
+                                                {item.price}
+                                            </div>
+                                        </div>
+
+                                        {!isOwned ? (
+                                            <button
+                                                onClick={() => handleBuy(item)}
+                                                disabled={busy || points < item.price}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-amber-500 hover:bg-amber-400 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                            >
+                                                {busy ? "…" : points < item.price ? t("not_enough_points_short", "Trop cher") : t("buy", "Acheter")}
+                                            </button>
+                                        ) : isEquipped ? (
+                                            <button
+                                                onClick={() => handleEquip(null, "pattern")}
+                                                disabled={busy}
+                                                className="w-full py-2.5 rounded-xl font-semibold text-sm bg-slate-800 dark:bg-gray-100 text-slate-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-200 transition-colors disabled:opacity-40"
+                                            >
+                                                {busy ? "…" : t("unequip", "Retirer")}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleEquip(item.id, "pattern")}
                                                 disabled={busy}
                                                 className="w-full py-2.5 rounded-xl font-semibold text-sm bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-40"
                                             >

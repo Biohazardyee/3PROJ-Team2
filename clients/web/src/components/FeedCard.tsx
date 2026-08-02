@@ -14,9 +14,18 @@ import {
 import {useTranslation} from "react-i18next";
 import apiClient from "../api/client";
 import UserAvatar from "./UserAvatar.tsx";
+import AvatarBorder from "./AvatarBorder";
+import {getPseudoFontFamily} from "../fonts.config";
+import {getTextEffectClassName} from "../textEffects.config";
 import {AxiosResponse} from "axios";
 
-export interface ReviewReply {
+interface AuthorCosmetics {
+    equipped_avatar_border?: string | null;
+    equipped_font?: string | null;
+    equipped_text_effect?: string | null;
+}
+
+export interface ReviewReply extends AuthorCosmetics {
     id: string | number;
     user: string;
     user_id?: string | number;
@@ -27,7 +36,7 @@ export interface ReviewReply {
     created_at?: string;
 }
 
-export interface ReviewComment {
+export interface ReviewComment extends AuthorCosmetics {
     id: string | number;
     user: string;
     user_id?: string | number;
@@ -37,7 +46,7 @@ export interface ReviewComment {
     replies: ReviewReply[];
 }
 
-export interface FeedItem {
+export interface FeedItem extends AuthorCosmetics {
     id: string;
     type: "review" | "new_album" | "recommendation";
     user_id?: string;
@@ -212,28 +221,35 @@ const CommentItem: React.FC<CommentItemProps> = ({
                     }`}
                 >
                     {/* Si l'image existe et n'a pas crashé, on l'affiche. Sinon, fallback UserAvatar */}
-                    {comment.user_image && !hasImageError ? (
-                        <div
-                            className={`rounded-full bg-[#2A2A38] dark:bg-slate-200 flex items-center justify-center font-bold text-blue-400 shrink-0 overflow-hidden ${depth === 0 ? "w-10 h-10 text-sm" : "w-8 h-8 text-xs"}`}>
-                            <img
-                                src={comment.user_image}
-                                alt={comment.user}
-                                className="w-full h-full object-cover"
-                                onError={() => setHasImageError(true)} // Déclenche le fallback si l'image est introuvable
+                    <AvatarBorder borderId={comment.equipped_avatar_border} compact className="shrink-0">
+                        {comment.user_image && !hasImageError ? (
+                            <div
+                                className={`rounded-full bg-[#2A2A38] dark:bg-slate-200 flex items-center justify-center font-bold text-blue-400 shrink-0 overflow-hidden ${depth === 0 ? "w-10 h-10 text-sm" : "w-8 h-8 text-xs"}`}>
+                                <img
+                                    src={comment.user_image}
+                                    alt={comment.user}
+                                    className="w-full h-full object-cover"
+                                    onError={() => setHasImageError(true)} // Déclenche le fallback si l'image est introuvable
+                                />
+                            </div>
+                        ) : (
+                            <UserAvatar
+                                userId={comment.user_id ? String(comment.user_id) : undefined}
+                                username={comment.user}
+                                sizeClass={depth === 0 ? "w-10 h-10 text-sm font-bold" : "w-8 h-8 text-xs font-bold"}
                             />
-                        </div>
-                    ) : (
-                        <UserAvatar
-                            userId={comment.user_id ? String(comment.user_id) : undefined}
-                            username={comment.user}
-                            sizeClass={depth === 0 ? "w-10 h-10 text-sm font-bold" : "w-8 h-8 text-xs font-bold"}
-                        />
-                    )}
+                        )}
+                    </AvatarBorder>
 
                     <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start mb-1 gap-2">
                             <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-bold text-white dark:text-gray-900 text-sm">{comment.user}</span>
+                                <span
+                                    className={`font-bold text-sm ${getTextEffectClassName(comment.equipped_text_effect) || "text-white dark:text-gray-900"}`}
+                                    style={{fontFamily: getPseudoFontFamily(comment.equipped_font) || undefined}}
+                                >
+                                    {comment.user}
+                                </span>
                                 {parentComment && (
                                     <span
                                         className="text-[10px] px-2 py-0.5 rounded bg-[#1C1C28] dark:bg-blue-50 text-[#3b82f6] font-medium border border-[#3b82f6]/20">
@@ -390,7 +406,10 @@ const FeedCard: React.FC<FeedCardProps> = ({
                     id: c.id,
                     user: c.user?.pseudo || c.user?.username || c.user_name || t("anonymous"),
                     user_id: c.user?.id || c.user_id || c.userId,
-                    user_image: c.user?.profile_picture,
+                    user_image: c.user?.profile_picture || c.user?.image,
+                    equipped_avatar_border: c.user?.equipped_avatar_border ?? null,
+                    equipped_font: c.user?.equipped_font ?? null,
+                    equipped_text_effect: c.user?.equipped_text_effect ?? null,
                     text: c.content || c.text || "",
                     parent_id: c.parent_id ?? null,
                     created_at: c.created_at,
@@ -448,7 +467,10 @@ const FeedCard: React.FC<FeedCardProps> = ({
                             id: saved.id || tempId,
                             user: saved.user?.pseudo || saved.user?.username || t("me"),
                             user_id: saved.user?.id || currentUserId,
-                            user_image: saved.user?.profile_picture,
+                            user_image: saved.user?.profile_picture || saved.user?.image,
+                            equipped_avatar_border: saved.user?.equipped_avatar_border ?? null,
+                            equipped_font: saved.user?.equipped_font ?? null,
+                            equipped_text_effect: saved.user?.equipped_text_effect ?? null,
                             text: saved.content || text,
                             parent_id: null,
                             created_at: saved.created_at || tempComment.created_at,
@@ -501,6 +523,10 @@ const FeedCard: React.FC<FeedCardProps> = ({
                             id: saved.id || tempId,
                             user: saved.user?.pseudo || saved.user?.username || t("me"),
                             user_id: saved.user?.id || currentUserId,
+                            user_image: saved.user?.profile_picture || saved.user?.image,
+                            equipped_avatar_border: saved.user?.equipped_avatar_border ?? null,
+                            equipped_font: saved.user?.equipped_font ?? null,
+                            equipped_text_effect: saved.user?.equipped_text_effect ?? null,
                             text: saved.content || text,
                             parent_id: parentId,
                             created_at: saved.created_at || tempReply.created_at,
@@ -543,25 +569,32 @@ const FeedCard: React.FC<FeedCardProps> = ({
                     onClick={() => item.user_id && onNavigateToProfile(item.user_id)}
                     className="flex items-center gap-4 hover:opacity-80 transition-opacity"
                 >
-                    {item.user_image && !mainImageError ? (
-                        <img
-                            src={item.user_image}
-                            alt={item.user_name}
-                            className="w-12 h-12 rounded-full object-cover"
-                            onError={() => setMainImageError(true)}
-                        />
-                    ) : (
-                        <div
-                            className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
-                                isNew ? "bg-pink-900/50 text-pink-300 dark:bg-pink-100 dark:text-pink-600" : getAvatarColor(item.user_name)
-                            }`}
-                        >
-                            {isNew ? <Sparkles size={18}/> : getInitials(item.user_name)}
-                        </div>
-                    )}
+                    <AvatarBorder borderId={item.equipped_avatar_border} compact>
+                        {item.user_image && !mainImageError ? (
+                            <img
+                                src={item.user_image}
+                                alt={item.user_name}
+                                className="w-12 h-12 rounded-full object-cover"
+                                onError={() => setMainImageError(true)}
+                            />
+                        ) : (
+                            <div
+                                className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
+                                    isNew ? "bg-pink-900/50 text-pink-300 dark:bg-pink-100 dark:text-pink-600" : getAvatarColor(item.user_name)
+                                }`}
+                            >
+                                {isNew ? <Sparkles size={18}/> : getInitials(item.user_name)}
+                            </div>
+                        )}
+                    </AvatarBorder>
                     <div className="text-left">
-                        <p className="text-white dark:text-gray-900 font-bold">
-                            {item.user_name || t("recommendation")}
+                        <p className="font-bold">
+                            <span
+                                className={getTextEffectClassName(item.equipped_text_effect) || "text-white dark:text-gray-900"}
+                                style={{fontFamily: getPseudoFontFamily(item.equipped_font) || undefined}}
+                            >
+                                {item.user_name || t("recommendation")}
+                            </span>
                             <span className="text-gray-400 dark:text-gray-500 font-normal text-sm ml-1">
                                 {isReview ? t("wrote_review") : t("new_album")}
                             </span>

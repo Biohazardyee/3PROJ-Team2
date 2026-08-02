@@ -28,6 +28,9 @@ export interface FeedItem {
   user_id?: string;
   user_image?: string;
   user_name?: string;
+  equipped_avatar_border?: string | null;
+  equipped_font?: string | null;
+  equipped_text_effect?: string | null;
   review_id?: string;
   media_id?: string;
 

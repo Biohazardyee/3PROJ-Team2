@@ -27,6 +27,10 @@ model Users {
   owned_cosmetics        String[] @default([])
   equipped_avatar_border String?
   equipped_font          String?
+  equipped_title         String?
+  equipped_text_effect   String?
+  equipped_banner        String?
+  equipped_pattern       String?
 
   role            Roles   @default(BASIC)
 
@@ -60,6 +64,8 @@ model Users {
 
   expo_push_token String?
 
+  spotify_account SpotifyAccounts?
+
   @@unique([provider, provider_id])
 }
 
@@ -73,6 +79,19 @@ enum AuthProvider {
 enum Roles {
   BASIC
   ADMIN
+}
+
+model SpotifyAccounts {
+  id            String   @id @default(uuid())
+  user          Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id       String   @unique
+  spotify_id    String
+  display_name  String?
+  access_token  String
+  refresh_token String
+  expires_at    DateTime
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 }
 
 model Medias {
@@ -153,14 +172,15 @@ model ReviewLikes {
 }
 
 model Playlists {
-  id         String   @id @default(uuid())
-  user       Users    @relation(fields: [user_id], references: [id])
-  user_id    String
-  name       String   @db.VarChar(30)
-  image_url  Bytes?
-  is_public  Boolean
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id                 String   @id @default(uuid())
+  user               Users    @relation(fields: [user_id], references: [id])
+  user_id            String
+  name               String   @db.VarChar(30)
+  image_url          Bytes?
+  is_public          Boolean
+  spotify_playlist_id String?
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
 
   items PlaylistItems[]
 

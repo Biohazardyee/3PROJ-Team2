@@ -14,6 +14,14 @@ import {
 import {jwtDecode} from "jwt-decode";
 import {useNavigate} from "react-router-dom";
 import apiClient from "../api/client";
+import AvatarBorder from "../components/AvatarBorder";
+
+interface NotificationActor {
+    username: string;
+    pseudo?: string | null;
+    profile_image?: string;
+    equipped_avatar_border?: string | null;
+}
 
 export interface AppNotification {
     id: string;
@@ -23,8 +31,8 @@ export interface AppNotification {
     content?: string;
     related_user_id?: string;
     created_at: string;
-    sender?: {username: string; profile_image?: string};
-    related_user?: {username: string; profile_image?: string};
+    sender?: NotificationActor;
+    related_user?: NotificationActor;
 }
 
 type Tab = "all" | "unread" | "mentions";
@@ -84,6 +92,9 @@ const NotificationCard: React.FC<{
     const userPic =
         notification.related_user?.profile_image ||
         notification.sender?.profile_image;
+    const userBorder =
+        notification.related_user?.equipped_avatar_border ||
+        notification.sender?.equipped_avatar_border;
 
     const text = (): string => {
         const key = `notification_action_${notification.action}`;
@@ -106,15 +117,17 @@ const NotificationCard: React.FC<{
             `}
         >
             <div className="relative shrink-0" onClick={onAvatarClick}>
-                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-800 dark:bg-gray-100 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
-                    {userPic ? (
-                        <img src={userPic} alt={displayUser} className="w-full h-full object-cover"/>
-                    ) : (
-                        <span className="text-blue-400 dark:text-blue-600 font-bold text-base">
-                            {userInitial}
-                        </span>
-                    )}
-                </div>
+                <AvatarBorder borderId={userBorder} compact>
+                    <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-800 dark:bg-gray-100 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
+                        {userPic ? (
+                            <img src={userPic} alt={displayUser} className="w-full h-full object-cover"/>
+                        ) : (
+                            <span className="text-blue-400 dark:text-blue-600 font-bold text-base">
+                                {userInitial}
+                            </span>
+                        )}
+                    </div>
+                </AvatarBorder>
                 <div className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full ${config.badgeBg} flex items-center justify-center border-2 border-[#13131A] dark:border-white`}>
                     <Icon size={10} className={config.iconColor}/>
                 </div>

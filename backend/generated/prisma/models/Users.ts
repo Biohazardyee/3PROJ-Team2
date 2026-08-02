@@ -46,6 +46,10 @@ export type UsersMinAggregateOutputType = {
   shop_points: number | null
   equipped_avatar_border: string | null
   equipped_font: string | null
+  equipped_title: string | null
+  equipped_text_effect: string | null
+  equipped_banner: string | null
+  equipped_pattern: string | null
   role: $Enums.Roles | null
   provider: $Enums.AuthProvider | null
   provider_id: string | null
@@ -69,6 +73,10 @@ export type UsersMaxAggregateOutputType = {
   shop_points: number | null
   equipped_avatar_border: string | null
   equipped_font: string | null
+  equipped_title: string | null
+  equipped_text_effect: string | null
+  equipped_banner: string | null
+  equipped_pattern: string | null
   role: $Enums.Roles | null
   provider: $Enums.AuthProvider | null
   provider_id: string | null
@@ -93,6 +101,10 @@ export type UsersCountAggregateOutputType = {
   owned_cosmetics: number
   equipped_avatar_border: number
   equipped_font: number
+  equipped_title: number
+  equipped_text_effect: number
+  equipped_banner: number
+  equipped_pattern: number
   role: number
   provider: number
   provider_id: number
@@ -126,6 +138,10 @@ export type UsersMinAggregateInputType = {
   shop_points?: true
   equipped_avatar_border?: true
   equipped_font?: true
+  equipped_title?: true
+  equipped_text_effect?: true
+  equipped_banner?: true
+  equipped_pattern?: true
   role?: true
   provider?: true
   provider_id?: true
@@ -149,6 +165,10 @@ export type UsersMaxAggregateInputType = {
   shop_points?: true
   equipped_avatar_border?: true
   equipped_font?: true
+  equipped_title?: true
+  equipped_text_effect?: true
+  equipped_banner?: true
+  equipped_pattern?: true
   role?: true
   provider?: true
   provider_id?: true
@@ -173,6 +193,10 @@ export type UsersCountAggregateInputType = {
   owned_cosmetics?: true
   equipped_avatar_border?: true
   equipped_font?: true
+  equipped_title?: true
+  equipped_text_effect?: true
+  equipped_banner?: true
+  equipped_pattern?: true
   role?: true
   provider?: true
   provider_id?: true
@@ -284,6 +308,10 @@ export type UsersGroupByOutputType = {
   owned_cosmetics: string[]
   equipped_avatar_border: string | null
   equipped_font: string | null
+  equipped_title: string | null
+  equipped_text_effect: string | null
+  equipped_banner: string | null
+  equipped_pattern: string | null
   role: $Enums.Roles
   provider: $Enums.AuthProvider | null
   provider_id: string | null
@@ -331,6 +359,10 @@ export type UsersWhereInput = {
   owned_cosmetics?: Prisma.StringNullableListFilter<"Users">
   equipped_avatar_border?: Prisma.StringNullableFilter<"Users"> | string | null
   equipped_font?: Prisma.StringNullableFilter<"Users"> | string | null
+  equipped_title?: Prisma.StringNullableFilter<"Users"> | string | null
+  equipped_text_effect?: Prisma.StringNullableFilter<"Users"> | string | null
+  equipped_banner?: Prisma.StringNullableFilter<"Users"> | string | null
+  equipped_pattern?: Prisma.StringNullableFilter<"Users"> | string | null
   role?: Prisma.EnumRolesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableFilter<"Users"> | $Enums.AuthProvider | null
   provider_id?: Prisma.StringNullableFilter<"Users"> | string | null
@@ -357,6 +389,7 @@ export type UsersWhereInput = {
   conversations_user2?: Prisma.ConversationsListRelationFilter
   messages?: Prisma.MessagesListRelationFilter
   commentLikes?: Prisma.CommentLikesListRelationFilter
+  spotify_account?: Prisma.XOR<Prisma.SpotifyAccountsNullableScalarRelationFilter, Prisma.SpotifyAccountsWhereInput> | null
 }
 
 export type UsersOrderByWithRelationInput = {
@@ -372,6 +405,10 @@ export type UsersOrderByWithRelationInput = {
   owned_cosmetics?: Prisma.SortOrder
   equipped_avatar_border?: Prisma.SortOrderInput | Prisma.SortOrder
   equipped_font?: Prisma.SortOrderInput | Prisma.SortOrder
+  equipped_title?: Prisma.SortOrderInput | Prisma.SortOrder
+  equipped_text_effect?: Prisma.SortOrderInput | Prisma.SortOrder
+  equipped_banner?: Prisma.SortOrderInput | Prisma.SortOrder
+  equipped_pattern?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrderInput | Prisma.SortOrder
   provider_id?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -398,6 +435,7 @@ export type UsersOrderByWithRelationInput = {
   conversations_user2?: Prisma.ConversationsOrderByRelationAggregateInput
   messages?: Prisma.MessagesOrderByRelationAggregateInput
   commentLikes?: Prisma.CommentLikesOrderByRelationAggregateInput
+  spotify_account?: Prisma.SpotifyAccountsOrderByWithRelationInput
 }
 
 export type UsersWhereUniqueInput = Prisma.AtLeast<{
@@ -417,6 +455,10 @@ export type UsersWhereUniqueInput = Prisma.AtLeast<{
   owned_cosmetics?: Prisma.StringNullableListFilter<"Users">
   equipped_avatar_border?: Prisma.StringNullableFilter<"Users"> | string | null
   equipped_font?: Prisma.StringNullableFilter<"Users"> | string | null
+  equipped_title?: Prisma.StringNullableFilter<"Users"> | string | null
+  equipped_text_effect?: Prisma.StringNullableFilter<"Users"> | string | null
+  equipped_banner?: Prisma.StringNullableFilter<"Users"> | string | null
+  equipped_pattern?: Prisma.StringNullableFilter<"Users"> | string | null
   role?: Prisma.EnumRolesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableFilter<"Users"> | $Enums.AuthProvider | null
   provider_id?: Prisma.StringNullableFilter<"Users"> | string | null
@@ -443,6 +485,7 @@ export type UsersWhereUniqueInput = Prisma.AtLeast<{
   conversations_user2?: Prisma.ConversationsListRelationFilter
   messages?: Prisma.MessagesListRelationFilter
   commentLikes?: Prisma.CommentLikesListRelationFilter
+  spotify_account?: Prisma.XOR<Prisma.SpotifyAccountsNullableScalarRelationFilter, Prisma.SpotifyAccountsWhereInput> | null
 }, "id" | "username" | "email" | "provider_provider_id">
 
 export type UsersOrderByWithAggregationInput = {
@@ -458,6 +501,10 @@ export type UsersOrderByWithAggregationInput = {
   owned_cosmetics?: Prisma.SortOrder
   equipped_avatar_border?: Prisma.SortOrderInput | Prisma.SortOrder
   equipped_font?: Prisma.SortOrderInput | Prisma.SortOrder
+  equipped_title?: Prisma.SortOrderInput | Prisma.SortOrder
+  equipped_text_effect?: Prisma.SortOrderInput | Prisma.SortOrder
+  equipped_banner?: Prisma.SortOrderInput | Prisma.SortOrder
+  equipped_pattern?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrderInput | Prisma.SortOrder
   provider_id?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -490,6 +537,10 @@ export type UsersScalarWhereWithAggregatesInput = {
   owned_cosmetics?: Prisma.StringNullableListFilter<"Users">
   equipped_avatar_border?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
   equipped_font?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
+  equipped_title?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
+  equipped_text_effect?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
+  equipped_banner?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
+  equipped_pattern?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
   role?: Prisma.EnumRolesWithAggregatesFilter<"Users"> | $Enums.Roles
   provider?: Prisma.EnumAuthProviderNullableWithAggregatesFilter<"Users"> | $Enums.AuthProvider | null
   provider_id?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
@@ -514,6 +565,10 @@ export type UsersCreateInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -540,6 +595,7 @@ export type UsersCreateInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateInput = {
@@ -555,6 +611,10 @@ export type UsersUncheckedCreateInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -581,6 +641,7 @@ export type UsersUncheckedCreateInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersUpdateInput = {
@@ -596,6 +657,10 @@ export type UsersUpdateInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -622,6 +687,7 @@ export type UsersUpdateInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateInput = {
@@ -637,6 +703,10 @@ export type UsersUncheckedUpdateInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -663,6 +733,7 @@ export type UsersUncheckedUpdateInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateManyInput = {
@@ -678,6 +749,10 @@ export type UsersCreateManyInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -702,6 +777,10 @@ export type UsersUpdateManyMutationInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -726,6 +805,10 @@ export type UsersUncheckedUpdateManyInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -763,6 +846,10 @@ export type UsersCountOrderByAggregateInput = {
   owned_cosmetics?: Prisma.SortOrder
   equipped_avatar_border?: Prisma.SortOrder
   equipped_font?: Prisma.SortOrder
+  equipped_title?: Prisma.SortOrder
+  equipped_text_effect?: Prisma.SortOrder
+  equipped_banner?: Prisma.SortOrder
+  equipped_pattern?: Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   provider_id?: Prisma.SortOrder
@@ -790,6 +877,10 @@ export type UsersMaxOrderByAggregateInput = {
   shop_points?: Prisma.SortOrder
   equipped_avatar_border?: Prisma.SortOrder
   equipped_font?: Prisma.SortOrder
+  equipped_title?: Prisma.SortOrder
+  equipped_text_effect?: Prisma.SortOrder
+  equipped_banner?: Prisma.SortOrder
+  equipped_pattern?: Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   provider_id?: Prisma.SortOrder
@@ -813,6 +904,10 @@ export type UsersMinOrderByAggregateInput = {
   shop_points?: Prisma.SortOrder
   equipped_avatar_border?: Prisma.SortOrder
   equipped_font?: Prisma.SortOrder
+  equipped_title?: Prisma.SortOrder
+  equipped_text_effect?: Prisma.SortOrder
+  equipped_banner?: Prisma.SortOrder
+  equipped_pattern?: Prisma.SortOrder
   role?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   provider_id?: Prisma.SortOrder
@@ -881,6 +976,20 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type UsersCreateNestedOneWithoutSpotify_accountInput = {
+  create?: Prisma.XOR<Prisma.UsersCreateWithoutSpotify_accountInput, Prisma.UsersUncheckedCreateWithoutSpotify_accountInput>
+  connectOrCreate?: Prisma.UsersCreateOrConnectWithoutSpotify_accountInput
+  connect?: Prisma.UsersWhereUniqueInput
+}
+
+export type UsersUpdateOneRequiredWithoutSpotify_accountNestedInput = {
+  create?: Prisma.XOR<Prisma.UsersCreateWithoutSpotify_accountInput, Prisma.UsersUncheckedCreateWithoutSpotify_accountInput>
+  connectOrCreate?: Prisma.UsersCreateOrConnectWithoutSpotify_accountInput
+  upsert?: Prisma.UsersUpsertWithoutSpotify_accountInput
+  connect?: Prisma.UsersWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsersUpdateToOneWithWhereWithoutSpotify_accountInput, Prisma.UsersUpdateWithoutSpotify_accountInput>, Prisma.UsersUncheckedUpdateWithoutSpotify_accountInput>
 }
 
 export type UsersCreateNestedOneWithoutReviewsInput = {
@@ -1127,6 +1236,202 @@ export type UsersUpdateOneRequiredWithoutMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsersUpdateToOneWithWhereWithoutMessagesInput, Prisma.UsersUpdateWithoutMessagesInput>, Prisma.UsersUncheckedUpdateWithoutMessagesInput>
 }
 
+export type UsersCreateWithoutSpotify_accountInput = {
+  id?: string
+  username: string
+  pseudo: string
+  email: string
+  password?: string | null
+  favorite_band?: string | null
+  profile_picture?: runtime.Bytes | null
+  banner?: runtime.Bytes | null
+  shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
+  equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
+  role?: $Enums.Roles
+  provider?: $Enums.AuthProvider | null
+  provider_id?: string | null
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  expo_push_token?: string | null
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
+  reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
+  profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitiesCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
+  commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+}
+
+export type UsersUncheckedCreateWithoutSpotify_accountInput = {
+  id?: string
+  username: string
+  pseudo: string
+  email: string
+  password?: string | null
+  favorite_band?: string | null
+  profile_picture?: runtime.Bytes | null
+  banner?: runtime.Bytes | null
+  shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
+  equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
+  role?: $Enums.Roles
+  provider?: $Enums.AuthProvider | null
+  provider_id?: string | null
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  expo_push_token?: string | null
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
+  reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
+  profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
+  commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UsersCreateOrConnectWithoutSpotify_accountInput = {
+  where: Prisma.UsersWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsersCreateWithoutSpotify_accountInput, Prisma.UsersUncheckedCreateWithoutSpotify_accountInput>
+}
+
+export type UsersUpsertWithoutSpotify_accountInput = {
+  update: Prisma.XOR<Prisma.UsersUpdateWithoutSpotify_accountInput, Prisma.UsersUncheckedUpdateWithoutSpotify_accountInput>
+  create: Prisma.XOR<Prisma.UsersCreateWithoutSpotify_accountInput, Prisma.UsersUncheckedCreateWithoutSpotify_accountInput>
+  where?: Prisma.UsersWhereInput
+}
+
+export type UsersUpdateToOneWithWhereWithoutSpotify_accountInput = {
+  where?: Prisma.UsersWhereInput
+  data: Prisma.XOR<Prisma.UsersUpdateWithoutSpotify_accountInput, Prisma.UsersUncheckedUpdateWithoutSpotify_accountInput>
+}
+
+export type UsersUpdateWithoutSpotify_accountInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  pseudo?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
+  provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
+  reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
+  profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitiesUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
+  commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+}
+
+export type UsersUncheckedUpdateWithoutSpotify_accountInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  pseudo?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
+  provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
+  reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
+  profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitiesUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
+  commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UsersCreateWithoutReviewsInput = {
   id?: string
   username: string
@@ -1140,6 +1445,10 @@ export type UsersCreateWithoutReviewsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1165,6 +1474,7 @@ export type UsersCreateWithoutReviewsInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutReviewsInput = {
@@ -1180,6 +1490,10 @@ export type UsersUncheckedCreateWithoutReviewsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1205,6 +1519,7 @@ export type UsersUncheckedCreateWithoutReviewsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutReviewsInput = {
@@ -1236,6 +1551,10 @@ export type UsersUpdateWithoutReviewsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1261,6 +1580,7 @@ export type UsersUpdateWithoutReviewsInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutReviewsInput = {
@@ -1276,6 +1596,10 @@ export type UsersUncheckedUpdateWithoutReviewsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1301,6 +1625,7 @@ export type UsersUncheckedUpdateWithoutReviewsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutReview_commentsInput = {
@@ -1316,6 +1641,10 @@ export type UsersCreateWithoutReview_commentsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1341,6 +1670,7 @@ export type UsersCreateWithoutReview_commentsInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutReview_commentsInput = {
@@ -1356,6 +1686,10 @@ export type UsersUncheckedCreateWithoutReview_commentsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1381,6 +1715,7 @@ export type UsersUncheckedCreateWithoutReview_commentsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutReview_commentsInput = {
@@ -1412,6 +1747,10 @@ export type UsersUpdateWithoutReview_commentsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1437,6 +1776,7 @@ export type UsersUpdateWithoutReview_commentsInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutReview_commentsInput = {
@@ -1452,6 +1792,10 @@ export type UsersUncheckedUpdateWithoutReview_commentsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1477,6 +1821,7 @@ export type UsersUncheckedUpdateWithoutReview_commentsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutCommentLikesInput = {
@@ -1492,6 +1837,10 @@ export type UsersCreateWithoutCommentLikesInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1517,6 +1866,7 @@ export type UsersCreateWithoutCommentLikesInput = {
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutCommentLikesInput = {
@@ -1532,6 +1882,10 @@ export type UsersUncheckedCreateWithoutCommentLikesInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1557,6 +1911,7 @@ export type UsersUncheckedCreateWithoutCommentLikesInput = {
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutCommentLikesInput = {
@@ -1588,6 +1943,10 @@ export type UsersUpdateWithoutCommentLikesInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1613,6 +1972,7 @@ export type UsersUpdateWithoutCommentLikesInput = {
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutCommentLikesInput = {
@@ -1628,6 +1988,10 @@ export type UsersUncheckedUpdateWithoutCommentLikesInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1653,6 +2017,7 @@ export type UsersUncheckedUpdateWithoutCommentLikesInput = {
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutReview_likesInput = {
@@ -1668,6 +2033,10 @@ export type UsersCreateWithoutReview_likesInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1693,6 +2062,7 @@ export type UsersCreateWithoutReview_likesInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutReview_likesInput = {
@@ -1708,6 +2078,10 @@ export type UsersUncheckedCreateWithoutReview_likesInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1733,6 +2107,7 @@ export type UsersUncheckedCreateWithoutReview_likesInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutReview_likesInput = {
@@ -1764,6 +2139,10 @@ export type UsersUpdateWithoutReview_likesInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1789,6 +2168,7 @@ export type UsersUpdateWithoutReview_likesInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutReview_likesInput = {
@@ -1804,6 +2184,10 @@ export type UsersUncheckedUpdateWithoutReview_likesInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1829,6 +2213,7 @@ export type UsersUncheckedUpdateWithoutReview_likesInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutPlaylistsInput = {
@@ -1844,6 +2229,10 @@ export type UsersCreateWithoutPlaylistsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1869,6 +2258,7 @@ export type UsersCreateWithoutPlaylistsInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutPlaylistsInput = {
@@ -1884,6 +2274,10 @@ export type UsersUncheckedCreateWithoutPlaylistsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -1909,6 +2303,7 @@ export type UsersUncheckedCreateWithoutPlaylistsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutPlaylistsInput = {
@@ -1940,6 +2335,10 @@ export type UsersUpdateWithoutPlaylistsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1965,6 +2364,7 @@ export type UsersUpdateWithoutPlaylistsInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutPlaylistsInput = {
@@ -1980,6 +2380,10 @@ export type UsersUncheckedUpdateWithoutPlaylistsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2005,6 +2409,7 @@ export type UsersUncheckedUpdateWithoutPlaylistsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutUser_media_statusInput = {
@@ -2020,6 +2425,10 @@ export type UsersCreateWithoutUser_media_statusInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2045,6 +2454,7 @@ export type UsersCreateWithoutUser_media_statusInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutUser_media_statusInput = {
@@ -2060,6 +2470,10 @@ export type UsersUncheckedCreateWithoutUser_media_statusInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2085,6 +2499,7 @@ export type UsersUncheckedCreateWithoutUser_media_statusInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutUser_media_statusInput = {
@@ -2116,6 +2531,10 @@ export type UsersUpdateWithoutUser_media_statusInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2141,6 +2560,7 @@ export type UsersUpdateWithoutUser_media_statusInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutUser_media_statusInput = {
@@ -2156,6 +2576,10 @@ export type UsersUncheckedUpdateWithoutUser_media_statusInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2181,6 +2605,7 @@ export type UsersUncheckedUpdateWithoutUser_media_statusInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutActivitiesInput = {
@@ -2196,6 +2621,10 @@ export type UsersCreateWithoutActivitiesInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2221,6 +2650,7 @@ export type UsersCreateWithoutActivitiesInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutActivitiesInput = {
@@ -2236,6 +2666,10 @@ export type UsersUncheckedCreateWithoutActivitiesInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2261,6 +2695,7 @@ export type UsersUncheckedCreateWithoutActivitiesInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutActivitiesInput = {
@@ -2281,6 +2716,10 @@ export type UsersCreateWithoutActivities_targetsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2306,6 +2745,7 @@ export type UsersCreateWithoutActivities_targetsInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutActivities_targetsInput = {
@@ -2321,6 +2761,10 @@ export type UsersUncheckedCreateWithoutActivities_targetsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2346,6 +2790,7 @@ export type UsersUncheckedCreateWithoutActivities_targetsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutActivities_targetsInput = {
@@ -2377,6 +2822,10 @@ export type UsersUpdateWithoutActivitiesInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2402,6 +2851,7 @@ export type UsersUpdateWithoutActivitiesInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutActivitiesInput = {
@@ -2417,6 +2867,10 @@ export type UsersUncheckedUpdateWithoutActivitiesInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2442,6 +2896,7 @@ export type UsersUncheckedUpdateWithoutActivitiesInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUpsertWithoutActivities_targetsInput = {
@@ -2468,6 +2923,10 @@ export type UsersUpdateWithoutActivities_targetsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2493,6 +2952,7 @@ export type UsersUpdateWithoutActivities_targetsInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutActivities_targetsInput = {
@@ -2508,6 +2968,10 @@ export type UsersUncheckedUpdateWithoutActivities_targetsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2533,6 +2997,7 @@ export type UsersUncheckedUpdateWithoutActivities_targetsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutFollowsInput = {
@@ -2548,6 +3013,10 @@ export type UsersCreateWithoutFollowsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2573,6 +3042,7 @@ export type UsersCreateWithoutFollowsInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutFollowsInput = {
@@ -2588,6 +3058,10 @@ export type UsersUncheckedCreateWithoutFollowsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2613,6 +3087,7 @@ export type UsersUncheckedCreateWithoutFollowsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutFollowsInput = {
@@ -2633,6 +3108,10 @@ export type UsersCreateWithoutFollowersInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2658,6 +3137,7 @@ export type UsersCreateWithoutFollowersInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutFollowersInput = {
@@ -2673,6 +3153,10 @@ export type UsersUncheckedCreateWithoutFollowersInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2698,6 +3182,7 @@ export type UsersUncheckedCreateWithoutFollowersInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutFollowersInput = {
@@ -2729,6 +3214,10 @@ export type UsersUpdateWithoutFollowsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2754,6 +3243,7 @@ export type UsersUpdateWithoutFollowsInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutFollowsInput = {
@@ -2769,6 +3259,10 @@ export type UsersUncheckedUpdateWithoutFollowsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2794,6 +3288,7 @@ export type UsersUncheckedUpdateWithoutFollowsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUpsertWithoutFollowersInput = {
@@ -2820,6 +3315,10 @@ export type UsersUpdateWithoutFollowersInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2845,6 +3344,7 @@ export type UsersUpdateWithoutFollowersInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutFollowersInput = {
@@ -2860,6 +3360,10 @@ export type UsersUncheckedUpdateWithoutFollowersInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2885,6 +3389,7 @@ export type UsersUncheckedUpdateWithoutFollowersInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutReporter_reportsInput = {
@@ -2900,6 +3405,10 @@ export type UsersCreateWithoutReporter_reportsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2925,6 +3434,7 @@ export type UsersCreateWithoutReporter_reportsInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutReporter_reportsInput = {
@@ -2940,6 +3450,10 @@ export type UsersUncheckedCreateWithoutReporter_reportsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -2965,6 +3479,7 @@ export type UsersUncheckedCreateWithoutReporter_reportsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutReporter_reportsInput = {
@@ -2985,6 +3500,10 @@ export type UsersCreateWithoutProfile_reportsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3010,6 +3529,7 @@ export type UsersCreateWithoutProfile_reportsInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutProfile_reportsInput = {
@@ -3025,6 +3545,10 @@ export type UsersUncheckedCreateWithoutProfile_reportsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3050,6 +3574,7 @@ export type UsersUncheckedCreateWithoutProfile_reportsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutProfile_reportsInput = {
@@ -3081,6 +3606,10 @@ export type UsersUpdateWithoutReporter_reportsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3106,6 +3635,7 @@ export type UsersUpdateWithoutReporter_reportsInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutReporter_reportsInput = {
@@ -3121,6 +3651,10 @@ export type UsersUncheckedUpdateWithoutReporter_reportsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3146,6 +3680,7 @@ export type UsersUncheckedUpdateWithoutReporter_reportsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUpsertWithoutProfile_reportsInput = {
@@ -3172,6 +3707,10 @@ export type UsersUpdateWithoutProfile_reportsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3197,6 +3736,7 @@ export type UsersUpdateWithoutProfile_reportsInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutProfile_reportsInput = {
@@ -3212,6 +3752,10 @@ export type UsersUncheckedUpdateWithoutProfile_reportsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3237,6 +3781,7 @@ export type UsersUncheckedUpdateWithoutProfile_reportsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutNotificationsInput = {
@@ -3252,6 +3797,10 @@ export type UsersCreateWithoutNotificationsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3277,6 +3826,7 @@ export type UsersCreateWithoutNotificationsInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutNotificationsInput = {
@@ -3292,6 +3842,10 @@ export type UsersUncheckedCreateWithoutNotificationsInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3317,6 +3871,7 @@ export type UsersUncheckedCreateWithoutNotificationsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutNotificationsInput = {
@@ -3337,6 +3892,10 @@ export type UsersCreateWithoutNotificationsRelatedInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3362,6 +3921,7 @@ export type UsersCreateWithoutNotificationsRelatedInput = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutNotificationsRelatedInput = {
@@ -3377,6 +3937,10 @@ export type UsersUncheckedCreateWithoutNotificationsRelatedInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3402,6 +3966,7 @@ export type UsersUncheckedCreateWithoutNotificationsRelatedInput = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutNotificationsRelatedInput = {
@@ -3433,6 +3998,10 @@ export type UsersUpdateWithoutNotificationsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3458,6 +4027,7 @@ export type UsersUpdateWithoutNotificationsInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutNotificationsInput = {
@@ -3473,6 +4043,10 @@ export type UsersUncheckedUpdateWithoutNotificationsInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3498,6 +4072,7 @@ export type UsersUncheckedUpdateWithoutNotificationsInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUpsertWithoutNotificationsRelatedInput = {
@@ -3524,6 +4099,10 @@ export type UsersUpdateWithoutNotificationsRelatedInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3549,6 +4128,7 @@ export type UsersUpdateWithoutNotificationsRelatedInput = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutNotificationsRelatedInput = {
@@ -3564,6 +4144,10 @@ export type UsersUncheckedUpdateWithoutNotificationsRelatedInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3589,6 +4173,7 @@ export type UsersUncheckedUpdateWithoutNotificationsRelatedInput = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutConversations_user1Input = {
@@ -3604,6 +4189,10 @@ export type UsersCreateWithoutConversations_user1Input = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3629,6 +4218,7 @@ export type UsersCreateWithoutConversations_user1Input = {
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutConversations_user1Input = {
@@ -3644,6 +4234,10 @@ export type UsersUncheckedCreateWithoutConversations_user1Input = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3669,6 +4263,7 @@ export type UsersUncheckedCreateWithoutConversations_user1Input = {
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutConversations_user1Input = {
@@ -3689,6 +4284,10 @@ export type UsersCreateWithoutConversations_user2Input = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3714,6 +4313,7 @@ export type UsersCreateWithoutConversations_user2Input = {
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
   messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutConversations_user2Input = {
@@ -3729,6 +4329,10 @@ export type UsersUncheckedCreateWithoutConversations_user2Input = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3754,6 +4358,7 @@ export type UsersUncheckedCreateWithoutConversations_user2Input = {
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
   messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutConversations_user2Input = {
@@ -3785,6 +4390,10 @@ export type UsersUpdateWithoutConversations_user1Input = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3810,6 +4419,7 @@ export type UsersUpdateWithoutConversations_user1Input = {
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutConversations_user1Input = {
@@ -3825,6 +4435,10 @@ export type UsersUncheckedUpdateWithoutConversations_user1Input = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3850,6 +4464,7 @@ export type UsersUncheckedUpdateWithoutConversations_user1Input = {
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUpsertWithoutConversations_user2Input = {
@@ -3876,6 +4491,10 @@ export type UsersUpdateWithoutConversations_user2Input = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3901,6 +4520,7 @@ export type UsersUpdateWithoutConversations_user2Input = {
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
   messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutConversations_user2Input = {
@@ -3916,6 +4536,10 @@ export type UsersUncheckedUpdateWithoutConversations_user2Input = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3941,6 +4565,7 @@ export type UsersUncheckedUpdateWithoutConversations_user2Input = {
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
   messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UsersCreateWithoutMessagesInput = {
@@ -3956,6 +4581,10 @@ export type UsersCreateWithoutMessagesInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -3981,6 +4610,7 @@ export type UsersCreateWithoutMessagesInput = {
   conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
   conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
   commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
 }
 
 export type UsersUncheckedCreateWithoutMessagesInput = {
@@ -3996,6 +4626,10 @@ export type UsersUncheckedCreateWithoutMessagesInput = {
   owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
   equipped_avatar_border?: string | null
   equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
   role?: $Enums.Roles
   provider?: $Enums.AuthProvider | null
   provider_id?: string | null
@@ -4021,6 +4655,7 @@ export type UsersUncheckedCreateWithoutMessagesInput = {
   conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
   conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
   commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UsersCreateOrConnectWithoutMessagesInput = {
@@ -4052,6 +4687,10 @@ export type UsersUpdateWithoutMessagesInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4077,6 +4716,7 @@ export type UsersUpdateWithoutMessagesInput = {
   conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
   conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
   commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
 }
 
 export type UsersUncheckedUpdateWithoutMessagesInput = {
@@ -4092,6 +4732,10 @@ export type UsersUncheckedUpdateWithoutMessagesInput = {
   owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
   equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
   provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
   provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4117,6 +4761,7 @@ export type UsersUncheckedUpdateWithoutMessagesInput = {
   conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
   conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
   commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -4307,6 +4952,10 @@ export type UsersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   owned_cosmetics?: boolean
   equipped_avatar_border?: boolean
   equipped_font?: boolean
+  equipped_title?: boolean
+  equipped_text_effect?: boolean
+  equipped_banner?: boolean
+  equipped_pattern?: boolean
   role?: boolean
   provider?: boolean
   provider_id?: boolean
@@ -4333,6 +4982,7 @@ export type UsersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   conversations_user2?: boolean | Prisma.Users$conversations_user2Args<ExtArgs>
   messages?: boolean | Prisma.Users$messagesArgs<ExtArgs>
   commentLikes?: boolean | Prisma.Users$commentLikesArgs<ExtArgs>
+  spotify_account?: boolean | Prisma.Users$spotify_accountArgs<ExtArgs>
   _count?: boolean | Prisma.UsersCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["users"]>
 
@@ -4349,6 +4999,10 @@ export type UsersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   owned_cosmetics?: boolean
   equipped_avatar_border?: boolean
   equipped_font?: boolean
+  equipped_title?: boolean
+  equipped_text_effect?: boolean
+  equipped_banner?: boolean
+  equipped_pattern?: boolean
   role?: boolean
   provider?: boolean
   provider_id?: boolean
@@ -4373,6 +5027,10 @@ export type UsersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   owned_cosmetics?: boolean
   equipped_avatar_border?: boolean
   equipped_font?: boolean
+  equipped_title?: boolean
+  equipped_text_effect?: boolean
+  equipped_banner?: boolean
+  equipped_pattern?: boolean
   role?: boolean
   provider?: boolean
   provider_id?: boolean
@@ -4397,6 +5055,10 @@ export type UsersSelectScalar = {
   owned_cosmetics?: boolean
   equipped_avatar_border?: boolean
   equipped_font?: boolean
+  equipped_title?: boolean
+  equipped_text_effect?: boolean
+  equipped_banner?: boolean
+  equipped_pattern?: boolean
   role?: boolean
   provider?: boolean
   provider_id?: boolean
@@ -4408,7 +5070,7 @@ export type UsersSelectScalar = {
   expo_push_token?: boolean
 }
 
-export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "pseudo" | "email" | "password" | "favorite_band" | "profile_picture" | "banner" | "shop_points" | "owned_cosmetics" | "equipped_avatar_border" | "equipped_font" | "role" | "provider" | "provider_id" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at" | "expo_push_token", ExtArgs["result"]["users"]>
+export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "pseudo" | "email" | "password" | "favorite_band" | "profile_picture" | "banner" | "shop_points" | "owned_cosmetics" | "equipped_avatar_border" | "equipped_font" | "equipped_title" | "equipped_text_effect" | "equipped_banner" | "equipped_pattern" | "role" | "provider" | "provider_id" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at" | "expo_push_token", ExtArgs["result"]["users"]>
 export type UsersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviews?: boolean | Prisma.Users$reviewsArgs<ExtArgs>
   review_comments?: boolean | Prisma.Users$review_commentsArgs<ExtArgs>
@@ -4427,6 +5089,7 @@ export type UsersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   conversations_user2?: boolean | Prisma.Users$conversations_user2Args<ExtArgs>
   messages?: boolean | Prisma.Users$messagesArgs<ExtArgs>
   commentLikes?: boolean | Prisma.Users$commentLikesArgs<ExtArgs>
+  spotify_account?: boolean | Prisma.Users$spotify_accountArgs<ExtArgs>
   _count?: boolean | Prisma.UsersCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsersIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -4452,6 +5115,7 @@ export type $UsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     conversations_user2: Prisma.$ConversationsPayload<ExtArgs>[]
     messages: Prisma.$MessagesPayload<ExtArgs>[]
     commentLikes: Prisma.$CommentLikesPayload<ExtArgs>[]
+    spotify_account: Prisma.$SpotifyAccountsPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4466,6 +5130,10 @@ export type $UsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     owned_cosmetics: string[]
     equipped_avatar_border: string | null
     equipped_font: string | null
+    equipped_title: string | null
+    equipped_text_effect: string | null
+    equipped_banner: string | null
+    equipped_pattern: string | null
     role: $Enums.Roles
     provider: $Enums.AuthProvider | null
     provider_id: string | null
@@ -4886,6 +5554,7 @@ export interface Prisma__UsersClient<T, Null = never, ExtArgs extends runtime.Ty
   conversations_user2<T extends Prisma.Users$conversations_user2Args<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$conversations_user2Args<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.Users$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   commentLikes<T extends Prisma.Users$commentLikesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$commentLikesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentLikesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  spotify_account<T extends Prisma.Users$spotify_accountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$spotify_accountArgs<ExtArgs>>): Prisma.Prisma__SpotifyAccountsClient<runtime.Types.Result.GetResult<Prisma.$SpotifyAccountsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4927,6 +5596,10 @@ export interface UsersFieldRefs {
   readonly owned_cosmetics: Prisma.FieldRef<"Users", 'String[]'>
   readonly equipped_avatar_border: Prisma.FieldRef<"Users", 'String'>
   readonly equipped_font: Prisma.FieldRef<"Users", 'String'>
+  readonly equipped_title: Prisma.FieldRef<"Users", 'String'>
+  readonly equipped_text_effect: Prisma.FieldRef<"Users", 'String'>
+  readonly equipped_banner: Prisma.FieldRef<"Users", 'String'>
+  readonly equipped_pattern: Prisma.FieldRef<"Users", 'String'>
   readonly role: Prisma.FieldRef<"Users", 'Roles'>
   readonly provider: Prisma.FieldRef<"Users", 'AuthProvider'>
   readonly provider_id: Prisma.FieldRef<"Users", 'String'>
@@ -5729,6 +6402,25 @@ export type Users$commentLikesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.CommentLikesScalarFieldEnum | Prisma.CommentLikesScalarFieldEnum[]
+}
+
+/**
+ * Users.spotify_account
+ */
+export type Users$spotify_accountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SpotifyAccounts
+   */
+  select?: Prisma.SpotifyAccountsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SpotifyAccounts
+   */
+  omit?: Prisma.SpotifyAccountsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SpotifyAccountsInclude<ExtArgs> | null
+  where?: Prisma.SpotifyAccountsWhereInput
 }
 
 /**

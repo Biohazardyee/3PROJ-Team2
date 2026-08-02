@@ -12,6 +12,10 @@ export interface ReviewCommentResponseDto {
         id: string;
         username: string;
         pseudo?: string | null;
+        image?: string | null;
+        equipped_avatar_border?: string | null;
+        equipped_font?: string | null;
+        equipped_text_effect?: string | null;
     };
 }
 

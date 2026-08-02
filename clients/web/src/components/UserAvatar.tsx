@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import apiClient from "../api/client.ts";
 import {AxiosResponse} from "axios";
+import {toImageDataUri} from "../utils/imageDataUri";
 
 const UserAvatar = ({userId, username, sizeClass}: { userId?: string, username?: string, sizeClass: string }) => {
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -15,10 +16,7 @@ const UserAvatar = ({userId, username, sizeClass}: { userId?: string, username?:
                 const userData = res.data.user || res.data;
 
                 if (isMounted && userData.profile_picture) {
-                    const formattedUrl = userData.profile_picture.startsWith("data:")
-                        ? userData.profile_picture
-                        : `data:image/jpeg;base64,${userData.profile_picture}`;
-                    setAvatarUrl(formattedUrl);
+                    setAvatarUrl(toImageDataUri(userData.profile_picture));
                 }
             } catch (error) {
                 console.error("Erreur lors de la récupération de l'avatar", error);

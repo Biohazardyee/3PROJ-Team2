@@ -18,6 +18,9 @@ import {
     Star,
     MessageSquare,
     ChevronRight,
+    Trash2,
+    ShieldCheck,
+    Loader2,
 } from "lucide-react";
 import {NavigateFunction, useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
@@ -27,7 +30,14 @@ import apiClient from "../api/client";
 import {useConfirm} from "../context/ConfirmContext";
 import AvatarBorder, {isValidBorder} from "../components/AvatarBorder";
 import {PSEUDO_FONTS, getPseudoFontFamily, isValidPseudoFont} from "../fonts.config";
+import {getProfileTitle, isValidProfileTitle} from "../titles.config";
+import {TEXT_EFFECTS, getTextEffectClassName, isValidTextEffect} from "../textEffects.config";
+import {getPremiumBanner, isValidPremiumBanner} from "../banners.config";
+import {getPattern, isValidPattern} from "../patterns.config";
+import {toImageDataUri} from "../utils/imageDataUri";
 import {AlbumCard} from "../components/AlbumCard";
+import SpotifyPlaylistImport from "../components/SpotifyPlaylistImport";
+import NowPlayingCard from "../components/NowPlayingCard";
 import {AxiosResponse} from "axios";
 
 const formatReviewItem = (
@@ -103,6 +113,9 @@ const Profil: React.FC = () => {
         followers: 0,
         following: 0,
     });
+    const [followModalType, setFollowModalType] = useState<"followers" | "following" | null>(null);
+    const [followModalUsers, setFollowModalUsers] = useState<any[]>([]);
+    const [followModalLoading, setFollowModalLoading] = useState(false);
     const [isFollowing, setIsFollowing] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isOwnProfile, setIsOwnProfile] = useState(false);
@@ -228,6 +241,23 @@ const Profil: React.FC = () => {
         }
     };
 
+    const openFollowModal = async (type: "followers" | "following"): Promise<void> => {
+        if (!userProfil?.id) return;
+        setFollowModalType(type);
+        setFollowModalLoading(true);
+        try {
+            const response: AxiosResponse<any, any> = await apiClient.get(
+                `/follows/${type}/${userProfil.id}/users`,
+            );
+            setFollowModalUsers(response.data.data || []);
+        } catch (error: any) {
+            console.error("❌ Erreur liste follow :", error.response?.status);
+            setFollowModalUsers([]);
+        } finally {
+            setFollowModalLoading(false);
+        }
+    };
+
     const handleFollowToggle = async (): Promise<void> => {
         if (!userProfil?.id || !userConnected || isInteracting.current) return;
         isInteracting.current = true;
@@ -288,6 +318,29 @@ const Profil: React.FC = () => {
         } catch (error) {
             console.error("Erreur chargement détails playlist:", error);
             toast.error(t("alert_playlist_load_error")); // <-- Traduit
+        }
+    };
+
+    const handleDeletePlaylist = async (
+        e: React.MouseEvent,
+        playlistId: string,
+    ): Promise<void> => {
+        e.stopPropagation();
+        const ok = await confirm({
+            title: t("delete_playlist_title", "Supprimer la playlist"),
+            message: t("delete_playlist_confirm"),
+            confirmText: t("delete", "Supprimer"),
+            danger: true,
+        });
+        if (!ok) return;
+
+        try {
+            await apiClient.delete(`/playlists/${playlistId}`);
+            setPlaylists((prev: any[]) => prev.filter((p: any) => p.id !== playlistId));
+            toast.success(t("playlist_delete_success", "Playlist supprimée."));
+        } catch (error) {
+            console.error("Erreur suppression playlist:", error);
+            toast.error(t("playlist_delete_error", "Impossible de supprimer la playlist."));
         }
     };
 
@@ -370,6 +423,102 @@ const Profil: React.FC = () => {
                 cosmeticId
                     ? t("font_equipped", "Police équipée !")
                     : t("font_unequipped", "Police retirée."),
+            );
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
+        } finally {
+            setEquipping(null);
+        }
+    };
+
+    const equipTitle = async (cosmeticId: string | null): Promise<void> => {
+        setEquipping(cosmeticId || "none-title");
+        try {
+            const res = await apiClient.post("/users/cosmetics/equip", {
+                cosmetic_id: cosmeticId,
+                slot: "title",
+            });
+            setUserProfil((prev: any) => ({
+                ...prev,
+                equipped_title: res.data.equipped_title,
+            }));
+            window.dispatchEvent(new Event("profileUpdated"));
+            toast.success(
+                cosmeticId
+                    ? t("title_equipped", "Titre équipé !")
+                    : t("title_unequipped", "Titre retiré."),
+            );
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
+        } finally {
+            setEquipping(null);
+        }
+    };
+
+    const equipTextEffect = async (cosmeticId: string | null): Promise<void> => {
+        setEquipping(cosmeticId || "none-text_effect");
+        try {
+            const res = await apiClient.post("/users/cosmetics/equip", {
+                cosmetic_id: cosmeticId,
+                slot: "text_effect",
+            });
+            setUserProfil((prev: any) => ({
+                ...prev,
+                equipped_text_effect: res.data.equipped_text_effect,
+            }));
+            window.dispatchEvent(new Event("profileUpdated"));
+            toast.success(
+                cosmeticId
+                    ? t("text_effect_equipped", "Effet équipé !")
+                    : t("text_effect_unequipped", "Effet retiré."),
+            );
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
+        } finally {
+            setEquipping(null);
+        }
+    };
+
+    const equipBanner = async (cosmeticId: string | null): Promise<void> => {
+        setEquipping(cosmeticId || "none-banner");
+        try {
+            const res = await apiClient.post("/users/cosmetics/equip", {
+                cosmetic_id: cosmeticId,
+                slot: "banner",
+            });
+            setUserProfil((prev: any) => ({
+                ...prev,
+                equipped_banner: res.data.equipped_banner,
+            }));
+            window.dispatchEvent(new Event("profileUpdated"));
+            toast.success(
+                cosmeticId
+                    ? t("banner_equipped", "Bannière équipée !")
+                    : t("banner_unequipped", "Bannière retirée."),
+            );
+        } catch (e: any) {
+            toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
+        } finally {
+            setEquipping(null);
+        }
+    };
+
+    const equipPattern = async (cosmeticId: string | null): Promise<void> => {
+        setEquipping(cosmeticId || "none-pattern");
+        try {
+            const res = await apiClient.post("/users/cosmetics/equip", {
+                cosmetic_id: cosmeticId,
+                slot: "pattern",
+            });
+            setUserProfil((prev: any) => ({
+                ...prev,
+                equipped_pattern: res.data.equipped_pattern,
+            }));
+            window.dispatchEvent(new Event("profileUpdated"));
+            toast.success(
+                cosmeticId
+                    ? t("pattern_equipped", "Motif équipé !")
+                    : t("pattern_unequipped", "Motif retiré."),
             );
         } catch (e: any) {
             toast.error(e.response?.data?.message || t("cosmetic_equip_error", "Action impossible."));
@@ -595,13 +744,7 @@ const Profil: React.FC = () => {
         }
     };
 
-    const formatPlaylistImage = (imgUrl: string): string => {
-        if (!imgUrl) return "";
-        if (imgUrl.startsWith("data") || imgUrl.startsWith("http")) {
-            return imgUrl;
-        }
-        return `data:image/jpeg;base64,${imgUrl}`;
-    };
+    const formatPlaylistImage = (imgUrl: string): string => toImageDataUri(imgUrl) || "";
 
     if (loading) {
         return (
@@ -617,9 +760,13 @@ const Profil: React.FC = () => {
         {id: "activity", label: t("tab_recent_activity")},
     ];
 
+    const equippedBannerDef = getPremiumBanner(userProfil?.equipped_banner);
+    const equippedTitleDef = getProfileTitle(userProfil?.equipped_title);
+    const equippedPatternDef = getPattern(userProfil?.equipped_pattern);
+
     return (
         <div
-            className="min-h-screen bg-[#13131A] text-slate-200 dark:bg-slate-50 dark:text-gray-900 font-sans transition-colors duration-300">
+            className={`min-h-screen bg-[#13131A] text-slate-200 dark:bg-slate-50 dark:text-gray-900 font-sans transition-colors duration-300 ${equippedPatternDef?.className || ""}`}>
             <input
                 type="file"
                 ref={fileInputRef}
@@ -639,14 +786,10 @@ const Profil: React.FC = () => {
             <div className="relative">
                 <div
                     onClick={handleBannerClick}
-                    className={`h-56 md:h-72 lg:h-80 w-full bg-cover bg-center relative group ${isOwnProfile ? "cursor-pointer" : ""}`}
-                    style={{
+                    className={`h-56 md:h-72 lg:h-80 w-full bg-cover bg-center relative group ${isOwnProfile ? "cursor-pointer" : ""} ${equippedBannerDef?.className || ""}`}
+                    style={equippedBannerDef ? undefined : {
                         backgroundImage: `url('${
-                            userProfil?.banner
-                                ? (userProfil.banner.startsWith("data") || userProfil.banner.startsWith("http")
-                                    ? userProfil.banner
-                                    : `data:image/jpeg;base64,${userProfil.banner}`)
-                                : "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1600"
+                            toImageDataUri(userProfil?.banner) || "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1600"
                         }')`,
                     }}
                 >
@@ -674,12 +817,7 @@ const Profil: React.FC = () => {
                                 {userProfil?.profile_picture &&
                                 typeof userProfil.profile_picture === "string" ? (
                                     <img
-                                        src={
-                                            userProfil.profile_picture.startsWith("data") ||
-                                            userProfil.profile_picture.startsWith("http")
-                                                ? userProfil.profile_picture
-                                                : `data:image/jpeg;base64,${userProfil.profile_picture}`
-                                        }
+                                        src={toImageDataUri(userProfil.profile_picture) || undefined}
                                         alt="Profil"
                                         className="w-full h-full object-cover"
                                     />
@@ -699,12 +837,25 @@ const Profil: React.FC = () => {
                             </AvatarBorder>
 
                             <div className="pb-2">
-                                <h1
-                                    className="text-4xl font-bold text-white dark:text-gray-900 tracking-tight"
-                                    style={{fontFamily: getPseudoFontFamily(userProfil?.equipped_font) || undefined}}
-                                >
-                                    {userProfil?.pseudo || userProfil?.username}
-                                </h1>
+                                <div className="flex items-center gap-3 flex-wrap">
+                                    <h1
+                                        className={`text-4xl font-bold tracking-tight ${getTextEffectClassName(userProfil?.equipped_text_effect) || "text-white dark:text-gray-900"}`}
+                                        style={{fontFamily: getPseudoFontFamily(userProfil?.equipped_font) || undefined}}
+                                    >
+                                        {userProfil?.pseudo || userProfil?.username}
+                                    </h1>
+                                    {userProfil?.role === "ADMIN" && (
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-rose-500/40 bg-rose-500/15 text-rose-400 text-sm font-bold">
+                                            <ShieldCheck size={14}/>
+                                            {t("admin_badge", "Admin")}
+                                        </span>
+                                    )}
+                                    {equippedTitleDef && (
+                                        <span className={`inline-flex items-center px-3 py-1 rounded-full border text-sm font-bold ${equippedTitleDef.className}`}>
+                                            {equippedTitleDef.label}
+                                        </span>
+                                    )}
+                                </div>
                                 <p className="text-slate-400 dark:text-gray-600 font-medium">
                                     @{userProfil?.username?.toLowerCase()}
                                 </p>
@@ -796,22 +947,28 @@ const Profil: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex gap-8 pt-2">
-                            <div className="flex items-center gap-1.5">
+                            <button
+                                onClick={() => openFollowModal("followers")}
+                                className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                            >
                                 <span className="text-white dark:text-gray-900 font-bold text-lg">
                                   {followCounts.followers}
                                 </span>
                                 <span className="text-slate-500 dark:text-gray-500 text-sm">
                                   {t("profile_followers")}
                                 </span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
+                            </button>
+                            <button
+                                onClick={() => openFollowModal("following")}
+                                className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                            >
                                 <span className="text-white dark:text-gray-900 font-bold text-lg">
                                   {followCounts.following}
                                 </span>
                                 <span className="text-slate-500 dark:text-gray-500 text-sm">
                                   {t("profile_following")}
                                 </span>
-                            </div>
+                            </button>
                             <div className="flex items-center gap-1.5">
                                 <span className="text-white dark:text-gray-900 font-bold text-lg">
                                   {favoriteReviews.length}
@@ -822,6 +979,11 @@ const Profil: React.FC = () => {
                             </div>
                         </div>
 
+                        {userProfil?.id && (
+                            <div className="pt-4">
+                                <NowPlayingCard userId={userProfil.id}/>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -961,6 +1123,9 @@ const Profil: React.FC = () => {
                         {activeTab === "playlists" && (
                             <div className="space-y-4 w-full">
                                 {isOwnProfile && (
+                                    <SpotifyPlaylistImport onImported={() => fetchPlaylists(userConnected, true)}/>
+                                )}
+                                {isOwnProfile && (
                                     <button
                                         onClick={() => navigate("/create-playlist")}
                                         className="w-full flex items-center gap-5 bg-[#1a1d26] dark:bg-white border border-dashed border-slate-600 dark:border-gray-300 p-5 rounded-2xl cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 hover:bg-[#1e2230] dark:hover:bg-gray-50 transition-all group"
@@ -1020,6 +1185,15 @@ const Profil: React.FC = () => {
                                                         <span className="bg-emerald-500/10 text-emerald-500 dark:text-emerald-600 border border-emerald-500/20 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
                                                             {t("status_public")}
                                                         </span>
+                                                    )}
+                                                    {isOwnProfile && (
+                                                        <button
+                                                            onClick={(e) => handleDeletePlaylist(e, playlist.id)}
+                                                            className="p-2 rounded-lg text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                                                            title={t("delete_playlist_title", "Supprimer la playlist")}
+                                                        >
+                                                            <Trash2 size={16}/>
+                                                        </button>
                                                     )}
                                                     <ChevronRight
                                                         size={20}
@@ -1217,14 +1391,20 @@ const Profil: React.FC = () => {
                                 {(() => {
                                     const ownedBorders: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidBorder(id));
                                     const ownedFonts: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidPseudoFont(id));
+                                    const ownedTitles: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidProfileTitle(id));
+                                    const ownedTextEffects: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidTextEffect(id));
+                                    const ownedBanners: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidPremiumBanner(id));
+                                    const ownedPatterns: string[] = (userProfil?.owned_cosmetics || []).filter((id: string) => isValidPattern(id));
                                     const pic: string | null =
-                                        userProfil?.profile_picture && typeof userProfil.profile_picture === "string"
-                                            ? (userProfil.profile_picture.startsWith("data") || userProfil.profile_picture.startsWith("http")
-                                                ? userProfil.profile_picture
-                                                : `data:image/jpeg;base64,${userProfil.profile_picture}`)
+                                        typeof userProfil?.profile_picture === "string"
+                                            ? toImageDataUri(userProfil.profile_picture)
                                             : null;
                                     const equipped: string | null = userProfil?.equipped_avatar_border || null;
                                     const equippedFont: string | null = userProfil?.equipped_font || null;
+                                    const equippedTitle: string | null = userProfil?.equipped_title || null;
+                                    const equippedTextEffect: string | null = userProfil?.equipped_text_effect || null;
+                                    const equippedBanner: string | null = userProfil?.equipped_banner || null;
+                                    const equippedPattern: string | null = userProfil?.equipped_pattern || null;
                                     const pseudoText: string = (userProfil?.pseudo || userProfil?.username) || "Aa";
 
                                     const PreviewInner = (
@@ -1239,7 +1419,14 @@ const Profil: React.FC = () => {
                                         </div>
                                     );
 
-                                    if (ownedBorders.length === 0 && ownedFonts.length === 0) {
+                                    if (
+                                        ownedBorders.length === 0 &&
+                                        ownedFonts.length === 0 &&
+                                        ownedTitles.length === 0 &&
+                                        ownedTextEffects.length === 0 &&
+                                        ownedBanners.length === 0 &&
+                                        ownedPatterns.length === 0
+                                    ) {
                                         return (
                                             <div className="text-center py-8">
                                                 <p className="text-sm text-slate-400 dark:text-gray-500 mb-5">
@@ -1335,9 +1522,228 @@ const Profil: React.FC = () => {
                                                     </div>
                                                 </div>
                                             )}
+
+                                            {/* Titres de profil */}
+                                            {ownedTitles.length > 0 && (
+                                                <div>
+                                                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-gray-400 mb-3">
+                                                        {t("shop_section_titles", "Titres de profil")}
+                                                    </h3>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        <button
+                                                            onClick={() => equipTitle(null)}
+                                                            disabled={equipping !== null}
+                                                            className={`px-3 py-1.5 rounded-full border text-xs font-bold transition-all disabled:opacity-50 ${!equippedTitle ? "border-purple-500 bg-purple-500/10 text-purple-400 dark:text-purple-500" : "border-slate-700 dark:border-gray-300 text-slate-400 dark:text-gray-500"}`}
+                                                        >
+                                                            {t("none", "Aucun")}
+                                                        </button>
+                                                        {ownedTitles.map((id: string) => {
+                                                            const def = getProfileTitle(id);
+                                                            return (
+                                                                <button
+                                                                    key={id}
+                                                                    onClick={() => equipTitle(id)}
+                                                                    disabled={equipping !== null}
+                                                                    className={`px-3 py-1.5 rounded-full border text-xs font-bold transition-all disabled:opacity-50 ${def?.className || "border-slate-700 text-slate-300"} ${equippedTitle === id ? "ring-2 ring-purple-500" : ""}`}
+                                                                >
+                                                                    {def?.label || cosmeticNames[id] || id}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Effets de texte du pseudo */}
+                                            {ownedTextEffects.length > 0 && (
+                                                <div>
+                                                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-gray-400 mb-3">
+                                                        {t("shop_section_text_effects", "Effets de texte")}
+                                                    </h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                                        <button
+                                                            onClick={() => equipTextEffect(null)}
+                                                            disabled={equipping !== null}
+                                                            className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all disabled:opacity-50 ${!equippedTextEffect ? "border-purple-500 bg-purple-500/10" : "border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-300"}`}
+                                                        >
+                                                            <span className="text-xl text-white dark:text-gray-900 truncate max-w-full leading-tight">
+                                                                {pseudoText}
+                                                            </span>
+                                                            <span className={`text-[11px] ${!equippedTextEffect ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                {t("default_font", "Défaut")}
+                                                            </span>
+                                                        </button>
+                                                        {ownedTextEffects.map((id: string) => (
+                                                            <button
+                                                                key={id}
+                                                                onClick={() => equipTextEffect(id)}
+                                                                disabled={equipping !== null}
+                                                                className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all disabled:opacity-50 ${equippedTextEffect === id ? "border-purple-500 bg-purple-500/10" : "border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-300"}`}
+                                                            >
+                                                                <span className={`text-xl font-bold truncate max-w-full leading-tight ${getTextEffectClassName(id)}`}>
+                                                                    {pseudoText}
+                                                                </span>
+                                                                <span className={`text-[11px] truncate max-w-full ${equippedTextEffect === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                    {TEXT_EFFECTS.find((e) => e.id === id)?.name || id}
+                                                                </span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Bannières premium */}
+                                            {ownedBanners.length > 0 && (
+                                                <div>
+                                                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-gray-400 mb-3">
+                                                        {t("shop_section_banners", "Bannières")}
+                                                    </h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                                        <button
+                                                            onClick={() => equipBanner(null)}
+                                                            disabled={equipping !== null}
+                                                            className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all disabled:opacity-50 ${!equippedBanner ? "border-purple-500" : "border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-300"}`}
+                                                        >
+                                                            <div className="w-full h-10 rounded-lg bg-slate-800 dark:bg-gray-100"/>
+                                                            <span className={`text-[11px] ${!equippedBanner ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                {t("none", "Aucun")}
+                                                            </span>
+                                                        </button>
+                                                        {ownedBanners.map((id: string) => {
+                                                            const def = getPremiumBanner(id);
+                                                            return (
+                                                                <button
+                                                                    key={id}
+                                                                    onClick={() => equipBanner(id)}
+                                                                    disabled={equipping !== null}
+                                                                    className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all disabled:opacity-50 ${equippedBanner === id ? "border-purple-500" : "border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-300"}`}
+                                                                >
+                                                                    <div className={`w-full h-10 rounded-lg ${def?.className || "bg-slate-800"}`}/>
+                                                                    <span className={`text-[11px] truncate max-w-full ${equippedBanner === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                        {def?.name || cosmeticNames[id] || id}
+                                                                    </span>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Motifs de fond (page profil) */}
+                                            {ownedPatterns.length > 0 && (
+                                                <div>
+                                                    <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-gray-400 mb-3">
+                                                        {t("shop_section_patterns", "Motifs de profil")}
+                                                    </h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                                        <button
+                                                            onClick={() => equipPattern(null)}
+                                                            disabled={equipping !== null}
+                                                            className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all disabled:opacity-50 ${!equippedPattern ? "border-purple-500" : "border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-300"}`}
+                                                        >
+                                                            <div className="w-full h-10 rounded-lg bg-slate-800 dark:bg-gray-100"/>
+                                                            <span className={`text-[11px] ${!equippedPattern ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                {t("none", "Aucun")}
+                                                            </span>
+                                                        </button>
+                                                        {ownedPatterns.map((id: string) => {
+                                                            const def = getPattern(id);
+                                                            return (
+                                                                <button
+                                                                    key={id}
+                                                                    onClick={() => equipPattern(id)}
+                                                                    disabled={equipping !== null}
+                                                                    className={`flex flex-col items-center gap-1.5 p-2 rounded-xl border transition-all disabled:opacity-50 ${equippedPattern === id ? "border-purple-500" : "border-slate-800 dark:border-gray-200 hover:border-slate-600 dark:hover:border-gray-300"}`}
+                                                                >
+                                                                    <div className={`w-full h-10 rounded-lg bg-slate-800 dark:bg-gray-100 ${def?.className || ""}`}/>
+                                                                    <span className={`text-[11px] truncate max-w-full ${equippedPattern === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
+                                                                        {def?.name || cosmeticNames[id] || id}
+                                                                    </span>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     );
                                 })()}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {followModalType && (
+                    <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+                        onClick={() => setFollowModalType(null)}
+                    >
+                        <div
+                            className="w-full max-w-sm bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-slate-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="flex items-center justify-between p-5 border-b border-slate-800 dark:border-slate-200">
+                                <h2 className="text-lg font-bold text-white dark:text-gray-900">
+                                    {followModalType === "followers"
+                                        ? t("profile_followers")
+                                        : t("profile_following")}
+                                </h2>
+                                <button
+                                    onClick={() => setFollowModalType(null)}
+                                    className="p-1.5 rounded-full text-slate-500 hover:text-white dark:hover:text-gray-900 hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
+                                >
+                                    <X size={20}/>
+                                </button>
+                            </div>
+
+                            <div className="overflow-y-auto p-3">
+                                {followModalLoading ? (
+                                    <div className="flex justify-center py-10">
+                                        <Loader2 size={22} className="animate-spin text-slate-500"/>
+                                    </div>
+                                ) : followModalUsers.length === 0 ? (
+                                    <p className="text-sm text-slate-400 dark:text-gray-500 text-center py-10">
+                                        {followModalType === "followers"
+                                            ? t("no_followers", "Personne ne suit ce profil pour le moment.")
+                                            : t("no_following", "Ne suit personne pour le moment.")}
+                                    </p>
+                                ) : (
+                                    <div className="space-y-1">
+                                        {followModalUsers.map((u: any) => (
+                                            <button
+                                                key={u.id}
+                                                onClick={() => {
+                                                    setFollowModalType(null);
+                                                    navigate(`/profil/${u.id}`);
+                                                }}
+                                                className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-800/60 dark:hover:bg-gray-100 transition-colors text-left"
+                                            >
+                                                <AvatarBorder borderId={u.equipped_avatar_border} compact>
+                                                    <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-800 dark:bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                                        {u.profile_picture ? (
+                                                            <img src={u.profile_picture} alt="" className="w-full h-full object-cover"/>
+                                                        ) : (
+                                                            <span className="text-sm font-bold text-blue-400">
+                                                                {(u.pseudo || u.username)?.substring(0, 2).toUpperCase()}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </AvatarBorder>
+                                                <div className="min-w-0">
+                                                    <p
+                                                        className={`font-bold truncate ${getTextEffectClassName(u.equipped_text_effect) || "text-white dark:text-gray-900"}`}
+                                                        style={{fontFamily: getPseudoFontFamily(u.equipped_font) || undefined}}
+                                                    >
+                                                        {u.pseudo || u.username}
+                                                    </p>
+                                                    <p className="text-xs text-slate-500 dark:text-gray-500 truncate">
+                                                        @{u.username}
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

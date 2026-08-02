@@ -30,7 +30,7 @@ import {
 
 import {Users} from "../../../generated/prisma/browser.js";
 import {userMapper} from "../../../mappers/users/user.mapper.js";
-import {COSMETICS, CosmeticItem, getCosmeticById} from "./cosmetics.catalog.js";
+import {COSMETIC_SLOT_FIELDS, COSMETICS, CosmeticItem, CosmeticSlot, getCosmeticById} from "./cosmetics.catalog.js";
 
 export class UserService {
     async add(data: UserRegistrationDto): Promise<UserResponseAddDto> {
@@ -672,8 +672,15 @@ export class UserService {
     async equipCosmetic(
         userId: string,
         cosmeticId: string | null,
-        slot: "avatar_border" | "font" = "avatar_border",
-    ): Promise<{ equipped_avatar_border: string | null; equipped_font: string | null }> {
+        slot: CosmeticSlot = "avatar_border",
+    ): Promise<{
+        equipped_avatar_border: string | null;
+        equipped_font: string | null;
+        equipped_title: string | null;
+        equipped_text_effect: string | null;
+        equipped_banner: string | null;
+        equipped_pattern: string | null;
+    }> {
         if (isEmptyString(userId)) {
             throw new BadRequest("User id is required");
         }
@@ -696,7 +703,7 @@ export class UserService {
             }
         }
 
-        const field = slot === "font" ? "equipped_font" : "equipped_avatar_border";
+        const field = COSMETIC_SLOT_FIELDS[slot];
 
         const updated = await PrismaDb.users.update({
             where: {id: userId},
@@ -706,6 +713,10 @@ export class UserService {
         return {
             equipped_avatar_border: updated.equipped_avatar_border,
             equipped_font: updated.equipped_font,
+            equipped_title: updated.equipped_title,
+            equipped_text_effect: updated.equipped_text_effect,
+            equipped_banner: updated.equipped_banner,
+            equipped_pattern: updated.equipped_pattern,
         };
     }
 

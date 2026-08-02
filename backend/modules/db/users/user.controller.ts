@@ -7,6 +7,7 @@ import {Controller} from "../../controller.js";
 import {Unauthorized, BadRequest} from "../../../utils/errors.js";
 import {UserService, userService} from "./user.service.js";
 import {userMapper} from "../../../mappers/users/user.mapper.js";
+import {COSMETIC_SLOT_FIELDS, CosmeticSlot} from "./cosmetics.catalog.js";
 
 import type {
     SelectableUserField,
@@ -420,7 +421,12 @@ class UserController extends Controller {
                 throw new Unauthorized("User not authenticated");
             }
 
-            const slot = req.body.slot === "font" ? "font" : "avatar_border";
+            const requestedSlot: string = req.body.slot;
+            if (!Object.keys(COSMETIC_SLOT_FIELDS).includes(requestedSlot)) {
+                throw new BadRequest("Invalid cosmetic slot");
+            }
+            const slot: CosmeticSlot = requestedSlot as CosmeticSlot;
+
             const result = await this.service.equipCosmetic(
                 userId,
                 req.body.cosmetic_id ?? null,

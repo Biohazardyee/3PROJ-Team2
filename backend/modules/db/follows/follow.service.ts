@@ -4,9 +4,11 @@ import {isEmptyString} from "../../../utils/helpers.js";
 import {
     FollowCreateDto,
     FollowResponseDto,
+    FollowUserPreviewDto,
 } from "../../../types/follows/follows.dto.js";
 import {followsMapper} from "../../../mappers/follows/follows.mapper.js";
 import {Follows, Users} from "../../../generated/prisma/client.js";
+import {bufferToImageDataUri} from "../../../utils/imageDataUri.js";
 import {
     ensureConversation,
     deleteByParticipants,
@@ -14,6 +16,34 @@ import {
 import {notificationService} from "../notifications/notification.service.js";
 import {NotificationActions} from "../../../generated/prisma/enums.js";
 import {canSendNotification} from "../notifications/notification.helper.js";
+
+const USER_PREVIEW_SELECT = {
+    id: true,
+    username: true,
+    pseudo: true,
+    profile_picture: true,
+    equipped_avatar_border: true,
+    equipped_font: true,
+    equipped_text_effect: true,
+} as const;
+
+const toUserPreview = (user: {
+    id: string;
+    username: string;
+    pseudo: string;
+    profile_picture: Uint8Array | null;
+    equipped_avatar_border: string | null;
+    equipped_font: string | null;
+    equipped_text_effect: string | null;
+}): FollowUserPreviewDto => ({
+    id: user.id,
+    username: user.username,
+    pseudo: user.pseudo,
+    profile_picture: bufferToImageDataUri(user.profile_picture),
+    equipped_avatar_border: user.equipped_avatar_border,
+    equipped_font: user.equipped_font,
+    equipped_text_effect: user.equipped_text_effect,
+});
 
 export class FollowService {
     async create(data: FollowCreateDto): Promise<FollowResponseDto> {
@@ -205,10 +235,36 @@ export class FollowService {
             id: m.user.id,
             username: m.user.username,
             pseudo: m.user.pseudo,
-            profile_picture: m.user.profile_picture
-                ? `data:image/jpeg;base64,${Buffer.from(m.user.profile_picture).toString("base64")}`
-                : null,
+            profile_picture: bufferToImageDataUri(m.user.profile_picture),
         }));
+    }
+
+    async getFollowersWithUsers(user_id: string): Promise<FollowUserPreviewDto[]> {
+        if (isEmptyString(user_id)) {
+            throw new BadRequest("user_id cannot be empty");
+        }
+
+        const followers = await PrismaDb.follows.findMany({
+            where: {follow_user_id: user_id},
+            orderBy: {created_at: "desc"},
+            include: {user: {select: USER_PREVIEW_SELECT}},
+        });
+
+        return followers.map((f) => toUserPreview(f.user));
+    }
+
+    async getFollowingWithUsers(user_id: string): Promise<FollowUserPreviewDto[]> {
+        if (isEmptyString(user_id)) {
+            throw new BadRequest("user_id cannot be empty");
+        }
+
+        const following = await PrismaDb.follows.findMany({
+            where: {user_id},
+            orderBy: {created_at: "desc"},
+            include: {follow_user: {select: USER_PREVIEW_SELECT}},
+        });
+
+        return following.map((f) => toUserPreview(f.follow_user));
     }
 
     async getFollowing(user_id: string): Promise<FollowResponseDto[]> {

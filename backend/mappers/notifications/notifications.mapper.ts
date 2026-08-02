@@ -5,6 +5,7 @@ import {
 } from "../../types/notifications/notifications.dto.js";
 import { BaseMapper } from "../base.mapper.js";
 import { Notifications } from "../../generated/prisma/browser.js";
+import { bufferToImageDataUri } from "../../utils/imageDataUri.js";
 
 class NotificationsMapper extends BaseMapper<
   Notifications,
@@ -15,19 +16,15 @@ class NotificationsMapper extends BaseMapper<
 
     if (typeof profile_picture === "string") return profile_picture;
 
-    let base64String = "";
-
-    if (Buffer.isBuffer(profile_picture)) {
-      base64String = profile_picture.toString("base64");
-    } else if (profile_picture instanceof Uint8Array) {
-      base64String = Buffer.from(profile_picture).toString("base64");
-    } else if (Array.isArray(profile_picture)) {
-      base64String = Buffer.from(profile_picture).toString("base64");
-    } else {
-      return null;
+    if (
+      Buffer.isBuffer(profile_picture) ||
+      profile_picture instanceof Uint8Array ||
+      Array.isArray(profile_picture)
+    ) {
+      return bufferToImageDataUri(Buffer.from(profile_picture));
     }
 
-    return `data:image/jpeg;base64,${base64String}`;
+    return null;
   };
 
   protected mapOne(notification: any): NotificationsResponseDto {
@@ -43,6 +40,9 @@ class NotificationsMapper extends BaseMapper<
             profile_image: this.formatImage(
               notification.related_user.profile_picture,
             ),
+            equipped_avatar_border: notification.related_user.equipped_avatar_border ?? null,
+            equipped_font: notification.related_user.equipped_font ?? null,
+            equipped_text_effect: notification.related_user.equipped_text_effect ?? null,
           }
         : null,
       review_id: notification.review_id,

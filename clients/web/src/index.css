@@ -317,3 +317,87 @@ html.theme-cyan .from-indigo-400,
 html.theme-cyan .from-indigo-600 {
   background-image: linear-gradient(to right, #22d3ee, #0e7490) !important;
 }
+
+/* ===== Cosmétiques : effets de texte sur le pseudo ===== */
+@keyframes cosmetic-text-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.cosmetic-text-effect_glow_blue {
+  color: #60a5fa !important;
+  text-shadow: 0 0 6px rgba(96, 165, 250, 0.85), 0 0 16px rgba(59, 130, 246, 0.6);
+}
+.cosmetic-text-effect_glow_pink {
+  color: #f472b6 !important;
+  text-shadow: 0 0 6px rgba(244, 114, 182, 0.85), 0 0 16px rgba(236, 72, 153, 0.6);
+}
+.cosmetic-text-effect_shadow_gold {
+  color: #fde047 !important;
+  text-shadow: 0 2px 0 #b45309, 0 4px 8px rgba(0, 0, 0, 0.45);
+}
+.cosmetic-text-effect_gradient_sunset {
+  background: linear-gradient(90deg, #f97316, #ec4899, #a855f7, #f97316);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  animation: cosmetic-text-gradient-shift 4s ease infinite;
+}
+.cosmetic-text-effect_gradient_ocean {
+  background: linear-gradient(90deg, #06b6d4, #3b82f6, #14b8a6, #06b6d4);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  animation: cosmetic-text-gradient-shift 4s ease infinite;
+}
+
+/* ===== Cosmétiques : bannières de profil premium (dégradés animés) ===== */
+@keyframes cosmetic-banner-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.cosmetic-banner_midnight,
+.cosmetic-banner_sunset,
+.cosmetic-banner_ocean,
+.cosmetic-banner_aurora {
+  background-size: 300% 300%;
+  animation: cosmetic-banner-shift 10s ease infinite;
+}
+.cosmetic-banner_midnight {
+  background-image: linear-gradient(120deg, #1e1b4b, #4c1d95, #6d28d9, #1e1b4b);
+}
+.cosmetic-banner_sunset {
+  background-image: linear-gradient(120deg, #f97316, #ef4444, #ec4899, #f97316);
+}
+.cosmetic-banner_ocean {
+  background-image: linear-gradient(120deg, #0ea5e9, #06b6d4, #14b8a6, #0ea5e9);
+}
+.cosmetic-banner_aurora {
+  background-image: linear-gradient(120deg, #ff0080, #7928ca, #2afadf, #00ff8f, #ff0080);
+}
+
+/* ===== Cosmétiques : motifs de fond sur la page profil ===== */
+.cosmetic-pattern_dots {
+  background-image: radial-gradient(rgba(168, 85, 247, 0.28) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+.cosmetic-pattern_grid {
+  background-image:
+    linear-gradient(rgba(168, 85, 247, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 85, 247, 0.18) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.cosmetic-pattern_diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(168, 85, 247, 0.16),
+    rgba(168, 85, 247, 0.16) 2px,
+    transparent 2px,
+    transparent 14px
+  );
+}
+.cosmetic-pattern_waves {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40' viewBox='0 0 80 40'%3E%3Cpath d='M0 20 Q 20 0 40 20 T 80 20' fill='none' stroke='rgba(168,85,247,0.28)' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: 80px 40px;
+}

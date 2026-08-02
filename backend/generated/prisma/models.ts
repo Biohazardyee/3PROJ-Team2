@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Users.js'
+export type * from './models/SpotifyAccounts.js'
 export type * from './models/Medias.js'
 export type * from './models/Reviews.js'
 export type * from './models/ReviewComments.js'

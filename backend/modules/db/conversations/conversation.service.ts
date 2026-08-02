@@ -1,6 +1,7 @@
 import {PrismaDb} from "../../../config/database.js";
 import {NotFound, BadRequest} from "../../../utils/errors.js";
 import {isEmptyString} from "../../../utils/helpers.js";
+import {bufferToImageDataUri} from "../../../utils/imageDataUri.js";
 import {
     ConversationAddDto,
     ConversationAddResponseDto,
@@ -147,6 +148,9 @@ export class ConversationService {
                         pseudo: true,
                         profile_picture: true,
                         role: true,
+                        equipped_avatar_border: true,
+                        equipped_font: true,
+                        equipped_text_effect: true,
                     },
                 },
                 user2: {
@@ -156,6 +160,9 @@ export class ConversationService {
                         pseudo: true,
                         profile_picture: true,
                         role: true,
+                        equipped_avatar_border: true,
+                        equipped_font: true,
+                        equipped_text_effect: true,
                     },
                 },
                 messages: {
@@ -180,18 +187,20 @@ export class ConversationService {
                 username: conv.user1.username,
                 pseudo: conv.user1.pseudo,
                 role: conv.user1.role,
-                profile_picture: conv.user1.profile_picture
-                    ? `data:image/png;base64,${Buffer.from(conv.user1.profile_picture).toString("base64")}`
-                    : null,
+                profile_picture: bufferToImageDataUri(conv.user1.profile_picture),
+                equipped_avatar_border: conv.user1.equipped_avatar_border,
+                equipped_font: conv.user1.equipped_font,
+                equipped_text_effect: conv.user1.equipped_text_effect,
             },
             user2: {
                 id: conv.user2.id,
                 username: conv.user2.username,
                 pseudo: conv.user2.pseudo,
                 role: conv.user2.role,
-                profile_picture: conv.user2.profile_picture
-                    ? `data:image/png;base64,${Buffer.from(conv.user2.profile_picture).toString("base64")}`
-                    : null,
+                profile_picture: bufferToImageDataUri(conv.user2.profile_picture),
+                equipped_avatar_border: conv.user2.equipped_avatar_border,
+                equipped_font: conv.user2.equipped_font,
+                equipped_text_effect: conv.user2.equipped_text_effect,
             },
         }));
     }

@@ -52,6 +52,28 @@ export class TrackController {
         }
     }
 
+    async getTrackPreview(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { artist, track } = req.query;
+
+            if (!artist || !track) {
+                throw new BadRequest('Artist and Track are required');
+            }
+
+            const preview = await this.service.getTrackPreview({
+                artist: String(artist),
+                track: String(track),
+            });
+
+            res.status(200).json({
+                message: 'Track preview retrieved successfully',
+                ...preview,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async getTopTrackTags(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { artist, track } = req.query;

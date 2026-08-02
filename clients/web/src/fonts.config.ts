@@ -10,7 +10,7 @@ export interface PseudoFontDef {
  */
 export const PSEUDO_FONTS: PseudoFontDef[] = [
     {id: "font_michroma", name: "Michroma", fontFamily: "'Michroma', sans-serif"},
-    {id: "font_orbitron", name: "Orbitron", fontFamily: "'Orbitron', sans-serif"},
+    {id: "font_pixel", name: "Press Start 2P", fontFamily: "'Press Start 2P', monospace"},
     {id: "font_bebas", name: "Bebas Neue", fontFamily: "'Bebas Neue', sans-serif"},
     {id: "font_cinzel", name: "Cinzel", fontFamily: "'Cinzel', serif"},
     {id: "font_pacifico", name: "Pacifico", fontFamily: "'Pacifico', cursive"},

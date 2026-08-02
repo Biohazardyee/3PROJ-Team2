@@ -72,6 +72,7 @@ export class PlaylistService {
                 user_id: data.user_id,
                 is_public: data.is_public,
                 image_url: imageData,
+                spotify_playlist_id: data.spotify_playlist_id,
             },
         });
         return playlistMapper.toAddDto(playlist);

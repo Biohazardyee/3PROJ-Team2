@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Users: 'Users',
+  SpotifyAccounts: 'SpotifyAccounts',
   Medias: 'Medias',
   Reviews: 'Reviews',
   ReviewComments: 'ReviewComments',
@@ -98,6 +99,10 @@ export const UsersScalarFieldEnum = {
   owned_cosmetics: 'owned_cosmetics',
   equipped_avatar_border: 'equipped_avatar_border',
   equipped_font: 'equipped_font',
+  equipped_title: 'equipped_title',
+  equipped_text_effect: 'equipped_text_effect',
+  equipped_banner: 'equipped_banner',
+  equipped_pattern: 'equipped_pattern',
   role: 'role',
   provider: 'provider',
   provider_id: 'provider_id',
@@ -110,6 +115,21 @@ export const UsersScalarFieldEnum = {
 } as const
 
 export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
+
+
+export const SpotifyAccountsScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  spotify_id: 'spotify_id',
+  display_name: 'display_name',
+  access_token: 'access_token',
+  refresh_token: 'refresh_token',
+  expires_at: 'expires_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type SpotifyAccountsScalarFieldEnum = (typeof SpotifyAccountsScalarFieldEnum)[keyof typeof SpotifyAccountsScalarFieldEnum]
 
 
 export const MediasScalarFieldEnum = {
@@ -174,6 +194,7 @@ export const PlaylistsScalarFieldEnum = {
   name: 'name',
   image_url: 'image_url',
   is_public: 'is_public',
+  spotify_playlist_id: 'spotify_playlist_id',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const

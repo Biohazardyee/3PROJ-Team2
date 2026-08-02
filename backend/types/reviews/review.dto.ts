@@ -11,7 +11,15 @@ export interface ReviewResponseDto {
   likes_count: number;
   comments_count: number;
   isLiked: boolean;
-  user?: { id: string; username: string; pseudo?: string | null; image?: string | null };
+  user?: {
+    id: string;
+    username: string;
+    pseudo?: string | null;
+    image?: string | null;
+    equipped_avatar_border?: string | null;
+    equipped_font?: string | null;
+    equipped_text_effect?: string | null;
+  };
   media: { id: string; content: any } | null;
 }
 
@@ -59,6 +67,9 @@ export interface ReviewWithMediaDto {
     username: string;
     pseudo?: string | null;
     image?: string | null;
+    equipped_avatar_border?: string | null;
+    equipped_font?: string | null;
+    equipped_text_effect?: string | null;
   } | null;
   media: {
     id: string;

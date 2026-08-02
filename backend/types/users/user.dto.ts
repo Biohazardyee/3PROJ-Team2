@@ -17,6 +17,10 @@ export interface UserResponseDto {
     owned_cosmetics: string[];
     equipped_avatar_border: string | null;
     equipped_font: string | null;
+    equipped_title: string | null;
+    equipped_text_effect: string | null;
+    equipped_banner: string | null;
+    equipped_pattern: string | null;
     has_notifications: boolean;
     created_at: Date;
     updated_at: Date;
@@ -52,6 +56,7 @@ export interface UserPublicDto {
     id: string;
     username: string;
     pseudo: string;
+    role: Roles;
     biography: string | null;
     favorite_band: string | null;
     profile_picture: string | null;
@@ -60,6 +65,10 @@ export interface UserPublicDto {
     owned_cosmetics: string[];
     equipped_avatar_border: string | null;
     equipped_font: string | null;
+    equipped_title: string | null;
+    equipped_text_effect: string | null;
+    equipped_banner: string | null;
+    equipped_pattern: string | null;
     created_at: Date;
 }
 

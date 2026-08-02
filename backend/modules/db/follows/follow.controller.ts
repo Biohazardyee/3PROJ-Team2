@@ -74,6 +74,32 @@ class FollowController {
         }
     }
 
+    async getFollowersWithUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const followers = await this.service.getFollowersWithUsers(req.params.user_id);
+
+            res.status(200).json({
+                message: 'Followers retrieved successfully',
+                data: followers,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getFollowingWithUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const following = await this.service.getFollowingWithUsers(req.params.user_id);
+
+            res.status(200).json({
+                message: 'Following retrieved successfully',
+                data: following,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getMutuals(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const mutuals = await this.service.getMutualFollows(req.params.user_id);

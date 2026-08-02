@@ -8,7 +8,10 @@ export interface NotificationsResponseDto {
   related_user?: {
     username: string;
     pseudo?: string | null;
-    profile_image?: string | null
+    profile_image?: string | null;
+    equipped_avatar_border?: string | null;
+    equipped_font?: string | null;
+    equipped_text_effect?: string | null;
   } | null;
   review_id?: string | null;
   media_id?: string | null;

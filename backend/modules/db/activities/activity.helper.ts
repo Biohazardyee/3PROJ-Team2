@@ -1,6 +1,7 @@
 import {
   FeedItem,
 } from "../../../types/activities/activities.dto.js";
+import { bufferToImageDataUri } from "../../../utils/imageDataUri.js";
 
 const placeholder_img = "";
 
@@ -22,11 +23,11 @@ export const formatBinaryToImage = (data: any): string | null => {
   if (typeof data === "string") return data;
 
   if (Buffer.isBuffer(data) || data instanceof Uint8Array) {
-    return `data:image/jpeg;base64,${Buffer.from(data).toString("base64")}`;
+    return bufferToImageDataUri(data);
   }
 
   if (typeof data === "object" && data.type === "Buffer" && data.data) {
-    return `data:image/jpeg;base64,${Buffer.from(data.data).toString("base64")}`;
+    return bufferToImageDataUri(Buffer.from(data.data));
   }
 
   return null;
@@ -84,6 +85,9 @@ export const mapToFeedItem = (act: any, feedType: string): FeedItem => {
     user_name: user?.pseudo || user?.username || "Utilisateur",
 
     user_image: formattedUserImage || undefined,
+    equipped_avatar_border: user?.equipped_avatar_border ?? null,
+    equipped_font: user?.equipped_font ?? null,
+    equipped_text_effect: user?.equipped_text_effect ?? null,
 
     album:
       content?.name ||

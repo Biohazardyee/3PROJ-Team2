@@ -15,12 +15,24 @@ import {Edit3, Heart, Loader2, MessageCircle, Trash2, Flag} from "lucide-react";
 import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import UserAvatar from "../components/UserAvatar";
+import AvatarBorder from "../components/AvatarBorder";
+import {getPseudoFontFamily} from "../fonts.config";
+import {getTextEffectClassName} from "../textEffects.config";
 import {AxiosResponse} from "axios";
 import {toast} from "react-toastify";
 import {useGoBack} from "../hooks/useGoBack";
 import {useConfirm} from "../context/ConfirmContext";
+import AlbumTrackList from "../components/AlbumTrackList";
 
 type TabType = "Commentaires" | "Albums";
+
+const normalizeTracks = (raw: any): { name: string; duration?: string | number }[] => {
+    if (!raw) return [];
+    const list = Array.isArray(raw) ? raw : [raw];
+    return list
+        .filter((track: any) => track?.name)
+        .map((track: any) => ({name: track.name, duration: track.duration}));
+};
 
 const AlbumDetails: React.FC = () => {
     const {id} = useParams<{ id: string }>();
@@ -280,6 +292,7 @@ const AlbumDetails: React.FC = () => {
                             mbid: media.mbid,
                             db_id: media.id,
                             wiki: null,
+                            tracks: [] as { name: string; duration?: string | number }[],
                         };
 
                         // La DB locale ne stocke pas la description : on l'enrichit via l'API externe
@@ -291,6 +304,7 @@ const AlbumDetails: React.FC = () => {
                                 const info = infoRes.data.albumInfo || {};
                                 const albumObj = info.album || info;
                                 finalData.wiki = albumObj.wiki || null;
+                                finalData.tracks = normalizeTracks(albumObj.tracks?.track);
                             } catch (wikiErr) {
                                 console.warn("Description (wiki) non récupérée depuis l'API externe", wikiErr);
                             }
@@ -319,6 +333,7 @@ const AlbumDetails: React.FC = () => {
                         cover: imageUrl,
                         mbid: urlMbid || albumObj.mbid || null,
                         wiki: albumObj.wiki || null,
+                        tracks: normalizeTracks(albumObj.tracks?.track),
                         rating: 0,
                         db_id: null,
                     };
@@ -1037,6 +1052,8 @@ const AlbumDetails: React.FC = () => {
                             </p>
                         </section>
 
+                        <AlbumTrackList tracks={albumData?.tracks || []} artist={albumData?.artist || urlArtist}/>
+
                         <div className="mt-4">
                             <div
                                 className="flex gap-2 mb-8 bg-[#1a1b26] dark:bg-white p-1.5 rounded-xl w-fit border border-gray-800 dark:border-gray-200 shadow-sm">
@@ -1238,11 +1255,13 @@ const AlbumDetails: React.FC = () => {
                                                                         onClick={() => comment.user?.id && navigate(`/profil/${comment.user.id}`)}
                                                                         className="cursor-pointer transition-transform hover:scale-105"
                                                                     >
-                                                                        <UserAvatar
-                                                                            userId={comment.user?.id || comment.user_id}
-                                                                            username={comment.user?.pseudo || comment.user?.username}
-                                                                            sizeClass="w-10 h-10 text-sm"
-                                                                        />
+                                                                        <AvatarBorder borderId={comment.user?.equipped_avatar_border} compact>
+                                                                            <UserAvatar
+                                                                                userId={comment.user?.id || comment.user_id}
+                                                                                username={comment.user?.pseudo || comment.user?.username}
+                                                                                sizeClass="w-10 h-10 text-sm"
+                                                                            />
+                                                                        </AvatarBorder>
                                                                     </div>
 
                                                                     <div>
@@ -1250,7 +1269,8 @@ const AlbumDetails: React.FC = () => {
                                                                         <div className="flex items-center gap-3">
                                                                             <h4
                                                                                 onClick={() => comment.user?.id && navigate(`/profil/${comment.user.id}`)}
-                                                                                className="font-bold text-gray-100 dark:text-gray-900 hover:underline cursor-pointer"
+                                                                                className={`font-bold hover:underline cursor-pointer ${getTextEffectClassName(comment.user?.equipped_text_effect) || "text-gray-100 dark:text-gray-900"}`}
+                                                                                style={{fontFamily: getPseudoFontFamily(comment.user?.equipped_font) || undefined}}
                                                                             >
                                                                                 {comment.user?.pseudo || comment.user?.username || "Anonyme"}
                                                                             </h4>
@@ -1385,16 +1405,20 @@ const AlbumDetails: React.FC = () => {
                                                                                         <div
                                                                                             className="flex items-start gap-2 min-w-0">
                                                                                             {/* Mini avatar */}
-                                                                                            <UserAvatar
-                                                                                                userId={reply.user?.id || reply.user_id}
-                                                                                                username={reply.user?.pseudo || reply.user?.username}
-                                                                                                sizeClass="w-7 h-7 text-[10px]"
-                                                                                            />
+                                                                                            <AvatarBorder borderId={reply.user?.equipped_avatar_border} compact>
+                                                                                                <UserAvatar
+                                                                                                    userId={reply.user?.id || reply.user_id}
+                                                                                                    username={reply.user?.pseudo || reply.user?.username}
+                                                                                                    sizeClass="w-7 h-7 text-[10px]"
+                                                                                                />
+                                                                                            </AvatarBorder>
                                                                                             <div className="min-w-0">
                                                                                                 <div
                                                                                                     className="flex items-center gap-2 flex-wrap mb-1">
                                                                                                     <span
-                                                                                                        className="font-bold text-blue-400 text-xs">
+                                                                                                        className={`font-bold text-xs ${getTextEffectClassName(reply.user?.equipped_text_effect) || "text-blue-400"}`}
+                                                                                                        style={{fontFamily: getPseudoFontFamily(reply.user?.equipped_font) || undefined}}
+                                                                                                    >
                                                                                                       {reply.user?.pseudo || reply.user?.username || "Anonyme"}
                                                                                                     </span>
                                                                                                     {/* ✅ Mention @parent si réponse imbriquée */}

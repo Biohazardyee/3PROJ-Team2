@@ -15,4 +15,8 @@ router.get('/info/similar-tracks', function (req, res, next: NextFunction): void
     trackController.getSimilarTracks(req, res, next);
 });
 
+router.get('/preview', function (req, res, next: NextFunction): void {
+    trackController.getTrackPreview(req, res, next);
+});
+
 export default router;

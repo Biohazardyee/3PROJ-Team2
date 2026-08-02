@@ -27,6 +27,7 @@ import artistsRouter from "./routes/api/artists.js";
 import searchRouter from "./routes/api/search.js";
 import tagRouter from "./routes/api/tags.js";
 import trackRouter from "./routes/api/tracks.js";
+import spotifyRouter from "./routes/api/spotify.js";
 
 import oauthRouter from "./routes/oauth/oauth.js";
 
@@ -95,6 +96,7 @@ app.use("/api/tags", tagRouter);
 app.use("/api/artists", artistsRouter);
 app.use("/api/albums", albumsRouter);
 app.use("/api/search", searchRouter);
+app.use("/api/spotify", spotifyRouter);
 
 app.use("/api/oauth", oauthRouter);
 
