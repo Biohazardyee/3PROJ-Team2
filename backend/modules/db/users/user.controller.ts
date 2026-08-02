@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 import {Controller} from "../../controller.js";
-import {Unauthorized, BadRequest} from "../../../utils/errors.js";
+import {Unauthorized, BadRequest, Forbidden} from "../../../utils/errors.js";
 import {UserService, userService} from "./user.service.js";
 import {userMapper} from "../../../mappers/users/user.mapper.js";
 import {COSMETIC_SLOT_FIELDS, CosmeticSlot} from "./cosmetics.catalog.js";
@@ -21,6 +21,7 @@ import {
     UserResponseDeleteDto,
     UserResponseDto,
     UserResponseLoginDto,
+    UserSearchResultDto,
     UserUpdateDto,
 } from "../../../types/users/user.dto.js";
 import {Users} from "../../../generated/prisma/client.js";
@@ -56,24 +57,82 @@ class UserController extends Controller {
 
             const user: UserResponseAddDto = await this.service.add(registrationData);
 
-            const token: string = jwt.sign(
-                {
-                    id: user.id,
-                    username: user.username,
-                    email: registrationData.email.trim().toLowerCase(),
-                    role: "USER",
-                },
-                process.env.JWT_SECRET!,
-                {
-                    expiresIn: "24h",
-                },
-            );
-
+            // Pas de token ici : le compte doit d'abord être vérifié par email
+            // (voir /users/verify-email) avant de pouvoir se connecter.
             res.status(201).json({
-                message: "User created successfully",
+                message: "User created successfully, verification email sent",
+                requiresEmailVerification: true,
+                user,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async verifyEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {email, code} = req.body;
+
+            if (!email || !code) {
+                throw new BadRequest("Email and code are required");
+            }
+
+            const user = await this.service.verifyEmail(email, code);
+            const token: string = this.signAuthToken(user);
+
+            res.status(200).json({
+                message: "Email verified successfully",
                 token,
                 user,
             });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async resendVerification(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {email} = req.body;
+
+            if (!email) {
+                throw new BadRequest("Email is required");
+            }
+
+            await this.service.resendVerificationCode(email);
+
+            res.status(200).json({message: "Verification code resent"});
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {email} = req.body;
+
+            if (!email) {
+                throw new BadRequest("Email is required");
+            }
+
+            await this.service.requestPasswordReset(email);
+
+            res.status(200).json({message: "Password reset code sent"});
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {email, code, newPassword} = req.body;
+
+            if (!email || !code || !newPassword) {
+                throw new BadRequest("Email, code and new password are required");
+            }
+
+            await this.service.resetPassword(email, code, newPassword);
+
+            res.status(200).json({message: "Password reset successfully"});
         } catch (err) {
             next(err);
         }
@@ -113,19 +172,26 @@ class UserController extends Controller {
                 );
             }
 
-            const token: string = jwt.sign(
-                {
-                    id: user.id,
-                    email: user.email,
-                    username: user.username,
-                    role: user.role,
-                },
-                process.env.JWT_SECRET!,
-                {
-                    expiresIn: "24h",
-                },
-            );
+            if (!user.email_verified) {
+                throw new Forbidden("EMAIL_NOT_VERIFIED");
+            }
 
+            if (user.twofa_enabled) {
+                const preAuthToken: string = jwt.sign(
+                    {id: user.id, twofa_pending: true},
+                    process.env.JWT_SECRET!,
+                    {expiresIn: "5m"},
+                );
+
+                res.json({
+                    message: "Two-factor authentication required",
+                    requires2FA: true,
+                    preAuthToken,
+                });
+                return;
+            }
+
+            const token: string = this.signAuthToken(user);
             const userResponse: UserResponseLoginDto = userMapper.toLoginDto(user);
 
             res.json({
@@ -136,6 +202,115 @@ class UserController extends Controller {
         } catch (err) {
             next(err);
         }
+    }
+
+    async verifyTwoFactorLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {preAuthToken, code} = req.body;
+
+            if (!preAuthToken || !code) {
+                throw new BadRequest("preAuthToken and code are required");
+            }
+
+            let decoded: any;
+            try {
+                decoded = jwt.verify(preAuthToken, process.env.JWT_SECRET!);
+            } catch {
+                throw new Unauthorized("Invalid or expired session, please log in again");
+            }
+
+            if (!decoded?.twofa_pending || !decoded?.id) {
+                throw new Unauthorized("Invalid or expired session, please log in again");
+            }
+
+            const user = await this.service.verifyTwoFactorLogin(decoded.id, code);
+
+            const token: string = this.signAuthToken(user);
+            const userResponse: UserResponseLoginDto = userMapper.toLoginDto(user);
+
+            res.json({
+                message: "Login successful",
+                token,
+                user: userResponse,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async setupTwoFactor(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId: string = (req as any).user.id;
+            const result = await this.service.setupTwoFactor(userId);
+
+            res.status(200).json({message: "Two-factor setup initiated", ...result});
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async confirmTwoFactor(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId: string = (req as any).user.id;
+            const {code} = req.body;
+
+            if (!code) {
+                throw new BadRequest("code is required");
+            }
+
+            const backupCodes: string[] = await this.service.confirmTwoFactor(userId, code);
+
+            res.status(200).json({message: "Two-factor authentication enabled", backupCodes});
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async regenerateBackupCodes(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId: string = (req as any).user.id;
+            const {code} = req.body;
+
+            if (!code) {
+                throw new BadRequest("code is required");
+            }
+
+            const backupCodes: string[] = await this.service.regenerateBackupCodes(userId, code);
+
+            res.status(200).json({message: "Backup codes regenerated", backupCodes});
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async disableTwoFactor(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId: string = (req as any).user.id;
+            const {code} = req.body;
+
+            if (!code) {
+                throw new BadRequest("code is required");
+            }
+
+            await this.service.disableTwoFactor(userId, code);
+
+            res.status(200).json({message: "Two-factor authentication disabled"});
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    private signAuthToken(user: { id: string; email: string; username: string; role: unknown }): string {
+        return jwt.sign(
+            {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                role: user.role,
+            },
+            process.env.JWT_SECRET!,
+            {expiresIn: "24h"},
+        );
     }
 
     async getAll(_: Request, res: Response, next: NextFunction): Promise<void> {
@@ -326,6 +501,34 @@ class UserController extends Controller {
                 message: "User deleted successfully",
                 user,
             });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async exportData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId: string = (req as any).user.id;
+            const data = await this.service.exportUserData(userId);
+
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="melodia-export-${userId}.json"`,
+            );
+            res.status(200).json(data);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async search(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const query: string = (req.query.q as string) || "";
+            const excludeUserId: string = (req as any).user.id;
+
+            const users: UserSearchResultDto[] = await this.service.searchUsers(query, excludeUserId);
+
+            res.status(200).json({users});
         } catch (err) {
             next(err);
         }

@@ -9,12 +9,14 @@ import {
     CheckCircle2,
     Loader2,
     Send,
-    Trash
+    Trash,
+    Share2
 } from "lucide-react";
 import {useTranslation} from "react-i18next";
 import apiClient from "../api/client";
 import UserAvatar from "./UserAvatar.tsx";
 import AvatarBorder from "./AvatarBorder";
+import ShareCardModal from "./ShareCardModal";
 import {getPseudoFontFamily} from "../fonts.config";
 import {getTextEffectClassName} from "../textEffects.config";
 import {AxiosResponse} from "axios";
@@ -64,6 +66,7 @@ export interface FeedItem extends AuthorCosmetics {
     hasReviewed?: boolean;
     userReviewRating?: number | null;
     globalRating?: number;
+    reasonType?: "favorite" | "similar" | "social" | "popular";
     review_id?: string;
     media_id?: string;
     api_id?: string;
@@ -378,10 +381,26 @@ const FeedCard: React.FC<FeedCardProps> = ({
     const isLiking = likingId === item.id;
     const isAdmin = currentUserRole === "ADMIN";
 
+    const discoveryReasonText = (): string => {
+        switch (item.reasonType) {
+            case "favorite":
+                return t("discovery_reason_favorite", {artist: item.artist});
+            case "similar":
+                return t("discovery_reason_similar", {artist: item.artist});
+            case "social":
+                return t("discovery_reason_social");
+            case "popular":
+                return t("discovery_reason_popular");
+            default:
+                return t("suggestion");
+        }
+    };
+
     const [commentsOpen, setCommentsOpen] = useState(false);
     const [allComments, setAllComments] = useState<ReviewReply[]>([]);
     const [commentsLoading, setCommentsLoading] = useState(false);
     const [commentsFetched, setCommentsFetched] = useState(false);
+    const [showShareModal, setShowShareModal] = useState(false);
 
     const [commentInput, setCommentInput] = useState("");
     const [submittingComment, setSubmittingComment] = useState(false);
@@ -562,6 +581,7 @@ const FeedCard: React.FC<FeedCardProps> = ({
     const rootComments = allComments.filter((c) => !c.parent_id);
 
     return (
+        <>
         <div
             className="bg-[#1C1C28] dark:bg-white rounded-xl p-6 border border-gray-800 dark:border-gray-200 shadow-sm transition-colors">
             <div className="flex items-center justify-between mb-5">
@@ -599,7 +619,7 @@ const FeedCard: React.FC<FeedCardProps> = ({
                                 {isReview ? t("wrote_review") : t("new_album")}
                             </span>
                         </p>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">{isNew ? t("suggestion") : timeAgo(item.created_at, t)}</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">{isNew ? discoveryReasonText() : timeAgo(item.created_at, t)}</p>
                     </div>
                 </button>
 
@@ -664,6 +684,13 @@ const FeedCard: React.FC<FeedCardProps> = ({
                         >
                             <MessageCircle size={18}/>
                             {item.comments_count ?? 0}
+                        </button>
+
+                        <button
+                            onClick={() => setShowShareModal(true)}
+                            className="flex items-center gap-2 text-sm font-semibold text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 transition-colors"
+                        >
+                            <Share2 size={18}/>
                         </button>
                     </>
                 ) : (
@@ -739,6 +766,23 @@ const FeedCard: React.FC<FeedCardProps> = ({
                 </div>
             )}
         </div>
+
+        {showShareModal && (
+            <ShareCardModal
+                data={{
+                    artist: item.artist || "",
+                    album: item.album || "",
+                    cover: item.cover,
+                    rating: item.rating ?? 0,
+                    title: item.title,
+                    content: item.content,
+                    userName: item.user_name || "Utilisateur",
+                    userImage: item.user_image,
+                }}
+                onClose={() => setShowShareModal(false)}
+            />
+        )}
+        </>
     );
 };
 

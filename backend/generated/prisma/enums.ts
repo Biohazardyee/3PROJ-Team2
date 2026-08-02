@@ -63,7 +63,9 @@ export const NotificationActions = {
   like_added: 'like_added',
   comment_added: 'comment_added',
   new_follow: 'new_follow',
-  recommendation: 'recommendation'
+  recommendation: 'recommendation',
+  badge_earned: 'badge_earned',
+  playlist_collaborator_added: 'playlist_collaborator_added'
 } as const
 
 export type NotificationActions = (typeof NotificationActions)[keyof typeof NotificationActions]

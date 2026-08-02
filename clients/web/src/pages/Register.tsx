@@ -99,23 +99,9 @@ const Register: React.FC = () => {
       });
 
       if (response.status === 201 || response.status === 200) {
-        const { token } = response.data;
-
-        if (token) {
-          localStorage.setItem("token", token);
-          window.dispatchEvent(new Event("auth-changed"));
-
-          apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-          navigate("/home", {
-            state: { message: "Compte créé et connexion réussie !" },
-          });
-        } else {
-          setError(
-            "Compte créé, mais impossible de vous connecter automatiquement.",
-          );
-          navigate("/login");
-        }
+        navigate("/verify-email", {
+          state: { email: formData.email },
+        });
       }
     } catch (error: any) {
       if (error.response) {

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import {Search, SlidersHorizontal, Loader2, ChevronDown, Disc} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import {AlbumCard} from "../components/AlbumCard";
@@ -7,12 +7,15 @@ import apiClient from "../api/client";
 
 const Home: React.FC = () => {
     const {t} = useTranslation();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
     const [albums, setAlbums] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedSort, setSelectedSort] = useState("popular");
-    const [searchMode, setSearchMode] = useState<"artist" | "album">("artist");
+    const [searchMode, setSearchMode] = useState<"artist" | "album">(
+        searchParams.get("mode") === "album" ? "album" : "artist",
+    );
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
 
@@ -115,6 +118,16 @@ const Home: React.FC = () => {
         setPage(1);
         setHasMore(false);
     }, [searchQuery, searchMode]);
+
+    // Déclenche automatiquement une recherche si on arrive ici avec ?q=...&mode=...
+    // (depuis la recherche globale du header), puis nettoie l'URL.
+    useEffect(() => {
+        if (searchParams.get("q")) {
+            handleSearch(1);
+            setSearchParams({}, {replace: true});
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const applySort = (data: any[], sortType: string) => {
         let sorted = [...data];

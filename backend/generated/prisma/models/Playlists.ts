@@ -30,6 +30,7 @@ export type PlaylistsMinAggregateOutputType = {
   name: string | null
   image_url: runtime.Bytes | null
   is_public: boolean | null
+  is_collaborative: boolean | null
   spotify_playlist_id: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -41,6 +42,7 @@ export type PlaylistsMaxAggregateOutputType = {
   name: string | null
   image_url: runtime.Bytes | null
   is_public: boolean | null
+  is_collaborative: boolean | null
   spotify_playlist_id: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -52,6 +54,7 @@ export type PlaylistsCountAggregateOutputType = {
   name: number
   image_url: number
   is_public: number
+  is_collaborative: number
   spotify_playlist_id: number
   created_at: number
   updated_at: number
@@ -65,6 +68,7 @@ export type PlaylistsMinAggregateInputType = {
   name?: true
   image_url?: true
   is_public?: true
+  is_collaborative?: true
   spotify_playlist_id?: true
   created_at?: true
   updated_at?: true
@@ -76,6 +80,7 @@ export type PlaylistsMaxAggregateInputType = {
   name?: true
   image_url?: true
   is_public?: true
+  is_collaborative?: true
   spotify_playlist_id?: true
   created_at?: true
   updated_at?: true
@@ -87,6 +92,7 @@ export type PlaylistsCountAggregateInputType = {
   name?: true
   image_url?: true
   is_public?: true
+  is_collaborative?: true
   spotify_playlist_id?: true
   created_at?: true
   updated_at?: true
@@ -171,6 +177,7 @@ export type PlaylistsGroupByOutputType = {
   name: string
   image_url: runtime.Bytes | null
   is_public: boolean
+  is_collaborative: boolean
   spotify_playlist_id: string | null
   created_at: Date
   updated_at: Date
@@ -203,11 +210,13 @@ export type PlaylistsWhereInput = {
   name?: Prisma.StringFilter<"Playlists"> | string
   image_url?: Prisma.BytesNullableFilter<"Playlists"> | runtime.Bytes | null
   is_public?: Prisma.BoolFilter<"Playlists"> | boolean
+  is_collaborative?: Prisma.BoolFilter<"Playlists"> | boolean
   spotify_playlist_id?: Prisma.StringNullableFilter<"Playlists"> | string | null
   created_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
   user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   items?: Prisma.PlaylistItemsListRelationFilter
+  collaborators?: Prisma.PlaylistCollaboratorsListRelationFilter
 }
 
 export type PlaylistsOrderByWithRelationInput = {
@@ -216,11 +225,13 @@ export type PlaylistsOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   image_url?: Prisma.SortOrderInput | Prisma.SortOrder
   is_public?: Prisma.SortOrder
+  is_collaborative?: Prisma.SortOrder
   spotify_playlist_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   user?: Prisma.UsersOrderByWithRelationInput
   items?: Prisma.PlaylistItemsOrderByRelationAggregateInput
+  collaborators?: Prisma.PlaylistCollaboratorsOrderByRelationAggregateInput
 }
 
 export type PlaylistsWhereUniqueInput = Prisma.AtLeast<{
@@ -233,11 +244,13 @@ export type PlaylistsWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Playlists"> | string
   image_url?: Prisma.BytesNullableFilter<"Playlists"> | runtime.Bytes | null
   is_public?: Prisma.BoolFilter<"Playlists"> | boolean
+  is_collaborative?: Prisma.BoolFilter<"Playlists"> | boolean
   spotify_playlist_id?: Prisma.StringNullableFilter<"Playlists"> | string | null
   created_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
   user?: Prisma.XOR<Prisma.UsersScalarRelationFilter, Prisma.UsersWhereInput>
   items?: Prisma.PlaylistItemsListRelationFilter
+  collaborators?: Prisma.PlaylistCollaboratorsListRelationFilter
 }, "id" | "user_id_name">
 
 export type PlaylistsOrderByWithAggregationInput = {
@@ -246,6 +259,7 @@ export type PlaylistsOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   image_url?: Prisma.SortOrderInput | Prisma.SortOrder
   is_public?: Prisma.SortOrder
+  is_collaborative?: Prisma.SortOrder
   spotify_playlist_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -263,6 +277,7 @@ export type PlaylistsScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Playlists"> | string
   image_url?: Prisma.BytesNullableWithAggregatesFilter<"Playlists"> | runtime.Bytes | null
   is_public?: Prisma.BoolWithAggregatesFilter<"Playlists"> | boolean
+  is_collaborative?: Prisma.BoolWithAggregatesFilter<"Playlists"> | boolean
   spotify_playlist_id?: Prisma.StringNullableWithAggregatesFilter<"Playlists"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Playlists"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Playlists"> | Date | string
@@ -273,11 +288,13 @@ export type PlaylistsCreateInput = {
   name: string
   image_url?: runtime.Bytes | null
   is_public: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UsersCreateNestedOneWithoutPlaylistsInput
   items?: Prisma.PlaylistItemsCreateNestedManyWithoutPlaylistInput
+  collaborators?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutPlaylistInput
 }
 
 export type PlaylistsUncheckedCreateInput = {
@@ -286,10 +303,12 @@ export type PlaylistsUncheckedCreateInput = {
   name: string
   image_url?: runtime.Bytes | null
   is_public: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
   items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutPlaylistInput
+  collaborators?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutPlaylistInput
 }
 
 export type PlaylistsUpdateInput = {
@@ -297,11 +316,13 @@ export type PlaylistsUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UsersUpdateOneRequiredWithoutPlaylistsNestedInput
   items?: Prisma.PlaylistItemsUpdateManyWithoutPlaylistNestedInput
+  collaborators?: Prisma.PlaylistCollaboratorsUpdateManyWithoutPlaylistNestedInput
 }
 
 export type PlaylistsUncheckedUpdateInput = {
@@ -310,10 +331,12 @@ export type PlaylistsUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.PlaylistItemsUncheckedUpdateManyWithoutPlaylistNestedInput
+  collaborators?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutPlaylistNestedInput
 }
 
 export type PlaylistsCreateManyInput = {
@@ -322,6 +345,7 @@ export type PlaylistsCreateManyInput = {
   name: string
   image_url?: runtime.Bytes | null
   is_public: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
@@ -332,6 +356,7 @@ export type PlaylistsUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -343,6 +368,7 @@ export type PlaylistsUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -369,6 +395,7 @@ export type PlaylistsCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   image_url?: Prisma.SortOrder
   is_public?: Prisma.SortOrder
+  is_collaborative?: Prisma.SortOrder
   spotify_playlist_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -380,6 +407,7 @@ export type PlaylistsMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   image_url?: Prisma.SortOrder
   is_public?: Prisma.SortOrder
+  is_collaborative?: Prisma.SortOrder
   spotify_playlist_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -391,6 +419,7 @@ export type PlaylistsMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   image_url?: Prisma.SortOrder
   is_public?: Prisma.SortOrder
+  is_collaborative?: Prisma.SortOrder
   spotify_playlist_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -443,6 +472,20 @@ export type PlaylistsUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.PlaylistsScalarWhereInput | Prisma.PlaylistsScalarWhereInput[]
 }
 
+export type PlaylistsCreateNestedOneWithoutCollaboratorsInput = {
+  create?: Prisma.XOR<Prisma.PlaylistsCreateWithoutCollaboratorsInput, Prisma.PlaylistsUncheckedCreateWithoutCollaboratorsInput>
+  connectOrCreate?: Prisma.PlaylistsCreateOrConnectWithoutCollaboratorsInput
+  connect?: Prisma.PlaylistsWhereUniqueInput
+}
+
+export type PlaylistsUpdateOneRequiredWithoutCollaboratorsNestedInput = {
+  create?: Prisma.XOR<Prisma.PlaylistsCreateWithoutCollaboratorsInput, Prisma.PlaylistsUncheckedCreateWithoutCollaboratorsInput>
+  connectOrCreate?: Prisma.PlaylistsCreateOrConnectWithoutCollaboratorsInput
+  upsert?: Prisma.PlaylistsUpsertWithoutCollaboratorsInput
+  connect?: Prisma.PlaylistsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlaylistsUpdateToOneWithWhereWithoutCollaboratorsInput, Prisma.PlaylistsUpdateWithoutCollaboratorsInput>, Prisma.PlaylistsUncheckedUpdateWithoutCollaboratorsInput>
+}
+
 export type PlaylistsCreateNestedOneWithoutItemsInput = {
   create?: Prisma.XOR<Prisma.PlaylistsCreateWithoutItemsInput, Prisma.PlaylistsUncheckedCreateWithoutItemsInput>
   connectOrCreate?: Prisma.PlaylistsCreateOrConnectWithoutItemsInput
@@ -462,10 +505,12 @@ export type PlaylistsCreateWithoutUserInput = {
   name: string
   image_url?: runtime.Bytes | null
   is_public: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
   items?: Prisma.PlaylistItemsCreateNestedManyWithoutPlaylistInput
+  collaborators?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutPlaylistInput
 }
 
 export type PlaylistsUncheckedCreateWithoutUserInput = {
@@ -473,10 +518,12 @@ export type PlaylistsUncheckedCreateWithoutUserInput = {
   name: string
   image_url?: runtime.Bytes | null
   is_public: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
   items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutPlaylistInput
+  collaborators?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutPlaylistInput
 }
 
 export type PlaylistsCreateOrConnectWithoutUserInput = {
@@ -514,9 +561,78 @@ export type PlaylistsScalarWhereInput = {
   name?: Prisma.StringFilter<"Playlists"> | string
   image_url?: Prisma.BytesNullableFilter<"Playlists"> | runtime.Bytes | null
   is_public?: Prisma.BoolFilter<"Playlists"> | boolean
+  is_collaborative?: Prisma.BoolFilter<"Playlists"> | boolean
   spotify_playlist_id?: Prisma.StringNullableFilter<"Playlists"> | string | null
   created_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Playlists"> | Date | string
+}
+
+export type PlaylistsCreateWithoutCollaboratorsInput = {
+  id?: string
+  name: string
+  image_url?: runtime.Bytes | null
+  is_public: boolean
+  is_collaborative?: boolean
+  spotify_playlist_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  user: Prisma.UsersCreateNestedOneWithoutPlaylistsInput
+  items?: Prisma.PlaylistItemsCreateNestedManyWithoutPlaylistInput
+}
+
+export type PlaylistsUncheckedCreateWithoutCollaboratorsInput = {
+  id?: string
+  user_id: string
+  name: string
+  image_url?: runtime.Bytes | null
+  is_public: boolean
+  is_collaborative?: boolean
+  spotify_playlist_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  items?: Prisma.PlaylistItemsUncheckedCreateNestedManyWithoutPlaylistInput
+}
+
+export type PlaylistsCreateOrConnectWithoutCollaboratorsInput = {
+  where: Prisma.PlaylistsWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlaylistsCreateWithoutCollaboratorsInput, Prisma.PlaylistsUncheckedCreateWithoutCollaboratorsInput>
+}
+
+export type PlaylistsUpsertWithoutCollaboratorsInput = {
+  update: Prisma.XOR<Prisma.PlaylistsUpdateWithoutCollaboratorsInput, Prisma.PlaylistsUncheckedUpdateWithoutCollaboratorsInput>
+  create: Prisma.XOR<Prisma.PlaylistsCreateWithoutCollaboratorsInput, Prisma.PlaylistsUncheckedCreateWithoutCollaboratorsInput>
+  where?: Prisma.PlaylistsWhereInput
+}
+
+export type PlaylistsUpdateToOneWithWhereWithoutCollaboratorsInput = {
+  where?: Prisma.PlaylistsWhereInput
+  data: Prisma.XOR<Prisma.PlaylistsUpdateWithoutCollaboratorsInput, Prisma.PlaylistsUncheckedUpdateWithoutCollaboratorsInput>
+}
+
+export type PlaylistsUpdateWithoutCollaboratorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UsersUpdateOneRequiredWithoutPlaylistsNestedInput
+  items?: Prisma.PlaylistItemsUpdateManyWithoutPlaylistNestedInput
+}
+
+export type PlaylistsUncheckedUpdateWithoutCollaboratorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.PlaylistItemsUncheckedUpdateManyWithoutPlaylistNestedInput
 }
 
 export type PlaylistsCreateWithoutItemsInput = {
@@ -524,10 +640,12 @@ export type PlaylistsCreateWithoutItemsInput = {
   name: string
   image_url?: runtime.Bytes | null
   is_public: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
   user: Prisma.UsersCreateNestedOneWithoutPlaylistsInput
+  collaborators?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutPlaylistInput
 }
 
 export type PlaylistsUncheckedCreateWithoutItemsInput = {
@@ -536,9 +654,11 @@ export type PlaylistsUncheckedCreateWithoutItemsInput = {
   name: string
   image_url?: runtime.Bytes | null
   is_public: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  collaborators?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutPlaylistInput
 }
 
 export type PlaylistsCreateOrConnectWithoutItemsInput = {
@@ -562,10 +682,12 @@ export type PlaylistsUpdateWithoutItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UsersUpdateOneRequiredWithoutPlaylistsNestedInput
+  collaborators?: Prisma.PlaylistCollaboratorsUpdateManyWithoutPlaylistNestedInput
 }
 
 export type PlaylistsUncheckedUpdateWithoutItemsInput = {
@@ -574,9 +696,11 @@ export type PlaylistsUncheckedUpdateWithoutItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  collaborators?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutPlaylistNestedInput
 }
 
 export type PlaylistsCreateManyUserInput = {
@@ -584,6 +708,7 @@ export type PlaylistsCreateManyUserInput = {
   name: string
   image_url?: runtime.Bytes | null
   is_public: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: string | null
   created_at?: Date | string
   updated_at?: Date | string
@@ -594,10 +719,12 @@ export type PlaylistsUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.PlaylistItemsUpdateManyWithoutPlaylistNestedInput
+  collaborators?: Prisma.PlaylistCollaboratorsUpdateManyWithoutPlaylistNestedInput
 }
 
 export type PlaylistsUncheckedUpdateWithoutUserInput = {
@@ -605,10 +732,12 @@ export type PlaylistsUncheckedUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.PlaylistItemsUncheckedUpdateManyWithoutPlaylistNestedInput
+  collaborators?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutPlaylistNestedInput
 }
 
 export type PlaylistsUncheckedUpdateManyWithoutUserInput = {
@@ -616,6 +745,7 @@ export type PlaylistsUncheckedUpdateManyWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   is_public?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  is_collaborative?: Prisma.BoolFieldUpdateOperationsInput | boolean
   spotify_playlist_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -628,10 +758,12 @@ export type PlaylistsUncheckedUpdateManyWithoutUserInput = {
 
 export type PlaylistsCountOutputType = {
   items: number
+  collaborators: number
 }
 
 export type PlaylistsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | PlaylistsCountOutputTypeCountItemsArgs
+  collaborators?: boolean | PlaylistsCountOutputTypeCountCollaboratorsArgs
 }
 
 /**
@@ -651,6 +783,13 @@ export type PlaylistsCountOutputTypeCountItemsArgs<ExtArgs extends runtime.Types
   where?: Prisma.PlaylistItemsWhereInput
 }
 
+/**
+ * PlaylistsCountOutputType without action
+ */
+export type PlaylistsCountOutputTypeCountCollaboratorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlaylistCollaboratorsWhereInput
+}
+
 
 export type PlaylistsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -658,11 +797,13 @@ export type PlaylistsSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   name?: boolean
   image_url?: boolean
   is_public?: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: boolean
   created_at?: boolean
   updated_at?: boolean
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   items?: boolean | Prisma.Playlists$itemsArgs<ExtArgs>
+  collaborators?: boolean | Prisma.Playlists$collaboratorsArgs<ExtArgs>
   _count?: boolean | Prisma.PlaylistsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["playlists"]>
 
@@ -672,6 +813,7 @@ export type PlaylistsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   image_url?: boolean
   is_public?: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -684,6 +826,7 @@ export type PlaylistsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   image_url?: boolean
   is_public?: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -696,15 +839,17 @@ export type PlaylistsSelectScalar = {
   name?: boolean
   image_url?: boolean
   is_public?: boolean
+  is_collaborative?: boolean
   spotify_playlist_id?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type PlaylistsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "name" | "image_url" | "is_public" | "spotify_playlist_id" | "created_at" | "updated_at", ExtArgs["result"]["playlists"]>
+export type PlaylistsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "name" | "image_url" | "is_public" | "is_collaborative" | "spotify_playlist_id" | "created_at" | "updated_at", ExtArgs["result"]["playlists"]>
 export type PlaylistsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UsersDefaultArgs<ExtArgs>
   items?: boolean | Prisma.Playlists$itemsArgs<ExtArgs>
+  collaborators?: boolean | Prisma.Playlists$collaboratorsArgs<ExtArgs>
   _count?: boolean | Prisma.PlaylistsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PlaylistsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -719,6 +864,7 @@ export type $PlaylistsPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     user: Prisma.$UsersPayload<ExtArgs>
     items: Prisma.$PlaylistItemsPayload<ExtArgs>[]
+    collaborators: Prisma.$PlaylistCollaboratorsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -726,6 +872,7 @@ export type $PlaylistsPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     name: string
     image_url: runtime.Bytes | null
     is_public: boolean
+    is_collaborative: boolean
     spotify_playlist_id: string | null
     created_at: Date
     updated_at: Date
@@ -1125,6 +1272,7 @@ export interface Prisma__PlaylistsClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UsersDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UsersDefaultArgs<ExtArgs>>): Prisma.Prisma__UsersClient<runtime.Types.Result.GetResult<Prisma.$UsersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.Playlists$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Playlists$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaylistItemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  collaborators<T extends Prisma.Playlists$collaboratorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Playlists$collaboratorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaylistCollaboratorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1159,6 +1307,7 @@ export interface PlaylistsFieldRefs {
   readonly name: Prisma.FieldRef<"Playlists", 'String'>
   readonly image_url: Prisma.FieldRef<"Playlists", 'Bytes'>
   readonly is_public: Prisma.FieldRef<"Playlists", 'Boolean'>
+  readonly is_collaborative: Prisma.FieldRef<"Playlists", 'Boolean'>
   readonly spotify_playlist_id: Prisma.FieldRef<"Playlists", 'String'>
   readonly created_at: Prisma.FieldRef<"Playlists", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Playlists", 'DateTime'>
@@ -1579,6 +1728,30 @@ export type Playlists$itemsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.PlaylistItemsScalarFieldEnum | Prisma.PlaylistItemsScalarFieldEnum[]
+}
+
+/**
+ * Playlists.collaborators
+ */
+export type Playlists$collaboratorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlaylistCollaborators
+   */
+  select?: Prisma.PlaylistCollaboratorsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlaylistCollaborators
+   */
+  omit?: Prisma.PlaylistCollaboratorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlaylistCollaboratorsInclude<ExtArgs> | null
+  where?: Prisma.PlaylistCollaboratorsWhereInput
+  orderBy?: Prisma.PlaylistCollaboratorsOrderByWithRelationInput | Prisma.PlaylistCollaboratorsOrderByWithRelationInput[]
+  cursor?: Prisma.PlaylistCollaboratorsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlaylistCollaboratorsScalarFieldEnum | Prisma.PlaylistCollaboratorsScalarFieldEnum[]
 }
 
 /**

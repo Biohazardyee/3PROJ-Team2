@@ -16,6 +16,7 @@ import {
 import {notificationService} from "../notifications/notification.service.js";
 import {NotificationActions} from "../../../generated/prisma/enums.js";
 import {canSendNotification} from "../notifications/notification.helper.js";
+import {badgeService} from "../badges/badge.service.js";
 
 const USER_PREVIEW_SELECT = {
     id: true,
@@ -77,7 +78,7 @@ export class FollowService {
             throw new BadRequest("Already following this user");
         }
 
-        return await PrismaDb.$transaction(async (tx): Promise<FollowResponseDto> => {
+        const result = await PrismaDb.$transaction(async (tx): Promise<FollowResponseDto> => {
             const followCreation = await tx.follows.create({
                 data: {
                     user_id: data.user_id,
@@ -120,6 +121,15 @@ export class FollowService {
 
             return followsMapper.toDto(followCreation);
         });
+
+        badgeService
+            .checkAndAwardBadges(data.user_id)
+            .catch((err): void => console.error("Badge check failed:", err));
+        badgeService
+            .checkAndAwardBadges(data.follow_user_id)
+            .catch((err): void => console.error("Badge check failed:", err));
+
+        return result;
     }
 
     async delete(

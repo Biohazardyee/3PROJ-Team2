@@ -9,6 +9,8 @@ import {LandingPage} from "./pages/LandingPage";
 import Layout from "./components/Layout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
 import Feed from "./pages/Feed";
 import AlbumDetails from "./pages/AlbumDetails";
@@ -65,6 +67,8 @@ const App: React.FC = () => {
                 <Route path="/" element={<LandingPage/>}/>
                 <Route path="/register" element={<Register/>}/>
                 <Route path="/login" element={<Login/>}/>
+                <Route path="/verify-email" element={<VerifyEmail/>}/>
+                <Route path="/forgot-password" element={<ForgotPassword/>}/>
                 <Route path="/auth/callback" element={<AuthCallback/>}/>
                 <Route path="/album/:id" element={<AlbumDetails/>}/>
 

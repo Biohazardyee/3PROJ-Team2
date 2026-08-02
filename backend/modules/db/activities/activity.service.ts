@@ -16,7 +16,14 @@ import {
 } from "../../../types/activities/activities.dto.js";
 import { activityMapper } from "../../../mappers/activities/activities.mapper.js";
 import { artistService } from "../../external_api/artists/artist.service.js";
-import { getImageUrl, mapToFeedItem } from "./activity.helper.js";
+import {
+  getImageUrl,
+  mapToFeedItem,
+  DiscoveryCandidate,
+  addDiscoveryCandidate,
+  coverFromContent,
+  discoveryReasonType,
+} from "./activity.helper.js";
 import { feedRankingService, UserContext } from "./feed.ranking.service.js";
 
 export class ActivityService {
@@ -302,7 +309,10 @@ export class ActivityService {
 
   /**
    * DISCOVERY FEED
-   * Système de recommandation hybride basé sur les scores, sans aucun random, avec contrôle de diversité
+   * Recommandation hybride : filtrage par contenu (LastFM, artiste favori +
+   * artistes similaires) combiné à du filtrage collaboratif (ce que des
+   * utilisateurs aux goûts proches ont aimé), sans aucun random — le tri est
+   * déterministe pour que la pagination (offset/limit) reste stable.
    */
   async getDiscoveryFeed(
     user_id: string,
@@ -317,42 +327,71 @@ export class ActivityService {
     if (!user) throw new NotFound("User not found");
 
     const userReviews = await PrismaDb.reviews.findMany({
-      where: { user_id: user_id },
+      where: { user_id },
       select: {
+        media_id: true,
         rating: true,
         media: { select: { id: true, rating: true, content: true } },
       },
     });
 
-    let rawAlbumsToProcess: Array<{
-      albumName: string;
-      artistName: string;
-      image: any;
-    }> = [];
+    const knownMediaIds = new Set<string>(
+      userReviews.map((r): string => r.media_id),
+    );
 
-    if (user.favorite_band) {
+    const statusRows = await PrismaDb.userMediaStatus.findMany({
+      where: { user_id },
+      select: { media_id: true },
+    });
+    statusRows.forEach((s): Set<string> => knownMediaIds.add(s.media_id));
+
+    const candidates = new Map<string, DiscoveryCandidate>();
+
+    const highlyRatedArtists: string[] = Array.from(
+      new Set(
+        userReviews
+          .filter((r): boolean => r.rating >= 4)
+          .map((r): string | undefined => (r.media.content as any)?.artist)
+          .filter((a): a is string => !!a),
+      ),
+    ).slice(0, 3);
+
+    const seedArtists: string[] = Array.from(
+      new Set([
+        ...(user.favorite_band ? [user.favorite_band] : []),
+        ...highlyRatedArtists,
+      ]),
+    ).slice(0, 4);
+
+    // --- Source A : filtrage par contenu (LastFM) ---
+    for (const seedArtist of seedArtists) {
       try {
         const topAlbumsRes = await artistService.getTopAlbums({
-          artist: user.favorite_band,
+          artist: seedArtist,
         } as any);
 
-        const favAlbums = (topAlbumsRes.topalbums?.album || []).slice(0, 30);
+        const favAlbums = (topAlbumsRes.topalbums?.album || []).slice(0, 20);
         for (const alb of favAlbums) {
-          rawAlbumsToProcess.push({
+          addDiscoveryCandidate(candidates, {
             albumName: alb.name,
-            artistName: user.favorite_band,
-            image: alb.image,
+            artistName: seedArtist,
+            cover: getImageUrl(alb.image),
+            dbId: null,
+            globalRating: 0,
+            source: "favorite",
+            closeness: 40,
+            socialProofCount: 0,
           });
         }
 
         if (typeof artistService.getSimilarArtists === "function") {
           const similarArtistsRes = await artistService.getSimilarArtists({
-            artist: user.favorite_band,
+            artist: seedArtist,
           } as any);
 
           const similarArtists = (
             similarArtistsRes.similarartists?.artist || []
-          ).slice(0, 10);
+          ).slice(0, 8);
 
           await Promise.all(
             similarArtists.map(async (art: any): Promise<void> => {
@@ -360,12 +399,17 @@ export class ActivityService {
                 const res = await artistService.getTopAlbums({
                   artist: art.name,
                 } as any);
-                const albums = (res.topalbums?.album || []).slice(0, 5);
+                const albums = (res.topalbums?.album || []).slice(0, 4);
                 for (const alb of albums) {
-                  rawAlbumsToProcess.push({
+                  addDiscoveryCandidate(candidates, {
                     albumName: alb.name,
                     artistName: art.name,
-                    image: alb.image,
+                    cover: getImageUrl(alb.image),
+                    dbId: null,
+                    globalRating: 0,
+                    source: "similar",
+                    closeness: 20,
+                    socialProofCount: 0,
                   });
                 }
               } catch (err) {}
@@ -380,67 +424,189 @@ export class ActivityService {
       }
     }
 
-    if (rawAlbumsToProcess.length === 0) return [];
+    // --- Source B : filtrage collaboratif (goûts des utilisateurs proches) ---
+    const likedMediaIds: string[] = userReviews
+      .filter((r): boolean => r.rating >= 4)
+      .map((r): string => r.media_id);
 
-    const mediasInDb = await PrismaDb.medias.findMany({
-      where: {
-        content: {
-          path: ["name"],
-          string_contains: "",
+    if (likedMediaIds.length > 0) {
+      const tasteNeighbors = await PrismaDb.reviews.findMany({
+        where: {
+          media_id: { in: likedMediaIds },
+          rating: { gte: 4 },
+          user_id: { not: user_id },
         },
-      },
-    });
-
-    const getMediaStatsInMemory = (albumName: string, artistName: string) => {
-      const userReview = userReviews.find((r): boolean => {
-        const content = r.media.content as any;
-        return (
-          content?.name?.toLowerCase() === albumName.toLowerCase() &&
-          content?.artist?.toLowerCase() === artistName.toLowerCase()
-        );
+        select: { user_id: true },
+        distinct: ["user_id"],
+        orderBy: { rating: "desc" },
+        take: 50,
       });
 
-      const mediaInDb = mediasInDb.find((m): boolean => {
-        const content = m.content as any;
-        return (
-          content?.name?.toLowerCase() === albumName.toLowerCase() &&
-          content?.artist?.toLowerCase() === artistName.toLowerCase()
-        );
-      });
+      const neighborIds: string[] = tasteNeighbors.map((n): string => n.user_id);
 
-      return {
-        dbId: mediaInDb ? mediaInDb.id : null,
-        exists: !!userReview,
-        userRating: userReview ? userReview.rating : null,
-        globalRating: mediaInDb ? mediaInDb.rating : 0,
-      };
-    };
+      if (neighborIds.length > 0) {
+        const neighborReviews = await PrismaDb.reviews.findMany({
+          where: {
+            user_id: { in: neighborIds },
+            rating: { gte: 4 },
+            media_id: { notIn: Array.from(knownMediaIds) },
+          },
+          select: {
+            media_id: true,
+            media: { select: { id: true, rating: true, content: true } },
+          },
+          orderBy: { rating: "desc" },
+          take: 300,
+        });
 
-    const allRecommendations: FeedItem[] = [];
+        const popularity = new Map<string, { count: number; media: any }>();
+        for (const r of neighborReviews) {
+          const entry = popularity.get(r.media_id) || { count: 0, media: r.media };
+          entry.count += 1;
+          popularity.set(r.media_id, entry);
+        }
 
-    for (const [index, item] of rawAlbumsToProcess.entries()) {
-      const stats = getMediaStatsInMemory(item.albumName, item.artistName);
+        for (const [mediaId, { count, media }] of popularity) {
+          const content = media?.content as any;
+          if (!content?.artist || !content?.name) continue;
 
-      allRecommendations.push({
-        id:
-          stats.dbId ||
-          `reco-discover-${item.artistName.replace(/\s+/g, "-")}-${item.albumName.replace(/\s+/g, "-")}-${index}`,
-        type: "new_album",
-        artist: item.artistName,
-        album: item.albumName,
-        cover: getImageUrl(item.image),
-        created_at: new Date(),
-        hasReviewed: stats.exists,
-        userReviewRating: stats.userRating,
-        globalRating: stats.globalRating,
-      });
+          addDiscoveryCandidate(candidates, {
+            albumName: content.name,
+            artistName: content.artist,
+            cover: coverFromContent(content),
+            dbId: mediaId,
+            globalRating: media.rating || 0,
+            source: "collaborative",
+            closeness: Math.min(45, 25 + count * 3),
+            socialProofCount: count,
+          });
+        }
+      }
     }
 
-    const shuffledRecommendations: FeedItem[] = allRecommendations.sort(
-      (): number => 0.5 - Math.random(),
+    // --- Repli "cold start" : pas assez de données pour personnaliser ---
+    if (candidates.size === 0) {
+      const topRated = await PrismaDb.medias.findMany({
+        where: {
+          id: { notIn: Array.from(knownMediaIds) },
+          rating: { not: null },
+        },
+        orderBy: { rating: "desc" },
+        take: 60,
+      });
+
+      for (const m of topRated) {
+        const content = m.content as any;
+        if (!content?.artist || !content?.name) continue;
+
+        addDiscoveryCandidate(candidates, {
+          albumName: content.name,
+          artistName: content.artist,
+          cover: coverFromContent(content),
+          dbId: m.id,
+          globalRating: m.rating || 0,
+          source: "collaborative",
+          closeness: 10,
+          socialProofCount: 0,
+        });
+      }
+    }
+
+    // Résout dbId/globalRating pour les candidats venus de LastFM (recherche
+    // ciblée sur les artistes concernés, pas un scan de toute la table).
+    const unresolvedArtists: string[] = Array.from(
+      new Set(
+        Array.from(candidates.values())
+          .filter((c): boolean => !c.dbId)
+          .map((c): string => c.artistName),
+      ),
     );
 
-    return shuffledRecommendations.slice(offset, offset + limit);
+    // `equals` + `mode: insensitive` sur un champ JSON génère du SQL invalide
+    // pour jsonb (`~~* ` sans cast) selon le provider ; `string_contains` en
+    // insensitive fonctionne, et le matching exact est de toute façon refait
+    // en mémoire juste après (cf. `.find()` plus bas).
+    const mediasInDb = unresolvedArtists.length > 0
+      ? await PrismaDb.medias.findMany({
+          where: {
+            OR: unresolvedArtists.map((name) => ({
+              content: { path: ["artist"], string_contains: name, mode: "insensitive" },
+            })),
+          },
+        })
+      : [];
+
+    for (const candidate of candidates.values()) {
+      if (candidate.dbId) continue;
+
+      const match = mediasInDb.find((m): boolean => {
+        const content = m.content as any;
+        return (
+          content?.name?.toLowerCase() === candidate.albumName.toLowerCase() &&
+          content?.artist?.toLowerCase() === candidate.artistName.toLowerCase()
+        );
+      });
+
+      if (match) {
+        candidate.dbId = match.id;
+        candidate.globalRating = match.rating || 0;
+      }
+    }
+
+    // Exclut tout ce que l'utilisateur connaît déjà (critique ou statut posé)
+    for (const [key, candidate] of candidates) {
+      if (candidate.dbId && knownMediaIds.has(candidate.dbId)) {
+        candidates.delete(key);
+      }
+    }
+
+    // --- Score déterministe (closeness + qualité + preuve sociale) ---
+    const scored = Array.from(candidates.values()).map((c) => ({
+      candidate: c,
+      score:
+        c.closeness +
+        Math.min(30, (c.globalRating || 0) * 6) +
+        Math.min(15, c.socialProofCount * 2),
+    }));
+
+    scored.sort(
+      (a, b): number => b.score - a.score || a.candidate.key.localeCompare(b.candidate.key),
+    );
+
+    // Diversité : au plus 2 albums par artiste dans le haut du classement,
+    // le reste vient combler la liste ensuite plutôt que d'être perdu.
+    const perArtistCount = new Map<string, number>();
+    const diversified: typeof scored = [];
+    const overflow: typeof scored = [];
+
+    for (const item of scored) {
+      const artistKey: string = item.candidate.artistName.toLowerCase();
+      const n: number = perArtistCount.get(artistKey) || 0;
+
+      if (n < 2) {
+        diversified.push(item);
+        perArtistCount.set(artistKey, n + 1);
+      } else {
+        overflow.push(item);
+      }
+    }
+
+    const finalOrdered = [...diversified, ...overflow];
+
+    const items: FeedItem[] = finalOrdered.map(({ candidate }): FeedItem => ({
+      id: candidate.dbId || `reco-discover-${candidate.key}`,
+      type: "new_album",
+      artist: candidate.artistName,
+      album: candidate.albumName,
+      cover: candidate.cover,
+      created_at: new Date(),
+      hasReviewed: false,
+      userReviewRating: null,
+      globalRating: candidate.globalRating || 0,
+      reasonType: discoveryReasonType(candidate),
+    }));
+
+    return items.slice(offset, offset + limit);
   }
 }
 

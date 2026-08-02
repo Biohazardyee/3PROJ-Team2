@@ -14,6 +14,7 @@ import {reviewLikeMapper} from "../../../mappers/reviews/review.like.mapper.js";
 import {notificationService} from "../notifications/notification.service.js";
 import {NotificationActions} from "../../../generated/prisma/enums.js";
 import {canSendNotification} from "../notifications/notification.helper.js";
+import {badgeService} from "../badges/badge.service.js";
 
 export class ReviewLikeService {
     async create(data: ReviewLikeAddDto): Promise<ReviewLikeResponseDto> {
@@ -62,6 +63,10 @@ export class ReviewLikeService {
         const reviewLike: ReviewLikes = await PrismaDb.reviewLikes.create({
             data,
         });
+
+        badgeService
+            .checkAndAwardBadges(data.user_id)
+            .catch((err): void => console.error("Badge check failed:", err));
 
         if (data.user_id !== review.user_id) {
             const isAllowed: boolean = await canSendNotification(

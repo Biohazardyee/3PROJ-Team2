@@ -1,5 +1,13 @@
 import {PrismaDb} from "../../../config/database.js";
-import {NotFound, BadRequest} from "../../../utils/errors.js";
+import {NotFound, BadRequest, Unauthorized} from "../../../utils/errors.js";
+import {sendVerificationEmail, sendPasswordResetEmail} from "../../../utils/mailer.js";
+import {
+    generateTwoFactorQrCode,
+    generateTwoFactorSecret,
+    verifyTwoFactorToken,
+    generateBackupCodes,
+    normalizeBackupCode,
+} from "../../../utils/twofa.js";
 import {
     isValidStringLength,
     isEmptyString,
@@ -25,12 +33,21 @@ import {
     UserResponseAddDto,
     UserResponseDeleteDto,
     UserResponseDto,
+    UserResponseLoginDto,
+    UserSearchResultDto,
     UserUpdateDto,
 } from "../../../types/users/user.dto.js";
 
 import {Users} from "../../../generated/prisma/browser.js";
 import {userMapper} from "../../../mappers/users/user.mapper.js";
 import {COSMETIC_SLOT_FIELDS, COSMETICS, CosmeticItem, CosmeticSlot, getCosmeticById} from "./cosmetics.catalog.js";
+import {bufferToImageDataUri} from "../../../utils/imageDataUri.js";
+
+const VERIFICATION_CODE_TTL_MS = 15 * 60 * 1000;
+
+function generateVerificationCode(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 export class UserService {
     async add(data: UserRegistrationDto): Promise<UserResponseAddDto> {
@@ -87,6 +104,8 @@ export class UserService {
             throw new BadRequest("Email or username already in use");
         }
 
+        const verificationCode: string = generateVerificationCode();
+
         const createData: Prisma.UsersCreateInput = {
             email,
             username,
@@ -94,13 +113,305 @@ export class UserService {
             password: hashedPassword,
             favorite_band: data.favorite_band,
             profile_picture: data.profile_picture,
+            email_verified: false,
+            email_verification_code: verificationCode,
+            email_verification_expires: new Date(Date.now() + VERIFICATION_CODE_TTL_MS),
         };
 
         const user: Users = await PrismaDb.users.create({
             data: createData,
         });
 
+        try {
+            await sendVerificationEmail(user.email, verificationCode);
+        } catch (err) {
+            // Le compte est créé même si l'email échoue : l'utilisateur pourra
+            // toujours redemander un code via /users/resend-verification.
+            console.error("❌ Échec de l'envoi de l'email de vérification:", err);
+        }
+
         return userMapper.toAddDto(user);
+    }
+
+    async verifyEmail(email: string, code: string): Promise<UserResponseLoginDto> {
+        if (isEmptyString(email) || isEmptyString(code)) {
+            throw new BadRequest("Email and code are required");
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({
+            where: {email: email.trim().toLowerCase()},
+        });
+
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+
+        if (user.email_verified) {
+            throw new BadRequest("Email already verified");
+        }
+
+        if (
+            !user.email_verification_code ||
+            user.email_verification_code !== code.trim() ||
+            !user.email_verification_expires ||
+            user.email_verification_expires.getTime() < Date.now()
+        ) {
+            throw new BadRequest("Invalid or expired verification code");
+        }
+
+        const verified: Users = await PrismaDb.users.update({
+            where: {id: user.id},
+            data: {
+                email_verified: true,
+                email_verification_code: null,
+                email_verification_expires: null,
+            },
+        });
+
+        return userMapper.toLoginDto(verified);
+    }
+
+    async resendVerificationCode(email: string): Promise<void> {
+        if (isEmptyString(email)) {
+            throw new BadRequest("Email is required");
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({
+            where: {email: email.trim().toLowerCase()},
+        });
+
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+
+        if (user.email_verified) {
+            throw new BadRequest("Email already verified");
+        }
+
+        const verificationCode: string = generateVerificationCode();
+
+        await PrismaDb.users.update({
+            where: {id: user.id},
+            data: {
+                email_verification_code: verificationCode,
+                email_verification_expires: new Date(Date.now() + VERIFICATION_CODE_TTL_MS),
+            },
+        });
+
+        await sendVerificationEmail(user.email, verificationCode);
+    }
+
+    async requestPasswordReset(email: string): Promise<void> {
+        if (isEmptyString(email)) {
+            throw new BadRequest("Email is required");
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({
+            where: {email: email.trim().toLowerCase()},
+        });
+
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+
+        if (!user.password) {
+            throw new BadRequest(
+                "This account uses OAuth login, there is no password to reset",
+            );
+        }
+
+        const resetCode: string = generateVerificationCode();
+
+        await PrismaDb.users.update({
+            where: {id: user.id},
+            data: {
+                password_reset_code: resetCode,
+                password_reset_expires: new Date(Date.now() + VERIFICATION_CODE_TTL_MS),
+            },
+        });
+
+        await sendPasswordResetEmail(user.email, resetCode);
+    }
+
+    async resetPassword(email: string, code: string, newPassword: string): Promise<void> {
+        if (isEmptyString(email) || isEmptyString(code) || isEmptyString(newPassword)) {
+            throw new BadRequest("Email, code and new password are required");
+        }
+
+        if (!isValidPassword(newPassword)) {
+            throw new BadRequest(
+                "Password must be at least 8 characters and include uppercase, lowercase, number and special character",
+            );
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({
+            where: {email: email.trim().toLowerCase()},
+        });
+
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+
+        if (
+            !user.password_reset_code ||
+            user.password_reset_code !== code.trim() ||
+            !user.password_reset_expires ||
+            user.password_reset_expires.getTime() < Date.now()
+        ) {
+            throw new BadRequest("Invalid or expired reset code");
+        }
+
+        const hashedPassword: string = await bcrypt.hash(newPassword, 10);
+
+        await PrismaDb.users.update({
+            where: {id: user.id},
+            data: {
+                password: hashedPassword,
+                password_reset_code: null,
+                password_reset_expires: null,
+            },
+        });
+    }
+
+    async setupTwoFactor(userId: string): Promise<{ secret: string; qrCodeDataUri: string }> {
+        const user: Users | null = await PrismaDb.users.findUnique({where: {id: userId}});
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+        if (user.twofa_enabled) {
+            throw new BadRequest("Two-factor authentication is already enabled");
+        }
+
+        const secret: string = generateTwoFactorSecret();
+
+        // Stocké mais pas encore actif : ne devient "enabled" qu'après
+        // confirmation d'un premier code valide (voir confirmTwoFactor).
+        await PrismaDb.users.update({
+            where: {id: userId},
+            data: {twofa_secret: secret},
+        });
+
+        const qrCodeDataUri: string = await generateTwoFactorQrCode(user.email, secret);
+
+        return {secret, qrCodeDataUri};
+    }
+
+    async confirmTwoFactor(userId: string, token: string): Promise<string[]> {
+        if (isEmptyString(token)) {
+            throw new BadRequest("Code is required");
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({where: {id: userId}});
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+        if (!user.twofa_secret) {
+            throw new BadRequest("No two-factor setup in progress");
+        }
+        if (!verifyTwoFactorToken(token.trim(), user.twofa_secret)) {
+            throw new BadRequest("Invalid verification code");
+        }
+
+        const backupCodes: string[] = generateBackupCodes();
+        const hashedBackupCodes: string[] = await Promise.all(
+            backupCodes.map((code): Promise<string> => bcrypt.hash(code, 10)),
+        );
+
+        await PrismaDb.users.update({
+            where: {id: userId},
+            data: {twofa_enabled: true, twofa_backup_codes: hashedBackupCodes},
+        });
+
+        return backupCodes;
+    }
+
+    async disableTwoFactor(userId: string, token: string): Promise<void> {
+        if (isEmptyString(token)) {
+            throw new BadRequest("Code is required");
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({where: {id: userId}});
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+        if (!user.twofa_enabled || !user.twofa_secret) {
+            throw new BadRequest("Two-factor authentication is not enabled");
+        }
+        if (!verifyTwoFactorToken(token.trim(), user.twofa_secret)) {
+            throw new BadRequest("Invalid verification code");
+        }
+
+        await PrismaDb.users.update({
+            where: {id: userId},
+            data: {twofa_enabled: false, twofa_secret: null, twofa_backup_codes: []},
+        });
+    }
+
+    async regenerateBackupCodes(userId: string, token: string): Promise<string[]> {
+        if (isEmptyString(token)) {
+            throw new BadRequest("Code is required");
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({where: {id: userId}});
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+        if (!user.twofa_enabled || !user.twofa_secret) {
+            throw new BadRequest("Two-factor authentication is not enabled");
+        }
+        // Exige un code TOTP de l'application (pas un code de secours), pour éviter
+        // qu'un seul code de secours compromis permette d'en régénérer indéfiniment.
+        if (!verifyTwoFactorToken(token.trim(), user.twofa_secret)) {
+            throw new BadRequest("Invalid verification code");
+        }
+
+        const backupCodes: string[] = generateBackupCodes();
+        const hashedBackupCodes: string[] = await Promise.all(
+            backupCodes.map((code): Promise<string> => bcrypt.hash(code, 10)),
+        );
+
+        await PrismaDb.users.update({
+            where: {id: userId},
+            data: {twofa_backup_codes: hashedBackupCodes},
+        });
+
+        return backupCodes;
+    }
+
+    async verifyTwoFactorLogin(userId: string, token: string): Promise<Users> {
+        if (isEmptyString(token)) {
+            throw new BadRequest("Code is required");
+        }
+
+        const user: Users | null = await PrismaDb.users.findUnique({where: {id: userId}});
+        if (!user || !user.twofa_enabled || !user.twofa_secret) {
+            throw new BadRequest("Two-factor authentication is not enabled for this account");
+        }
+
+        if (verifyTwoFactorToken(token.trim(), user.twofa_secret)) {
+            return user;
+        }
+
+        // Repli sur les codes de secours si le code TOTP est invalide/expiré.
+        const normalized: string = normalizeBackupCode(token);
+        if (normalized.length === 8) {
+            for (let i = 0; i < user.twofa_backup_codes.length; i++) {
+                const matches: boolean = await bcrypt.compare(normalized, user.twofa_backup_codes[i]);
+                if (matches) {
+                    const remainingCodes: string[] = [...user.twofa_backup_codes];
+                    remainingCodes.splice(i, 1);
+
+                    await PrismaDb.users.update({
+                        where: {id: userId},
+                        data: {twofa_backup_codes: remainingCodes},
+                    });
+
+                    return user;
+                }
+            }
+        }
+
+        throw new Unauthorized("Invalid verification code");
     }
 
     /**
@@ -222,6 +533,35 @@ export class UserService {
         });
 
         return users as PartialUserResponseDto[];
+    }
+
+    async searchUsers(query: string, excludeUserId?: string): Promise<UserSearchResultDto[]> {
+        const trimmed: string = (query || "").trim();
+        if (trimmed.length < 2) return [];
+
+        const users = await PrismaDb.users.findMany({
+            where: {
+                AND: [
+                    excludeUserId ? {id: {not: excludeUserId}} : {},
+                    {
+                        OR: [
+                            {username: {contains: trimmed, mode: "insensitive"}},
+                            {pseudo: {contains: trimmed, mode: "insensitive"}},
+                        ],
+                    },
+                ],
+            },
+            select: {id: true, username: true, pseudo: true, profile_picture: true},
+            orderBy: {username: "asc"},
+            take: 8,
+        });
+
+        return users.map((u): UserSearchResultDto => ({
+            id: u.id,
+            username: u.username,
+            pseudo: u.pseudo,
+            profile_picture: bufferToImageDataUri(u.profile_picture),
+        }));
     }
 
     async getProfile(id: string): Promise<UserPublicDto> {
@@ -717,6 +1057,165 @@ export class UserService {
             equipped_text_effect: updated.equipped_text_effect,
             equipped_banner: updated.equipped_banner,
             equipped_pattern: updated.equipped_pattern,
+        };
+    }
+
+    async exportUserData(userId: string): Promise<Record<string, unknown>> {
+        if (isEmptyString(userId)) {
+            throw new BadRequest("User id is required");
+        }
+
+        const user = await PrismaDb.users.findUnique({
+            where: {id: userId},
+            include: {
+                reviews: {
+                    include: {media: {select: {api_id: true}}},
+                    orderBy: {created_at: "desc"},
+                },
+                review_comments: {orderBy: {created_at: "desc"}},
+                review_likes: {orderBy: {created_at: "desc"}},
+                commentLikes: {orderBy: {created_at: "desc"}},
+                playlists: {
+                    include: {items: {include: {media: {select: {api_id: true}}}}},
+                    orderBy: {created_at: "desc"},
+                },
+                follows: {
+                    include: {follow_user: {select: {username: true}}},
+                    orderBy: {created_at: "desc"},
+                },
+                followers: {
+                    include: {user: {select: {username: true}}},
+                    orderBy: {created_at: "desc"},
+                },
+                user_media_status: {
+                    include: {media: {select: {api_id: true}}},
+                    orderBy: {created_at: "desc"},
+                },
+                activities: {orderBy: {created_at: "desc"}},
+                notifications: {orderBy: {created_at: "desc"}},
+                conversations_user1: {
+                    include: {
+                        user2: {select: {username: true}},
+                        messages: {orderBy: {created_at: "asc"}},
+                    },
+                },
+                conversations_user2: {
+                    include: {
+                        user1: {select: {username: true}},
+                        messages: {orderBy: {created_at: "asc"}},
+                    },
+                },
+            },
+        });
+
+        if (!user) {
+            throw new NotFound("User not found");
+        }
+
+        const conversations = [
+            ...user.conversations_user1.map((c) => ({
+                with: c.user2.username,
+                created_at: c.created_at,
+                messages: c.messages.map((m) => ({
+                    content: m.content,
+                    sender: m.sender_id === userId ? "me" : c.user2.username,
+                    is_read: m.is_read,
+                    created_at: m.created_at,
+                })),
+            })),
+            ...user.conversations_user2.map((c) => ({
+                with: c.user1.username,
+                created_at: c.created_at,
+                messages: c.messages.map((m) => ({
+                    content: m.content,
+                    sender: m.sender_id === userId ? "me" : c.user1.username,
+                    is_read: m.is_read,
+                    created_at: m.created_at,
+                })),
+            })),
+        ];
+
+        return {
+            exported_at: new Date().toISOString(),
+            profile: {
+                id: user.id,
+                username: user.username,
+                pseudo: user.pseudo,
+                email: user.email,
+                phone_number: user.phone_number,
+                biography: user.biography,
+                favorite_band: user.favorite_band,
+                role: user.role,
+                shop_points: user.shop_points,
+                owned_cosmetics: user.owned_cosmetics,
+                equipped_avatar_border: user.equipped_avatar_border,
+                equipped_font: user.equipped_font,
+                equipped_title: user.equipped_title,
+                equipped_text_effect: user.equipped_text_effect,
+                equipped_banner: user.equipped_banner,
+                equipped_pattern: user.equipped_pattern,
+                has_notifications: user.has_notifications,
+                provider: user.provider,
+                created_at: user.created_at,
+                updated_at: user.updated_at,
+            },
+            reviews: user.reviews.map((r) => ({
+                media_api_id: r.media.api_id,
+                rating: r.rating,
+                title: r.title,
+                content: r.content,
+                created_at: r.created_at,
+                updated_at: r.updated_at,
+            })),
+            review_comments: user.review_comments.map((c) => ({
+                content: c.content,
+                review_id: c.review_id,
+                parent_id: c.parent_id,
+                created_at: c.created_at,
+            })),
+            review_likes: user.review_likes.map((l) => ({
+                review_id: l.review_id,
+                created_at: l.created_at,
+            })),
+            comment_likes: user.commentLikes.map((l) => ({
+                comment_id: l.comment_id,
+                created_at: l.created_at,
+            })),
+            playlists: user.playlists.map((p) => ({
+                name: p.name,
+                is_public: p.is_public,
+                created_at: p.created_at,
+                items: p.items.map((i) => ({
+                    media_api_id: i.media.api_id,
+                    added_at: i.created_at,
+                })),
+            })),
+            media_status: user.user_media_status.map((s) => ({
+                media_api_id: s.media.api_id,
+                status: s.status,
+                created_at: s.created_at,
+            })),
+            following: user.follows.map((f) => ({
+                username: f.follow_user.username,
+                since: f.created_at,
+            })),
+            followers: user.followers.map((f) => ({
+                username: f.user.username,
+                since: f.created_at,
+            })),
+            activities: user.activities.map((a) => ({
+                action: a.action,
+                review_id: a.review_id,
+                media_id: a.media_id,
+                rating_from_user: a.rating_from_user,
+                created_at: a.created_at,
+            })),
+            notifications_received: user.notifications.map((n) => ({
+                action: n.action,
+                is_read: n.is_read,
+                created_at: n.created_at,
+            })),
+            conversations,
         };
     }
 

@@ -49,6 +49,7 @@ export interface FeedItem {
   hasReviewed?: boolean;
   userReviewRating?: number | null;
   globalRating?: number | null;
+  reasonType?: "favorite" | "similar" | "social" | "popular";
 }
 
 export interface ActivityDeleteResponseDto {

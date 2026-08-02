@@ -10,6 +10,8 @@ import {
     Sparkles,
     Loader2,
     CheckCheck,
+    Award,
+    ListMusic,
 } from "lucide-react";
 import {jwtDecode} from "jwt-decode";
 import {useNavigate} from "react-router-dom";
@@ -51,6 +53,8 @@ const ACTION_CONFIG: Record<string, ActionConfig> = {
     new_message:    {Icon: MessageSquare,  badgeBg: "bg-blue-500/15 dark:bg-blue-50",     iconColor: "text-blue-400 dark:text-blue-500",       accent: "border-l-blue-500 dark:border-l-blue-400"},
     new_follow:     {Icon: UserPlus,       badgeBg: "bg-violet-500/15 dark:bg-violet-50", iconColor: "text-violet-400 dark:text-violet-600",   accent: "border-l-violet-500 dark:border-l-violet-400"},
     recommendation: {Icon: Sparkles,       badgeBg: "bg-cyan-500/15 dark:bg-cyan-50",     iconColor: "text-cyan-400 dark:text-cyan-600",       accent: "border-l-cyan-500 dark:border-l-cyan-400"},
+    badge_earned:   {Icon: Award,          badgeBg: "bg-amber-500/15 dark:bg-amber-50",   iconColor: "text-amber-400 dark:text-amber-500",     accent: "border-l-amber-500 dark:border-l-amber-400"},
+    playlist_collaborator_added: {Icon: ListMusic, badgeBg: "bg-indigo-500/15 dark:bg-indigo-50", iconColor: "text-indigo-400 dark:text-indigo-500", accent: "border-l-indigo-500 dark:border-l-indigo-400"},
 };
 
 const DEFAULT_CONFIG: ActionConfig = {

@@ -1,3 +1,10 @@
+export interface PlaylistCollaboratorDto {
+    id: string;
+    username: string;
+    pseudo: string;
+    profile_picture: string | null;
+}
+
 // Responses interfaces
 export interface PlaylistResponseDto {
     id: string;
@@ -5,6 +12,9 @@ export interface PlaylistResponseDto {
     name: string;
     image_url?: string;
     is_public: boolean;
+    is_collaborative: boolean;
+    is_owner?: boolean;
+    collaborators?: PlaylistCollaboratorDto[];
     items?: {
         id: string;
         media_id: string;

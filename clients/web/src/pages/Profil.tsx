@@ -21,6 +21,11 @@ import {
     Trash2,
     ShieldCheck,
     Loader2,
+    Award,
+    PenLine,
+    Users,
+    ListMusic,
+    Lock,
 } from "lucide-react";
 import {NavigateFunction, useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
@@ -83,6 +88,15 @@ const formatReviewItem = (
     };
 };
 
+const BADGE_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+    PenLine,
+    Users,
+    UserPlus,
+    MessageSquare,
+    ListMusic,
+    Heart,
+};
+
 const getRatingColors = (rating: number) => {
     if (rating >= 4.5) return { bg: "bg-emerald-500/10", text: "text-emerald-600 dark:text-emerald-500", border: "border-emerald-500/20", fill: "#10b981" };
     if (rating >= 3.5) return { bg: "bg-blue-500/10", text: "text-blue-600 dark:text-blue-500", border: "border-blue-500/20", fill: "#3b82f6" };
@@ -108,6 +122,9 @@ const Profil: React.FC = () => {
     const [cosmeticNames, setCosmeticNames] = useState<Record<string, string>>({});
     const [equipping, setEquipping] = useState<string | null>(null);
     const [playlists, setPlaylists] = useState<any[]>([]);
+    const [badges, setBadges] = useState<any[]>([]);
+    const [mediaStatuses, setMediaStatuses] = useState<any[]>([]);
+    const [mediaStatusFilter, setMediaStatusFilter] = useState<string>("later");
     const [favoriteReviews, setFavoriteReviews] = useState<any[]>([]);
     const [followCounts, setFollowCounts] = useState({
         followers: 0,
@@ -181,6 +198,8 @@ const Profil: React.FC = () => {
                 fetchPlaylists(targetId, ownProfile),
                 fetchFavoriteAlbums(targetId),
                 fetchFollowCounts(targetId),
+                fetchBadges(targetId),
+                fetchMediaStatuses(targetId),
             ];
 
             if (!ownProfile) {
@@ -308,6 +327,24 @@ const Profil: React.FC = () => {
             setPlaylists(filtered);
         } catch (error: any) {
             console.error("❌ Erreur Playlists :", error.response?.status);
+        }
+    };
+
+    const fetchBadges = async (userId: string): Promise<void> => {
+        try {
+            const response: AxiosResponse<any, any> = await apiClient.get(`/badges/user/${userId}`);
+            setBadges(response.data.badges || []);
+        } catch (error: any) {
+            console.error("❌ Erreur Badges :", error.response?.status);
+        }
+    };
+
+    const fetchMediaStatuses = async (userId: string): Promise<void> => {
+        try {
+            const response: AxiosResponse<any, any> = await apiClient.get(`/medias/status/user/${userId}`);
+            setMediaStatuses(response.data.mediasStatus || []);
+        } catch (error: any) {
+            console.error("❌ Erreur Statuts média :", error.response?.status);
         }
     };
 
@@ -754,9 +791,13 @@ const Profil: React.FC = () => {
         );
     }
 
+    const unlockedBadgesCount: number = badges.filter((b) => b.unlocked).length;
+
     const tabs = [
         {id: "favorites", label: t("tab_favorite_albums")},
         {id: "playlists", label: `${t("tab_playlists")} (${playlists.length})`},
+        {id: "mediaStatus", label: t("tab_media_status", "Écoute")},
+        {id: "badges", label: `${t("tab_badges", "Badges")} (${unlockedBadgesCount})`},
         {id: "activity", label: t("tab_recent_activity")},
     ];
 
@@ -1208,6 +1249,132 @@ const Profil: React.FC = () => {
                                 {playlists.length === 0 && (
                                     <p className="text-slate-500 font-medium py-12 text-center">
                                         {t("empty_playlists_list")}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === "mediaStatus" && (() => {
+                            const statusCounts = {listened: 0, later: 0, favorite: 0, disliked: 0};
+                            mediaStatuses.forEach((item: any): void => {
+                                const key = item.status?.toLowerCase();
+                                if (key in statusCounts) statusCounts[key as keyof typeof statusCounts]++;
+                            });
+
+                            const statusFilters = [
+                                {id: "listened", label: t("status_listened", "Écoutés"), icon: "✅"},
+                                {id: "later", label: t("status_later", "À écouter"), icon: "🎧"},
+                                {id: "favorite", label: t("status_favorite", "Favoris"), icon: "⭐"},
+                                {id: "disliked", label: t("status_disliked", "Détestés"), icon: "❌"},
+                            ];
+
+                            const filteredAlbums = mediaStatuses
+                                .filter((item: any): boolean => item.status?.toLowerCase() === mediaStatusFilter && item.media)
+                                .map((item: any) => ({
+                                    id: item.media.id,
+                                    title: item.media.name,
+                                    artist: item.media.artist,
+                                    image: item.media.cover || "",
+                                    rating: item.media.rating ?? 0,
+                                }));
+
+                            return (
+                                <div className="space-y-6">
+                                    <div className="flex flex-wrap bg-slate-900/50 dark:bg-white border border-slate-800 dark:border-gray-200 rounded-xl p-1 shadow-inner">
+                                        {statusFilters.map((filter) => (
+                                            <button
+                                                key={filter.id}
+                                                onClick={() => setMediaStatusFilter(filter.id)}
+                                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-semibold text-sm transition-all ${
+                                                    mediaStatusFilter === filter.id
+                                                        ? "bg-slate-800 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md"
+                                                        : "text-slate-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900"
+                                                }`}
+                                            >
+                                                <span>{filter.icon}</span>
+                                                <span>{filter.label}</span>
+                                                <span className="opacity-75">({statusCounts[filter.id as keyof typeof statusCounts]})</span>
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {filteredAlbums.length > 0 ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            {filteredAlbums.map((album) => (
+                                                <AlbumCard
+                                                    key={album.id}
+                                                    id={album.id}
+                                                    title={album.title}
+                                                    artist={album.artist}
+                                                    cover={album.image}
+                                                    rating={album.rating}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-slate-500 font-medium py-12 text-center">
+                                            {t("no_album_category", "Aucun album dans cette catégorie")}
+                                        </p>
+                                    )}
+                                </div>
+                            );
+                        })()}
+
+                        {activeTab === "badges" && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                {badges.map((badge) => {
+                                    const Icon = BADGE_ICONS[badge.icon] || Award;
+                                    const progressPct: number = Math.min(
+                                        100,
+                                        Math.round((badge.progress / badge.threshold) * 100),
+                                    );
+
+                                    return (
+                                        <div
+                                            key={badge.id}
+                                            className={`relative flex items-start gap-4 p-5 rounded-2xl border transition-all ${
+                                                badge.unlocked
+                                                    ? "bg-amber-500/5 border-amber-500/30"
+                                                    : "bg-[#1a1d26] dark:bg-white border-slate-800 dark:border-gray-200 opacity-70"
+                                            }`}
+                                        >
+                                            <div
+                                                className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                                                    badge.unlocked
+                                                        ? "bg-amber-500/15 text-amber-400"
+                                                        : "bg-slate-800 dark:bg-gray-100 text-slate-500"
+                                                }`}
+                                            >
+                                                {badge.unlocked ? <Icon size={22}/> : <Lock size={20}/>}
+                                            </div>
+                                            <div className="min-w-0 grow">
+                                                <p className="font-bold text-white dark:text-gray-900">
+                                                    {badge.name}
+                                                </p>
+                                                <p className="text-xs text-slate-400 dark:text-gray-500 mt-0.5">
+                                                    {badge.description}
+                                                </p>
+                                                {!badge.unlocked && (
+                                                    <div className="mt-2.5 space-y-1">
+                                                        <div className="h-1.5 rounded-full bg-slate-800 dark:bg-gray-200 overflow-hidden">
+                                                            <div
+                                                                className="h-full bg-amber-500/70 rounded-full transition-all"
+                                                                style={{width: `${progressPct}%`}}
+                                                            />
+                                                        </div>
+                                                        <p className="text-[11px] text-slate-500 dark:text-gray-400">
+                                                            {badge.progress}/{badge.threshold}
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                                {badges.length === 0 && (
+                                    <p className="text-slate-500 font-medium py-12 text-center col-span-full">
+                                        {t("badges_loading", "Chargement des badges...")}
                                     </p>
                                 )}
                             </div>

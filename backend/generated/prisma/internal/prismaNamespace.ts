@@ -392,6 +392,7 @@ export const ModelName = {
   CommentLikes: 'CommentLikes',
   ReviewLikes: 'ReviewLikes',
   Playlists: 'Playlists',
+  PlaylistCollaborators: 'PlaylistCollaborators',
   PlaylistItems: 'PlaylistItems',
   UserMediaStatus: 'UserMediaStatus',
   Activities: 'Activities',
@@ -416,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "users" | "spotifyAccounts" | "medias" | "reviews" | "reviewComments" | "commentLikes" | "reviewLikes" | "playlists" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
+    modelProps: "users" | "spotifyAccounts" | "medias" | "reviews" | "reviewComments" | "commentLikes" | "reviewLikes" | "playlists" | "playlistCollaborators" | "playlistItems" | "userMediaStatus" | "activities" | "follows" | "reports" | "notifications" | "bannedUsers" | "conversations" | "messages"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1009,6 +1010,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PlaylistsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PlaylistsCountAggregateOutputType> | number
+        }
+      }
+    }
+    PlaylistCollaborators: {
+      payload: Prisma.$PlaylistCollaboratorsPayload<ExtArgs>
+      fields: Prisma.PlaylistCollaboratorsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PlaylistCollaboratorsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PlaylistCollaboratorsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>
+        }
+        findFirst: {
+          args: Prisma.PlaylistCollaboratorsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PlaylistCollaboratorsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>
+        }
+        findMany: {
+          args: Prisma.PlaylistCollaboratorsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>[]
+        }
+        create: {
+          args: Prisma.PlaylistCollaboratorsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>
+        }
+        createMany: {
+          args: Prisma.PlaylistCollaboratorsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PlaylistCollaboratorsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>[]
+        }
+        delete: {
+          args: Prisma.PlaylistCollaboratorsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>
+        }
+        update: {
+          args: Prisma.PlaylistCollaboratorsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>
+        }
+        deleteMany: {
+          args: Prisma.PlaylistCollaboratorsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PlaylistCollaboratorsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PlaylistCollaboratorsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>[]
+        }
+        upsert: {
+          args: Prisma.PlaylistCollaboratorsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaylistCollaboratorsPayload>
+        }
+        aggregate: {
+          args: Prisma.PlaylistCollaboratorsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePlaylistCollaborators>
+        }
+        groupBy: {
+          args: Prisma.PlaylistCollaboratorsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlaylistCollaboratorsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PlaylistCollaboratorsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlaylistCollaboratorsCountAggregateOutputType> | number
         }
       }
     }
@@ -1742,6 +1817,15 @@ export const UsersScalarFieldEnum = {
   biography: 'biography',
   created_at: 'created_at',
   updated_at: 'updated_at',
+  email_verified: 'email_verified',
+  email_verification_code: 'email_verification_code',
+  email_verification_expires: 'email_verification_expires',
+  password_reset_code: 'password_reset_code',
+  password_reset_expires: 'password_reset_expires',
+  twofa_enabled: 'twofa_enabled',
+  twofa_secret: 'twofa_secret',
+  twofa_backup_codes: 'twofa_backup_codes',
+  earned_badges: 'earned_badges',
   expo_push_token: 'expo_push_token'
 } as const
 
@@ -1825,12 +1909,22 @@ export const PlaylistsScalarFieldEnum = {
   name: 'name',
   image_url: 'image_url',
   is_public: 'is_public',
+  is_collaborative: 'is_collaborative',
   spotify_playlist_id: 'spotify_playlist_id',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
 export type PlaylistsScalarFieldEnum = (typeof PlaylistsScalarFieldEnum)[keyof typeof PlaylistsScalarFieldEnum]
+
+
+export const PlaylistCollaboratorsScalarFieldEnum = {
+  playlist_id: 'playlist_id',
+  user_id: 'user_id',
+  added_at: 'added_at'
+} as const
+
+export type PlaylistCollaboratorsScalarFieldEnum = (typeof PlaylistCollaboratorsScalarFieldEnum)[keyof typeof PlaylistCollaboratorsScalarFieldEnum]
 
 
 export const PlaylistItemsScalarFieldEnum = {
@@ -2263,6 +2357,7 @@ export type GlobalOmitConfig = {
   commentLikes?: Prisma.CommentLikesOmit
   reviewLikes?: Prisma.ReviewLikesOmit
   playlists?: Prisma.PlaylistsOmit
+  playlistCollaborators?: Prisma.PlaylistCollaboratorsOmit
   playlistItems?: Prisma.PlaylistItemsOmit
   userMediaStatus?: Prisma.UserMediaStatusOmit
   activities?: Prisma.ActivitiesOmit

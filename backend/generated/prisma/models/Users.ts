@@ -58,6 +58,13 @@ export type UsersMinAggregateOutputType = {
   biography: string | null
   created_at: Date | null
   updated_at: Date | null
+  email_verified: boolean | null
+  email_verification_code: string | null
+  email_verification_expires: Date | null
+  password_reset_code: string | null
+  password_reset_expires: Date | null
+  twofa_enabled: boolean | null
+  twofa_secret: string | null
   expo_push_token: string | null
 }
 
@@ -85,6 +92,13 @@ export type UsersMaxAggregateOutputType = {
   biography: string | null
   created_at: Date | null
   updated_at: Date | null
+  email_verified: boolean | null
+  email_verification_code: string | null
+  email_verification_expires: Date | null
+  password_reset_code: string | null
+  password_reset_expires: Date | null
+  twofa_enabled: boolean | null
+  twofa_secret: string | null
   expo_push_token: string | null
 }
 
@@ -113,6 +127,15 @@ export type UsersCountAggregateOutputType = {
   biography: number
   created_at: number
   updated_at: number
+  email_verified: number
+  email_verification_code: number
+  email_verification_expires: number
+  password_reset_code: number
+  password_reset_expires: number
+  twofa_enabled: number
+  twofa_secret: number
+  twofa_backup_codes: number
+  earned_badges: number
   expo_push_token: number
   _all: number
 }
@@ -150,6 +173,13 @@ export type UsersMinAggregateInputType = {
   biography?: true
   created_at?: true
   updated_at?: true
+  email_verified?: true
+  email_verification_code?: true
+  email_verification_expires?: true
+  password_reset_code?: true
+  password_reset_expires?: true
+  twofa_enabled?: true
+  twofa_secret?: true
   expo_push_token?: true
 }
 
@@ -177,6 +207,13 @@ export type UsersMaxAggregateInputType = {
   biography?: true
   created_at?: true
   updated_at?: true
+  email_verified?: true
+  email_verification_code?: true
+  email_verification_expires?: true
+  password_reset_code?: true
+  password_reset_expires?: true
+  twofa_enabled?: true
+  twofa_secret?: true
   expo_push_token?: true
 }
 
@@ -205,6 +242,15 @@ export type UsersCountAggregateInputType = {
   biography?: true
   created_at?: true
   updated_at?: true
+  email_verified?: true
+  email_verification_code?: true
+  email_verification_expires?: true
+  password_reset_code?: true
+  password_reset_expires?: true
+  twofa_enabled?: true
+  twofa_secret?: true
+  twofa_backup_codes?: true
+  earned_badges?: true
   expo_push_token?: true
   _all?: true
 }
@@ -320,6 +366,15 @@ export type UsersGroupByOutputType = {
   biography: string | null
   created_at: Date
   updated_at: Date
+  email_verified: boolean
+  email_verification_code: string | null
+  email_verification_expires: Date | null
+  password_reset_code: string | null
+  password_reset_expires: Date | null
+  twofa_enabled: boolean
+  twofa_secret: string | null
+  twofa_backup_codes: string[]
+  earned_badges: string[]
   expo_push_token: string | null
   _count: UsersCountAggregateOutputType | null
   _avg: UsersAvgAggregateOutputType | null
@@ -371,11 +426,21 @@ export type UsersWhereInput = {
   biography?: Prisma.StringNullableFilter<"Users"> | string | null
   created_at?: Prisma.DateTimeFilter<"Users"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Users"> | Date | string
+  email_verified?: Prisma.BoolFilter<"Users"> | boolean
+  email_verification_code?: Prisma.StringNullableFilter<"Users"> | string | null
+  email_verification_expires?: Prisma.DateTimeNullableFilter<"Users"> | Date | string | null
+  password_reset_code?: Prisma.StringNullableFilter<"Users"> | string | null
+  password_reset_expires?: Prisma.DateTimeNullableFilter<"Users"> | Date | string | null
+  twofa_enabled?: Prisma.BoolFilter<"Users"> | boolean
+  twofa_secret?: Prisma.StringNullableFilter<"Users"> | string | null
+  twofa_backup_codes?: Prisma.StringNullableListFilter<"Users">
+  earned_badges?: Prisma.StringNullableListFilter<"Users">
   expo_push_token?: Prisma.StringNullableFilter<"Users"> | string | null
   reviews?: Prisma.ReviewsListRelationFilter
   review_comments?: Prisma.ReviewCommentsListRelationFilter
   review_likes?: Prisma.ReviewLikesListRelationFilter
   playlists?: Prisma.PlaylistsListRelationFilter
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsListRelationFilter
   follows?: Prisma.FollowsListRelationFilter
   followers?: Prisma.FollowsListRelationFilter
   notifications?: Prisma.NotificationsListRelationFilter
@@ -417,11 +482,21 @@ export type UsersOrderByWithRelationInput = {
   biography?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  email_verified?: Prisma.SortOrder
+  email_verification_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  email_verification_expires?: Prisma.SortOrderInput | Prisma.SortOrder
+  password_reset_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  password_reset_expires?: Prisma.SortOrderInput | Prisma.SortOrder
+  twofa_enabled?: Prisma.SortOrder
+  twofa_secret?: Prisma.SortOrderInput | Prisma.SortOrder
+  twofa_backup_codes?: Prisma.SortOrder
+  earned_badges?: Prisma.SortOrder
   expo_push_token?: Prisma.SortOrderInput | Prisma.SortOrder
   reviews?: Prisma.ReviewsOrderByRelationAggregateInput
   review_comments?: Prisma.ReviewCommentsOrderByRelationAggregateInput
   review_likes?: Prisma.ReviewLikesOrderByRelationAggregateInput
   playlists?: Prisma.PlaylistsOrderByRelationAggregateInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsOrderByRelationAggregateInput
   follows?: Prisma.FollowsOrderByRelationAggregateInput
   followers?: Prisma.FollowsOrderByRelationAggregateInput
   notifications?: Prisma.NotificationsOrderByRelationAggregateInput
@@ -467,11 +542,21 @@ export type UsersWhereUniqueInput = Prisma.AtLeast<{
   biography?: Prisma.StringNullableFilter<"Users"> | string | null
   created_at?: Prisma.DateTimeFilter<"Users"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Users"> | Date | string
+  email_verified?: Prisma.BoolFilter<"Users"> | boolean
+  email_verification_code?: Prisma.StringNullableFilter<"Users"> | string | null
+  email_verification_expires?: Prisma.DateTimeNullableFilter<"Users"> | Date | string | null
+  password_reset_code?: Prisma.StringNullableFilter<"Users"> | string | null
+  password_reset_expires?: Prisma.DateTimeNullableFilter<"Users"> | Date | string | null
+  twofa_enabled?: Prisma.BoolFilter<"Users"> | boolean
+  twofa_secret?: Prisma.StringNullableFilter<"Users"> | string | null
+  twofa_backup_codes?: Prisma.StringNullableListFilter<"Users">
+  earned_badges?: Prisma.StringNullableListFilter<"Users">
   expo_push_token?: Prisma.StringNullableFilter<"Users"> | string | null
   reviews?: Prisma.ReviewsListRelationFilter
   review_comments?: Prisma.ReviewCommentsListRelationFilter
   review_likes?: Prisma.ReviewLikesListRelationFilter
   playlists?: Prisma.PlaylistsListRelationFilter
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsListRelationFilter
   follows?: Prisma.FollowsListRelationFilter
   followers?: Prisma.FollowsListRelationFilter
   notifications?: Prisma.NotificationsListRelationFilter
@@ -513,6 +598,15 @@ export type UsersOrderByWithAggregationInput = {
   biography?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  email_verified?: Prisma.SortOrder
+  email_verification_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  email_verification_expires?: Prisma.SortOrderInput | Prisma.SortOrder
+  password_reset_code?: Prisma.SortOrderInput | Prisma.SortOrder
+  password_reset_expires?: Prisma.SortOrderInput | Prisma.SortOrder
+  twofa_enabled?: Prisma.SortOrder
+  twofa_secret?: Prisma.SortOrderInput | Prisma.SortOrder
+  twofa_backup_codes?: Prisma.SortOrder
+  earned_badges?: Prisma.SortOrder
   expo_push_token?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UsersCountOrderByAggregateInput
   _avg?: Prisma.UsersAvgOrderByAggregateInput
@@ -549,6 +643,15 @@ export type UsersScalarWhereWithAggregatesInput = {
   biography?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Users"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Users"> | Date | string
+  email_verified?: Prisma.BoolWithAggregatesFilter<"Users"> | boolean
+  email_verification_code?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
+  email_verification_expires?: Prisma.DateTimeNullableWithAggregatesFilter<"Users"> | Date | string | null
+  password_reset_code?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
+  password_reset_expires?: Prisma.DateTimeNullableWithAggregatesFilter<"Users"> | Date | string | null
+  twofa_enabled?: Prisma.BoolWithAggregatesFilter<"Users"> | boolean
+  twofa_secret?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
+  twofa_backup_codes?: Prisma.StringNullableListFilter<"Users">
+  earned_badges?: Prisma.StringNullableListFilter<"Users">
   expo_push_token?: Prisma.StringNullableWithAggregatesFilter<"Users"> | string | null
 }
 
@@ -577,11 +680,21 @@ export type UsersCreateInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -623,11 +736,21 @@ export type UsersUncheckedCreateInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -669,11 +792,21 @@ export type UsersUpdateInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -715,11 +848,21 @@ export type UsersUncheckedUpdateInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -761,6 +904,15 @@ export type UsersCreateManyInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
 }
 
@@ -789,6 +941,15 @@ export type UsersUpdateManyMutationInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -817,6 +978,15 @@ export type UsersUncheckedUpdateManyInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -858,6 +1028,15 @@ export type UsersCountOrderByAggregateInput = {
   biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  email_verified?: Prisma.SortOrder
+  email_verification_code?: Prisma.SortOrder
+  email_verification_expires?: Prisma.SortOrder
+  password_reset_code?: Prisma.SortOrder
+  password_reset_expires?: Prisma.SortOrder
+  twofa_enabled?: Prisma.SortOrder
+  twofa_secret?: Prisma.SortOrder
+  twofa_backup_codes?: Prisma.SortOrder
+  earned_badges?: Prisma.SortOrder
   expo_push_token?: Prisma.SortOrder
 }
 
@@ -889,6 +1068,13 @@ export type UsersMaxOrderByAggregateInput = {
   biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  email_verified?: Prisma.SortOrder
+  email_verification_code?: Prisma.SortOrder
+  email_verification_expires?: Prisma.SortOrder
+  password_reset_code?: Prisma.SortOrder
+  password_reset_expires?: Prisma.SortOrder
+  twofa_enabled?: Prisma.SortOrder
+  twofa_secret?: Prisma.SortOrder
   expo_push_token?: Prisma.SortOrder
 }
 
@@ -916,6 +1102,13 @@ export type UsersMinOrderByAggregateInput = {
   biography?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  email_verified?: Prisma.SortOrder
+  email_verification_code?: Prisma.SortOrder
+  email_verification_expires?: Prisma.SortOrder
+  password_reset_code?: Prisma.SortOrder
+  password_reset_expires?: Prisma.SortOrder
+  twofa_enabled?: Prisma.SortOrder
+  twofa_secret?: Prisma.SortOrder
   expo_push_token?: Prisma.SortOrder
 }
 
@@ -934,6 +1127,14 @@ export type UsersNullableScalarRelationFilter = {
 }
 
 export type UsersCreateowned_cosmeticsInput = {
+  set: string[]
+}
+
+export type UsersCreatetwofa_backup_codesInput = {
+  set: string[]
+}
+
+export type UsersCreateearned_badgesInput = {
   set: string[]
 }
 
@@ -976,6 +1177,20 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type UsersUpdatetwofa_backup_codesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type UsersUpdateearned_badgesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type UsersCreateNestedOneWithoutSpotify_accountInput = {
@@ -1060,6 +1275,20 @@ export type UsersUpdateOneRequiredWithoutPlaylistsNestedInput = {
   upsert?: Prisma.UsersUpsertWithoutPlaylistsInput
   connect?: Prisma.UsersWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsersUpdateToOneWithWhereWithoutPlaylistsInput, Prisma.UsersUpdateWithoutPlaylistsInput>, Prisma.UsersUncheckedUpdateWithoutPlaylistsInput>
+}
+
+export type UsersCreateNestedOneWithoutPlaylist_collaborationsInput = {
+  create?: Prisma.XOR<Prisma.UsersCreateWithoutPlaylist_collaborationsInput, Prisma.UsersUncheckedCreateWithoutPlaylist_collaborationsInput>
+  connectOrCreate?: Prisma.UsersCreateOrConnectWithoutPlaylist_collaborationsInput
+  connect?: Prisma.UsersWhereUniqueInput
+}
+
+export type UsersUpdateOneRequiredWithoutPlaylist_collaborationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UsersCreateWithoutPlaylist_collaborationsInput, Prisma.UsersUncheckedCreateWithoutPlaylist_collaborationsInput>
+  connectOrCreate?: Prisma.UsersCreateOrConnectWithoutPlaylist_collaborationsInput
+  upsert?: Prisma.UsersUpsertWithoutPlaylist_collaborationsInput
+  connect?: Prisma.UsersWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsersUpdateToOneWithWhereWithoutPlaylist_collaborationsInput, Prisma.UsersUpdateWithoutPlaylist_collaborationsInput>, Prisma.UsersUncheckedUpdateWithoutPlaylist_collaborationsInput>
 }
 
 export type UsersCreateNestedOneWithoutUser_media_statusInput = {
@@ -1261,11 +1490,21 @@ export type UsersCreateWithoutSpotify_accountInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -1306,11 +1545,21 @@ export type UsersUncheckedCreateWithoutSpotify_accountInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -1367,11 +1616,21 @@ export type UsersUpdateWithoutSpotify_accountInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -1412,11 +1671,21 @@ export type UsersUncheckedUpdateWithoutSpotify_accountInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -1457,10 +1726,20 @@ export type UsersCreateWithoutReviewsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -1502,10 +1781,20 @@ export type UsersUncheckedCreateWithoutReviewsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -1563,10 +1852,20 @@ export type UsersUpdateWithoutReviewsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -1608,10 +1907,20 @@ export type UsersUncheckedUpdateWithoutReviewsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -1653,10 +1962,20 @@ export type UsersCreateWithoutReview_commentsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -1698,10 +2017,20 @@ export type UsersUncheckedCreateWithoutReview_commentsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -1759,10 +2088,20 @@ export type UsersUpdateWithoutReview_commentsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -1804,10 +2143,20 @@ export type UsersUncheckedUpdateWithoutReview_commentsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -1849,11 +2198,21 @@ export type UsersCreateWithoutCommentLikesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -1894,11 +2253,21 @@ export type UsersUncheckedCreateWithoutCommentLikesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -1955,11 +2324,21 @@ export type UsersUpdateWithoutCommentLikesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -2000,11 +2379,21 @@ export type UsersUncheckedUpdateWithoutCommentLikesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -2045,10 +2434,20 @@ export type UsersCreateWithoutReview_likesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -2090,10 +2489,20 @@ export type UsersUncheckedCreateWithoutReview_likesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -2151,10 +2560,20 @@ export type UsersUpdateWithoutReview_likesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -2196,10 +2615,20 @@ export type UsersUncheckedUpdateWithoutReview_likesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -2241,10 +2670,20 @@ export type UsersCreateWithoutPlaylistsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -2286,10 +2725,20 @@ export type UsersUncheckedCreateWithoutPlaylistsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -2347,10 +2796,20 @@ export type UsersUpdateWithoutPlaylistsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -2392,10 +2851,256 @@ export type UsersUncheckedUpdateWithoutPlaylistsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedUpdateManyWithoutUserNestedInput
+  reporter_reports?: Prisma.ReportsUncheckedUpdateManyWithoutReporterNestedInput
+  profile_reports?: Prisma.ReportsUncheckedUpdateManyWithoutProfileNestedInput
+  activities?: Prisma.ActivitiesUncheckedUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitiesUncheckedUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUncheckedUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUncheckedUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUncheckedUpdateManyWithoutSenderNestedInput
+  commentLikes?: Prisma.CommentLikesUncheckedUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UsersCreateWithoutPlaylist_collaborationsInput = {
+  id?: string
+  username: string
+  pseudo: string
+  email: string
+  password?: string | null
+  favorite_band?: string | null
+  profile_picture?: runtime.Bytes | null
+  banner?: runtime.Bytes | null
+  shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
+  equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
+  role?: $Enums.Roles
+  provider?: $Enums.AuthProvider | null
+  provider_id?: string | null
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
+  expo_push_token?: string | null
+  reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
+  user_media_status?: Prisma.UserMediaStatusCreateNestedManyWithoutUserInput
+  reporter_reports?: Prisma.ReportsCreateNestedManyWithoutReporterInput
+  profile_reports?: Prisma.ReportsCreateNestedManyWithoutProfileInput
+  activities?: Prisma.ActivitiesCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitiesCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesCreateNestedManyWithoutSenderInput
+  commentLikes?: Prisma.CommentLikesCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsCreateNestedOneWithoutUserInput
+}
+
+export type UsersUncheckedCreateWithoutPlaylist_collaborationsInput = {
+  id?: string
+  username: string
+  pseudo: string
+  email: string
+  password?: string | null
+  favorite_band?: string | null
+  profile_picture?: runtime.Bytes | null
+  banner?: runtime.Bytes | null
+  shop_points?: number
+  owned_cosmetics?: Prisma.UsersCreateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: string | null
+  equipped_font?: string | null
+  equipped_title?: string | null
+  equipped_text_effect?: string | null
+  equipped_banner?: string | null
+  equipped_pattern?: string | null
+  role?: $Enums.Roles
+  provider?: $Enums.AuthProvider | null
+  provider_id?: string | null
+  has_notifications?: boolean
+  phone_number?: string | null
+  biography?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
+  expo_push_token?: string | null
+  reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
+  review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
+  review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
+  playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
+  notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
+  notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
+  user_media_status?: Prisma.UserMediaStatusUncheckedCreateNestedManyWithoutUserInput
+  reporter_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutReporterInput
+  profile_reports?: Prisma.ReportsUncheckedCreateNestedManyWithoutProfileInput
+  activities?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutUserInput
+  activities_targets?: Prisma.ActivitiesUncheckedCreateNestedManyWithoutTarget_userInput
+  conversations_user1?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser1Input
+  conversations_user2?: Prisma.ConversationsUncheckedCreateNestedManyWithoutUser2Input
+  messages?: Prisma.MessagesUncheckedCreateNestedManyWithoutSenderInput
+  commentLikes?: Prisma.CommentLikesUncheckedCreateNestedManyWithoutUserInput
+  spotify_account?: Prisma.SpotifyAccountsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UsersCreateOrConnectWithoutPlaylist_collaborationsInput = {
+  where: Prisma.UsersWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsersCreateWithoutPlaylist_collaborationsInput, Prisma.UsersUncheckedCreateWithoutPlaylist_collaborationsInput>
+}
+
+export type UsersUpsertWithoutPlaylist_collaborationsInput = {
+  update: Prisma.XOR<Prisma.UsersUpdateWithoutPlaylist_collaborationsInput, Prisma.UsersUncheckedUpdateWithoutPlaylist_collaborationsInput>
+  create: Prisma.XOR<Prisma.UsersCreateWithoutPlaylist_collaborationsInput, Prisma.UsersUncheckedCreateWithoutPlaylist_collaborationsInput>
+  where?: Prisma.UsersWhereInput
+}
+
+export type UsersUpdateToOneWithWhereWithoutPlaylist_collaborationsInput = {
+  where?: Prisma.UsersWhereInput
+  data: Prisma.XOR<Prisma.UsersUpdateWithoutPlaylist_collaborationsInput, Prisma.UsersUncheckedUpdateWithoutPlaylist_collaborationsInput>
+}
+
+export type UsersUpdateWithoutPlaylist_collaborationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  pseudo?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
+  provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
+  followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
+  notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
+  notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
+  user_media_status?: Prisma.UserMediaStatusUpdateManyWithoutUserNestedInput
+  reporter_reports?: Prisma.ReportsUpdateManyWithoutReporterNestedInput
+  profile_reports?: Prisma.ReportsUpdateManyWithoutProfileNestedInput
+  activities?: Prisma.ActivitiesUpdateManyWithoutUserNestedInput
+  activities_targets?: Prisma.ActivitiesUpdateManyWithoutTarget_userNestedInput
+  conversations_user1?: Prisma.ConversationsUpdateManyWithoutUser1NestedInput
+  conversations_user2?: Prisma.ConversationsUpdateManyWithoutUser2NestedInput
+  messages?: Prisma.MessagesUpdateManyWithoutSenderNestedInput
+  commentLikes?: Prisma.CommentLikesUpdateManyWithoutUserNestedInput
+  spotify_account?: Prisma.SpotifyAccountsUpdateOneWithoutUserNestedInput
+}
+
+export type UsersUncheckedUpdateWithoutPlaylist_collaborationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  pseudo?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favorite_band?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_picture?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  banner?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  shop_points?: Prisma.IntFieldUpdateOperationsInput | number
+  owned_cosmetics?: Prisma.UsersUpdateowned_cosmeticsInput | string[]
+  equipped_avatar_border?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_font?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_text_effect?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_banner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  equipped_pattern?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRolesFieldUpdateOperationsInput | $Enums.Roles
+  provider?: Prisma.NullableEnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider | null
+  provider_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  has_notifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
+  expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
+  review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
+  review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
+  playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -2437,11 +3142,21 @@ export type UsersCreateWithoutUser_media_statusInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -2482,11 +3197,21 @@ export type UsersUncheckedCreateWithoutUser_media_statusInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -2543,11 +3268,21 @@ export type UsersUpdateWithoutUser_media_statusInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -2588,11 +3323,21 @@ export type UsersUncheckedUpdateWithoutUser_media_statusInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -2633,11 +3378,21 @@ export type UsersCreateWithoutActivitiesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -2678,11 +3433,21 @@ export type UsersUncheckedCreateWithoutActivitiesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -2728,11 +3493,21 @@ export type UsersCreateWithoutActivities_targetsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -2773,11 +3548,21 @@ export type UsersUncheckedCreateWithoutActivities_targetsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -2834,11 +3619,21 @@ export type UsersUpdateWithoutActivitiesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -2879,11 +3674,21 @@ export type UsersUncheckedUpdateWithoutActivitiesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -2935,11 +3740,21 @@ export type UsersUpdateWithoutActivities_targetsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -2980,11 +3795,21 @@ export type UsersUncheckedUpdateWithoutActivities_targetsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -3025,11 +3850,21 @@ export type UsersCreateWithoutFollowsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
@@ -3070,11 +3905,21 @@ export type UsersUncheckedCreateWithoutFollowsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
@@ -3120,11 +3965,21 @@ export type UsersCreateWithoutFollowersInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
@@ -3165,11 +4020,21 @@ export type UsersUncheckedCreateWithoutFollowersInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
   notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
@@ -3226,11 +4091,21 @@ export type UsersUpdateWithoutFollowsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
@@ -3271,11 +4146,21 @@ export type UsersUncheckedUpdateWithoutFollowsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
@@ -3327,11 +4212,21 @@ export type UsersUpdateWithoutFollowersInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
@@ -3372,11 +4267,21 @@ export type UsersUncheckedUpdateWithoutFollowersInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
   notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
@@ -3417,11 +4322,21 @@ export type UsersCreateWithoutReporter_reportsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -3462,11 +4377,21 @@ export type UsersUncheckedCreateWithoutReporter_reportsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -3512,11 +4437,21 @@ export type UsersCreateWithoutProfile_reportsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -3557,11 +4492,21 @@ export type UsersUncheckedCreateWithoutProfile_reportsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -3618,11 +4563,21 @@ export type UsersUpdateWithoutReporter_reportsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -3663,11 +4618,21 @@ export type UsersUncheckedUpdateWithoutReporter_reportsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -3719,11 +4684,21 @@ export type UsersUpdateWithoutProfile_reportsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -3764,11 +4739,21 @@ export type UsersUncheckedUpdateWithoutProfile_reportsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -3809,11 +4794,21 @@ export type UsersCreateWithoutNotificationsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notificationsRelated?: Prisma.NotificationsCreateNestedManyWithoutRelated_userInput
@@ -3854,11 +4849,21 @@ export type UsersUncheckedCreateWithoutNotificationsInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notificationsRelated?: Prisma.NotificationsUncheckedCreateNestedManyWithoutRelated_userInput
@@ -3904,11 +4909,21 @@ export type UsersCreateWithoutNotificationsRelatedInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -3949,11 +4964,21 @@ export type UsersUncheckedCreateWithoutNotificationsRelatedInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -4010,11 +5035,21 @@ export type UsersUpdateWithoutNotificationsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notificationsRelated?: Prisma.NotificationsUpdateManyWithoutRelated_userNestedInput
@@ -4055,11 +5090,21 @@ export type UsersUncheckedUpdateWithoutNotificationsInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notificationsRelated?: Prisma.NotificationsUncheckedUpdateManyWithoutRelated_userNestedInput
@@ -4111,11 +5156,21 @@ export type UsersUpdateWithoutNotificationsRelatedInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -4156,11 +5211,21 @@ export type UsersUncheckedUpdateWithoutNotificationsRelatedInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -4201,11 +5266,21 @@ export type UsersCreateWithoutConversations_user1Input = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -4246,11 +5321,21 @@ export type UsersUncheckedCreateWithoutConversations_user1Input = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -4296,11 +5381,21 @@ export type UsersCreateWithoutConversations_user2Input = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -4341,11 +5436,21 @@ export type UsersUncheckedCreateWithoutConversations_user2Input = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -4402,11 +5507,21 @@ export type UsersUpdateWithoutConversations_user1Input = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -4447,11 +5562,21 @@ export type UsersUncheckedUpdateWithoutConversations_user1Input = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -4503,11 +5628,21 @@ export type UsersUpdateWithoutConversations_user2Input = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -4548,11 +5683,21 @@ export type UsersUncheckedUpdateWithoutConversations_user2Input = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -4593,11 +5738,21 @@ export type UsersCreateWithoutMessagesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsCreateNestedManyWithoutUserInput
@@ -4638,11 +5793,21 @@ export type UsersUncheckedCreateWithoutMessagesInput = {
   biography?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  email_verified?: boolean
+  email_verification_code?: string | null
+  email_verification_expires?: Date | string | null
+  password_reset_code?: string | null
+  password_reset_expires?: Date | string | null
+  twofa_enabled?: boolean
+  twofa_secret?: string | null
+  twofa_backup_codes?: Prisma.UsersCreatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersCreateearned_badgesInput | string[]
   expo_push_token?: string | null
   reviews?: Prisma.ReviewsUncheckedCreateNestedManyWithoutUserInput
   review_comments?: Prisma.ReviewCommentsUncheckedCreateNestedManyWithoutUserInput
   review_likes?: Prisma.ReviewLikesUncheckedCreateNestedManyWithoutUserInput
   playlists?: Prisma.PlaylistsUncheckedCreateNestedManyWithoutUserInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedCreateNestedManyWithoutUserInput
   follows?: Prisma.FollowsUncheckedCreateNestedManyWithoutUserInput
   followers?: Prisma.FollowsUncheckedCreateNestedManyWithoutFollow_userInput
   notifications?: Prisma.NotificationsUncheckedCreateNestedManyWithoutUserInput
@@ -4699,11 +5864,21 @@ export type UsersUpdateWithoutMessagesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUpdateManyWithoutUserNestedInput
@@ -4744,11 +5919,21 @@ export type UsersUncheckedUpdateWithoutMessagesInput = {
   biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  email_verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  email_verification_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email_verification_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  password_reset_code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password_reset_expires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twofa_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twofa_secret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twofa_backup_codes?: Prisma.UsersUpdatetwofa_backup_codesInput | string[]
+  earned_badges?: Prisma.UsersUpdateearned_badgesInput | string[]
   expo_push_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviews?: Prisma.ReviewsUncheckedUpdateManyWithoutUserNestedInput
   review_comments?: Prisma.ReviewCommentsUncheckedUpdateManyWithoutUserNestedInput
   review_likes?: Prisma.ReviewLikesUncheckedUpdateManyWithoutUserNestedInput
   playlists?: Prisma.PlaylistsUncheckedUpdateManyWithoutUserNestedInput
+  playlist_collaborations?: Prisma.PlaylistCollaboratorsUncheckedUpdateManyWithoutUserNestedInput
   follows?: Prisma.FollowsUncheckedUpdateManyWithoutUserNestedInput
   followers?: Prisma.FollowsUncheckedUpdateManyWithoutFollow_userNestedInput
   notifications?: Prisma.NotificationsUncheckedUpdateManyWithoutUserNestedInput
@@ -4774,6 +5959,7 @@ export type UsersCountOutputType = {
   review_comments: number
   review_likes: number
   playlists: number
+  playlist_collaborations: number
   follows: number
   followers: number
   notifications: number
@@ -4794,6 +5980,7 @@ export type UsersCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   review_comments?: boolean | UsersCountOutputTypeCountReview_commentsArgs
   review_likes?: boolean | UsersCountOutputTypeCountReview_likesArgs
   playlists?: boolean | UsersCountOutputTypeCountPlaylistsArgs
+  playlist_collaborations?: boolean | UsersCountOutputTypeCountPlaylist_collaborationsArgs
   follows?: boolean | UsersCountOutputTypeCountFollowsArgs
   followers?: boolean | UsersCountOutputTypeCountFollowersArgs
   notifications?: boolean | UsersCountOutputTypeCountNotificationsArgs
@@ -4845,6 +6032,13 @@ export type UsersCountOutputTypeCountReview_likesArgs<ExtArgs extends runtime.Ty
  */
 export type UsersCountOutputTypeCountPlaylistsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PlaylistsWhereInput
+}
+
+/**
+ * UsersCountOutputType without action
+ */
+export type UsersCountOutputTypeCountPlaylist_collaborationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlaylistCollaboratorsWhereInput
 }
 
 /**
@@ -4964,11 +6158,21 @@ export type UsersSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   biography?: boolean
   created_at?: boolean
   updated_at?: boolean
+  email_verified?: boolean
+  email_verification_code?: boolean
+  email_verification_expires?: boolean
+  password_reset_code?: boolean
+  password_reset_expires?: boolean
+  twofa_enabled?: boolean
+  twofa_secret?: boolean
+  twofa_backup_codes?: boolean
+  earned_badges?: boolean
   expo_push_token?: boolean
   reviews?: boolean | Prisma.Users$reviewsArgs<ExtArgs>
   review_comments?: boolean | Prisma.Users$review_commentsArgs<ExtArgs>
   review_likes?: boolean | Prisma.Users$review_likesArgs<ExtArgs>
   playlists?: boolean | Prisma.Users$playlistsArgs<ExtArgs>
+  playlist_collaborations?: boolean | Prisma.Users$playlist_collaborationsArgs<ExtArgs>
   follows?: boolean | Prisma.Users$followsArgs<ExtArgs>
   followers?: boolean | Prisma.Users$followersArgs<ExtArgs>
   notifications?: boolean | Prisma.Users$notificationsArgs<ExtArgs>
@@ -5011,6 +6215,15 @@ export type UsersSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   biography?: boolean
   created_at?: boolean
   updated_at?: boolean
+  email_verified?: boolean
+  email_verification_code?: boolean
+  email_verification_expires?: boolean
+  password_reset_code?: boolean
+  password_reset_expires?: boolean
+  twofa_enabled?: boolean
+  twofa_secret?: boolean
+  twofa_backup_codes?: boolean
+  earned_badges?: boolean
   expo_push_token?: boolean
 }, ExtArgs["result"]["users"]>
 
@@ -5039,6 +6252,15 @@ export type UsersSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   biography?: boolean
   created_at?: boolean
   updated_at?: boolean
+  email_verified?: boolean
+  email_verification_code?: boolean
+  email_verification_expires?: boolean
+  password_reset_code?: boolean
+  password_reset_expires?: boolean
+  twofa_enabled?: boolean
+  twofa_secret?: boolean
+  twofa_backup_codes?: boolean
+  earned_badges?: boolean
   expo_push_token?: boolean
 }, ExtArgs["result"]["users"]>
 
@@ -5067,15 +6289,25 @@ export type UsersSelectScalar = {
   biography?: boolean
   created_at?: boolean
   updated_at?: boolean
+  email_verified?: boolean
+  email_verification_code?: boolean
+  email_verification_expires?: boolean
+  password_reset_code?: boolean
+  password_reset_expires?: boolean
+  twofa_enabled?: boolean
+  twofa_secret?: boolean
+  twofa_backup_codes?: boolean
+  earned_badges?: boolean
   expo_push_token?: boolean
 }
 
-export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "pseudo" | "email" | "password" | "favorite_band" | "profile_picture" | "banner" | "shop_points" | "owned_cosmetics" | "equipped_avatar_border" | "equipped_font" | "equipped_title" | "equipped_text_effect" | "equipped_banner" | "equipped_pattern" | "role" | "provider" | "provider_id" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at" | "expo_push_token", ExtArgs["result"]["users"]>
+export type UsersOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "pseudo" | "email" | "password" | "favorite_band" | "profile_picture" | "banner" | "shop_points" | "owned_cosmetics" | "equipped_avatar_border" | "equipped_font" | "equipped_title" | "equipped_text_effect" | "equipped_banner" | "equipped_pattern" | "role" | "provider" | "provider_id" | "has_notifications" | "phone_number" | "biography" | "created_at" | "updated_at" | "email_verified" | "email_verification_code" | "email_verification_expires" | "password_reset_code" | "password_reset_expires" | "twofa_enabled" | "twofa_secret" | "twofa_backup_codes" | "earned_badges" | "expo_push_token", ExtArgs["result"]["users"]>
 export type UsersInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviews?: boolean | Prisma.Users$reviewsArgs<ExtArgs>
   review_comments?: boolean | Prisma.Users$review_commentsArgs<ExtArgs>
   review_likes?: boolean | Prisma.Users$review_likesArgs<ExtArgs>
   playlists?: boolean | Prisma.Users$playlistsArgs<ExtArgs>
+  playlist_collaborations?: boolean | Prisma.Users$playlist_collaborationsArgs<ExtArgs>
   follows?: boolean | Prisma.Users$followsArgs<ExtArgs>
   followers?: boolean | Prisma.Users$followersArgs<ExtArgs>
   notifications?: boolean | Prisma.Users$notificationsArgs<ExtArgs>
@@ -5102,6 +6334,7 @@ export type $UsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     review_comments: Prisma.$ReviewCommentsPayload<ExtArgs>[]
     review_likes: Prisma.$ReviewLikesPayload<ExtArgs>[]
     playlists: Prisma.$PlaylistsPayload<ExtArgs>[]
+    playlist_collaborations: Prisma.$PlaylistCollaboratorsPayload<ExtArgs>[]
     follows: Prisma.$FollowsPayload<ExtArgs>[]
     followers: Prisma.$FollowsPayload<ExtArgs>[]
     notifications: Prisma.$NotificationsPayload<ExtArgs>[]
@@ -5142,6 +6375,15 @@ export type $UsersPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     biography: string | null
     created_at: Date
     updated_at: Date
+    email_verified: boolean
+    email_verification_code: string | null
+    email_verification_expires: Date | null
+    password_reset_code: string | null
+    password_reset_expires: Date | null
+    twofa_enabled: boolean
+    twofa_secret: string | null
+    twofa_backup_codes: string[]
+    earned_badges: string[]
     expo_push_token: string | null
   }, ExtArgs["result"]["users"]>
   composites: {}
@@ -5541,6 +6783,7 @@ export interface Prisma__UsersClient<T, Null = never, ExtArgs extends runtime.Ty
   review_comments<T extends Prisma.Users$review_commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$review_commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewCommentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   review_likes<T extends Prisma.Users$review_likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$review_likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewLikesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   playlists<T extends Prisma.Users$playlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$playlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaylistsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  playlist_collaborations<T extends Prisma.Users$playlist_collaborationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$playlist_collaborationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaylistCollaboratorsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   follows<T extends Prisma.Users$followsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$followsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   followers<T extends Prisma.Users$followersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$followersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Users$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Users$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5608,6 +6851,15 @@ export interface UsersFieldRefs {
   readonly biography: Prisma.FieldRef<"Users", 'String'>
   readonly created_at: Prisma.FieldRef<"Users", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Users", 'DateTime'>
+  readonly email_verified: Prisma.FieldRef<"Users", 'Boolean'>
+  readonly email_verification_code: Prisma.FieldRef<"Users", 'String'>
+  readonly email_verification_expires: Prisma.FieldRef<"Users", 'DateTime'>
+  readonly password_reset_code: Prisma.FieldRef<"Users", 'String'>
+  readonly password_reset_expires: Prisma.FieldRef<"Users", 'DateTime'>
+  readonly twofa_enabled: Prisma.FieldRef<"Users", 'Boolean'>
+  readonly twofa_secret: Prisma.FieldRef<"Users", 'String'>
+  readonly twofa_backup_codes: Prisma.FieldRef<"Users", 'String[]'>
+  readonly earned_badges: Prisma.FieldRef<"Users", 'String[]'>
   readonly expo_push_token: Prisma.FieldRef<"Users", 'String'>
 }
     
@@ -6090,6 +7342,30 @@ export type Users$playlistsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.PlaylistsScalarFieldEnum | Prisma.PlaylistsScalarFieldEnum[]
+}
+
+/**
+ * Users.playlist_collaborations
+ */
+export type Users$playlist_collaborationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlaylistCollaborators
+   */
+  select?: Prisma.PlaylistCollaboratorsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlaylistCollaborators
+   */
+  omit?: Prisma.PlaylistCollaboratorsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlaylistCollaboratorsInclude<ExtArgs> | null
+  where?: Prisma.PlaylistCollaboratorsWhereInput
+  orderBy?: Prisma.PlaylistCollaboratorsOrderByWithRelationInput | Prisma.PlaylistCollaboratorsOrderByWithRelationInput[]
+  cursor?: Prisma.PlaylistCollaboratorsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlaylistCollaboratorsScalarFieldEnum | Prisma.PlaylistCollaboratorsScalarFieldEnum[]
 }
 
 /**

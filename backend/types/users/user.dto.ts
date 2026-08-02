@@ -22,6 +22,8 @@ export interface UserResponseDto {
     equipped_banner: string | null;
     equipped_pattern: string | null;
     has_notifications: boolean;
+    email_verified: boolean;
+    twofa_enabled: boolean;
     created_at: Date;
     updated_at: Date;
 }
@@ -136,3 +138,10 @@ export interface SocketUser {
 }
 
 export type PartialUserResponseDto = Partial<UserResponseDto>;
+
+export interface UserSearchResultDto {
+    id: string;
+    username: string;
+    pseudo: string;
+    profile_picture: string | null;
+}

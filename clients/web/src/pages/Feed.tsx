@@ -17,24 +17,6 @@ import FeedCard, {FeedItem} from "../components/FeedCard";
 
 type TabType = "all" | "following" | "trending";
 
-interface FeedsCache {
-    all: FeedItem[];
-    following: FeedItem[];
-    trending: FeedItem[];
-}
-
-interface PagesCache {
-    all: number;
-    following: number;
-    trending: number;
-}
-
-interface HasMoreCache {
-    all: boolean;
-    following: boolean;
-    trending: boolean;
-}
-
 const ITEMS_PER_PAGE = 10;
 
 
@@ -101,6 +83,185 @@ const EmptyState: React.FC<{ tab: TabType }> = ({tab}) => (
     </div>
 );
 
+/**
+ * Encapsule ENTIÈREMENT l'état d'un seul onglet (items, pagination, статus de
+ * chargement) dans sa propre closure — aucune structure partagée indexée par
+ * onglet (plus de `{[tab]: ...}`). Une contamination croisée entre onglets
+ * est donc structurellement impossible : chaque instance a son propre state,
+ * son propre setter, il n'existe aucun point du code qui puisse écrire dans
+ * le mauvais onglet par erreur.
+ */
+function useFeedTab(buildEndpoint: (offset: number) => string | null) {
+    const [items, setItems] = useState<FeedItem[]>([]);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [loaded, setLoaded] = useState(false);
+
+    const buildEndpointRef = useRef(buildEndpoint);
+    buildEndpointRef.current = buildEndpoint;
+
+    const fetchPage = useCallback(async (offset: number, append: boolean): Promise<void> => {
+        const endpoint = buildEndpointRef.current(offset);
+        if (!endpoint) return;
+
+        if (append) setLoadingMore(true); else setLoading(true);
+
+        try {
+            const response = await apiClient.get(endpoint);
+            const newItems: FeedItem[] = response.data?.feed || [];
+            setItems((prev) => append ? [...prev, ...newItems] : newItems);
+            setHasMore(newItems.length === ITEMS_PER_PAGE);
+            setPage(offset + ITEMS_PER_PAGE);
+            setLoaded(true);
+        } catch (error) {
+            console.error("Erreur feed:", error);
+        } finally {
+            setLoading(false);
+            setLoadingMore(false);
+        }
+    }, []);
+
+    const loadingRef = useRef(loading);
+    loadingRef.current = loading;
+    const loadingMoreRef = useRef(loadingMore);
+    loadingMoreRef.current = loadingMore;
+    const hasMoreRef = useRef(hasMore);
+    hasMoreRef.current = hasMore;
+    const pageRef = useRef(page);
+    pageRef.current = page;
+    const loadedRef = useRef(loaded);
+    loadedRef.current = loaded;
+
+    const ensureLoaded = useCallback((): void => {
+        if (!loadedRef.current && !loadingRef.current) fetchPage(0, false);
+    }, [fetchPage]);
+
+    const loadMore = useCallback((): void => {
+        if (!loadingMoreRef.current && hasMoreRef.current) fetchPage(pageRef.current, true);
+    }, [fetchPage]);
+
+    const refresh = useCallback((): void => fetchPage(0, false), [fetchPage]);
+
+    return {items, setItems, loading, loadingMore, hasMore, loaded, ensureLoaded, loadMore, refresh};
+}
+
+type FeedTabState = ReturnType<typeof useFeedTab>;
+
+const FeedTabPanel: React.FC<{
+    tab: FeedTabState;
+    tabType: TabType;
+    searchQuery: string;
+    likingId: string | null;
+    currentUserId: string | null;
+    infiniteScroll?: boolean;
+    onLike: (item: FeedItem) => void;
+    onNavigateToAlbum: (item: FeedItem) => void;
+    onNavigateToProfile: (userId: string) => void;
+}> = ({tab, tabType, searchQuery, likingId, currentUserId, infiniteScroll = true, onLike, onNavigateToAlbum, onNavigateToProfile}) => {
+    const {t} = useTranslation();
+
+    useEffect(() => {
+        tab.ensureLoaded();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Observer local à CE panneau : monté/démonté avec lui, donc toujours
+    // rattaché à SA sentinelle. Comme le panneau entier est démonté au
+    // changement d'onglet (un seul panneau rendu à la fois), il n'y a aucune
+    // ambiguïté possible sur l'onglet concerné par un "load more".
+    const observerRef = useRef<IntersectionObserver | null>(null);
+
+    useEffect(() => {
+        if (!infiniteScroll) return;
+
+        observerRef.current = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) tab.loadMore();
+            },
+            {threshold: 0.5},
+        );
+        return () => observerRef.current?.disconnect();
+    }, [tab.loadMore, infiniteScroll]);
+
+    const setSentinelRef = useCallback((node: HTMLDivElement | null): void => {
+        const observer = observerRef.current;
+        if (!observer) return;
+        observer.disconnect();
+        if (node) observer.observe(node);
+    }, []);
+
+    const displayedItems = tab.items.filter((item) => {
+        if (!item) return false;
+        const q = searchQuery.toLowerCase().trim();
+        if (!q) return true;
+        return (
+            item.album?.toLowerCase().includes(q) ||
+            item.artist?.toLowerCase().includes(q) ||
+            item.user_name?.toLowerCase().includes(q) ||
+            item.content?.toLowerCase().includes(q)
+        );
+    });
+
+    if (!tab.loaded && tab.items.length === 0) {
+        return <>{[...Array(3)].map((_, i) => <SkeletonCard key={i}/>)}</>;
+    }
+
+    if (displayedItems.length === 0) {
+        if (searchQuery) {
+            return (
+                <div className="text-center py-12">
+                    <Search size={48} className="mx-auto text-gray-500 dark:text-gray-400 mb-4 opacity-50"/>
+                    <p className="text-gray-400 dark:text-gray-600 text-lg">
+                        {t("no_post_found", "Aucun résultat pour")} &quot;{searchQuery}&quot;
+                    </p>
+                </div>
+            );
+        }
+        return <EmptyState tab={tabType}/>;
+    }
+
+    return (
+        <>
+            {displayedItems.map((item) => (
+                <FeedCard
+                    key={item.id}
+                    item={item}
+                    onLike={() => onLike(item)}
+                    onNavigateToAlbum={onNavigateToAlbum}
+                    onNavigateToProfile={onNavigateToProfile}
+                    likingId={likingId}
+                    currentUserId={currentUserId}
+                />
+            ))}
+
+            {infiniteScroll && (
+                <>
+                    <div ref={setSentinelRef} className="h-4"/>
+
+                    {tab.loadingMore && (
+                        <div className="flex items-center justify-center py-6">
+                            <Loader2 size={24} className="text-[#FF1E56] animate-spin"/>
+                        </div>
+                    )}
+
+                    {!tab.hasMore && displayedItems.length > 0 && (
+                        <div className="text-center py-8">
+                            <div
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1C1C28] dark:bg-white border border-gray-800 dark:border-gray-200">
+                                <ChevronDown size={14} className="text-gray-600"/>
+                                <span
+                                    className="text-gray-600 dark:text-gray-400 text-xs font-semibold tracking-wide">FIN DU FIL</span>
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
+        </>
+    );
+};
+
 
 const Feed: React.FC = () => {
     const {t} = useTranslation();
@@ -110,117 +271,49 @@ const Feed: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState<TabType>("all");
     const [searchQuery, setSearchQuery] = useState("");
-
-    const [feedsCache, setFeedsCache] = useState<FeedsCache>({all: [], following: [], trending: []});
-    const [pagesCache, setPagesCache] = useState<PagesCache>({all: 0, following: 0, trending: 0});
-    const [hasMoreCache, setHasMoreCache] = useState<HasMoreCache>({all: true, following: true, trending: true});
-
-    const [isLoading, setIsLoading] = useState(true);
-    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [likingId, setLikingId] = useState<string | null>(null);
 
-    const observerTarget = useRef<HTMLDivElement>(null);
-    const activeTabRef = useRef<TabType>(activeTab);
-    activeTabRef.current = activeTab;
-
-
-    const fetchFeed = useCallback(
-        async (targetTab: TabType, currentOffset: number, isLoadMore = false) => {
-            try {
-                if (!isLoadMore) setIsLoading(true);
-                else setIsLoadingMore(true);
-
-                const queryParams = `limit=${ITEMS_PER_PAGE}&offset=${currentOffset}`;
-                let endpoint = "";
-
-                switch (targetTab) {
-                    case "all":
-                        endpoint = `/activities/feed/global?${currentUserId ? `current_user_id=${currentUserId}&` : ""}${queryParams}`;
-                        break;
-                    case "following":
-                        if (!currentUserId) {
-                            setIsLoading(false);
-                            return;
-                        }
-                        endpoint = `/activities/feed/friends/${currentUserId}?${queryParams}`;
-                        break;
-                    case "trending":
-                        if (!currentUserId) {
-                            setIsLoading(false);
-                            return;
-                        }
-                        endpoint = `/activities/feed/discovery/${currentUserId}?${queryParams}`;
-                        break;
-                }
-
-                const response = await apiClient.get(endpoint);
-                const items: FeedItem[] = response.data?.feed || [];
-
-                setFeedsCache((prev) => ({
-                    ...prev,
-                    [targetTab]: isLoadMore ? [...prev[targetTab], ...items] : items,
-                }));
-                setHasMoreCache((prev) => ({...prev, [targetTab]: items.length === ITEMS_PER_PAGE}));
-                setPagesCache((prev) => ({
-                    ...prev,
-                    [targetTab]: isLoadMore ? currentOffset + ITEMS_PER_PAGE : ITEMS_PER_PAGE,
-                }));
-            } catch (error) {
-                console.error(`Erreur feed (${targetTab}):`, error);
-            } finally {
-                setIsLoading(false);
-                setIsRefreshing(false);
-                setIsLoadingMore(false);
-            }
-        },
-        [currentUserId]
+    const buildAllEndpoint = useCallback(
+        (offset: number): string =>
+            `/activities/feed/global?${currentUserId ? `current_user_id=${currentUserId}&` : ""}limit=${ITEMS_PER_PAGE}&offset=${offset}`,
+        [currentUserId],
+    );
+    const buildFollowingEndpoint = useCallback(
+        (offset: number): string | null =>
+            currentUserId ? `/activities/feed/friends/${currentUserId}?limit=${ITEMS_PER_PAGE}&offset=${offset}` : null,
+        [currentUserId],
+    );
+    const buildTrendingEndpoint = useCallback(
+        (offset: number): string | null =>
+            currentUserId ? `/activities/feed/discovery/${currentUserId}?limit=${ITEMS_PER_PAGE}&offset=${offset}` : null,
+        [currentUserId],
     );
 
-    useEffect(() => {
-        if (feedsCache[activeTab].length === 0) fetchFeed(activeTab, 0, false);
-        else setIsLoading(false);
-    }, [activeTab, fetchFeed]);
+    const allTab = useFeedTab(buildAllEndpoint);
+    const followingTab = useFeedTab(buildFollowingEndpoint);
+    const trendingTab = useFeedTab(buildTrendingEndpoint);
 
-    useEffect(() => {
-        fetchFeed("all", 0, false);
-    }, [fetchFeed]);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && !isLoadingMore && hasMoreCache[activeTabRef.current]) {
-                    fetchFeed(activeTabRef.current, pagesCache[activeTabRef.current], true);
-                }
-            },
-            {threshold: 0.5}
-        );
-        if (observerTarget.current) observer.observe(observerTarget.current);
-        return () => observer.disconnect();
-    }, [fetchFeed, isLoadingMore, hasMoreCache, pagesCache]);
-
+    const tabsByType: Record<TabType, FeedTabState> = {
+        all: allTab,
+        following: followingTab,
+        trending: trendingTab,
+    };
+    const currentTab = tabsByType[activeTab];
 
     const handleLike = useCallback(
-        async (id: string) => {
-            if (!currentUserId || likingId) return;
-            const currentItems = feedsCache[activeTabRef.current];
-            const idx = currentItems.findIndex((f) => f.id === id);
-            if (idx === -1) return;
+        async (item: FeedItem) => {
+            if (!currentUserId || likingId || item.type !== "review") return;
 
-            const item = currentItems[idx];
-            if (item.type !== "review") return;
+            const {setItems} = tabsByType[activeTab];
             const wasLiked = !!item.isLiked;
-            setLikingId(id);
+            setLikingId(item.id);
 
-            setFeedsCache((prev) => {
-                const updated = [...prev[activeTabRef.current]];
-                updated[idx] = {
-                    ...updated[idx],
-                    isLiked: !wasLiked,
-                    likes_count: wasLiked ? Math.max(0, (item.likes_count ?? 1) - 1) : (item.likes_count ?? 0) + 1,
-                };
-                return {...prev, [activeTabRef.current]: updated};
-            });
+            setItems((prev) => prev.map((i) => i.id === item.id ? {
+                ...i,
+                isLiked: !wasLiked,
+                likes_count: wasLiked ? Math.max(0, (i.likes_count ?? 1) - 1) : (i.likes_count ?? 0) + 1,
+            } : i));
 
             try {
                 const response = await apiClient.post("/reviews/likes/toggle", {
@@ -228,35 +321,22 @@ const Feed: React.FC = () => {
                     user_id: currentUserId,
                 });
                 const {isLiked, likes_count} = response.data;
-                setFeedsCache((prev) => {
-                    const updated = [...prev[activeTabRef.current]];
-                    const freshIdx = updated.findIndex((f) => f.id === id);
-                    if (freshIdx !== -1) updated[freshIdx] = {...updated[freshIdx], isLiked, likes_count};
-                    return {...prev, [activeTabRef.current]: updated};
-                });
+                setItems((prev) => prev.map((i) => i.id === item.id ? {...i, isLiked, likes_count} : i));
             } catch {
-                setFeedsCache((prev) => {
-                    const updated = [...prev[activeTabRef.current]];
-                    const freshIdx = updated.findIndex((f) => f.id === id);
-                    if (freshIdx !== -1) updated[freshIdx] = {
-                        ...updated[freshIdx],
-                        isLiked: wasLiked,
-                        likes_count: item.likes_count
-                    };
-                    return {...prev, [activeTabRef.current]: updated};
-                });
+                setItems((prev) => prev.map((i) => i.id === item.id ? {
+                    ...i,
+                    isLiked: wasLiked,
+                    likes_count: item.likes_count,
+                } : i));
             } finally {
                 setLikingId(null);
             }
         },
-        [currentUserId, feedsCache, likingId]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [currentUserId, likingId, activeTab],
     );
 
-
-
     const handleNavigateToAlbum = (item: FeedItem) => {
-        console.log("Clic sur item :", item);
-
         const albumId = item.media_id || item.api_id || item.id;
 
         if (!albumId) {
@@ -278,19 +358,15 @@ const Feed: React.FC = () => {
         navigate(`/profil/${userId}`);
     };
 
+    const handleRefresh = (): void => {
+        setIsRefreshing(true);
+        currentTab.refresh();
+    };
 
-    const displayedItems = (feedsCache[activeTab] || []).filter((item) => {
-        if (!item) return false;
-        const q = searchQuery.toLowerCase().trim();
-        if (!q) return true;
-        return (
-            item.album?.toLowerCase().includes(q) ||
-            item.artist?.toLowerCase().includes(q) ||
-            item.user_name?.toLowerCase().includes(q) ||
-            item.content?.toLowerCase().includes(q)
-        );
-    });
-
+    useEffect(() => {
+        if (!isRefreshing) return;
+        if (!currentTab.loading) setIsRefreshing(false);
+    }, [isRefreshing, currentTab.loading]);
 
     return (
         <div
@@ -306,10 +382,7 @@ const Feed: React.FC = () => {
                     </p>
                 </div>
                 <button
-                    onClick={() => {
-                        setIsRefreshing(true);
-                        fetchFeed(activeTab, 0, false);
-                    }}
+                    onClick={handleRefresh}
                     disabled={isRefreshing}
                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1C1C28] dark:bg-white border border-gray-800 dark:border-gray-200 text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-900 hover:border-gray-700 transition-all text-sm disabled:opacity-50"
                 >
@@ -363,54 +436,44 @@ const Feed: React.FC = () => {
                 ))}
             </div>
 
-            {/* Feed List */}
+            {/* Feed List — un seul panneau monté à la fois, un par onglet */}
             <div className="space-y-6 pb-10">
-                {isLoading && feedsCache[activeTab].length === 0 ? (
-                    [...Array(3)].map((_, i) => <SkeletonCard key={i}/>)
-                ) : displayedItems.length === 0 ? (
-                    searchQuery ? (
-                        <div className="text-center py-12">
-                            <Search size={48} className="mx-auto text-gray-500 dark:text-gray-400 mb-4 opacity-50"/>
-                            <p className="text-gray-400 dark:text-gray-600 text-lg">
-                                {t("no_post_found", "Aucun résultat pour")} &quot;{searchQuery}&quot;
-                            </p>
-                        </div>
-                    ) : (
-                        <EmptyState tab={activeTab}/>
-                    )
-                ) : (
-                    <>
-                        {displayedItems.map((item) => (
-                            <FeedCard
-                                key={item.id}
-                                item={item}
-                                onLike={handleLike}
-                                onNavigateToAlbum={handleNavigateToAlbum}
-                                onNavigateToProfile={handleNavigateToProfile}
-                                likingId={likingId}
-                                currentUserId={currentUserId}
-                            />
-                        ))}
-
-                        <div ref={observerTarget} className="h-4"/>
-
-                        {isLoadingMore && (
-                            <div className="flex items-center justify-center py-6">
-                                <Loader2 size={24} className="text-[#FF1E56] animate-spin"/>
-                            </div>
-                        )}
-
-                        {!hasMoreCache[activeTab] && displayedItems.length > 0 && (
-                            <div className="text-center py-8">
-                                <div
-                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1C1C28] dark:bg-white border border-gray-800 dark:border-gray-200">
-                                    <ChevronDown size={14} className="text-gray-600"/>
-                                    <span
-                                        className="text-gray-600 dark:text-gray-400 text-xs font-semibold tracking-wide">FIN DU FIL</span>
-                                </div>
-                            </div>
-                        )}
-                    </>
+                {activeTab === "all" && (
+                    <FeedTabPanel
+                        tab={allTab}
+                        tabType="all"
+                        searchQuery={searchQuery}
+                        likingId={likingId}
+                        currentUserId={currentUserId}
+                        onLike={handleLike}
+                        onNavigateToAlbum={handleNavigateToAlbum}
+                        onNavigateToProfile={handleNavigateToProfile}
+                    />
+                )}
+                {activeTab === "following" && (
+                    <FeedTabPanel
+                        tab={followingTab}
+                        tabType="following"
+                        searchQuery={searchQuery}
+                        likingId={likingId}
+                        currentUserId={currentUserId}
+                        onLike={handleLike}
+                        onNavigateToAlbum={handleNavigateToAlbum}
+                        onNavigateToProfile={handleNavigateToProfile}
+                    />
+                )}
+                {activeTab === "trending" && (
+                    <FeedTabPanel
+                        tab={trendingTab}
+                        tabType="trending"
+                        searchQuery={searchQuery}
+                        likingId={likingId}
+                        currentUserId={currentUserId}
+                        infiniteScroll={false}
+                        onLike={handleLike}
+                        onNavigateToAlbum={handleNavigateToAlbum}
+                        onNavigateToProfile={handleNavigateToProfile}
+                    />
                 )}
             </div>
         </div>

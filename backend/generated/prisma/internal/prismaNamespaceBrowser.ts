@@ -59,6 +59,7 @@ export const ModelName = {
   CommentLikes: 'CommentLikes',
   ReviewLikes: 'ReviewLikes',
   Playlists: 'Playlists',
+  PlaylistCollaborators: 'PlaylistCollaborators',
   PlaylistItems: 'PlaylistItems',
   UserMediaStatus: 'UserMediaStatus',
   Activities: 'Activities',
@@ -111,6 +112,15 @@ export const UsersScalarFieldEnum = {
   biography: 'biography',
   created_at: 'created_at',
   updated_at: 'updated_at',
+  email_verified: 'email_verified',
+  email_verification_code: 'email_verification_code',
+  email_verification_expires: 'email_verification_expires',
+  password_reset_code: 'password_reset_code',
+  password_reset_expires: 'password_reset_expires',
+  twofa_enabled: 'twofa_enabled',
+  twofa_secret: 'twofa_secret',
+  twofa_backup_codes: 'twofa_backup_codes',
+  earned_badges: 'earned_badges',
   expo_push_token: 'expo_push_token'
 } as const
 
@@ -194,12 +204,22 @@ export const PlaylistsScalarFieldEnum = {
   name: 'name',
   image_url: 'image_url',
   is_public: 'is_public',
+  is_collaborative: 'is_collaborative',
   spotify_playlist_id: 'spotify_playlist_id',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
 export type PlaylistsScalarFieldEnum = (typeof PlaylistsScalarFieldEnum)[keyof typeof PlaylistsScalarFieldEnum]
+
+
+export const PlaylistCollaboratorsScalarFieldEnum = {
+  playlist_id: 'playlist_id',
+  user_id: 'user_id',
+  added_at: 'added_at'
+} as const
+
+export type PlaylistCollaboratorsScalarFieldEnum = (typeof PlaylistCollaboratorsScalarFieldEnum)[keyof typeof PlaylistCollaboratorsScalarFieldEnum]
 
 
 export const PlaylistItemsScalarFieldEnum = {

@@ -65,6 +65,15 @@ export const setGlobalTheme = (theme: Theme): void => {
   window.dispatchEvent(new Event("theme-changed"));
 };
 
+/**
+ * Remet la possession à l'état "non validé" (appelé au logout). Sans ça, la
+ * possession du compte précédent restait en mémoire pour le compte suivant
+ * tant que la page n'était pas rechargée manuellement.
+ */
+export const resetOwnedThemesCache = (): void => {
+  ownedThemesCache = null;
+};
+
 /** Renseigne la possession (appelé par ThemeGuard) puis ré-applique le thème. */
 export const setOwnedThemes = (cosmetics: string[]): void => {
   ownedThemesCache = new Set(cosmetics);

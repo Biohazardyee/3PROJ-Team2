@@ -16,6 +16,7 @@ import {Prisma} from "../../../generated/prisma/client.js";
 import {notificationService} from "../notifications/notification.service.js";
 import {NotificationActions} from "../../../generated/prisma/enums.js";
 import {canSendNotification} from "../notifications/notification.helper.js";
+import {badgeService} from "../badges/badge.service.js";
 
 export class ReviewCommentService {
     async create(data: ReviewCommentAddDto): Promise<ReviewCommentResponseDto> {
@@ -73,6 +74,10 @@ export class ReviewCommentService {
                 user: true,
             },
         });
+
+        badgeService
+            .checkAndAwardBadges(data.user_id)
+            .catch((err): void => console.error("Badge check failed:", err));
 
         if (review && data.user_id !== review.user_id) {
             const isAllowed: boolean = await canSendNotification(

@@ -583,10 +583,6 @@ export type EnumNotificationActionsFieldUpdateOperationsInput = {
   set?: $Enums.NotificationActions
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type NotificationsCreateWithoutUserInput = {
   id?: string
   action: $Enums.NotificationActions

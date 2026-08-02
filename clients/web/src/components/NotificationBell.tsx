@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Bell } from "lucide-react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import apiClient from "../api/client";
 import { useSocket } from "../context/SocketContext";
@@ -8,6 +10,7 @@ import { AxiosResponse } from "axios";
 
 export const NotificationBell: React.FC = () => {
   const navigate: NavigateFunction = useNavigate();
+  const { t } = useTranslation();
   const socket = useSocket();
   const [unreadCount, setUnreadCount] = useState<number>(0);
 
@@ -57,12 +60,20 @@ export const NotificationBell: React.FC = () => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("notification_received", fetchCount);
+    const handleNotification = (notification: any): void => {
+      fetchCount();
+
+      if (notification?.action === "badge_earned") {
+        toast.success(t("toast_badge_earned", "Nouveau badge débloqué ! 🎉"));
+      }
+    };
+
+    socket.on("notification_received", handleNotification);
 
     return (): void => {
-      socket.off("notification_received", fetchCount);
+      socket.off("notification_received", handleNotification);
     };
-  }, [socket, fetchCount]);
+  }, [socket, fetchCount, t]);
 
   return (
       <button

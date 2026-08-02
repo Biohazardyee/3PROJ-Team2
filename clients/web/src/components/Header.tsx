@@ -4,6 +4,7 @@ import {useState, useEffect, useCallback} from "react";
 import apiClient from "../api/client";
 import {jwtDecode} from "jwt-decode";
 import {NotificationBell} from "./NotificationBell";
+import GlobalSearch from "./GlobalSearch";
 import {useSocket} from "../context/SocketContext";
 import {AxiosResponse} from "axios";
 import AvatarBorder from "./AvatarBorder";
@@ -132,6 +133,8 @@ export const Header = ({onMenuClick}: HeaderProps) => {
             <div className="flex items-center gap-6 text-gray-300 dark:text-gray-500 z-10">
                 {isLoggedIn ? (
                     <>
+                        <GlobalSearch/>
+
                         <button
                             onClick={() => navigate("/shop")}
                             title={t("shop_points_label", "points boutique")}

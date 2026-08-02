@@ -58,6 +58,11 @@ export type ReviewLikes = Prisma.ReviewLikesModel
  */
 export type Playlists = Prisma.PlaylistsModel
 /**
+ * Model PlaylistCollaborators
+ * 
+ */
+export type PlaylistCollaborators = Prisma.PlaylistCollaboratorsModel
+/**
  * Model PlaylistItems
  * 
  */

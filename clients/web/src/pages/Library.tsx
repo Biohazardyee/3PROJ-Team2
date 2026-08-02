@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {
     Edit2,
     Trash2,
@@ -6,6 +6,9 @@ import {
     ArrowLeft,
     Loader2,
     MoreVertical,
+    Users,
+    UserPlus,
+    X,
 } from "lucide-react";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
@@ -20,6 +23,8 @@ const ListCard: React.FC<any> = ({
                                      title,
                                      count,
                                      image,
+                                     isOwner,
+                                     isCollaborative,
                                      onClick,
                                      onEdit,
                                      onDelete,
@@ -31,6 +36,14 @@ const ListCard: React.FC<any> = ({
                 onClick={() => onClick(id)}
                 className="aspect-square bg-slate-900 dark:bg-white rounded-2xl overflow-hidden cursor-pointer shadow-lg border border-slate-800 dark:border-slate-200 relative"
             >
+                {isCollaborative && (
+                    <div
+                        title={t("playlist_collaborative", "Playlist collaborative")}
+                        className="absolute top-2 left-2 z-10 bg-black/60 backdrop-blur-md p-1.5 rounded-lg text-blue-400"
+                    >
+                        <Users size={14}/>
+                    </div>
+                )}
                 {image ? (
                     <img
                         src={image}
@@ -59,26 +72,28 @@ const ListCard: React.FC<any> = ({
                             : t("albums_count", {count: count || 0})}
                     </p>
                 </div>
-                <div className="flex items-center opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                        onClick={(e): void => {
-                            e.stopPropagation();
-                            onEdit(id);
-                        }}
-                        className="text-slate-500 hover:text-white dark:hover:text-gray-900 p-1.5 transition-colors"
-                    >
-                        <Edit2 size={18}/>
-                    </button>
-                    <button
-                        onClick={(e): void => {
-                            e.stopPropagation();
-                            onDelete(id);
-                        }}
-                        className="text-slate-500 hover:text-rose-500 p-1.5 transition-colors"
-                    >
-                        <Trash2 size={18}/>
-                    </button>
-                </div>
+                {isOwner !== false && (
+                    <div className="flex items-center opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                            onClick={(e): void => {
+                                e.stopPropagation();
+                                onEdit(id);
+                            }}
+                            className="text-slate-500 hover:text-white dark:hover:text-gray-900 p-1.5 transition-colors"
+                        >
+                            <Edit2 size={18}/>
+                        </button>
+                        <button
+                            onClick={(e): void => {
+                                e.stopPropagation();
+                                onDelete(id);
+                            }}
+                            className="text-slate-500 hover:text-rose-500 p-1.5 transition-colors"
+                        >
+                            <Trash2 size={18}/>
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -91,6 +106,13 @@ const LibraryPage: React.FC = () => {
     const [playlists, setPlaylists] = useState<any[]>([]);
     const [selectedPlaylist, setSelectedPlaylist] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
+    const [currentUserId, setCurrentUserId] = useState<string>("");
+    const [inviteUsername, setInviteUsername] = useState("");
+    const [inviteLoading, setInviteLoading] = useState(false);
+    const [inviteSuggestions, setInviteSuggestions] = useState<any[]>([]);
+    const [showInviteSuggestions, setShowInviteSuggestions] = useState(false);
+    const [inviteSearching, setInviteSearching] = useState(false);
+    const inviteSearchTimeout = useRef<any>(null);
 
     useEffect((): void => {
         const fetchPlaylists = async (): Promise<void> => {
@@ -100,6 +122,7 @@ const LibraryPage: React.FC = () => {
                 if (!token) throw new Error("Non authentifié");
                 const decoded: any = jwtDecode(token);
                 const userId: any = decoded.id || decoded.userId;
+                setCurrentUserId(String(userId));
                 const res: AxiosResponse = await apiClient.get(`/playlists/user/${userId}`);
                 setPlaylists(res.data.playlists || []);
             } catch (e) {
@@ -142,6 +165,109 @@ const LibraryPage: React.FC = () => {
         }
     };
 
+    const handleInviteUsernameChange = (value: string): void => {
+        setInviteUsername(value);
+
+        if (inviteSearchTimeout.current) clearTimeout(inviteSearchTimeout.current);
+
+        if (value.trim().length < 2) {
+            setInviteSuggestions([]);
+            setShowInviteSuggestions(false);
+            return;
+        }
+
+        setShowInviteSuggestions(true);
+        inviteSearchTimeout.current = setTimeout(async (): Promise<void> => {
+            try {
+                setInviteSearching(true);
+                const res: AxiosResponse = await apiClient.get(
+                    `/users/search?q=${encodeURIComponent(value.trim())}`,
+                );
+                setInviteSuggestions(res.data.users || []);
+            } catch (e) {
+                console.error("Erreur recherche utilisateurs:", e);
+            } finally {
+                setInviteSearching(false);
+            }
+        }, 300);
+    };
+
+    const handleSelectInviteSuggestion = (username: string): void => {
+        setInviteUsername(username);
+        setShowInviteSuggestions(false);
+        setInviteSuggestions([]);
+    };
+
+    const handleInviteCollaborator = async (): Promise<void> => {
+        if (!inviteUsername.trim() || !selectedPlaylist) return;
+
+        try {
+            setInviteLoading(true);
+            const res: AxiosResponse = await apiClient.post(
+                `/playlists/${selectedPlaylist.id}/collaborators`,
+                {username: inviteUsername.trim()},
+            );
+            setSelectedPlaylist((prev: any): any => ({
+                ...prev,
+                is_collaborative: true,
+                collaborators: res.data.collaborators,
+            }));
+            setInviteUsername("");
+            setInviteSuggestions([]);
+            setShowInviteSuggestions(false);
+            toast.success(t("collaborator_added_success", "Collaborateur ajouté !"));
+        } catch (e: any) {
+            console.error("Erreur invitation collaborateur:", e);
+            toast.error(e.response?.data?.message || t("collaborator_added_error", "Impossible d'ajouter ce collaborateur."));
+        } finally {
+            setInviteLoading(false);
+        }
+    };
+
+    const handleRemoveCollaborator = async (userId: string): Promise<void> => {
+        if (!selectedPlaylist) return;
+        const ok = await confirm({
+            title: t("remove_collaborator_title", "Retirer le collaborateur"),
+            message: t("remove_collaborator_confirm", "Voulez-vous vraiment retirer ce collaborateur ?"),
+            confirmText: t("remove", "Retirer"),
+            danger: true,
+        });
+        if (!ok) return;
+
+        try {
+            await apiClient.delete(`/playlists/${selectedPlaylist.id}/collaborators/${userId}`);
+            setSelectedPlaylist((prev: any): any => {
+                const remaining = prev.collaborators.filter((c: any): boolean => c.id !== userId);
+                return {...prev, collaborators: remaining, is_collaborative: remaining.length > 0};
+            });
+            toast.success(t("collaborator_removed_success", "Collaborateur retiré."));
+        } catch (e: any) {
+            console.error("Erreur retrait collaborateur:", e);
+            toast.error(t("collaborator_removed_error", "Impossible de retirer ce collaborateur."));
+        }
+    };
+
+    const handleLeaveCollaboration = async (): Promise<void> => {
+        if (!selectedPlaylist) return;
+        const ok = await confirm({
+            title: t("leave_playlist_title", "Quitter la playlist"),
+            message: t("leave_playlist_confirm", "Voulez-vous vraiment quitter cette playlist collaborative ?"),
+            confirmText: t("leave_playlist_btn", "Quitter"),
+            danger: true,
+        });
+        if (!ok) return;
+
+        try {
+            await apiClient.delete(`/playlists/${selectedPlaylist.id}/collaborators/me`);
+            setPlaylists((prev: any[]): any[] => prev.filter((p: any): boolean => p.id !== selectedPlaylist.id));
+            setSelectedPlaylist(null);
+            toast.success(t("leave_playlist_success", "Tu as quitté la playlist."));
+        } catch (e: any) {
+            console.error("Erreur pour quitter la playlist:", e);
+            toast.error(t("leave_playlist_error", "Impossible de quitter cette playlist."));
+        }
+    };
+
     const removeItem = async (
         e: React.MouseEvent,
         playlistItemId: string,
@@ -178,6 +304,8 @@ const LibraryPage: React.FC = () => {
 
     if (selectedPlaylist) {
         const currentAlbums = selectedPlaylist.items || [];
+        const isOwner: boolean = selectedPlaylist.user_id === currentUserId;
+        const collaborators: any[] = selectedPlaylist.collaborators || [];
 
         return (
             <div className="min-h-screen bg-[#13131A] dark:bg-slate-50 p-6 md:p-10 text-white dark:text-slate-900 font-sans transition-colors duration-300">
@@ -211,10 +339,112 @@ const LibraryPage: React.FC = () => {
                                 {currentAlbums.length}{" "}
                                 {t("albums_count", {count: currentAlbums.length})}
                             </p>
+
+                            {!isOwner && selectedPlaylist.is_collaborative && (
+                                <button
+                                    onClick={handleLeaveCollaboration}
+                                    className="self-start flex items-center gap-2 text-rose-500 hover:bg-rose-500/10 px-3 py-1.5 rounded-lg text-sm font-bold transition-all"
+                                >
+                                    <X size={14}/> {t("leave_playlist_btn", "Quitter")}
+                                </button>
+                            )}
                         </div>
                     </div>
 
-                    <div className="mt-12 pt-8 border-t border-slate-800 dark:border-slate-300">
+                    <div className="pt-6 border-t border-slate-800 dark:border-slate-300 space-y-4">
+                        <h2 className="text-lg font-bold text-white dark:text-slate-900 flex items-center gap-2">
+                            <Users size={18}/> {t("playlist_collaborators_title", "Collaborateurs")}
+                        </h2>
+
+                        {collaborators.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                                {collaborators.map((c: any) => (
+                                    <div
+                                        key={c.id}
+                                        className="flex items-center gap-2 bg-slate-900 dark:bg-white border border-slate-800 dark:border-slate-200 rounded-full pl-1 pr-3 py-1"
+                                    >
+                                        <div className="w-6 h-6 rounded-full bg-slate-700 dark:bg-slate-200 overflow-hidden flex items-center justify-center text-xs font-bold shrink-0">
+                                            {c.profile_picture ? (
+                                                <img src={c.profile_picture} alt="" className="w-full h-full object-cover"/>
+                                            ) : (
+                                                c.pseudo?.substring(0, 1).toUpperCase() || "?"
+                                            )}
+                                        </div>
+                                        <span className="text-sm font-medium">{c.pseudo || c.username}</span>
+                                        {isOwner && (
+                                            <button
+                                                onClick={() => handleRemoveCollaborator(c.id)}
+                                                className="text-slate-500 hover:text-rose-500 transition-colors"
+                                            >
+                                                <X size={14}/>
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {isOwner && (
+                            <div className="relative max-w-sm">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={inviteUsername}
+                                        onChange={(e) => handleInviteUsernameChange(e.target.value)}
+                                        onFocus={() => inviteSuggestions.length > 0 && setShowInviteSuggestions(true)}
+                                        onBlur={() => setTimeout(() => setShowInviteSuggestions(false), 150)}
+                                        placeholder={t("invite_collaborator_placeholder", "Nom d'utilisateur...")}
+                                        autoComplete="off"
+                                        className="flex-1 bg-slate-900 dark:bg-white border border-slate-800 dark:border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors"
+                                    />
+                                    <button
+                                        onClick={handleInviteCollaborator}
+                                        disabled={inviteLoading || !inviteUsername.trim()}
+                                        className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-3 py-2 rounded-xl text-sm font-bold transition-all"
+                                    >
+                                        {inviteLoading ? <Loader2 className="animate-spin" size={16}/> : <UserPlus size={16}/>}
+                                    </button>
+                                </div>
+
+                                {showInviteSuggestions && (
+                                    <div className="absolute z-50 w-full mt-1 bg-[#1c1c2e] dark:bg-white border border-slate-800 dark:border-slate-200 rounded-xl overflow-hidden shadow-2xl max-h-60 overflow-y-auto">
+                                        {inviteSearching ? (
+                                            <div className="flex items-center justify-center p-3">
+                                                <Loader2 className="animate-spin text-blue-500" size={18}/>
+                                            </div>
+                                        ) : inviteSuggestions.length > 0 ? (
+                                            inviteSuggestions.map((u: any) => (
+                                                <button
+                                                    key={u.id}
+                                                    type="button"
+                                                    onClick={() => handleSelectInviteSuggestion(u.username)}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors"
+                                                >
+                                                    <div className="w-7 h-7 rounded-full bg-slate-700 dark:bg-slate-200 overflow-hidden flex items-center justify-center text-xs font-bold shrink-0">
+                                                        {u.profile_picture ? (
+                                                            <img src={u.profile_picture} alt="" className="w-full h-full object-cover"/>
+                                                        ) : (
+                                                            u.pseudo?.substring(0, 1).toUpperCase() || "?"
+                                                        )}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-bold text-white dark:text-gray-900 truncate">{u.pseudo}</p>
+                                                        <p className="text-xs text-slate-500 truncate">@{u.username}</p>
+                                                    </div>
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <div className="p-3 text-center text-sm text-slate-500">
+                                                {t("no_users_found", "Aucun utilisateur trouvé")}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mt-4 pt-8 border-t border-slate-800 dark:border-slate-300">
                         <h2 className="text-2xl font-bold mb-6 text-white dark:text-slate-900">Albums</h2>
                         {currentAlbums.length > 0 ? (
                             <div
@@ -302,6 +532,8 @@ const LibraryPage: React.FC = () => {
                             title={list.name}
                             count={list.items?.length || 0}
                             image={list.image_url}
+                            isOwner={list.is_owner !== false}
+                            isCollaborative={list.is_collaborative}
                             onClick={(id: string): Promise<void> => fetchPlaylistDetails(id)}
                             onEdit={(id: string): void | Promise<void> =>
                                 navigate("/create-playlist", {

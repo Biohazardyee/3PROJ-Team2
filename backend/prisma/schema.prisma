@@ -43,12 +43,31 @@ model Users {
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
-  reviews              Reviews[]
-  review_comments      ReviewComments[]
-  review_likes         ReviewLikes[]
-  playlists            Playlists[]
-  follows              Follows[]         @relation("following")
-  followers            Follows[]         @relation("followers")
+  // Vérification d'email (comptes LOCAL uniquement — les comptes OAuth sont
+  // considérés vérifiés par le fournisseur dès leur création)
+  email_verified              Boolean   @default(true)
+  email_verification_code     String?
+  email_verification_expires  DateTime?
+
+  // Réinitialisation de mot de passe
+  password_reset_code    String?
+  password_reset_expires DateTime?
+
+  // 2FA (TOTP)
+  twofa_enabled      Boolean  @default(false)
+  twofa_secret       String?
+  twofa_backup_codes String[] @default([])
+
+  // Gamification
+  earned_badges String[] @default([])
+
+  reviews                 Reviews[]
+  review_comments         ReviewComments[]
+  review_likes            ReviewLikes[]
+  playlists               Playlists[]
+  playlist_collaborations PlaylistCollaborators[]
+  follows                 Follows[]               @relation("following")
+  followers               Follows[]               @relation("followers")
   notifications        Notifications[]   @relation("user_notifications")
   notificationsRelated Notifications[]   @relation("user_related_notifications")
   user_media_status    UserMediaStatus[]
@@ -178,13 +197,25 @@ model Playlists {
   name               String   @db.VarChar(30)
   image_url          Bytes?
   is_public          Boolean
+  is_collaborative   Boolean  @default(false)
   spotify_playlist_id String?
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
 
-  items PlaylistItems[]
+  items         PlaylistItems[]
+  collaborators PlaylistCollaborators[]
 
   @@unique([user_id, name])
+}
+
+model PlaylistCollaborators {
+  playlist    Playlists @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+  playlist_id String
+  user        Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     String
+  added_at    DateTime  @default(now())
+
+  @@id([playlist_id, user_id])
 }
 
 model PlaylistItems {
@@ -303,6 +334,8 @@ enum NotificationActions {
   comment_added
   new_follow
   recommendation
+  badge_earned
+  playlist_collaborator_added
 }
 
 model Conversations {

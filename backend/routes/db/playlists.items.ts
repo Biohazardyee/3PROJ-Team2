@@ -3,11 +3,12 @@ import playlistItemController from "../../modules/db/playlists/playlist.item.con
 import {authGuard} from "../../middlewares/auth.js";
 import {checkAdmin} from "../../middlewares/checkAdmin.js";
 import {checkPlaylistOwner} from "../../middlewares/checkPlaylistOwner.js";
+import {checkPlaylistEditor} from "../../middlewares/checkPlaylistEditor.js";
 
 const router: Router = Router();
 
 
-router.post("/", authGuard, (req, res, next: NextFunction): void => {
+router.post("/", authGuard, checkPlaylistEditor, (req, res, next: NextFunction): void => {
     playlistItemController.add(req, res, next);
 });
 

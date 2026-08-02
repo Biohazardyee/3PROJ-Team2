@@ -32,6 +32,8 @@ export class UserMapper extends BaseMapper<Users, UserResponseDto> {
       equipped_banner: user.equipped_banner ?? null,
       equipped_pattern: user.equipped_pattern ?? null,
       has_notifications: user.has_notifications ?? true,
+      email_verified: user.email_verified ?? true,
+      twofa_enabled: user.twofa_enabled ?? false,
       profile_picture: user.profile_picture,
       banner: user.banner,
       created_at: user.created_at,

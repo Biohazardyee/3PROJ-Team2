@@ -30,6 +30,8 @@ const AuthCallback: React.FC = () => {
                     localStorage.setItem("userId", String(decoded.id));
                 }
 
+                window.dispatchEvent(new Event("auth-changed"));
+
                 navigate("/home");
             } catch (err) {
                 console.error("Erreur lors du décodage du token:", err);

@@ -11,10 +11,20 @@ import {setOwnedThemes} from "../useDarkMode";
  */
 const ThemeGuard = (): null => {
     useEffect(() => {
+        // Compteur de requête : "auth-changed" peut se redéclencher avant que
+        // la validation précédente n'ait fini de résoudre (logout suivi d'un
+        // login rapide vers un autre compte). Sans ce garde, une réponse
+        // périmée pouvait arriver APRÈS la bonne et écraser la possession du
+        // nouveau compte, forçant le thème qu'on venait de choisir à
+        // retomber en sombre juste après l'avoir sélectionné.
+        let latestRequestId = 0;
+
         const validate = async (): Promise<void> => {
+            const requestId: number = ++latestRequestId;
             const token: string | null = localStorage.getItem("token");
+
             if (!token) {
-                setOwnedThemes([]); // non connecté -> aucune possession
+                if (requestId === latestRequestId) setOwnedThemes([]); // non connecté -> aucune possession
                 return;
             }
             try {
@@ -22,9 +32,11 @@ const ThemeGuard = (): null => {
                 const uId: string = decoded.id || decoded.userId;
                 const res = await apiClient.get(`/users/public/${uId}`);
                 const data = res.data.user || res.data;
-                setOwnedThemes(data.owned_cosmetics || []);
+                if (requestId === latestRequestId) {
+                    setOwnedThemes(data.owned_cosmetics || []);
+                }
             } catch {
-                setOwnedThemes([]);
+                if (requestId === latestRequestId) setOwnedThemes([]);
             }
         };
 

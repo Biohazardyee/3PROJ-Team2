@@ -1,11 +1,13 @@
 import {BaseMapper} from "../base.mapper.js";
 import {
+    PlaylistCollaboratorDto,
     PlaylistResponseAddDto,
     PlaylistResponseDeleteDto,
     PlaylistResponseDto,
     PlaylistResponseUpdateDto,
 } from "../../types/playlists/playlist.dto.js";
 import {PlaylistItems, Playlists} from "../../generated/prisma/client.js";
+import {bufferToImageDataUri} from "../../utils/imageDataUri.js";
 
 type PlaylistWithItems = Playlists & {
     items?: PlaylistItems[];
@@ -17,11 +19,22 @@ class PlaylistMapper extends BaseMapper<Playlists, PlaylistResponseDto> {
      */
 
     protected mapOne(playlist: any): PlaylistResponseDto {
+        const collaborators: PlaylistCollaboratorDto[] | undefined = playlist.collaborators
+            ? playlist.collaborators.map((c: any): PlaylistCollaboratorDto => ({
+                id: c.user.id,
+                username: c.user.username,
+                pseudo: c.user.pseudo,
+                profile_picture: bufferToImageDataUri(c.user.profile_picture),
+            }))
+            : undefined;
+
         return {
             id: playlist.id,
             user_id: playlist.user_id,
             name: playlist.name,
             is_public: playlist.is_public,
+            is_collaborative: playlist.is_collaborative ?? (collaborators ? collaborators.length > 0 : false),
+            collaborators,
             image_url: playlist.image_url
                 ? `data:image/jpeg;base64,${Buffer.from(playlist.image_url).toString("base64")}`
                 : undefined,

@@ -5,6 +5,7 @@ import {BadRequest} from "../../../utils/errors.js";
 import {PlaylistService} from "./playlist.service.js";
 import {
     PlaylistAddDto,
+    PlaylistCollaboratorDto,
     PlaylistResponseAddDto,
     PlaylistResponseDeleteDto,
     PlaylistResponseDto,
@@ -56,13 +57,95 @@ class PlaylistController extends Controller {
                 throw new BadRequest("Missing required fields");
             }
 
+            const requesterId: string | undefined = (req as any).user?.id;
+
             const playlists: PlaylistResponseDto[] =
-                await this.service.getPlaylistsByUserId(req.params.id);
+                await this.service.getPlaylistsByUserId(req.params.id, requesterId);
 
             res.status(200).json({
                 message: "Playlists retrieved successfully",
                 playlists,
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async addCollaborator(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const playlistId: string = req.params.id;
+            const requesterId: string = (req as any).user.id;
+            const username: string = req.body.username;
+
+            if (!playlistId || !username) {
+                throw new BadRequest("Playlist id and username are required");
+            }
+
+            const collaborators: PlaylistCollaboratorDto[] = await this.service.addCollaborator(
+                playlistId,
+                requesterId,
+                username,
+            );
+
+            res.status(200).json({
+                message: "Collaborator added successfully",
+                collaborators,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async removeCollaborator(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const playlistId: string = req.params.id;
+            const requesterId: string = (req as any).user.id;
+            const targetUserId: string = req.params.user_id;
+
+            if (!playlistId || !targetUserId) {
+                throw new BadRequest("Playlist id and user id are required");
+            }
+
+            await this.service.removeCollaborator(playlistId, requesterId, targetUserId);
+
+            res.status(200).json({message: "Collaborator removed successfully"});
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async leaveCollaboration(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const playlistId: string = req.params.id;
+            const userId: string = (req as any).user.id;
+
+            if (!playlistId) {
+                throw new BadRequest("Playlist id is required");
+            }
+
+            await this.service.leaveCollaboration(playlistId, userId);
+
+            res.status(200).json({message: "Left the collaborative playlist successfully"});
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getCollaborators(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const playlistId: string = req.params.id;
+            const requesterId: string = (req as any).user.id;
+
+            if (!playlistId) {
+                throw new BadRequest("Playlist id is required");
+            }
+
+            const collaborators: PlaylistCollaboratorDto[] = await this.service.getCollaborators(
+                playlistId,
+                requesterId,
+            );
+
+            res.status(200).json({collaborators});
         } catch (error) {
             next(error);
         }

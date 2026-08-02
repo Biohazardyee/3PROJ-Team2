@@ -3,6 +3,7 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from "axios";
+import { resetOwnedThemesCache } from "../useDarkMode";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -22,6 +23,7 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
+      resetOwnedThemesCache();
 
       window.dispatchEvent(new CustomEvent("unauthorized"));
       window.dispatchEvent(new Event("auth-changed"));

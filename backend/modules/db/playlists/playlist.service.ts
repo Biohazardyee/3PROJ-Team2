@@ -1,8 +1,9 @@
 import {PrismaDb} from "../../../config/database.js";
-import {BadRequest, NotFound} from "../../../utils/errors.js";
+import {BadRequest, Forbidden, NotFound} from "../../../utils/errors.js";
 import {isEmptyString, isValidBoolean, isValidStringLength,} from "../../../utils/helpers.js";
 import {
     PlaylistAddDto,
+    PlaylistCollaboratorDto,
     PlaylistResponseAddDto,
     PlaylistResponseDeleteDto,
     PlaylistResponseDto,
@@ -11,6 +12,19 @@ import {
 } from "../../../types/playlists/playlist.dto.js";
 import {Playlists, Prisma, Users} from "../../../generated/prisma/client.js";
 import {playlistMapper} from "../../../mappers/playlists/playlist.mapper.js";
+import {badgeService} from "../badges/badge.service.js";
+import {isPlaylistEditor} from "./playlist.helper.js";
+import {bufferToImageDataUri} from "../../../utils/imageDataUri.js";
+import {notificationService} from "../notifications/notification.service.js";
+import {NotificationActions} from "../../../generated/prisma/enums.js";
+import {canSendNotification} from "../notifications/notification.helper.js";
+
+const COLLABORATOR_SELECT = {
+    id: true,
+    username: true,
+    pseudo: true,
+    profile_picture: true,
+} as const;
 
 export class PlaylistService {
     async create(data: PlaylistAddDto): Promise<PlaylistResponseAddDto> {
@@ -75,10 +89,15 @@ export class PlaylistService {
                 spotify_playlist_id: data.spotify_playlist_id,
             },
         });
+
+        badgeService
+            .checkAndAwardBadges(data.user_id)
+            .catch((err): void => console.error("Badge check failed:", err));
+
         return playlistMapper.toAddDto(playlist);
     }
 
-    async getPlaylistsByUserId(id: string): Promise<PlaylistResponseDto[]> {
+    async getPlaylistsByUserId(id: string, requesterId?: string): Promise<PlaylistResponseDto[]> {
         if (isEmptyString(id)) {
             throw new BadRequest("user_id cannot be empty");
         }
@@ -100,16 +119,31 @@ export class PlaylistService {
             throw new BadRequest("User with this id does not exist");
         }
 
+        const isSelf: boolean = requesterId === id;
+
         const playlists = await PrismaDb.playlists.findMany({
-            where: {user_id: id},
+            where: {
+                OR: [
+                    {user_id: id},
+                    {collaborators: {some: {user_id: id}}},
+                ],
+                ...(isSelf ? {} : {is_public: true}),
+            },
             include: {
                 items: {
                     include: {media: true}
                 },
+                collaborators: {
+                    include: {user: {select: COLLABORATOR_SELECT}},
+                },
             },
+            orderBy: {created_at: "desc"},
         });
 
-        return playlists.map(p => playlistMapper.toDtoWithRatings(p, reviewMap));
+        return playlists.map((p): PlaylistResponseDto => ({
+            ...playlistMapper.toDtoWithRatings(p, reviewMap),
+            is_owner: p.user_id === id,
+        }));
     }
 
     async getAll(): Promise<PlaylistResponseDto[]> {
@@ -136,7 +170,10 @@ export class PlaylistService {
                     include: {
                         media: true
                     }
-                }
+                },
+                collaborators: {
+                    include: {user: {select: COLLABORATOR_SELECT}},
+                },
             }
         });
 
@@ -145,6 +182,179 @@ export class PlaylistService {
         }
 
         return playlistMapper.toDto(playlist);
+    }
+
+    async addCollaborator(
+        playlistId: string,
+        requesterId: string,
+        username: string,
+    ): Promise<PlaylistCollaboratorDto[]> {
+        if (isEmptyString(playlistId) || isEmptyString(username)) {
+            throw new BadRequest("playlist_id and username are required");
+        }
+
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
+            where: {id: playlistId},
+        });
+
+        if (!playlist) {
+            throw new NotFound("Playlist not found");
+        }
+
+        if (playlist.user_id !== requesterId) {
+            throw new Forbidden("Only the playlist owner can manage collaborators");
+        }
+
+        const targetUser: Users | null = await PrismaDb.users.findUnique({
+            where: {username: username.trim()},
+        });
+
+        if (!targetUser) {
+            throw new NotFound("User not found");
+        }
+
+        if (targetUser.id === playlist.user_id) {
+            throw new BadRequest("The owner is already an editor of this playlist");
+        }
+
+        const existing = await PrismaDb.playlistCollaborators.findUnique({
+            where: {
+                playlist_id_user_id: {playlist_id: playlistId, user_id: targetUser.id},
+            },
+        });
+
+        if (existing) {
+            throw new BadRequest("This user is already a collaborator on this playlist");
+        }
+
+        await PrismaDb.$transaction([
+            PrismaDb.playlistCollaborators.create({
+                data: {playlist_id: playlistId, user_id: targetUser.id},
+            }),
+            PrismaDb.playlists.update({
+                where: {id: playlistId},
+                data: {is_collaborative: true},
+            }),
+        ]);
+
+        const isAllowed: boolean = await canSendNotification(
+            targetUser.id,
+            requesterId,
+            "playlist_collaborator_added",
+            5,
+        );
+
+        if (isAllowed) {
+            notificationService
+                .create({
+                    user_id: targetUser.id,
+                    action: NotificationActions.playlist_collaborator_added,
+                    related_user_id: requesterId,
+                })
+                .catch((err): void => console.error("Notification failed:", err));
+        }
+
+        return this.getCollaborators(playlistId, requesterId);
+    }
+
+    async removeCollaborator(
+        playlistId: string,
+        requesterId: string,
+        targetUserId: string,
+    ): Promise<void> {
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
+            where: {id: playlistId},
+        });
+
+        if (!playlist) {
+            throw new NotFound("Playlist not found");
+        }
+
+        if (playlist.user_id !== requesterId) {
+            throw new Forbidden("Only the playlist owner can manage collaborators");
+        }
+
+        await this.removeCollaboratorInternal(playlistId, targetUserId);
+    }
+
+    async leaveCollaboration(playlistId: string, userId: string): Promise<void> {
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
+            where: {id: playlistId},
+        });
+
+        if (!playlist) {
+            throw new NotFound("Playlist not found");
+        }
+
+        if (playlist.user_id === userId) {
+            throw new BadRequest("The owner cannot leave their own playlist");
+        }
+
+        await this.removeCollaboratorInternal(playlistId, userId);
+    }
+
+    private async removeCollaboratorInternal(playlistId: string, userId: string): Promise<void> {
+        const existing = await PrismaDb.playlistCollaborators.findUnique({
+            where: {
+                playlist_id_user_id: {playlist_id: playlistId, user_id: userId},
+            },
+        });
+
+        if (!existing) {
+            throw new NotFound("This user is not a collaborator on this playlist");
+        }
+
+        await PrismaDb.playlistCollaborators.delete({
+            where: {
+                playlist_id_user_id: {playlist_id: playlistId, user_id: userId},
+            },
+        });
+
+        const remaining: number = await PrismaDb.playlistCollaborators.count({
+            where: {playlist_id: playlistId},
+        });
+
+        if (remaining === 0) {
+            await PrismaDb.playlists.update({
+                where: {id: playlistId},
+                data: {is_collaborative: false},
+            });
+        }
+    }
+
+    async getCollaborators(
+        playlistId: string,
+        requesterId: string,
+    ): Promise<PlaylistCollaboratorDto[]> {
+        if (isEmptyString(playlistId)) {
+            throw new BadRequest("playlist_id is required");
+        }
+
+        const playlist: Playlists | null = await PrismaDb.playlists.findUnique({
+            where: {id: playlistId},
+        });
+
+        if (!playlist) {
+            throw new NotFound("Playlist not found");
+        }
+
+        const canView: boolean = await isPlaylistEditor(playlistId, requesterId);
+        if (!canView) {
+            throw new Forbidden("Access denied");
+        }
+
+        const collaborators = await PrismaDb.playlistCollaborators.findMany({
+            where: {playlist_id: playlistId},
+            include: {user: {select: COLLABORATOR_SELECT}},
+            orderBy: {added_at: "asc"},
+        });
+
+        return collaborators.map((c): PlaylistCollaboratorDto => ({
+            id: c.user.id,
+            username: c.user.username,
+            pseudo: c.user.pseudo,
+            profile_picture: bufferToImageDataUri(c.user.profile_picture),
+        }));
     }
 
     async update(

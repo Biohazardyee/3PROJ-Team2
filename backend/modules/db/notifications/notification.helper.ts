@@ -25,6 +25,16 @@ export function generateNotificationContent(notif: any) {
                 title: "Recommandation",
                 body: `${sender} vous recommande un média !`,
             };
+        case "badge_earned":
+            return {
+                title: "Nouveau badge débloqué !",
+                body: "Tu as débloqué un nouveau badge, va voir ton profil !",
+            };
+        case "playlist_collaborator_added":
+            return {
+                title: "Playlist partagée",
+                body: `${sender} t'a ajouté comme collaborateur sur une playlist !`,
+            };
         case "review_added":
             return {
                 title: "Nouvelle critique",

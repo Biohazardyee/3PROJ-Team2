@@ -22,6 +22,7 @@ import {
     canSendNotification,
 } from "../notifications/notification.helper.js";
 import {JsonValue} from "@prisma/client/runtime/client";
+import {badgeService} from "../badges/badge.service.js";
 
 // Points boutique gagnés par l'utilisateur à chaque nouvelle critique publiée
 export const POINTS_PER_REVIEW = 10;
@@ -117,6 +118,10 @@ export class ReviewService {
 
             return newReview;
         });
+
+        badgeService
+            .checkAndAwardBadges(data.user_id)
+            .catch((err): void => console.error("Badge check failed:", err));
 
         const tokens: string[] = await getFollowerTokens(data.user_id);
 
