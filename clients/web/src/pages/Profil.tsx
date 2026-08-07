@@ -36,7 +36,7 @@ import {useConfirm} from "../context/ConfirmContext";
 import AvatarBorder, {isValidBorder} from "../components/AvatarBorder";
 import {PSEUDO_FONTS, getPseudoFontFamily, isValidPseudoFont} from "../fonts.config";
 import {getProfileTitle, isValidProfileTitle} from "../titles.config";
-import {TEXT_EFFECTS, getTextEffectClassName, isValidTextEffect} from "../textEffects.config";
+import {getTextEffectClassName, isValidTextEffect} from "../textEffects.config";
 import {getPremiumBanner, isValidPremiumBanner} from "../banners.config";
 import {getPattern, isValidPattern} from "../patterns.config";
 import {toImageDataUri} from "../utils/imageDataUri";
@@ -120,6 +120,7 @@ const Profil: React.FC = () => {
     const [userConnected, setUserConnected] = useState<string>("");
     const [showCosmetics, setShowCosmetics] = useState<boolean>(false);
     const [cosmeticNames, setCosmeticNames] = useState<Record<string, string>>({});
+    const cosmeticLabel = (id: string): string => t(`cosmetic_item_${id}`, cosmeticNames[id] || id);
     const [equipping, setEquipping] = useState<string | null>(null);
     const [playlists, setPlaylists] = useState<any[]>([]);
     const [badges, setBadges] = useState<any[]>([]);
@@ -893,7 +894,7 @@ const Profil: React.FC = () => {
                                     )}
                                     {equippedTitleDef && (
                                         <span className={`inline-flex items-center px-3 py-1 rounded-full border text-sm font-bold ${equippedTitleDef.className}`}>
-                                            {equippedTitleDef.label}
+                                            {cosmeticLabel(equippedTitleDef.id)}
                                         </span>
                                     )}
                                 </div>
@@ -1644,7 +1645,7 @@ const Profil: React.FC = () => {
                                                                     </AvatarBorder>
                                                                 </div>
                                                                 <span className={`text-xs truncate max-w-full ${equipped === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
-                                                                    {cosmeticNames[id] || id}
+                                                                    {cosmeticLabel(id)}
                                                                 </span>
                                                             </button>
                                                         ))}
@@ -1713,7 +1714,7 @@ const Profil: React.FC = () => {
                                                                     disabled={equipping !== null}
                                                                     className={`px-3 py-1.5 rounded-full border text-xs font-bold transition-all disabled:opacity-50 ${def?.className || "border-slate-700 text-slate-300"} ${equippedTitle === id ? "ring-2 ring-purple-500" : ""}`}
                                                                 >
-                                                                    {def?.label || cosmeticNames[id] || id}
+                                                                    {cosmeticLabel(id)}
                                                                 </button>
                                                             );
                                                         })}
@@ -1751,7 +1752,7 @@ const Profil: React.FC = () => {
                                                                     {pseudoText}
                                                                 </span>
                                                                 <span className={`text-[11px] truncate max-w-full ${equippedTextEffect === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
-                                                                    {TEXT_EFFECTS.find((e) => e.id === id)?.name || id}
+                                                                    {cosmeticLabel(id)}
                                                                 </span>
                                                             </button>
                                                         ))}
@@ -1787,7 +1788,7 @@ const Profil: React.FC = () => {
                                                                 >
                                                                     <div className={`w-full h-10 rounded-lg ${def?.className || "bg-slate-800"}`}/>
                                                                     <span className={`text-[11px] truncate max-w-full ${equippedBanner === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
-                                                                        {def?.name || cosmeticNames[id] || id}
+                                                                        {cosmeticLabel(id)}
                                                                     </span>
                                                                 </button>
                                                             );
@@ -1824,7 +1825,7 @@ const Profil: React.FC = () => {
                                                                 >
                                                                     <div className={`w-full h-10 rounded-lg bg-slate-800 dark:bg-gray-100 ${def?.className || ""}`}/>
                                                                     <span className={`text-[11px] truncate max-w-full ${equippedPattern === id ? "text-purple-400 dark:text-purple-500 font-bold" : "text-slate-400 dark:text-gray-500"}`}>
-                                                                        {def?.name || cosmeticNames[id] || id}
+                                                                        {cosmeticLabel(id)}
                                                                     </span>
                                                                 </button>
                                                             );

@@ -53,6 +53,8 @@ const Shop: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [busyId, setBusyId] = useState<string | null>(null);
 
+    const itemName = (item: CatalogItem): string => t(`cosmetic_item_${item.id}`, item.name);
+
     useEffect(() => {
         const load = async (): Promise<void> => {
             try {
@@ -98,7 +100,7 @@ const Shop: React.FC = () => {
         const ok = await confirm({
             title: t("confirm_purchase_title", "Confirmer l'achat"),
             message: t("confirm_purchase", {
-                name: item.name,
+                name: itemName(item),
                 price: item.price,
                 defaultValue: 'Acheter "{{name}}" pour {{price}} points ?',
             }),
@@ -229,7 +231,7 @@ const Shop: React.FC = () => {
                                 </div>
 
                                 <h3 className="font-bold text-white dark:text-gray-900 mb-2">
-                                    {item.name}
+                                    {itemName(item)}
                                 </h3>
 
                                 <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold mb-4">
@@ -305,7 +307,7 @@ const Shop: React.FC = () => {
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
                                                 <Palette size={16} className={def?.accentClass || "text-purple-500"}/>
-                                                {item.name}
+                                                {itemName(item)}
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
                                                 <Coins size={16}/>
@@ -375,7 +377,7 @@ const Shop: React.FC = () => {
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
                                                 <Type size={16} className="text-purple-400"/>
-                                                {item.name}
+                                                {itemName(item)}
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
                                                 <Coins size={16}/>
@@ -438,14 +440,14 @@ const Shop: React.FC = () => {
                                         {/* Aperçu du badge */}
                                         <div className="h-24 rounded-xl mb-4 flex items-center justify-center bg-slate-900/60 dark:bg-gray-50 px-3 overflow-hidden">
                                             <span className={`inline-flex items-center px-3 py-1.5 rounded-full border text-sm font-bold ${def?.className || "bg-slate-700 text-slate-200 border-slate-600"}`}>
-                                                {def?.label || item.name}
+                                                {itemName(item)}
                                             </span>
                                         </div>
 
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
                                                 <Tag size={16} className="text-purple-400"/>
-                                                {item.name}
+                                                {itemName(item)}
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
                                                 <Coins size={16}/>
@@ -514,7 +516,7 @@ const Shop: React.FC = () => {
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
                                                 <Wand2 size={16} className="text-purple-400"/>
-                                                {item.name}
+                                                {itemName(item)}
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
                                                 <Coins size={16}/>
@@ -580,7 +582,7 @@ const Shop: React.FC = () => {
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
                                                 <ImageIcon size={16} className="text-purple-400"/>
-                                                {item.name}
+                                                {itemName(item)}
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
                                                 <Coins size={16}/>
@@ -645,7 +647,7 @@ const Shop: React.FC = () => {
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
                                                 <LayoutGrid size={16} className="text-purple-400"/>
-                                                {item.name}
+                                                {itemName(item)}
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-amber-400 dark:text-amber-500 font-bold">
                                                 <Coins size={16}/>

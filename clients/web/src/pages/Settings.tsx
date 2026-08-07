@@ -49,6 +49,8 @@ const Settings: React.FC = () => {
 
     const [spotifyConnected, setSpotifyConnected] = useState(false);
     const [spotifyDisplayName, setSpotifyDisplayName] = useState<string | null>(null);
+    const [spotifyProduct, setSpotifyProduct] = useState<string | null>(null);
+    const [spotifyNeedsRelink, setSpotifyNeedsRelink] = useState(false);
     const [loadingSpotify, setLoadingSpotify] = useState(false);
 
     const [userId, setUserId] = useState<string>("");
@@ -127,6 +129,8 @@ const Settings: React.FC = () => {
             const res: AxiosResponse = await apiClient.get("/api/spotify/status");
             setSpotifyConnected(!!res.data.connected);
             setSpotifyDisplayName(res.data.display_name || null);
+            setSpotifyProduct(res.data.product || null);
+            setSpotifyNeedsRelink(!!res.data.needs_relink);
         } catch (e) {
             console.error("Erreur lors de la vérification du compte Spotify:", e);
         }
@@ -891,7 +895,20 @@ const Settings: React.FC = () => {
                                             <Music2 size={22} className="text-emerald-500"/>
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="font-bold text-white dark:text-gray-900">Spotify</p>
+                                            <p className="font-bold text-white dark:text-gray-900 flex items-center gap-2">
+                                                Spotify
+                                                {spotifyConnected && spotifyProduct && (
+                                                    <span
+                                                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide ${
+                                                            spotifyProduct === "premium"
+                                                                ? "bg-emerald-500/20 text-emerald-400"
+                                                                : "bg-slate-700 dark:bg-gray-200 text-slate-400 dark:text-gray-600"
+                                                        }`}
+                                                    >
+                                                        {spotifyProduct === "premium" ? t("spotify_premium", "Premium") : t("spotify_free", "Gratuit")}
+                                                    </span>
+                                                )}
+                                            </p>
                                             <p className="text-xs text-slate-400 dark:text-gray-500 flex items-center gap-1.5 mt-0.5">
                                                 <span
                                                     className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${spotifyConnected ? "bg-emerald-500" : "bg-slate-600"}`}/>
@@ -924,6 +941,23 @@ const Settings: React.FC = () => {
                                         </button>
                                     )}
                                 </div>
+
+                                {spotifyConnected && spotifyNeedsRelink && (
+                                    <div className="flex items-center justify-between gap-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl px-5 py-4">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <AlertTriangle size={18} className="text-amber-400 shrink-0"/>
+                                            <p className="text-sm text-amber-200">
+                                                {t("spotify_needs_relink", "Reconnecte ton compte pour activer les Salons d'écoute.")}
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={handleConnectSpotify}
+                                            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all flex-shrink-0"
+                                        >
+                                            {t("rooms_reconnect_btn", "Reconnecter")}
+                                        </button>
+                                    </div>
+                                )}
 
                                 <div
                                     className="flex items-center gap-4 bg-transparent border border-dashed border-slate-800 dark:border-gray-200 rounded-2xl px-5 py-4 opacity-60">

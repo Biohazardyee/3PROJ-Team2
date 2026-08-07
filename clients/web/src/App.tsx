@@ -23,6 +23,8 @@ import Settings from "./pages/Settings";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreatePlaylist from "./pages/CreatePlaylist";
 import Shop from "./pages/Shop";
+import Rooms from "./pages/Rooms";
+import RoomDetail from "./pages/RoomDetail";
 import ScrollToTop from "./components/ScrollToTop";
 import ThemeGuard from "./components/ThemeGuard";
 import AuthGuard from "./components/AuthGuard";
@@ -88,6 +90,8 @@ const App: React.FC = () => {
                         <Route path="/profil/:id?" element={<Profil/>}/>{" "}
                         <Route path="/settings" element={<Settings/>}/>
                         <Route path="/shop" element={<Shop/>}/>
+                        <Route path="/rooms" element={<Rooms/>}/>
+                        <Route path="/rooms/:id" element={<RoomDetail/>}/>
                         <Route path="/create-playlist" element={<CreatePlaylist/>}/>
                         <Route path="/authguard" element={<AuthGuard/>}/>
 

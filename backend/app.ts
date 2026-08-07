@@ -21,6 +21,7 @@ import messageRouter from "./routes/db/messages.js";
 import conversationRouter from "./routes/db/conversations.js";
 import reviewCommentRouter from "./routes/db/reviews.comment.js";
 import badgeRouter from "./routes/db/badges.js";
+import roomRouter from "./routes/db/rooms.js";
 
 // API Endpoints
 import albumsRouter from "./routes/api/albums.js";
@@ -91,6 +92,7 @@ app.use("/users", userRouter);
 app.use("/reviews", reviewRouter);
 app.use("/review-comments", reviewCommentRouter);
 app.use("/badges", badgeRouter);
+app.use("/rooms", roomRouter);
 
 // API routes
 app.use("/api/tracks", trackRouter);

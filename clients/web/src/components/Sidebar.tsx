@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import {
     Home as HomeIcon, Library, Rocket, BarChart2,
-    Shield, Settings, X, Sun, Moon, Globe, ChevronRight, ShoppingBag, Palette
+    Shield, Settings, X, Sun, Moon, Globe, ChevronRight, ShoppingBag, Palette, Radio
 } from 'lucide-react';
 import {useNavigate, useLocation, NavigateFunction} from 'react-router-dom';
 import {useDarkMode} from '../useDarkMode';
@@ -85,6 +85,7 @@ const Sidebar = ({isOpen, onClose}: SidebarProps) => {
         {name: t('nav_stats'), icon: BarChart2, path: '/stats'},
         {name: t('nav_library'), icon: Library, path: '/library'},
         {name: t('nav_shop', 'Boutique'), icon: ShoppingBag, path: '/shop'},
+        {name: t('nav_rooms', "Salons d'écoute"), icon: Radio, path: '/rooms'},
     ];
 
     const languages = [

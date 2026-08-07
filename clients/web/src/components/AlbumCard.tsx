@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import { Star } from "lucide-react";
 
@@ -21,6 +21,12 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
   rating,
 }) => {
   const navigate: NavigateFunction = useNavigate();
+  const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true);
+  }, [cover]);
 
   return (
     <div
@@ -28,16 +34,25 @@ export const AlbumCard: React.FC<TrendingCardProps> = ({
       className="bg-[#1a1d26] dark:bg-white border border-slate-800 dark:border-gray-200 rounded-xl overflow-hidden group hover:border-slate-700 dark:hover:border-gray-300 transition-all shadow-sm cursor-pointer"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-gray-900 dark:bg-gray-100">
+        {!loaded && (
+          <div className="absolute inset-0 animate-pulse bg-gray-800 dark:bg-gray-200"/>
+        )}
         <img
+          ref={imgRef}
           src={cover || PLACEHOLDER_IMAGE}
           alt={title}
+          onLoad={() => setLoaded(true)}
           onError={(e) => {
             const img = e.currentTarget;
             if (img.src !== window.location.origin + PLACEHOLDER_IMAGE) {
               img.src = PLACEHOLDER_IMAGE;
+            } else {
+              setLoaded(true);
             }
           }}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
         />
       </div>
 

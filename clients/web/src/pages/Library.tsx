@@ -336,8 +336,9 @@ const LibraryPage: React.FC = () => {
                                 {selectedPlaylist.name}
                             </h1>
                             <p className="text-slate-500 font-medium">
-                                {currentAlbums.length}{" "}
-                                {t("albums_count", {count: currentAlbums.length})}
+                                {currentAlbums.length > 1
+                                    ? t("albums_count_plural", {count: currentAlbums.length})
+                                    : t("albums_count", {count: currentAlbums.length})}
                             </p>
 
                             {!isOwner && selectedPlaylist.is_collaborative && (
